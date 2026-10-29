@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LabelFieldPair, RadioOrSelect, RadioButtons, CardLabelError } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LabelFieldPair, RadioOrSelect, RadioButtons, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
@@ -143,6 +143,20 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
   }, [formValue]);
 
   useEffect(() => {
+    if (formData?.cpt?.details && window.location.href.includes("tl") && userType === "employee") {
+      const propertyLocality = formData?.cpt?.details?.address?.locality;
+      const propertyCity = formData?.cpt?.details?.address?.city || tenantId;
+      if (propertyLocality && (!getValues("locality") || getValues("locality")?.code !== propertyLocality?.code)) {
+        setValue("locality", { ...propertyLocality, i18nkey: propertyLocality?.name });
+      }
+      const cityObj = cities?.find((c) => c.code === propertyCity);
+      if (cityObj && (!getValues("city") || getValues("city")?.code !== cityObj?.code)) {
+        setValue("city", cityObj);
+      }
+    }
+  }, [formData?.cpt?.details]);
+
+  useEffect(() => {
     if (userType === "employee") {
       if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
         setError(config.key, { type: errors });
@@ -165,21 +179,21 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
             defaultValue={cities?.length === 1 ? cities[0] : selectedCity}
             control={control}
             rules={{required: t("REQUIRED_FIELD")}}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={props.value}
+                selected={field.value}
                 disable={true}
                 option={cities}
-                select={props.onChange}
+                select={field.onChange}
                 optionKey="code"
-                onBlur={props.onBlur}
+                onBlur={field.onBlur}
                 t={t}
               />
             )}
           />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.city ? errors?.city?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.city ? errors?.city?.message : ""}</CardLabelError>
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{`${t("TL_LOCALIZATION_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <Controller
@@ -187,22 +201,22 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
             defaultValue={checkingLocationForRenew ? formData?.address?.locality : null}
             control={control}
             rules={{required: t("REQUIRED_FIELD")}}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={checkingLocationForRenew && formData?.cpt?.details ? ({...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name}) :(props.value || {...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name})}
+                selected={checkingLocationForRenew && formData?.cpt?.details ? ({...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name}) :(field.value || {...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name})}
                 option={localities}
-                select={props.onChange}
-                onBlur={props.onBlur}
+                select={field.onChange}
+                onBlur={field.onBlur}
                 optionKey="i18nkey"
                 t={t}
                 disable={checkingLocationForRenew || formData?.cpt?.details ? true : false}
-                errorStyle={(localFormState.touched.locality && errors?.locality?.message) ? true : false}
+                errorStyle={(localFormState.touchedFields.locality && errors?.locality?.message) ? true : false}
               />
             )}
           />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.locality ? errors?.locality?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.locality ? errors?.locality?.message : ""}</CardLabelError>
       </div>
     );
   }

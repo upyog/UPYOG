@@ -59,7 +59,7 @@ export const SubformComposer = ({ _key, ...props }) => {
                     defaultValue={_defaultValue}
                     name={name}
                     control={control}
-                    render={(props) => component({ ...props, setState: _setState, setValue, setError, state, getValues }, _customProps)}
+                    render={({ field, fieldState }) => component({ ...field, error: fieldState?.error, setState: _setState, setValue, setError, state, getValues }, _customProps)}
                   />
                 </div>
               </div>

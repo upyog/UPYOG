@@ -1,30 +1,31 @@
+import { queryTemplate } from "../common/queryTemplate";
 import { MdmsServiceV2 } from "../services/elements/MDMSV2";
-import { useQuery } from "react-query";
+
 
 const useMDMS = (tenantId, moduleCode, type, config = {}) => {
   const usePaymentGateway = () => {
-    return useQuery("PAYMENT_GATEWAY", () => MdmsServiceV2.getPaymentGateway(tenantId, moduleCode, type), {
+    return queryTemplate({ queryKey: ["PAYMENT_GATEWAY"], queryFn: () => MdmsServiceV2.getPaymentGateway(tenantId, moduleCode, type), config: {
       select: (data) => {
         return data?.[moduleCode]?.[type].filter((e) => e.active).map(({ gateway }) => gateway);
       },
       ...config,
-    });
+    } });
   };
 
   const useReceiptKey = () => {
-    return useQuery("RECEIPT_KEY", () => MdmsServiceV2.getReceiptKey(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["RECEIPT_KEY"], queryFn: () => MdmsServiceV2.getReceiptKey(tenantId, moduleCode, type), config });
   };
 
   const useBillsGenieKey = () => {
-    return useQuery("BILLS_GENIE_KEY", () => MdmsServiceV2.getBillsGenieKey(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["BILLS_GENIE_KEY"], queryFn: () => MdmsServiceV2.getBillsGenieKey(tenantId, moduleCode, type), config });
   };
 
   const useFSTPPlantInfo = () => {
-    return useQuery("FSTP_PLANTINFO", () => MdmsServiceV2.getFSTPPlantInfo(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["FSTP_PLANTINFO"], queryFn: () => MdmsServiceV2.getFSTPPlantInfo(tenantId, moduleCode, type), config });
   };
 
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: [tenantId, moduleCode, type], queryFn: () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config });
   };
 
   switch (type) {

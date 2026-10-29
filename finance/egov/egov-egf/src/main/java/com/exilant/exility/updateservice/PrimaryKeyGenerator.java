@@ -50,7 +50,7 @@ package com.exilant.exility.updateservice;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -90,7 +90,7 @@ public class PrimaryKeyGenerator
         try
         {
             final Query pst = null;
-                    //persistenceService.getSession().createSQLQuery(sql);
+                    //persistenceService.getSession().createNativeQuery(sql);
             final List<BigInteger> rs = pst.list();
             key = rs != null ? rs.get(0).longValue() : 0l;
             if (rs == null || rs.size() == 0)

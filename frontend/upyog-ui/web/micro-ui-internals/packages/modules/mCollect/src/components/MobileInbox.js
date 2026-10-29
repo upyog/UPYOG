@@ -87,7 +87,8 @@ const MobileInbox = ({
               <span className="link">
                 <Link
                   to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${original?.["businessService"]}/${original?.["challanNo"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`,
+                    pathname: `/upyog-ui/employee/payment/collect/${original?.["businessService"]}/${original?.["challanNo"]}/${original?.["tenantId"]}`,
+                    search: `?workflow=mcollect`,
                   }}
                 >
                   {t(`UC_${action}`)}
@@ -102,10 +103,7 @@ const MobileInbox = ({
                 <Link>
                   <a
                     href="javascript:void(0)"
-                    style={{
-                      color: "#FE7A51",
-                      cursor: "pointer",
-                    }}
+                    className="mc-mobile-inbox-clickable"
                     onClick={(value) => {
                       printReciept(original?.["businessService"], original?.["challanNo"]);
                     }}
@@ -138,7 +136,7 @@ const MobileInbox = ({
   };
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="mc-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <ApplicationLinks linkPrefix={parentRoute} allLinks = {[

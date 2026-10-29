@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -18,14 +17,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+@SuppressWarnings("java:S2638")
 public class StreetVendingDraftApplicationRowMapper implements ResultSetExtractor<List<StreetVendingDetail>> {
 
-	@Autowired
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
+
+	public StreetVendingDraftApplicationRowMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
 
 	public List<StreetVendingDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
-		List<StreetVendingDetail> applicationList = new ArrayList<StreetVendingDetail>();
+		List<StreetVendingDetail> applicationList = new ArrayList<>();
 		while (rs.next()) {
 			
 			String draftId = rs.getString("draft_id");
@@ -39,7 +42,6 @@ public class StreetVendingDraftApplicationRowMapper implements ResultSetExtracto
 			} catch (JsonProcessingException e) {
 				log.error("JsonProcessingException : Error coccure while parsing draft applicagtion for draftid {}", draftId, e);
 			}
-			;
 			applicationList.add(streetVendingDetail);
 		}
 

@@ -8,9 +8,7 @@ import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.disposal.AssetDisposal;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
 import org.egov.asset.web.models.disposal.AssetDisposalSearchCriteria;
-import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -20,17 +18,18 @@ import java.util.List;
 @Service
 public class AssetDisposeService {
 
-    @Autowired
-    private AssetDisposeRepository assetDisposeRepository;
+    private final AssetDisposeRepository assetDisposeRepository;
+    private final AssetService assetService;
+    private final EnrichmentService enrichmentService;
+    private final AssetUtil assetUtil;
 
-    @Autowired
-    AssetService assetService;
-
-    @Autowired
-    EnrichmentService enrichmentService;
-
-    @Autowired
-    private AssetUtil assetUtil;
+    public AssetDisposeService(AssetDisposeRepository assetDisposeRepository, AssetService assetService,
+                               EnrichmentService enrichmentService, AssetUtil assetUtil) {
+        this.assetDisposeRepository = assetDisposeRepository;
+        this.assetService = assetService;
+        this.enrichmentService = enrichmentService;
+        this.assetUtil = assetUtil;
+    }
 
     /**
      * Create a new asset disposal record.
@@ -41,20 +40,15 @@ public class AssetDisposeService {
     public AssetDisposal createDisposal(AssetDisposalRequest request) {
         log.debug("Asset disposal service method create called");
 
-        // Validate the disposal request
         assetUtil.validateDisposalRequest(request);
 
-        // Extract tenant ID and fetch asset details
         String tenantId = assetUtil.extractTenantId(request);
         AssetDisposal disposal = request.getAssetDisposal();
         Asset asset = assetUtil.fetchAssetById(disposal.getAssetId(), tenantId);
 
-        // Enrich and save disposal details
         enrichmentService.enrichDisposalCreateOperations(request);
         assetDisposeRepository.save(request);
 
-        // Update the asset in the system
-        // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
             assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), disposal.getAssetDisposalStatus());
             updateAssetInSystem(request.getRequestInfo(), asset);
@@ -72,27 +66,21 @@ public class AssetDisposeService {
     public AssetDisposal updateDisposal(@Valid AssetDisposalRequest request) {
         log.debug("Asset disposal service method update called");
 
-        // Validate the disposal request
         assetUtil.validateDisposalRequest(request);
 
-        // Extract tenant ID and fetch asset details
         String tenantId = assetUtil.extractTenantId(request);
         AssetDisposal disposal = request.getAssetDisposal();
         Asset asset = assetUtil.fetchAssetById(disposal.getAssetId(), tenantId);
 
-        // Enrich and update disposal details
         enrichmentService.enrichDisposalUpdateOperations(request);
         assetDisposeRepository.update(request);
 
-        // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
             assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), null);
-            //updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
         return disposal;
     }
-
 
     /**
      * Searches for asset disposals based on the given search criteria.
@@ -102,9 +90,6 @@ public class AssetDisposeService {
      * @return A list of AssetDisposal objects that match the search criteria.
      */
     public List<AssetDisposal> searchDisposals(AssetDisposalSearchCriteria searchCriteria, RequestInfo requestInfo) {
-
-        // Delegates the search operation to the repository layer
-        // The repository performs the database query based on the provided search criteria
         return assetDisposeRepository.search(searchCriteria);
     }
 

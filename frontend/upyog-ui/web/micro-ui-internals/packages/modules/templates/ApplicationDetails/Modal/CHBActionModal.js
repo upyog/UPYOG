@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 import { configCHBApproverApplication} from "../config";
@@ -105,7 +105,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           },
         ];
       submitAction({
-        hallsBookingApplication: 
+        venueBookingApplication: 
           {
             ...applicationData,
             workflow,

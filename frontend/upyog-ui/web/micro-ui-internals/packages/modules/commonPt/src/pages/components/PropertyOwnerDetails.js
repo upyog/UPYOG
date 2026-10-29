@@ -12,7 +12,7 @@ import {
   LinkButton,
   DeleteIcon,
   CardSectionHeader
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useState, useMemo, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -203,10 +203,10 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
           rules={{
             required: t("REQUIRED_FIELD"),
           }}
-          render={({ value, onChange, onBlur }) => (
+          render={({ field }) => (
             <Dropdown
               className="form-field"
-              selected={value}
+              selected={field.value}
               option={dropdownData}
               select={(value) => {
                 if (value?.value.includes("INSTITUTIONAL")) {
@@ -215,11 +215,11 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                 if (!value?.code?.includes("MULTIPLEOWNERS") && ownerDetails?.length > 1) {
                   setOwnerDetails([...ownerDetails.filter((own, ind) => ind == 0)]);
                 }
-                onChange(value);
+                field.onChange(value);
                 setOwnerCategory(value);
               }}
               optionKey="i18nKey"
-              onBlur={onBlur}
+              onBlur={field.onBlur}
               t={t}
             />
           )}
@@ -228,20 +228,13 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
       {ownerDetails?.map((owner, index) => {
         return (
           <div
-            style={{
-              border: "1px solid #D6D5D4",
-              background: "#FAFAFA",
-              borderRadius: "4px",
-              boxSizing: "border-box",
-              margin: "16px 0px",
-              padding: "16px 8px",
-            }}
+            className="cmnpt-property-owner-details-container-padding"
           >
             {isMobile && ismultiple && ownerDetails.length > 1 && (
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div className="cmnpt-property-owner-details-flex-row">
                 <LinkButton
-                  label={<DeleteIcon style={{ bottom: "5px" }} fill={!(ownerDetails.length == 1) ? "#494848" : "#FAFAFA"} />}
-                  style={{ margin: "0px" }}
+                  label={<DeleteIcon className="cmnpt-property-owner-details-icon" fill={!(ownerDetails.length == 1) ? "#494848" : "#FAFAFA"} />}
+                  className="cmnpt-property-owner-details-action-btn"
                   onClick={(e) => {
                     setOwnerDetails([...ownerDetails.filter((own, ind) => ind != index)]);
                   }}
@@ -266,20 +259,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                             return /^[a-zA-Z ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <TextInput
                             t={t}
                             type={"text"}
                             isMandatory={false}
                             optionKey="i18nKey"
                             name={"institutionName" + index}
-                            value={value}
+                            value={field.value}
                             onChange={(ev) => {
-                              onChange(ev.target.value);
+                              field.onChange(ev.target.value);
                               updateState("institutionName", index, ev.target.value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -298,18 +291,18 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <Dropdown
-                            selected={institutionTypeMenu?.length === 1 ? Menu1[0] : value}
+                            selected={institutionTypeMenu?.length === 1 ? Menu1[0] : field.value}
                             disable={institutionTypeMenu?.length === 1 || editScreen}
                             option={institutionTypeMenu ? institutionTypeMenu.sort((a, b) => a.name.localeCompare(b.name)) : []}
                             select={(value) => {
-                              onChange(value);
+                              field.onChange(value);
                               updateState("institutionType", index, value);
                             }}
                             optionKey="i18nKey"
                             t={t}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -331,20 +324,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                             return /^[a-zA-Z ]+$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <TextInput
                             t={t}
                             type={"text"}
                             isMandatory={false}
                             optionKey="i18nKey"
                             name={"name" + index}
-                            value={value}
+                            value={field.value}
                             onChange={(ev) => {
-                              onChange(ev.target.value);
+                              field.onChange(ev.target.value);
                               updateState("name", index, ev.target.value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -364,20 +357,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => (/^[0-9]{11}$/i.test(value) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <MobileNumber
                             type={"text"}
                             t={t}
                             maxLength={11}
-                            value={value}
+                            value={field.value}
                             name={"altContactNumber" + index}
                             onChange={(value) => {
-                              onChange(value);
+                              field.onChange(value);
                               updateState("altContactNumber", index, value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
                             labelStyle={{ border: "1px solid #000", borderRight: "none" }}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -398,27 +391,27 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => (/[6-9]{1}[0-9]{9}/i.test(value) ? true : t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <MobileNumber
-                            value={value}
+                            value={field.value}
                             name={"mobileNumber" + index}
                             onChange={(value) => {
-                              onChange(value);
+                              field.onChange(value);
                               updateState("mobileNumber", index, value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
                             labelStyle={{ border: "1px solid #000", borderRight: "none" }}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
                     </div>
                     {!isMobile && (
-                      <div style={{ display: "flex", justifyContent: "flex-end", width: "20%", alignSelf: "flex-start" }}>
+                      <div className="cmnpt-property-owner-details-flex-row-2">
                         {ismultiple && (
                           <LinkButton
-                            label={<DeleteIcon style={{ bottom: "0px" }} fill={!(ownerDetails.length == 1) ? "#494848" : "#FAFAFA"} />}
-                            style={{ margin: "0px" }}
+                            label={<DeleteIcon className="cmnpt-property-owner-details-icon-2" fill={!(ownerDetails.length == 1) ? "#494848" : "#FAFAFA"} />}
+                            className="cmnpt-property-owner-details-action-btn"
                             onClick={(e) => {
                               setOwnerDetails([...ownerDetails.filter((own, ind) => ind != index)]);
                             }}
@@ -443,20 +436,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                             return /^[a-zA-Z ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <TextInput
                             t={t}
                             type={"text"}
                             isMandatory={false}
                             optionKey="i18nKey"
                             name={"designation" + index}
-                            value={value}
+                            value={field.value}
                             onChange={(ev) => {
-                              onChange(ev.target.value);
+                              field.onChange(ev.target.value);
                               updateState("designation", index, ev.target.value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -507,27 +500,27 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => (/[6-9]{1}[0-9]{9}/i.test(value) ? true : t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <MobileNumber
-                            value={value}
+                            value={field.value}
                             name={"mobileNumber" + index}
                             onChange={(value) => {
-                              onChange(value);
+                              field.onChange(value);
                               updateState("mobileNumber", index, value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
                             labelStyle={{ border: "1px solid #000", borderRight: "none" }}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
                     </div>
                     {!isMobile && (
-                      <div style={{ display: "flex", justifyContent: "flex-end", width: "20%", alignSelf: "flex-start" }}>
+                      <div className="cmnpt-property-owner-details-flex-row-2">
                         {ismultiple && (
                           <LinkButton
-                            label={<DeleteIcon style={{ bottom: "0px" }} fill={!(ownerDetails.length == 1) ? "#494848" : "#FAFAFA"} />}
-                            style={{ margin: "0px" }}
+                            label={<DeleteIcon className="cmnpt-property-owner-details-icon-2" fill={!(ownerDetails.length == 1) ? "#494848" : "#FAFAFA"} />}
+                            className="cmnpt-property-owner-details-action-btn"
                             onClick={(e) => {
                               setOwnerDetails([...ownerDetails.filter((own, ind) => ind != index)]);
                             }}
@@ -552,20 +545,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                             return /^[a-zA-Z ]+$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <TextInput
                             t={t}
                             type={"text"}
                             isMandatory={false}
                             optionKey="i18nKey"
                             name={"name" + index}
-                            value={value}
+                            value={field.value}
                             onChange={(ev) => {
-                              onChange(ev.target.value);
+                              field.onChange(ev.target.value);
                               updateState("name", index, ev.target.value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -584,20 +577,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <RadioOrSelect
                             name={"gender" + index}
                             options={menu}
-                            selectedOption={value}
+                            selectedOption={field.value}
                             optionKey="code"
                             onSelect={(value) => {
-                              onChange(value);
+                              field.onChange(value);
                               updateState("gender", index, value);
                             }}
                             t={t}
                             disabled={isUpdateProperty || isEditProperty}
                             isDropDown={window.location.href.includes("/employee") ? true : false}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -617,20 +610,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => (/^[a-zA-Z ]+$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE")),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <TextInput
                             t={t}
                             type={"text"}
                             isMandatory={false}
                             optionKey="i18nKey"
                             name={"fatherOrHusbandName" + index}
-                            value={value}
+                            value={field.value}
                             onChange={(ev) => {
-                              onChange(ev.target.value);
+                              field.onChange(ev.target.value);
                               updateState("fatherOrHusbandName", index, ev.target.value);
                             }}
                             disable={isUpdateProperty || isEditProperty}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -651,20 +644,20 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <RadioOrSelect
                             name={"relationship" + index}
                             options={GuardianOptions}
-                            selectedOption={value}
+                            selectedOption={field.value}
                             optionKey="i18nKey"
                             onSelect={(value) => {
-                              onChange(value);
+                              field.onChange(value);
                               updateState("relationship", index, value);
                             }}
                             t={t}
                             disabled={isUpdateProperty || isEditProperty}
                             isDropDown={window.location.href.includes("/employee") ? true : false}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -683,19 +676,19 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                         }}
-                        render={({ value, onChange, onBlur }) => (
+                        render={({ field }) => (
                           <Dropdown
-                            selected={Menu1?.length === 1 ? Menu1[0] : value}
+                            selected={Menu1?.length === 1 ? Menu1[0] : field.value}
                             disable={Menu1?.length === 1 || editScreen}
                             option={Menu1 ? Menu1.sort((a, b) => a.name.localeCompare(b.name)) : []}
                             select={(value) => {
-                              onChange(value);
+                              field.onChange(value);
 
                               updateState("ownerType", index, value);
                             }}
                             optionKey="i18nKey"
                             t={t}
-                            onBlur={onBlur}
+                            onBlur={field.onBlur}
                           />
                         )}
                       />
@@ -737,10 +730,10 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
       })}
       {ismultiple ? (
         <div>
-          <div style={{ display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
+          <div className="cmnpt-property-owner-details-flex-container">
             <button
               type="button"
-              style={{ paddingTop: "10px" }}
+              className="cmnpt-property-owner-details-action-btn-2"
               onClick={() =>
                 setOwnerDetails((prev) => [
                   ...prev,
@@ -762,7 +755,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
               {t("PT_COMMON_ADD_APPLICANT_LABEL")}
             </button>
           </div>
-          <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-35px" }}>
+          <CardLabelError className="cmnpt-property-owner-details-card">
             {t(formState.errors?.mulipleOwnerError?.message || "")}
           </CardLabelError>
         </div>

@@ -1,12 +1,11 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useWSConfigMDMS = {
   WSCreateConfig: (tenantId, config) =>
-    useQuery(
-      [tenantId, "FORM_WS_ACTIVATION_CONFIG"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, "FORM_WS_ACTIVATION_CONFIG"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -26,13 +25,12 @@ const useWSConfigMDMS = {
           },
           "WS"
         ),
-      { select: (d) => d["ws-services-masters"].WSCreateConfig, ...config }
-    ),
+      select: (d) => d["ws-services-masters"].WSCreateConfig, config }),
 
   WSActivationConfig: (tenantId, config) =>
-    useQuery(
-      [tenantId, "FORM_WS_ACTIVATION_CONFIG"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, "FORM_WS_ACTIVATION_CONFIG"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -52,13 +50,12 @@ const useWSConfigMDMS = {
           },
           "WS"
         ),
-      { select: (d) => d["ws-services-masters"].WSActivationConfig, ...config }
-    ),
+      select: (d) => d["ws-services-masters"].WSActivationConfig, config }),
 
   WSDisconnectionConfig: (tenantId, config) =>
-    useQuery(
-      [tenantId, "FORM_WS_ACTIVATION_CONFIG"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, "FORM_WS_ACTIVATION_CONFIG"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -78,13 +75,12 @@ const useWSConfigMDMS = {
           },
           "WS"
         ),
-      { select: (d) => d["ws-services-masters"].WSDisconnectionConfig, ...config }
-    ),
+      select: (d) => d["ws-services-masters"].WSDisconnectionConfig, config }),
   
     getFormConfig: (tenantId, config) =>
-    useQuery(
-      [tenantId, "FORM_CONFIG"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, "FORM_CONFIG"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -110,8 +106,7 @@ const useWSConfigMDMS = {
           },
           "ws-services-masters"
         ),
-      { select: (d) => d?.["ws-services-masters"], ...config }
-    ),
+      select: (d) => d?.["ws-services-masters"], config }),
 };
 
 export default useWSConfigMDMS;

@@ -194,7 +194,6 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getModuleName());
         }
 
-
         with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
         addPagination(with_query_builder,preparedStmtList,criteria);
@@ -590,5 +589,154 @@ public class WorkflowQueryBuilder {
     private String addStatusCountWrapper(String query){
         String countQuery = STATUS_COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         return countQuery;
+    }
+
+    /**
+     * Generates a SQL query to count total matching dashboard process instances
+     * based on search criteria.
+     *
+     * @param criteria search criteria filter containing tenant ID, action status, and createdBy
+     * @param preparedStmtList list to bind query parameters
+     * @return the SQL count query string
+     */
+    public String getDashboardProcessInstanceCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
+        String finalQuery = getDashboardProcessInstanceIds(criteria, preparedStmtList, false);
+        return addCountWrapperForInboxIdQuery(finalQuery);
+    }
+
+    /**
+     * Generates the SQL select query for dashboard process instances without pagination limits.
+     * Used for retrieving all matching records or wrapping within count queries.
+     *
+     * @param criteria search criteria filter containing tenant ID, action status, and createdBy
+     * @param preparedStmtList list to bind query parameters
+     * @return SQL query string
+     */
+    private String getDashboardProcessInstanceSearchQueryWithoutPagination(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(QUERY);
+
+        builder.append(" pi.tenantid=? ");
+        preparedStmtList.add(criteria.getTenantId());
+
+        List<String> statuses = criteria.getStatus();
+        if (!CollectionUtils.isEmpty(statuses)) {
+            builder.append(" and pi.action  IN (").append(createQuery(statuses)).append(")");
+            addToPreparedStatement(preparedStmtList, statuses);
+        }
+
+        if(!StringUtils.isEmpty(criteria.getCreatedByUUID())) {
+            builder.append(" AND pi.createdby=? ");
+            preparedStmtList.add(criteria.getCreatedByUUID());
+        }
+
+        if (criteria.getFromDate() != null) {
+            builder.append(" AND pi.createdtime >= ? ");
+            preparedStmtList.add(criteria.getFromDate());
+        }
+        if (criteria.getToDate() != null) {
+            builder.append(" AND pi.createdtime <= ? ");
+            preparedStmtList.add(criteria.getToDate());
+        }
+
+        builder.append(" ORDER BY pi.createdtime DESC ");
+
+        return builder.toString();
+    }
+
+    /**
+     * Builds the SQL query to fetch process instance IDs matching the dashboard search criteria.
+     * Optionally appends SQL pagination constraints (LIMIT and OFFSET).
+     *
+     * @param criteria             ProcessInstanceSearchCriteria filters
+     * @param preparedStmtList     The list to accumulate parameter values for prepared statement binding
+     * @param isPaginationRequired Flag indicating whether to append database pagination clauses
+     * @return The formatted SQL query string
+     */
+    public String getDashboardProcessInstanceIds(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, Boolean isPaginationRequired) {
+        StringBuilder with_query_builder = new StringBuilder(WITH_CLAUSE);
+
+        if (!criteria.getHistory()) {
+            with_query_builder.append(" pi_outer.lastmodifiedTime = (" +
+                    "SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 as pi_inner where pi_inner.businessid = pi_outer.businessid and tenantid = ? " +
+                     ") ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        if (criteria.getHistory())
+            with_query_builder.append(" pi_outer.tenantid=? ");
+        else
+            with_query_builder.append(" AND pi_outer.tenantid=? ");
+
+        preparedStmtList.add(criteria.getTenantId());
+
+        List<String> ids = criteria.getIds();
+        if (!CollectionUtils.isEmpty(ids)) {
+            with_query_builder.append("and pi_outer.id IN (").append(createQuery(ids)).append(")");
+            addToPreparedStatement(preparedStmtList, ids);
+        }
+
+        List<String> businessIds = criteria.getBusinessIds();
+        if (!CollectionUtils.isEmpty(businessIds)) {
+            if(isFuzzyEnabled) {
+                with_query_builder.append(" and pi_outer.businessId LIKE ANY(ARRAY[ ").append(createQuery(businessIds)).append("])");
+                addToPreparedStatementForFuzzySearch(preparedStmtList, businessIds);
+            }
+            else {
+                with_query_builder.append(" and pi_outer.businessId IN ( ").append(createQuery(businessIds)).append(")");
+                addToPreparedStatement(preparedStmtList, businessIds);
+            }
+        }
+
+        List<String> status = criteria.getStatus();
+        if (!CollectionUtils.isEmpty(status)) {
+            with_query_builder.append(" and pi_outer.action IN (").append(createQuery(status)).append(")");
+            addToPreparedStatement(preparedStmtList, status);
+        }
+
+        if(criteria.getAssignee()!=null){
+            with_query_builder.append(" and id in (select processinstanceid from eg_wf_assignee_v2 asg_inner where asg_inner.assignee = ?) AND pi_outer.tenantid = ? ");
+            preparedStmtList.add(criteria.getAssignee());
+            preparedStmtList.add(criteria.getTenantId());
+        }
+
+        if(!StringUtils.isEmpty(criteria.getBusinessService())){
+            with_query_builder.append(" AND pi_outer.businessservice =? ");
+            preparedStmtList.add(criteria.getBusinessService());
+        }
+
+        if(!StringUtils.isEmpty(criteria.getModuleName())){
+            with_query_builder.append(" AND pi_outer.modulename =? ");
+            preparedStmtList.add(criteria.getModuleName());
+        }
+
+        if(!StringUtils.isEmpty(criteria.getCreatedByUUID())){
+            with_query_builder.append(" AND pi_outer.createdby = ? ");
+            preparedStmtList.add(criteria.getCreatedByUUID());
+        }
+
+        if (criteria.getFromDate() != null) {
+            with_query_builder.append(" AND pi_outer.createdtime >= ? ");
+            preparedStmtList.add(criteria.getFromDate());
+        }
+        if (criteria.getToDate() != null) {
+            with_query_builder.append(" AND pi_outer.createdtime <= ? ");
+            preparedStmtList.add(criteria.getToDate());
+        }
+
+        with_query_builder.append(" ORDER BY pi_outer.createdtime DESC ");
+
+        if (isPaginationRequired) {
+            addPagination(with_query_builder, preparedStmtList, criteria);
+        }
+
+        return with_query_builder.toString();
+    }
+
+    public String getDashboardProcessInstanceSearchQueryById(List<String> ids, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(QUERY);
+        builder.append(" pi.id IN (").append(createQuery(ids)).append(")");
+        addToPreparedStatement(preparedStmtList, ids);
+        builder.append(" ORDER BY pi.createdtime DESC ");
+        return builder.toString();
     }
 }

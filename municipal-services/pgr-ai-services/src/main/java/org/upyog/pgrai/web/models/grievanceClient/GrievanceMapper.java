@@ -1,4 +1,4 @@
-package org.upyog.pgrai.web.models.grievanceClient;
+package org.upyog.pgrai.web.models.grievanceclient;
 
 import org.upyog.pgrai.web.models.Address;
 import org.upyog.pgrai.web.models.Service;
@@ -10,6 +10,9 @@ import org.upyog.pgrai.web.models.ServiceRequest;
  * into a format suitable for grievance processing.
  */
 public class GrievanceMapper {
+
+    private GrievanceMapper() {
+    }
 
     /**
      * Converts a ServiceRequest object into a Grievance object.
@@ -37,9 +40,8 @@ public class GrievanceMapper {
                 .state(address.getState())
                 .priority(service.getPriority() != null ? service.getPriority().name() : null)
                 .inputGrievance(service.getInputGrievance())
-                .businessService(service.getServiceCode()) // or another appropriate field
+                .businessService(service.getServiceCode())
                 .action(request.getWorkflow() != null ? request.getWorkflow().getAction() : null)
-//                .assignee(request.getWorkflow() != null ? request.getWorkflow().getAssignes().get(0) : null)
                 .assignee(null)
                 .comments(request.getWorkflow() != null ? request.getWorkflow().getComments() : null)
                 .grievanceId(service.getServiceRequestId())

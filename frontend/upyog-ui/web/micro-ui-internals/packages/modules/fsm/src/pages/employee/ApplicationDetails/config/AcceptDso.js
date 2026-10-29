@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLabelError, Dropdown, MultiSelectDropdown, RemoveableTag, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
+import { CardLabelError, Dropdown, MultiSelectDropdown, RemoveableTag, LabelFieldPair, CardLabel } from "@nudmcdgnpm/digit-ui-react-components";
 
 // steps
 // get individualIds array from workers array in vendor object
@@ -49,7 +49,7 @@ export const configAcceptDso = ({
                   selected={vehicleNo}
                   disable={vehicleNoList?.length > 0 ? false : true}
                 />
-                {!vehicleNoList?.length ? <CardLabelError style={{ marginTop: "-14px" }}>{t("ES_FSM_NO_VEHICLE_AVAILABLE")}</CardLabelError> : null}
+                {!vehicleNoList?.length ? <CardLabelError className="fsm-accept-dso-card">{t("ES_FSM_NO_VEHICLE_AVAILABLE")}</CardLabelError> : null}
               </React.Fragment>
             ),
           },
@@ -97,7 +97,7 @@ export const configAcceptDso = ({
           //         placeholder={t("SW_SEARCH_BY_NAME_ID")}
           //         optionCardStyles={{"maxHeight":"16rem"}}
           //       />
-          //       {drivers?.length === 0 || !drivers ? <CardLabelError style={{ marginTop: "-14px" }}>{t("ES_FSM_NO_DRIVER_AVAILABLE")}</CardLabelError> : null}
+          //       {drivers?.length === 0 || !drivers ? <CardLabelError className="custom-style">{t("ES_FSM_NO_DRIVER_AVAILABLE")}</CardLabelError> : null}
           //     </React.Fragment>
           //   ),
           // },

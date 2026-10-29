@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useRouteMatch, useLocation, useHistory, Switch, Route, Redirect } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams, useLocation, Route, Routes, Navigate,  } from "react-router-dom";
 import { newConfig as newConfigOCBPA } from "../../../config/ocbuildingPermitConfig";
 // import CheckPage from "./CheckPage";
 // import OBPSAcknowledgement from "./OBPSAcknowledgement";
@@ -16,10 +16,14 @@ const getPath = (path, params) => {
 const OCBuildingPermit = () => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const { path, url } = useRouteMatch();
+  const routeParams = useParams();
   const { pathname, state } = useLocation();
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const basePath = useMemo(
+    () => getPath(`${modulePath}/ocbpa/:applicationType/:serviceType`, routeParams),
+    [modulePath, routeParams?.applicationType, routeParams?.serviceType]
+  );
   sessionStorage.removeItem("BPA_SUBMIT_APP");
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -31,20 +35,20 @@ const OCBuildingPermit = () => {
   const goNext = (skipStep) => {
     const currentPath = pathname.split("/").pop();
     const { nextStep } = config.find((routeObj) => routeObj.route === currentPath);
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = navigate;
     if (nextStep === null) {
-      return redirectWithHistory(`${getPath(match.path, match.params)}/check`);
+      return redirectWithHistory(`${basePath}/check`);
     }
-    redirectWithHistory(`${getPath(match.path, match.params)}/${nextStep}`);
+    redirectWithHistory(`${basePath}/${nextStep}`);
 
   }
 
   const onSuccess = () => {
     //clearParams();
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    queryClient.invalidateQueries({ queryKey: ["PT_CREATE_PROPERTY"] });
   };
   const createApplication = async () => {
-    history.push(`${getPath(match.path, match.params)}/acknowledgement`);
+    navigate(`${basePath}/acknowledgement`);
   };
 
   const handleSelect = (key, data, skipStep, isFromCreateApi) => {
@@ -74,26 +78,22 @@ const OCBuildingPermit = () => {
   const OBPSAcknowledgement = Digit?.ComponentRegistryService?.getComponent('OCBPAAcknowledgement');
 
   return (
-    <Switch>
+    <Routes>
+      <Route index element={<Navigate to={config.indexRoute} replace />} />
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${getPath(match.path, match.params)}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} />
-          </Route>
+          <Route
+            path={routeObj.route}
+            key={index}
+            element={<Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} />}
+          />
         );
       })}
-      <Route path={`${getPath(match.path, match.params)}/check`}>
-        <CheckPage onSubmit={createApplication} value={params} />
-      </Route>
-      <Route path={`${getPath(match.path, match.params)}/acknowledgement`}>
-        <OBPSAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path="check" element={<CheckPage onSubmit={createApplication} value={params} />} />
+      <Route path="acknowledgement" element={<OBPSAcknowledgement data={params} onSuccess={onSuccess} />} />
+    </Routes>
   );
 };
 

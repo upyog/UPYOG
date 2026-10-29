@@ -19,21 +19,21 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            isDraftApplication:"false",
+            isDraftApplication: "false",
             fromDate: today,
             toDate: today
         }
     })
 
     useEffect(() => {
-        register("offset", 0)
-        register("limit", 10)
-        register("sortBy", "commencementDate")
-        register("sortOrder", "DESC")
-        register("isDraftApplication", "false")
+        setValue("offset", 0);
+        setValue("limit", 10);
+        setValue("sortBy", "commencementDate");
+        setValue("sortOrder", "DESC");
+        setValue("isDraftApplication", "false");
         setValue("fromDate", today);
         setValue("toDate", today);
-    }, [register, setValue, today])
+    }, [setValue, today])
 
 
     const paymentStatusOptions = [
@@ -43,9 +43,9 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     const renewalStatusOptions = [
         { i18nKey: "SV_ELIGIBLE_TO_RENEW", code: "ELIGIBLE_TO_RENEW", value: "Eligible to Renew" },
         { i18nKey: "SV_RENEW_IN_PROGRESS", code: "RENEW_IN_PROGRESS", value: "Renew in Progress" },
-        { i18nKey: "SV_RENEW_APPLICATION_CREATED", code: "RENEW_APPLICATION_CREATED", value: "Renew Application Created" },  
+        { i18nKey: "SV_RENEW_APPLICATION_CREATED", code: "RENEW_APPLICATION_CREATED", value: "Renew Application Created" },
         { i18nKey: "SV_RENEWED", code: "RENEWED", value: "Renewed" }
-    ];          
+    ];
 
     // hook for fetching vending type data
     const { data: vendingTypeData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
@@ -155,14 +155,19 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
                     <label>{t("SV_APPLICATION_NUMBER")}</label>
-                    <TextInput name="applicationNumber" inputRef={register({})} />
+                    <Controller
+                        control={control}
+                        name="applicationNumber"
+                        render={({ field }) => <TextInput {...field} />}
+                    />
                 </SearchField>
 
                 <SearchField>
                     <label>{t("SV_REGISTERED_MOB_NUMBER")}</label>
-                    <MobileNumber
+                    <Controller
+                        control={control}
                         name="mobileNumber"
-                        inputRef={register({
+                        rules={{
                             minLength: {
                                 value: 10,
                                 message: t("CORE_COMMON_MOBILE_ERROR"),
@@ -173,20 +178,23 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                             },
                             pattern: {
                                 value: /[6789][0-9]{9}/,
-                                //type: "tel",
                                 message: t("CORE_COMMON_MOBILE_ERROR"),
                             },
-                        })}
-                        type="number"
-                        componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                    //maxlength={10}
+                        }}
+                        render={({ field }) => (
+                            <MobileNumber
+                                {...field}
+                                type="number"
+                                componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
+                            />
+                        )}
                     />
                     <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                 </SearchField>
                 <SearchField>
                     <label>{t("SV_FROM_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} max={today} />}
                         name="fromDate"
                         control={control}
                     />
@@ -194,22 +202,22 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 <SearchField>
                     <label>{t("SV_TO_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} max={today} />}
                         name="toDate"
                         control={control}
                     />
                 </SearchField>
 
-                    <SearchField>
+                <SearchField>
                     <label>{t("SV_VENDING_TYPE")}</label>
                     <Controller
                         control={control}
                         name="vendingType"
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={vendingTypeOptions}
                                 optionKey="i18nKey"
                                 t={t}
@@ -225,10 +233,10 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                         control={control}
                         name="vendingLocality"
                         defaultValue={vendingLocality}
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
+                                selected={field.value}
+                                select={field.onChange}
                                 option={allCities}
                                 optionKey="i18nKey"
                                 t={t}
@@ -243,11 +251,11 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     <Controller
                         control={control}
                         name="paymentStatus"
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={paymentStatusOptions}
                                 optionKey="i18nKey"
                                 t={t}
@@ -262,11 +270,11 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     <Controller
                         control={control}
                         name="renewalStatus"
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={renewalStatusOptions}
                                 optionKey="i18nKey"
                                 t={t}
@@ -277,7 +285,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 </SearchField>
 
                 {/* Empty Field added for the formatting of the form */}
-                <SearchField></SearchField> 
+                <SearchField></SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                     <p style={{ marginTop: "10px" }}
@@ -289,9 +297,9 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                                 mobileNumber: "",
                                 status: "",
                                 vendingLocality: null,
-                                vendingType: null,     
-                                paymentStatus: null,   
-                                renewalStatus: null, 
+                                vendingType: null,
+                                paymentStatus: null,
+                                renewalStatus: null,
                                 offset: 0,
                                 limit: 10,
                                 sortBy: "commencementDate",

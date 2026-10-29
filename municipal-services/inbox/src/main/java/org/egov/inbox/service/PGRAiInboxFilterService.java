@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.inbox.util.CommonConstants.*;
+
 @Slf4j
 @Service
 public class PGRAiInboxFilterService {
@@ -92,8 +94,23 @@ public class PGRAiInboxFilterService {
                 searchCriteria.put(PGRAiConstants.SERVICE_CODE, moduleSearchCriteria.get(PGRAiConstants.SERVICE_CODE));
             }
 
-            searcherRequest.put(PGRAiConstants.REQUESTINFO_PARAM, requestInfo);
-            searcherRequest.put(PGRAiConstants.SEARCH_CRITERIA_PARAM, searchCriteria);
+            if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
+                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            } else {
+                if (statusIdNameMap.values().size() > 0) {
+                    if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                        searchCriteria.put(STATUS_PARAM, statusIdNameMap.keySet());
+                    }
+                }
+            }
+
+            // Paginating searcher results
+            searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
+            searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
+            moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
+
+            searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
+            searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
 
             StringBuilder uri = new StringBuilder();
             if (moduleSearchCriteria.containsKey(PGRAiConstants.SORT_ORDER_PARAM)

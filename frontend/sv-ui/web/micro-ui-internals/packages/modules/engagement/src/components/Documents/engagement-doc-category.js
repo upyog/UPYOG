@@ -9,18 +9,18 @@ const SelectCategory = ({ userType, t, setValue, onSelect, config, data, formDat
     return [];
   });
 
-  const currrentUlb = Digit.ULBService.getCurrentUlb() || "pb.amritsar" ;
+  const currrentUlb = Digit.ULBService.getCurrentUlb() || "pb.amritsar";
   const { data: categoryData, isLoading } = Digit.Hooks.engagement.useMDMS(stateId, "DocumentUploader", ["UlbLevelCategories"], {
     select: (d) => {
-     
+
       const data = d?.DocumentUploader?.UlbLevelCategories?.filter?.((e) => e.ulb === currrentUlb.code);
-      return data[0].categoryList.map((name)=>({name}));
+      return data[0].categoryList.map((name) => ({ name }));
     },
   });
 
- 
+
   useEffect(() => {
-   formData?.ULB?.length  ? setUlbs(formData?.ULB?.map((e) => e?.code)): null;
+    formData?.ULB?.length ? setUlbs(formData?.ULB?.map((e) => e?.code)) : null;
   }, [formData?.ULB]);
 
   return (
@@ -30,9 +30,9 @@ const SelectCategory = ({ userType, t, setValue, onSelect, config, data, formDat
         <Controller
           name={config.key}
           control={control}
-          render={(props) => (
+          render={({ field }) => (
             <div className="field">
-              <Dropdown option={categoryData} select={props.onChange} selected={props.value} t={t} optionKey="name" />
+              <Dropdown option={categoryData} select={field.onChange} selected={field.value} t={t} optionKey="name" />
             </div>
           )}
         />

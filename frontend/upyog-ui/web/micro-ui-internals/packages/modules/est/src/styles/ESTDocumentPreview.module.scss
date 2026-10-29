@@ -1,0 +1,106 @@
+.estDocumentPreview {
+  margin-top: 8px;
+
+  &--withThumbnails {
+    padding: 0 16px 12px;
+  }
+
+  .emptyState {
+    color: #666;
+  }
+
+  .divider {
+    border: 0;
+    height: 1px;
+    background-color: #e5e5e5;
+    margin: 8px 0 12px;
+  }
+}
+
+.docThumbnail {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  margin-bottom: 16px;
+  width: 100%;
+  padding: 8px 0;
+  cursor: pointer;
+
+  .meta {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .label {
+    font-weight: 700;
+    color: #111;
+    font-size: 14px;
+  }
+
+  .reference {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    word-break: break-all;
+  }
+
+  .thumb {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fafafa;
+    flex-shrink: 0;
+  }
+
+  .previewHint {
+    color: #0b5fff;
+    font-weight: 500;
+    font-size: 14px;
+  }
+}
+
+.docLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  margin-bottom: 12px;
+  width: 100%;
+  cursor: pointer;
+
+  .meta {
+    /* min-width set via CSS variable from labelWidth prop */
+    min-width: var(--est-doc-label-width, 220px);
+  }
+
+  .label {
+    font-weight: 700;
+    color: #111;
+  }
+
+  .reference {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    word-break: break-all;
+  }
+
+  .action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .viewHint {
+    color: #0b5fff;
+    font-weight: 500;
+  }
+}
+
+.pdfIcon {
+  flex-shrink: 0;
+}

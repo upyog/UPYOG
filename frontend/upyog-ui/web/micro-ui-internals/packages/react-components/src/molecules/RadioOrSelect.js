@@ -17,12 +17,14 @@ const RadioOrSelect = ({
   isPTFlow=false,
   isDropDown = false,
   innerStyles = {},
-  inputStyle = {}
+  inputStyle = {},
+  name
 }) => {
   return (
     <React.Fragment>
       {options?.length < 5 && !isDropDown ? (
         <RadioButtons
+          name={name}
           selectedOption={selectedOption}
           options={options}
           optionsKey={optionKey}

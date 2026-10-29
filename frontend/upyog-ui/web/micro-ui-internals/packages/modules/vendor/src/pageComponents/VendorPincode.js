@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/VENDORTimeline";
@@ -78,7 +78,7 @@ const VendorPincode = ({ t, config, onSelect, formData = {}, userType, register,
               />
             </div>
           </LabelFieldPair>
-          {error ? <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>{error}</CardLabelError> : null}
+          {error ? <CardLabelError className="vnd-vendor-pincode-card">{error}</CardLabelError> : null}
         </React.Fragment>
       );
     });

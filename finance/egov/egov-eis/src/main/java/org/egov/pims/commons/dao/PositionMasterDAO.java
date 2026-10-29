@@ -52,12 +52,11 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Position;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.Iterator;
 
@@ -124,9 +123,9 @@ public class PositionMasterDAO
         try
         {
             boolean b = false;
-            Query qry = getCurrentSession().createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.position)) = :positionName ").toString());
-            qry.setString("positionName", positionName);
-            Iterator iter = qry.iterate();
+            org.hibernate.query.Query qry = getCurrentSession().createQuery((new StringBuilder("from ")).append(className).append(" CA where trim(upper(CA.position)) = :positionName ").toString());
+            qry.setParameter("positionName", positionName);
+            Iterator iter = qry.list().iterator();
             LOGGER.info((new StringBuilder("iter")).append(iter).toString());
             if(iter.hasNext())
             {
@@ -147,9 +146,9 @@ public class PositionMasterDAO
         try
         {
             Integer positionId = 0;
-            Query qry = getCurrentSession().createQuery("from position where trim(upper(name)) = :positionName ");
-            qry.setString("positionName", positionName);
-            Iterator iter = qry.iterate();
+            org.hibernate.query.Query qry = getCurrentSession().createQuery("from position where trim(upper(name)) = :positionName ");
+            qry.setParameter("positionName", positionName);
+            Iterator iter = qry.list().iterator();
             LOGGER.info((new StringBuilder("iter")).append(iter).toString());
             if(iter.hasNext())
             {

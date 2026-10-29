@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
-
-const { useState, useEffect } = require("react");
+import { useState, useEffect } from "react";
 
 const useServiceDefs = (tenantId, moduleCode) => {
   const [localMenu, setLocalMenu] = useState([]);

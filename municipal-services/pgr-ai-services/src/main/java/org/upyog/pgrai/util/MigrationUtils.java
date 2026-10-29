@@ -132,8 +132,8 @@ public class MigrationUtils {
         }
 
         for (Map<String, Object> map : res) {
-            Long SLA = TimeUnit.HOURS.toMillis((Integer) map.get(MDMS_DATA_SLA_KEYWORD));
-            serviceCodeToSLA.put((String) map.get(MDMS_DATA_SERVICE_CODE_KEYWORD), SLA);
+            Long sla = TimeUnit.HOURS.toMillis((Integer) map.get(MDMS_DATA_SLA_KEYWORD));
+            serviceCodeToSLA.put((String) map.get(MDMS_DATA_SERVICE_CODE_KEYWORD), sla);
         }
 
         return serviceCodeToSLA;

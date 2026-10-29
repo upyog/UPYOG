@@ -3,6 +3,7 @@ package org.egov.vendor.driver.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.vendor.driver.web.model.Driver;
 import org.egov.vendor.driver.web.model.DriverRequest;
@@ -15,6 +16,8 @@ import org.egov.vendor.web.model.user.UserDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +33,9 @@ public class DriverEnrichmentService {
 
 	@Autowired
 	private VendorService vendorService;
+
+	@Autowired
+	private ObjectMapper mapper;
 
 	/**
 	 * enriches the request object for create, assigns random ids for driver and
@@ -51,6 +57,26 @@ public class DriverEnrichmentService {
 		driver.setId(UUID.randomUUID().toString());
 		driver.setName(driver.getOwner().getName());
 		driver.setOwnerId(driver.getOwner().getUuid());
+
+		// Default serviceType to FSM if not provided (e.g. created via FSM module)
+		if (driver.getAdditionalDetails() == null) {
+			Map<String, Object> additionalDetails = new HashMap<>();
+			additionalDetails.put("serviceType", "FSM");
+			driver.setAdditionalDetails(additionalDetails);
+		} else {
+			try {
+				Map<String, Object> additionalDetails = mapper.convertValue(driver.getAdditionalDetails(), Map.class);
+				if (additionalDetails == null) {
+					additionalDetails = new HashMap<>();
+				}
+				if (additionalDetails.get("serviceType") == null || StringUtils.isEmpty(additionalDetails.get("serviceType").toString())) {
+					additionalDetails.put("serviceType", "FSM");
+				}
+				driver.setAdditionalDetails(additionalDetails);
+			} catch (Exception e) {
+				log.error("Error setting default serviceType in driver additionalDetails: {}", e.getMessage());
+			}
+		}
 
 	}
 

@@ -1,7 +1,9 @@
 package org.egov.batchtelemetry.application;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.egov.batchtelemetry.connector.ElasticsearchConnector;
@@ -15,34 +17,36 @@ public class BatchApplication {
 
     public static void executeBatch(Long startTime, Long endTime) throws Exception {
         ElasticsearchConnector elasticsearchConnector = new ElasticsearchConnector();
+        SparkConf sparkConf = elasticsearchConnector.buildSparkConf(startTime, endTime);
 
-        JavaPairRDD<String, Map<String, Object>> esRDD = elasticsearchConnector.getTelemetryRecords(startTime, endTime);
+        // Spark 3.x + Java 17: own the SparkContext so it closes cleanly (try-with-resources implements AutoCloseable).
+        try (JavaSparkContext jsc = new JavaSparkContext(sparkConf)) {
+            JavaPairRDD<String, Map<String, Object>> esRDD = elasticsearchConnector.getTelemetryRecords(jsc);
 
-        log.info("Total Records read from ES: " + esRDD.count());
+            log.info("Total Records read from ES: " + esRDD.count());
 
-        SessionProcessor.init();
+            SessionProcessor.init();
 
-        JavaPairRDD<Object, Iterable<Tuple2<String, Map<String, Object>>>> deviceGroup = esRDD.groupBy(new Function<Tuple2<String,Map<String,Object>>, Object>() {
-            @Override
-            public Object call(Tuple2<String, Map<String, Object>> v1) throws Exception {
-                return ( (Map<String, Object>) v1._2.get("context")).get("did");
-            }
-        });
+            JavaPairRDD<Object, Iterable<Tuple2<String, Map<String, Object>>>> deviceGroup = esRDD.groupBy(new Function<Tuple2<String, Map<String, Object>>, Object>() {
+                @Override
+                public Object call(Tuple2<String, Map<String, Object>> v1) {
+                    return ((Map<String, Object>) v1._2.get("context")).get("did");
+                }
+            });
 
-        log.info("Unique Devices: " + deviceGroup.count());
+            log.info("Unique Devices: " + deviceGroup.count());
 
-        deviceGroup.foreach(new VoidFunction<Tuple2<Object, Iterable<Tuple2<String, Map<String, Object>>>>>() {
-            @Override
-            public void call(Tuple2<Object, Iterable<Tuple2<String, Map<String, Object>>>> objectIterableTuple2)
-                    throws Exception {
-                SessionProcessor.processRecords(objectIterableTuple2._2.iterator());
-            }
-        });
+            deviceGroup.foreach(new VoidFunction<Tuple2<Object, Iterable<Tuple2<String, Map<String, Object>>>>>() {
+                @Override
+                public void call(Tuple2<Object, Iterable<Tuple2<String, Map<String, Object>>>> objectIterableTuple2) {
+                    SessionProcessor.processRecords(objectIterableTuple2._2.iterator());
+                }
+            });
 
-        log.info("Total Sessions: " + SessionProcessor.totalSessionCounter);
+            log.info("Total Sessions: " + SessionProcessor.totalSessionCounter);
 
-        SessionProcessor.closeSessionProcessor();
-
+            SessionProcessor.closeSessionProcessor();
+        }
     }
 
 }

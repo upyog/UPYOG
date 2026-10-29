@@ -2,11 +2,11 @@ import { CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "../../../../hooks/useDebounce";
 
-const MultipleChoice = ({ t, options = checkboxlist, updateOption, addOption, removeOption,createNewSurvey,isPartiallyEnabled,formDisabled,inputRef,maxLength,titleHover,isInputDisabled }) => {
+const MultipleChoice = ({ t, options = checkboxlist, updateOption, addOption, removeOption, createNewSurvey, isPartiallyEnabled, formDisabled, inputRef, maxLength, titleHover, isInputDisabled }) => {
   return (
     <div className="options_checkboxes">
       {options.map((title, index) => (
-        <RadioButtonOption key={index} index={index} title={title} updateOption={updateOption} removeOption={removeOption} inputRef={inputRef} maxLength={maxLength} titleHover={titleHover} isPartiallyEnabled={isPartiallyEnabled} isInputDisabled={isInputDisabled} formDisabled={formDisabled}/>
+        <RadioButtonOption key={index} index={index} title={title} updateOption={updateOption} removeOption={removeOption} inputRef={inputRef} maxLength={maxLength} titleHover={titleHover} isPartiallyEnabled={isPartiallyEnabled} isInputDisabled={isInputDisabled} formDisabled={formDisabled} />
       ))}
       <div>
         <button className="unstyled-button link" type="button" disabled={(!createNewSurvey && formDisabled) || (isPartiallyEnabled ? !isPartiallyEnabled : formDisabled)} onClick={() => addOption()}>
@@ -19,17 +19,17 @@ const MultipleChoice = ({ t, options = checkboxlist, updateOption, addOption, re
 
 export default MultipleChoice;
 
-const RadioButtonOption = ({ index, title, updateOption, removeOption, inputRef, maxLength, titleHover,isPartiallyEnabled, isInputDisabled, formDisabled }) => {
+const RadioButtonOption = ({ index, title, updateOption, removeOption, inputRef, maxLength, titleHover, isPartiallyEnabled, isInputDisabled, formDisabled }) => {
   const [optionTitle, setOptionTitle] = useState(title);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-      updateOption({ value: optionTitle, id: index });
+    updateOption({ value: optionTitle, id: index });
   }, [optionTitle]);
 
   return (
     <div className="optionradiobtnwrapper">
-      <input type="radio" className="customradiobutton" disabled={isInputDisabled}/>
+      <input type="radio" className="customradiobutton" disabled={isInputDisabled} />
       <input
         type="text"
         ref={inputRef}

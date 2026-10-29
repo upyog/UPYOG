@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowDown } from "../../../../react-components/src/atoms/svgindex";
+import { ArrowDown } from "@nudmcdgnpm/digit-ui-react-components";
 
 // dropdown component for selecting options with a text input field 
 // rest file is same as Dropdown.js in react-components, just made it for styling purpose
@@ -59,7 +59,7 @@ const TextField = (props) => {
   return (
     <input
       ref={props.inputRef}
-      className={`employee-select-wrap--elipses ${props.disable && "disabled"}`}
+      className={`employee-select-wrap--elipses ${props.disable ? "disabled" : ""} pgrai-dropdown-input`}
       type="text"
       value={value}
       onChange={inputChange}
@@ -78,16 +78,7 @@ const TextField = (props) => {
       readOnly={props.disable}
       autoFocus={props.autoFocus}
       placeholder={props.placeholder}
-      autoComplete={"off"}
-      style={{
-        ...props.style, 
-        zIndex: "auto",
-        borderRadius: "8px",
-        border: "none",
-        padding: "8px",
-        height: "40px",
-        width: "40%",
-      }}
+      autoComplete={"off"} style={props.style}
     />
   );
 };
@@ -168,12 +159,7 @@ const Dropdown = (props) => {
 
   return (
     <div
-      className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""}`}
-      style={{ 
-        ...props.style,
-        borderRadius: "8px",
-        width: "44%"
-      }}
+      className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""} pgrai-dropdown-wrap`} style={props.style}
     >
       {hasCustomSelector && (
         <div className={props.showArrow ? "cp flex-right column-gap-5" : "cp"} onClick={dropdownSwitch}>
@@ -230,12 +216,7 @@ const Dropdown = (props) => {
         props.optionKey ? (
           <div
             id="jk-dropdown-unique"
-            className={`${hasCustomSelector ? "margin-top-10 display: table" : ""} options-card`}
-            style={{ 
-              ...props.optionCardStyles,
-              borderRadius: "8px",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
-            }}
+            className={`${hasCustomSelector ? "margin-top-10 display: table" : ""} options-card pgrai-dropdown-options`} style={props.optionCardStyles}
             ref={optionRef}
           >
             {filteredOption &&
@@ -270,8 +251,7 @@ const Dropdown = (props) => {
           </div>
         ) : (
           <div
-            className="options-card"
-            style={{ ...props.optionCardStyles, overflow: "scroll", maxHeight: "350px" }}
+            className="options-card options-card--scrollable" style={props?.optionCardStyles}
             id="jk-dropdown-unique"
             ref={optionRef}
           >

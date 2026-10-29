@@ -60,9 +60,9 @@ const Modal = ({
               <ButtonSelector label={actionSaveLabel} onSubmit={actionSaveOnSubmit} formId={formId} isDisabled={isDisabled} style={style} />
             ) : null}
             {actionSingleLabel ? 
-             <ActionBar style={{ position: mobileView ? "absolute" : "relative", boxShadow: "none", minWidth: "240px", maxWidth: "360px", margin: "16px" }}>
-             <div style={{ width: "100%" }}>
-               <SubmitBar style={{ width: "100%" }} label={actionSingleLabel} onSubmit={actionSingleSubmit} />
+             <ActionBar className={mobileView ? "action-bar-modal--mobile" : "action-bar-modal--desktop"}>
+             <div className="rc-modal-fullwidth">
+               <SubmitBar className="rc-modal-fullwidth" label={actionSingleLabel} onSubmit={actionSingleSubmit} />
              </div>
            </ActionBar> : null}
           </div>

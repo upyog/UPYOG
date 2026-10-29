@@ -1,20 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes, useLocation, useParams,  } from "react-router-dom";
 import { newConfig as newConfigOCBPA } from "../../../config/ocbuildingPermitConfig";
 import { getBPAEditDetails, getPath } from "../../../utils";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const OCSendBackToCitizen = ({ parentRoute }) => {
   sessionStorage.setItem("BPA_SUBMIT_APP", JSON.stringify("BPA_SUBMIT_APP"));
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const stateCode = Digit.ULBService.getStateId();
-  const { applicationNo: applicationNo, tenantId } = useParams();
+  const routeParams = useParams();
+  const { applicationNo: applicationNo, tenantId } = routeParams;
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const basePath = useMemo(
+    () => getPath(`${modulePath}/sendbacktocitizen/ocbpa/:tenantId/:applicationNo`, routeParams),
+    [modulePath, routeParams]
+  );
 
   let config = [], application = {};
 
@@ -37,44 +42,47 @@ const OCSendBackToCitizen = ({ parentRoute }) => {
 
   const editApplication = window.location.href.includes("editApplication");
 
-  useEffect(async () => {
-    let isAlready = sessionStorage.getItem("BPA_IS_ALREADY_WENT_OFF_DETAILS");
-    isAlready = isAlready ? JSON.parse(isAlready) : true;
-    if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isLoading && !isMdmsLoading) {
-      application = bpaData ? bpaData[0] : {};
-      if (bpaData && application && edcrDetails && mdmsData && nocdata) {
-        application = bpaData[0];
-        if (editApplication) {
-          application.isEditApplication = true;
+  useEffect(() => {
+    async function load() {
+      let isAlready = sessionStorage.getItem("BPA_IS_ALREADY_WENT_OFF_DETAILS");
+      isAlready = isAlready ? JSON.parse(isAlready) : true;
+      if (!isAlready && !isNocLoading && !isBpaSearchLoading && !isLoading && !isMdmsLoading) {
+        application = bpaData ? bpaData[0] : {};
+        if (bpaData && application && edcrDetails && mdmsData && nocdata) {
+          application = bpaData[0];
+          if (editApplication) {
+            application.isEditApplication = true;
+          }
+          sessionStorage.setItem("bpaInitialObject", JSON.stringify({ ...application }));
+          let bpaEditDetails = await getBPAEditDetails(application, edcrDetails, mdmsData, nocdata, t);
+          setParams({ ...params, ...bpaEditDetails });
         }
-        sessionStorage.setItem("bpaInitialObject", JSON.stringify({ ...application }));
-        let bpaEditDetails = await getBPAEditDetails(application, edcrDetails, mdmsData, nocdata, t);
-        setParams({ ...params, ...bpaEditDetails });
       }
+      else {
+          setParams({ ...params, ...bpaData?.[0] });
+        }
     }
-    else {
-        setParams({ ...params, ...bpaData?.[0] });
-      }
+    load();
   }, [bpaData, edcrDetails, mdmsData, nocdata]);
 
 
   const goNext = (skipStep) => {
     const currentPath = pathname.split("/").pop();
     const { nextStep } = config.find((routeObj) => routeObj.route === currentPath);
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = navigate;
     if (nextStep === null) {
-      return redirectWithHistory(`${getPath(match.path, match.params)}/check`);
+      return redirectWithHistory(`${basePath}/check`);
     }
-    redirectWithHistory(`${getPath(match.path, match.params)}/${nextStep}`);
+    redirectWithHistory(`${basePath}/${nextStep}`);
 
   }
 
   const onSuccess = () => {
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    queryClient.invalidateQueries({ queryKey: ["PT_CREATE_PROPERTY"] });
   };
 
   const createApplication = async () => {
-    // history.push(`${getPath(match.path, match.params)}/acknowledgement`);
+    // navigate(`${basePath}/acknowledgement`);
   };
 
   const handleSelect = (key, data, skipStep, isFromCreateApi) => {
@@ -105,26 +113,22 @@ const OCSendBackToCitizen = ({ parentRoute }) => {
   }
   
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${getPath(match.path, match.params)}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} />
-          </Route>
+          <Route
+            path={routeObj.route}
+            key={index}
+            element={<Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} />}
+          />
         );
       })}
-      <Route path={`${getPath(match.path, match.params)}/check`}>
-        <CheckPage onSubmit={createApplication} value={params} />
-      </Route>
-      <Route path={`${getPath(match.path, match.params)}/acknowledgement`}>
-        <Acknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path="check" element={<CheckPage onSubmit={createApplication} value={params} />} />
+      <Route path="acknowledgement" element={<Acknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route path="*" element={<Navigate to={`${basePath}/${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

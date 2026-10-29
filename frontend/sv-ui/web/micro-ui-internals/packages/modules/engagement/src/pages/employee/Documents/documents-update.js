@@ -2,12 +2,11 @@ import React, { useState, useCallback } from "react";
 import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { documentsFormConfig } from "../../../config/doc-update";
-import { useHistory } from "react-router-dom";
 
 
 const Documents = (props) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [canSubmit, setSubmitValve] = useState(false);
 
   const onFormValueChange = useCallback(
@@ -44,7 +43,7 @@ const Documents = (props) => {
     delete DocumentEntity.ULB;
     delete DocumentEntity.docCategory;
     delete DocumentEntity.documentName;
-    history.push("/sv-ui/employee/engagement/documents/update-response", { DocumentEntity });
+    navigate("/sv-ui/employee/engagement/documents/update-response", { DocumentEntity });
   };
   return (
     <React.Fragment>

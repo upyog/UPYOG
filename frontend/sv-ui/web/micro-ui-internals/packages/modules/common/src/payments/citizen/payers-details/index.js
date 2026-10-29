@@ -13,7 +13,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 const SelectPaymentType = (props) => {
   const optionFirst = {
@@ -33,7 +33,7 @@ const SelectPaymentType = (props) => {
   const payersActiveMobileNumber = userInfo?.mobileNumber;
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state, ...location } = useLocation();
   const { consumerCode, businessService, paymentAmt } = useParams();
   const { workflow: wrkflow, tenantId: _tenantId, ConsumerName } = Digit.Hooks.useQueryParams();
@@ -48,14 +48,14 @@ const SelectPaymentType = (props) => {
   let requestCriteria = [
     "/user/_search",
     {},
-    {data : {uuid:[Useruuid]}},
+    { data: { uuid: [Useruuid] } },
     { recordId: Useruuid, plainRequestFields: ["mobileNumber"] },
     {
-        enabled: Useruuid ? true : false,
-        cacheTime: 100,
-      }
+      enabled: Useruuid ? true : false,
+      cacheTime: 100,
+    }
   ]
-  const { isLoading : isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
+  const { isLoading: isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
 
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
   const Arrears =
@@ -72,8 +72,8 @@ const SelectPaymentType = (props) => {
   const [isCheckBox, setIsCheckBox] = useState(false);
   const [isCCFEnabled, setisCCFEnabled] = useState(false);
   const [mdmsConfig, setMdmsConfig] = useState("");
-  
-  const { isLoading: citizenConcentFormLoading, data:ccfData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "CitizenConsentForm" }]);
+
+  const { isLoading: citizenConcentFormLoading, data: ccfData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "CitizenConsentForm" }]);
 
   function setTermsAndPolicyDetails(e) {
     setIsCheckBox(e.target.checked)
@@ -91,7 +91,7 @@ const SelectPaymentType = (props) => {
     }
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     if (ccfData?.["common-masters"]?.CitizenConsentForm?.[0]?.isCitizenConsentFormEnabled) {
       setisCCFEnabled(ccfData?.["common-masters"]?.CitizenConsentForm?.[0])
     }
@@ -99,12 +99,12 @@ const SelectPaymentType = (props) => {
 
   const onLinkClick = (e) => {
     setMdmsConfig(e.target.id)
-}
+  }
 
   const checkLabels = () => {
     return <span>
       {isCCFEnabled?.checkBoxLabels?.map((data, index) => {
-        return <span>
+        return <span key={index}>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
           {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
@@ -114,14 +114,17 @@ const SelectPaymentType = (props) => {
       })}
     </span>
   }
-  
+
 
   useEffect(() => {
     if (!bill && data) {
-      let requiredBill = data?.Bill?.filter((e) => e.consumerCode == consumerCode)[0];
+      const requiredBill = data?.Bill?.find(
+        (e) => e.consumerCode === consumerCode
+      );
       setBill(requiredBill);
     }
-  }, [isLoading]);
+  }, [data, bill, consumerCode]);
+
 
   const onChangePayersMobileNumber = (e) => {
     setmobileNumberError(null);
@@ -141,17 +144,31 @@ const SelectPaymentType = (props) => {
   };
 
   const onSubmit = () => {
-    history.push(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
-      paymentAmount: paymentAmt,
-      tenantId: billDetails.tenantId,
-      name: paymentType?.code !== optionSecound?.code ? bill?.payerName : userInfo ? payersActiveName : payersName,
-      mobileNumber: paymentType?.code !== optionSecound?.code ? (bill?.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill?.mobileNumber )  : userInfo ? payersActiveMobileNumber : payersMobileNumber,
+    navigate(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+      state: {
+        paymentAmount: paymentAmt,
+        tenantId: billDetails.tenantId,
+        name:
+          paymentType?.code !== optionSecound?.code
+            ? bill?.payerName
+            : userInfo
+              ? payersActiveName
+              : payersName,
+        mobileNumber:
+          paymentType?.code !== optionSecound?.code
+            ? bill?.mobileNumber?.includes("*")
+              ? userData?.user?.[0]?.mobileNumber
+              : bill?.mobileNumber
+            : userInfo
+              ? payersActiveMobileNumber
+              : payersMobileNumber,
+      },
     });
   };
 
-   if (isLoading || isUserLoading || citizenConcentFormLoading) {
+  if (isLoading || isUserLoading || citizenConcentFormLoading) {
     return <Loader />;
-  } 
+  }
 
   return (
     <React.Fragment>
@@ -200,7 +217,7 @@ const SelectPaymentType = (props) => {
               value={isCheckBox}
               checked={isCheckBox}
               style={{ marginTop: "5px", marginLeft: "55px" }}
-              styles={{marginBottom: "30px"}}
+              styles={{ marginBottom: "30px" }}
               onChange={setTermsAndPolicyDetails}
             />
 

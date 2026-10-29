@@ -20,7 +20,6 @@ import org.upyog.pgrai.web.models.user.UserSearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +44,7 @@ public class UserService {
      */
     public void callUserService(ServiceRequest request){
 
-        if(!StringUtils.isEmpty(request.getService().getAccountId()))
+        if(request.getService().getAccountId() != null && !request.getService().getAccountId().isEmpty())
             enrichUser(request);
         else if(request.getService().getCitizen()!=null)
             upsertUser(request);
@@ -60,15 +59,11 @@ public class UserService {
 
         Set<String> uuids = new HashSet<>();
 
-        serviceWrappers.forEach(serviceWrapper -> {
-            uuids.add(serviceWrapper.getService().getAccountId());
-        });
+        serviceWrappers.forEach(serviceWrapper -> uuids.add(serviceWrapper.getService().getAccountId()));
 
         Map<String, User> idToUserMap = searchBulkUser(new LinkedList<>(uuids),requestInfo,tenantId);
 
-        serviceWrappers.forEach(serviceWrapper -> {
-            serviceWrapper.getService().setCitizen(idToUserMap.get(serviceWrapper.getService().getAccountId()));
-        });
+        serviceWrappers.forEach(serviceWrapper -> serviceWrapper.getService().setCitizen(idToUserMap.get(serviceWrapper.getService().getAccountId())));
 
     }
 
@@ -123,7 +118,6 @@ public class UserService {
      */
     private void enrichUser(ServiceRequest request){
 
-        RequestInfo requestInfo = request.getRequestInfo();
         String accountId = request.getService().getAccountId();
         String tenantId = request.getService().getTenantId();
 
@@ -195,13 +189,13 @@ public class UserService {
         userSearchRequest.setUserType(USERTYPE_CITIZEN);
         userSearchRequest.setTenantId(stateLevelTenant);
 
-        if(StringUtils.isEmpty(accountId) && StringUtils.isEmpty(userName))
-            return null;
+        if((accountId == null || accountId.isEmpty()) && (userName == null || userName.isEmpty()))
+            return new UserDetailResponse(null, Collections.emptyList());
 
-        if(!StringUtils.isEmpty(accountId))
+        if(accountId != null && !accountId.isEmpty())
             userSearchRequest.setUuid(Collections.singletonList(accountId));
 
-        if(!StringUtils.isEmpty(userName))
+        if(userName != null && !userName.isEmpty())
             userSearchRequest.setUserName(userName);
 
         StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
@@ -231,9 +225,7 @@ public class UserService {
         if(CollectionUtils.isEmpty(users))
             throw new CustomException("USER_NOT_FOUND","No user found for the uuids");
 
-        Map<String,User> idToUserMap = users.stream().collect(Collectors.toMap(User::getUuid, Function.identity()));
-
-        return idToUserMap;
+        return users.stream().collect(Collectors.toMap(User::getUuid, Function.identity()));
     }
 
     /**

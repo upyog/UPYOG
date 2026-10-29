@@ -1,47 +1,13 @@
 #!/bin/sh
-set -e  # fail fast
 
-# -------------------------------
-# Safe branch detection
-# -------------------------------
-if [ -d ".git" ]; then
-  BRANCH="$(git branch --show-current)"
-else
-  BRANCH="${BRANCH_NAME:-no-git}"
-fi
-
-echo "Main Branch: $BRANCH"
+BRANCH="$(git branch --show-current)"
 
 INTERNALS="micro-ui-internals"
 
-# -------------------------------
-# Safe file copy
-# -------------------------------
-if [ -f "$INTERNALS/example/src/UICustomizations.js" ]; then
-  mkdir -p src/Customisations
-  cp "$INTERNALS/example/src/UICustomizations.js" src/Customisations/
-  echo "UICustomizations copied"
-else
-  echo "UICustomizations file not found, skipping"
-fi
-
-# -------------------------------
-# Internals build
-# -------------------------------
-cd $INTERNALS || exit 1
-
-if [ -d ".git" ]; then
-  echo "Branch: $(git branch --show-current)"
-  echo "Last commit: $(git log -1 --pretty=%B)"
-fi
-
-echo "Installing internal packages"
-
-yarn install --ignore-engines
-
-echo "Building internals"
-yarn build
-
-echo "Internals build finished"
-
+cd $INTERNALS && echo "installing packages" && yarn install && echo "starting build" && yarn build && echo "building finished" && find . -name "node_modules" -type d -prune -print -exec rm -rf '{}' \; 
 cd ..
+
+rm -rf node_modules
+rm -f yarn.lock
+
+# yarn install

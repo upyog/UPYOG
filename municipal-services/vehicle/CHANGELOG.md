@@ -53,3 +53,30 @@ All notable changes to this module will be documented in this file.
 ## 1.0.0
 
 - base version
+
+## 2.1.0 - 2026-10-01
+
+- Added `serviceType` support in `additionalDetails` for Vehicle.
+- Default `serviceType` to `"FSM"` if not provided during creation.
+
+### Database Migration
+If migrating existing legacy records to support `serviceType`, execute the following queries in `vehicle_db`:
+
+```sql
+-- Vehicle Table
+UPDATE eg_vehicle 
+SET additionaldetails = '{"serviceType": "FSM"}'::jsonb 
+WHERE additionaldetails IS NULL OR additionaldetails = 'null'::jsonb;
+
+UPDATE eg_vehicle 
+SET additionaldetails = jsonb_set(additionaldetails, '{serviceType}', '"FSM"') 
+WHERE additionaldetails->>'serviceType' IS NULL;
+
+-- Vehicle Auditlog Table
+UPDATE eg_vehicle_auditlog 
+SET additionaldetails = '{"serviceType": "FSM"}'::jsonb 
+WHERE additionaldetails IS NULL OR additionaldetails = 'null'::jsonb;
+
+UPDATE eg_vehicle_auditlog 
+SET additionaldetails = jsonb_set(additionaldetails, '{serviceType}', '"FSM"') 
+WHERE additionaldetails->>'serviceType' IS NULL;

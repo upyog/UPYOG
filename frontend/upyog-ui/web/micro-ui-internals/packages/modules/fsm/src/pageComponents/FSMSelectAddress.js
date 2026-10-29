@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, Dropdown, RadioButtons, LabelFieldPair, RadioOrSelect,TextInput } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, Dropdown, RadioButtons, LabelFieldPair, RadioOrSelect,TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
@@ -217,7 +217,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
               <RadioButtons
                 selectedOption={selectLocation}
                 onSelect={selectedValue}
-                style={{ display: "flex", marginBottom: 0 }}
+                className="fsm-fsmselect-address-flex-container"
                 innerStyles={{ marginLeft: "10px" }}
                 options={inputs}
                 optionsKey="i18nKey"

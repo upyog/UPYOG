@@ -50,7 +50,7 @@ package org.egov.egf.web.controller.contractor;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.commons.bank.service.CreateBankService;
@@ -59,7 +59,7 @@ import org.egov.egf.web.adaptor.ContractorJsonAdaptor;
 import org.egov.model.masters.Contractor;
 import org.egov.model.masters.ContractorSearchRequest;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -174,7 +174,7 @@ public class CreateContractorController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final ContractorSearchRequest contractorSearchRequest = new ContractorSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(STR_CONTRACTOR_SEARCH_REQUEST, contractorSearchRequest);
@@ -184,7 +184,7 @@ public class CreateContractorController {
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final ContractorSearchRequest contractorSearchRequest) {
 		final List<Contractor> searchResultList = contractorService.search(contractorSearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
@@ -197,7 +197,7 @@ public class CreateContractorController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SafeHtml final String mode,
+	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SanitizeHtml final String mode,
 			final Model model) {
 		final Contractor contractor = contractorService.getById(id);
 		model.addAttribute(STR_CONTRACTOR, contractor);

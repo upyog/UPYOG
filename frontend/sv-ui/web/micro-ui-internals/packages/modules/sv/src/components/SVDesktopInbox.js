@@ -16,7 +16,7 @@ import SearchApplication from "./inbox/search";
  * Supports pagination and sorting
  */
 const SVDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
-  
+
   const { data, useNewInboxAPI } = props;
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));

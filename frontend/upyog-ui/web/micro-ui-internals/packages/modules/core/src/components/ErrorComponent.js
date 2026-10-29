@@ -23,19 +23,24 @@ const ErrorComponent = (props) => {
   const { type = "error" } = Digit.Hooks.useQueryParams();
   const config = ErrorConfig[type];
   const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const stateInfo = props.stateInfo;
+
+  const handleGoHome = () => {
+    if (props.goToHome && typeof props.goToHome === 'function') {
+      props.goToHome();
+    } else {
+      navigate("/upyog-ui/employee");
+    }
+  };
 
   return (
     <div className="error-boundary">
       <div className="error-container">
         <img src={config.imgUrl} alt="error" />
         <h1>{t(config.infoMessage)}</h1>
-        <button
-          onClick={() => {
-            props.goToHome();
-          }}
-        >
+        <button onClick={handleGoHome}>
           {t(config.buttonInfo)}
         </button>
       </div>

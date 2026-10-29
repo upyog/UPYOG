@@ -1,9 +1,9 @@
 package org.upyog.pgrai.producer;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,13 +12,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class Producer {
 
-    @Autowired
-    private CustomKafkaTemplate<String, Object> kafkaTemplate;
+    private final CustomKafkaTemplate<String, Object> kafkaTemplate;
 
-    @Autowired
-    private MultiStateInstanceUtil centralInstanceUtil;
+    private final MultiStateInstanceUtil centralInstanceUtil;
 
     /**
      * Publishes a message to a Kafka topic.

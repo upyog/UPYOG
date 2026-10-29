@@ -5,8 +5,8 @@ info:
     APIs available for Property Mutation
       - Calculate Property Mutation Fee.
   contact:
-    name: Egovernments Foundation
-    email: contact@egovernments.org
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
   version: '1.0.0'
 servers:
 - url: https://virtserver.swaggerhub.com/egovernmets-faundation/PT-2.0/1.0.0

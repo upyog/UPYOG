@@ -69,10 +69,15 @@ import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.xml.bind.DatatypeConverter;
+/*
+ * Jakarta EE 10 / JAXB 4.0 Migration:
+ * Replaced legacy javax.persistence (EntityManager, PersistenceContext, Query) and javax.xml.bind.DatatypeConverter
+ * with jakarta.persistence and jakarta.xml.bind.DatatypeConverter for Jakarta EE 10 runtime compatibility.
+ */
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;

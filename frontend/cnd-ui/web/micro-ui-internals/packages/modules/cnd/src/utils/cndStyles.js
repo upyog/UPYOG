@@ -42,12 +42,7 @@ export const cndStyles= {
     marginBottom:"5px"
   },
 
-  errorStyle:{
-    width: "70%", 
-    marginLeft: "30%", 
-    fontSize: "12px", 
-    marginTop: "-21px"
-  },
+
 
   constructionDatePicker:{
     display: "flex", 

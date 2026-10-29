@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import java.io.ByteArrayInputStream;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -32,8 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.apache.commons.fileupload.FileItem;
 
 @Component("microDiskFileStoreService")
 public class MicroDiskFileStoreService implements FileStoreService {
@@ -122,10 +124,11 @@ public class MicroDiskFileStoreService implements FileStoreService {
                 ret = inputs.read();
             }
             os.flush();
-            MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+            MultipartFile multipartFile = new ByteArrayMultipartFile(
+                    "files", name, probeContentType, fileItem.get());
             FileStoreMapper fileStoreMapper = storeFiles(Arrays.asList(multipartFile),
                     name,
-                    mimeType, moduleName,false);
+                    mimeType, moduleName, false);
             return fileStoreMapper;
         } catch (IOException e) {
             throw new ApplicationRuntimeException(
@@ -157,19 +160,19 @@ public class MicroDiskFileStoreService implements FileStoreService {
             boolean closeStream) {
         try {          
             byte[] fileSize = fileName.getBytes();
-            DiskFileItem fileItem = new DiskFileItem("file",mimeType, false, fileName, fileSize.length, null);
+            DiskFileItem fileItem = new DiskFileItem("file", mimeType, false, fileName, fileSize.length, null);
             OutputStream os = fileItem.getOutputStream();
             int ret = fileStream.read();
-            while ( ret != -1 )
-            {
+            while (ret != -1) {
                 os.write(ret);
                 ret = fileStream.read();
             }
             os.flush();
-            MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+            MultipartFile multipartFile = new ByteArrayMultipartFile(
+                    "file", fileName, mimeType, fileItem.get());
             FileStoreMapper fileStoreMapper = storeFiles(Arrays.asList(multipartFile),
                     fileName,
-                    mimeType, moduleName,false);
+                    mimeType, moduleName, false);
             
             return fileStoreMapper;
         } catch (IOException e) {
@@ -274,5 +277,70 @@ public class MicroDiskFileStoreService implements FileStoreService {
 
     private Path getFilePath(Path fileDirPath, String fileStoreId) {
         return Paths.get(fileDirPath + separator + fileStoreId);
+    }
+
+    /*
+     * LTS Migration Note [Spring 6 / WildFly Production Runtime Independence]:
+     * In Spring 6 / Spring Boot 3, MockMultipartFile is shipped in spring-test.jar (test scope).
+     * Created lightweight production-ready ByteArrayMultipartFile implementation to eliminate runtime 
+     * ClassNotFoundException when handling filestore uploads in production WildFly 40 deployments.
+     */
+    private static class ByteArrayMultipartFile implements MultipartFile {
+        private final String name;
+        private final String originalFilename;
+        private final String contentType;
+        private final byte[] content;
+
+        public ByteArrayMultipartFile(String name, String originalFilename, String contentType, byte[] content) {
+            this.name = name;
+            this.originalFilename = (originalFilename != null ? originalFilename : "");
+            this.contentType = contentType;
+            this.content = (content != null ? content : new byte[0]);
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public String getOriginalFilename() {
+            return this.originalFilename;
+        }
+
+        @Override
+        public String getContentType() {
+            return this.contentType;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return this.content.length == 0;
+        }
+
+        @Override
+        public long getSize() {
+            return this.content.length;
+        }
+
+        @Override
+        public byte[] getBytes() {
+            return this.content;
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return new ByteArrayInputStream(this.content);
+        }
+
+        @Override
+        public void transferTo(File dest) throws IOException, IllegalStateException {
+            FileCopyUtils.copy(this.content, dest);
+        }
+
+        @Override
+        public void transferTo(Path dest) throws IOException, IllegalStateException {
+            Files.write(dest, this.content);
+        }
     }
 }

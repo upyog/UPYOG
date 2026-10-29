@@ -39,7 +39,7 @@ const ReceiptsMobileInbox = ({
   };
   const serviceRequestIdKey = (original) => {return `${searchParams?.businessServices}/${encodeURIComponent(original?.[t("CR_COMMON_TABLE_COL_RECEIPT_NO")])}`};
   return (
-    <div style={{ padding: 0 }}>
+    <div className="rcpt-receipts-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {/* {!isSearch && <ApplicationLinks linkPrefix={parentRoute} allLinks={allLinks} isMobile={true} />} */}

@@ -1,11 +1,10 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
 import { MdmsServiceV2 } from "../services/elements/MDMSV2";
 
 /**
  * Custom hook which can be used to
  * make a single hook a module to get multiple masterdetails with/without filter
  * 
- * @author jagankumar-egov
  * 
  * @example
  * // returns useQuery object
@@ -26,7 +25,7 @@ import { MdmsServiceV2 } from "../services/elements/MDMSV2";
  * @returns {Object} Returns the object of the useQuery from react-query.
  */
 const useCustomMDMSV2 = (tenantId, moduleName, masterDetails = [], config = {}) => {
-    return useQuery([tenantId, moduleName, masterDetails], () => MdmsServiceV2.getMultipleTypesWithFilter(tenantId, moduleName, masterDetails), config);
+    return queryTemplate({ queryKey: [tenantId, moduleName, masterDetails], queryFn: () => MdmsServiceV2.getMultipleTypesWithFilter(tenantId, moduleName, masterDetails), config });
   };
 
 export default useCustomMDMSV2;

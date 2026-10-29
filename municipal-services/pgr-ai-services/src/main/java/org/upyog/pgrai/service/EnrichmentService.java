@@ -5,7 +5,7 @@ import org.upyog.pgrai.config.PGRConfiguration;
 import org.upyog.pgrai.repository.IdGenRepository;
 import org.upyog.pgrai.util.PGRUtils;
 import org.upyog.pgrai.web.models.*;
-import org.upyog.pgrai.web.models.Idgen.IdResponse;
+import org.upyog.pgrai.web.models.idgen.IdResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.upyog.pgrai.util.PGRConstants.USERTYPE_CITIZEN;
 
@@ -70,13 +69,10 @@ public class EnrichmentService {
         service.getAddress().setTenantId(tenantId);
         service.setActive(true);
 
-        if (workflow.getVerificationDocuments() != null) {
-            workflow.getVerificationDocuments().forEach(document -> {
-                document.setId(UUID.randomUUID().toString());
-            });
-        }
+        if (workflow.getVerificationDocuments() != null)
+            workflow.getVerificationDocuments().forEach(document -> document.setId(UUID.randomUUID().toString()));
 
-        if (StringUtils.isEmpty(service.getAccountId()))
+        if (!StringUtils.hasLength(service.getAccountId()))
             service.setAccountId(service.getCitizen().getUuid());
 
         List<String> customIds = getIdList(requestInfo, tenantId, config.getServiceRequestIdGenName(), config.getServiceRequestIdGenFormat(), 1);
@@ -148,6 +144,6 @@ public class EnrichmentService {
             throw new CustomException("IDGEN ERROR", "No IDs returned from IDGen Service");
 
         return idResponses.stream()
-                .map(IdResponse::getId).collect(Collectors.toList());
+                .map(IdResponse::getId).toList();
     }
 }

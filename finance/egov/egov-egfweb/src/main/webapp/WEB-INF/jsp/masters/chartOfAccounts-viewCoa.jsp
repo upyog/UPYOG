@@ -123,7 +123,7 @@
 					<td width="10%" class="greybox"><strong><s:text
 								name="chartOfAccount.activeForPosting" />:</strong></td>
 					<td class="greybox"><s:if
-							test="%{getIsActiveForPosting() == true}">
+							test="%{activeForPosting || (model != null && model.isActiveForPosting) || getIsActiveForPosting()}">
 							<s:text name="yes" />
 						</s:if> <s:else>
 							<s:text name="no" />
@@ -134,14 +134,14 @@
 					<td width="10%" class="bluebox"><strong><s:text
 								name="Function Required" />:</strong></td>
 					<td width="22%" class="bluebox"><s:if
-							test="%{getFunctionReqd() == true}">
+							test="%{functionRequired || (model != null && model.functionReqd) || getFunctionReqd()}">
 							<s:text name="yes" />
 						</s:if> <s:else>
 							<s:text name="no" />
 						</s:else></td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.budgetRequired" />:</strong></td>
-					<td class="bluebox"><s:if test="%{budgetCheckReq() == true}">
+					<td class="bluebox"><s:if test="%{budgetCheckRequired || (model != null && model.budgetCheckReq) || budgetCheckReq()}">
 							<s:text name="yes" />
 						</s:if> <s:else>
 							<s:text name="no" />

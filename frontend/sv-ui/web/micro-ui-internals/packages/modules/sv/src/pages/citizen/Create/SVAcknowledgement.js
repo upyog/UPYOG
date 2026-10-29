@@ -2,7 +2,7 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { svPayloadData,svUpdatePayload } from "../../../utils";
+import { svPayloadData, svUpdatePayload } from "../../../utils";
 import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 
 /* This component, SVAcknowledgement, is responsible for displaying the acknowledgement 
@@ -25,17 +25,17 @@ import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 
 
 const GetActionMessage = (props) => {
-    const { t } = useTranslation();
-    const currentUrl = window.location.href;
-    if (props.isSuccess) {
-      return currentUrl.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): currentUrl.includes("renew") ? t("SV_RENEW_SUCCESSFULL") : t("SV_SUBMIT_SUCCESSFULL");
-    }
-    else if (props.isLoading){
-      return t("SV_APPLICATION_PENDING");
-    }
-    else if (!props.isSuccess)
+  const { t } = useTranslation();
+  const currentUrl = window.location.href;
+  if (props.isSuccess) {
+    return currentUrl.includes("edit") ? t("SV_UPDATE_SUCCESSFULL") : currentUrl.includes("renew") ? t("SV_RENEW_SUCCESSFULL") : t("SV_SUBMIT_SUCCESSFULL");
+  }
+  else if (props.isPending) {
+    return t("SV_APPLICATION_PENDING");
+  }
+  else if (!props.isSuccess)
     return t("SV_APPLICATION_FAILED");
-  };
+};
 
 
 //style object to pass inside row container which shows the application ID and status of application of banner image
@@ -51,7 +51,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.SVDetail?.applicationNo}
       info={props.isSuccess ? props.t("SV_APPLICATION_NO") : ""}
       successful={props.isSuccess}
-      style={{width: "100%"}}
+      style={{ width: "100%" }}
     />
   );
 };
@@ -59,7 +59,7 @@ const BannerPicker = (props) => {
 const SVAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.sv.useSvCreateApi(tenantId,!window.location.href.includes("edit")); 
+  const mutation = Digit.Hooks.sv.useSvCreateApi(tenantId, !window.location.href.includes("edit"));
   const user = Digit.UserService.getUser().info;
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -68,9 +68,9 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
     try {
       data.tenantId = tenantId;
       let formdata = window.location.href.includes("edit") ?
-      svUpdatePayload(data,t):
-      svPayloadData(data)
-      mutation.mutate(formdata, {onSuccess});
+        svUpdatePayload(data, t) :
+        svPayloadData(data)
+      mutation.mutate(formdata, { onSuccess });
     } catch (err) {
     }
   }, []);
@@ -84,34 +84,34 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
     let SVData = (SVDetail) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === SVData.tenantId);
     let tenantId = SVData.tenantId || tenantId;
-   
+
     const data = await getSVAcknowledgementData({ ...SVData }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 
-  return mutation.isLoading || mutation.isIdle ? (
+  return mutation.isPending ? (
     <Loader />
   ) : (
     <Card>
-      <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
+      <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isPending} />
       <StatusTable>
         {mutation.isSuccess && (
           <Row
             rowContainerStyle={rowContainerStyle}
-            last       
+            last
             textStyle={{ whiteSpace: "pre", width: "60%" }}
           />
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT_BUTTON")} onSubmit={handleDownloadPdf} />}
-      {user?.type==="CITIZEN"?
-      <Link to={`/sv-ui/citizen`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>
-      :
-      <Link to={`/sv-ui/employee`}>
-        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
-      </Link>}
+      {user?.type === "CITIZEN" ?
+        <Link to={`/sv-ui/citizen`}>
+          <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+        :
+        <Link to={`/sv-ui/employee`}>
+          <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>}
     </Card>
   );
 };

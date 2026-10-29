@@ -1,0 +1,169 @@
+{
+  "moduleName":"pgr_citizen_module",
+  "description": "PGR Registration Citizen flow",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions":[
+
+    {
+      "stepName":"Open PGR Module",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[@href='/upyog-ui/citizen/pgr-home']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"File New Complaint",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[@href='/upyog-ui/citizen/pgr/create-complaint/complaint-type']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Select Service Category",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:1",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select Complaint Type",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"1:0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select Complaint Subtype",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"2:1",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Complaint Type Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Skip Pin Location",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//span[normalize-space()='Skip and Continue']/parent::*",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Location Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Enter Pincode",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[contains(@name,'pincode')]",
+      "action":"TYPE",
+      "inputValue":"${address.pincode}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Pincode Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//label[normalize-space()='City A']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Select Locality",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//label[normalize-space()='Main Road Abadpura']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Address Page Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Enter Landmark",
+      "locatorStrategy":"CSS",
+      "locatorValue":"textarea.card-textarea",
+      "action":"TYPE",
+      "inputValue":"${address.landmark}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Landmark Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Evidence Photo",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.png}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Evidence Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Additional Details",
+      "locatorStrategy":"CSS",
+      "locatorValue":"textarea.card-textarea",
+      "action":"TYPE",
+      "inputValue":"${pgr.description}"
+    },
+    {
+      "stepName": "Additional Details Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Complaint No.') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
+    }
+  ]
+}

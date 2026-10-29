@@ -74,7 +74,8 @@ public class FeatureService {
     }
 
     public Feature getFeatureById(Long id) {
-        return featureRepository.findOne(id);
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
+        return featureRepository.findById(id).orElse(null);
     }
 
     @Transactional
@@ -83,6 +84,6 @@ public class FeatureService {
     }
 
     public Long getNumberOfFeatureByRoleAction(Role role, Action action) {
-        return this.featureRepository.countByRolesInAndActionsIn(role, action);
+        return this.featureRepository.countByRolesContainingAndActionsContaining(role, action);
     }
 }

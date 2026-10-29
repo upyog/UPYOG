@@ -22,18 +22,6 @@ import lombok.Setter;
 @Import({ TracerConfiguration.class })
 public class StreetVendingConfiguration {
 
-	/*
-	 * // Pagination config for search results
-	 * 
-	 * @Value("${egov.street-vening.default.limit}") private Integer defaultLimit;
-	 * 
-	 * @Value("${egov.street-vending.default.offset}") private Integer
-	 * defaultOffset;
-	 * 
-	 * @Value("${egov.chb.max.limit}") private Integer maxSearchLimit;
-	 * 
-	 * // Workflow configs
-	 */
 	@Value("${egov.workflow.host}")
 	private String wfHost;
 
@@ -88,9 +76,6 @@ public class StreetVendingConfiguration {
 	
 	@Value("${sv.service.quaterly.name}")
 	private String serviceNameQuaterly;
-
-//	@Value("${sv.payment.business.service.name}")
-//	private String paymentBusinessServiceName;
 
 	@Value("${sv.business.service.name}")
 	private String businessServiceName;
@@ -161,17 +146,6 @@ public class StreetVendingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 
-//	@Value("${chb.claculation.tax.applicable}")
-//	private String applicableTaxes;
-
-	// Billing-Service
-
-//	@Value("${egbs.host}")
-//	private String egbsHost;
-//
-//	@Value("${egbs.fetchbill.endpoint}")
-//	private String egbsFetchBill;
-
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
 
@@ -220,9 +194,6 @@ public class StreetVendingConfiguration {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
 
-//	@Value("${egov.localization.fallback.locale}")
-//	private String fallBackLocale;
- 	
  	 @Value("${egov.download.receipt.link}")
      private String downloadReceiptLink;
  	 

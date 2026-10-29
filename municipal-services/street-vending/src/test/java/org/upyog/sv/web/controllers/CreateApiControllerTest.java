@@ -21,22 +21,20 @@ import org.upyog.sv.TestConfiguration;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(StreetVendingController.class)
 @Import(TestConfiguration.class)
-public class CreateApiControllerTest {
+class CreateApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void createPostSuccess() throws Exception {
-        mockMvc.perform(post("/sv/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
+    void createPostSuccess() throws Exception {
+        mockMvc.perform(post("/sv/_create").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
     }
 
     @Test
-    public void createPostFailure() throws Exception {
-        mockMvc.perform(post("/sv/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
+    void createPostFailure() throws Exception {
+        mockMvc.perform(post("/sv/_create").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
     }
 

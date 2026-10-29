@@ -25,6 +25,8 @@ class ShowForm extends Component {
     filterApplied: false,
     getResults: false,
     dateError: "",
+    allUlbDefaultValue: {},
+    isAllUlbLoaded: false,
   };
 
   toDateObj = (dateStr) => {
@@ -57,6 +59,15 @@ class ShowForm extends Component {
       }
       this.setState({ getResults: false, dateError: "" }, () => {
         resetForm();
+        // Restore full ULB list when report filters are reset
+        const reportName = get(metaData, "reportDetails.reportName") || this.state.reportName;
+        if (reportName === "MiscDashboardReport") {
+          if (!_.isEmpty(this.state.allUlbDefaultValue)) {
+            this.updateUlbDropdown(this.state.allUlbDefaultValue);
+          } else {
+            this.fetchUlbsByState("");
+          }
+        }
       });
     }
   };
@@ -132,6 +143,66 @@ class ShowForm extends Component {
       setSearchParams(searchParams);
     }
   };
+
+  // Updates ULB dropdown values in report metadata
+  updateUlbDropdown = (defaultValue = {}, metaDataForUpdate = this.props.metaData) => {
+    const { setMetaData } = this.props;
+    const updatedMetaData = _.cloneDeep(metaDataForUpdate);
+    const searchParams = get(updatedMetaData, "reportDetails.searchParams", []);
+    const ulbIndex = searchParams.findIndex((field) => field.name === "ulb");
+    if (ulbIndex > -1) {
+      searchParams[ulbIndex].defaultValue = defaultValue;
+      searchParams[ulbIndex].disabled = false;
+      setMetaData(updatedMetaData);
+    }
+  };
+
+  // Fetches ULB list. If State is selected, fetches State-specific ULBs; otherwise fetches all ULBs.
+  fetchUlbsByState = async (selectedState = "", metaDataForUpdate = this.props.metaData) => {
+    const masterDetail = {
+      name: "nationalInfo",
+    };
+    if (selectedState) {
+      const safeState = String(selectedState).replace(/"/g, '\\"');
+      masterDetail.filter = `[?(@.stateCode=="${safeState}")]`;
+    }
+    var tenantId = getTenantId() ? getTenantId() : commonConfig.tenantId;
+    const requestBody = {
+      MdmsCriteria: {
+        tenantId: tenantId,
+        moduleDetails: [
+          {
+            moduleName: "tenant",
+            masterDetails: [masterDetail],
+          },
+        ],
+      },
+    };
+    try {
+      const response = await commonApiPost(
+        "/egov-mdms-service/v1/_search",
+        {},
+        requestBody
+      );
+      const ulbList = get(response, "MdmsRes.tenant.nationalInfo", []);
+      const ulbDefaultValue = {};
+      ulbList
+        .filter((item) => item && item.active !== false)
+        .forEach((item) => {
+          ulbDefaultValue[item.code] = item.name || item.code;
+        });
+      if (!selectedState) {
+        this.setState({
+          allUlbDefaultValue: _.cloneDeep(ulbDefaultValue),
+          isAllUlbLoaded: true,
+        });
+      }
+      this.updateUlbDropdown(ulbDefaultValue, metaDataForUpdate);
+    } catch (error) {
+      console.log("Error while loading ULB dropdown:", error);
+    }
+  };
+
   handleChange = (e, property, isRequired, pattern) => {
     const { metaData, setMetaData, handleChange } = this.props;
     const selectedValue = e.target.value;
@@ -141,7 +212,13 @@ class ShowForm extends Component {
     } else {
       handleChange(e, property, isRequired, pattern);
     }
-
+    const reportName = get(metaData, "reportDetails.reportName") || this.state.reportName;
+    // Refresh ULB dropdown whenever State selection changes
+    if (reportName === "MiscDashboardReport" && property === "state") {
+      handleChange({ target: { value: "" } }, "ulb", false, "");
+      this.fetchUlbsByState(selectedValue);
+      return;
+    }
     if (metaData.hasOwnProperty("reportDetails") && metaData.reportDetails.searchParams.length > 0) {
       if (!selectedValue) {
         for (var l = 0; l < metaData.reportDetails.searchParams.length; l++) {
@@ -286,7 +363,14 @@ class ShowForm extends Component {
         reportName: nextProps.metaData.reportDetails.reportName,
       });
       this.setState({ moduleName: this.props.match.params.moduleName });
-
+      if (
+        nextProps.metaData.reportDetails.reportName === "MiscDashboardReport" &&
+        !this.state.isAllUlbLoaded
+      ) {
+        this.setState({ isAllUlbLoaded: true }, () => {
+          this.fetchUlbsByState("", nextProps.metaData);
+        });
+      }
       let { setForm } = this.props;
       let { searchParams } = !_.isEmpty(nextProps.metaData) ? nextProps.metaData.reportDetails : { searchParams: [] };
       let required = [];

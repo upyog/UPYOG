@@ -42,6 +42,8 @@ const createComplaint = ({
     type: CREATE_COMPLAINT,
     payload: response,
   });
+  // Return response so the dispatching component can capture and persist it
+  return response;
 };
 
 export default createComplaint;

@@ -1,4 +1,4 @@
-import { Header, LinkButton, Loader, Table } from "@upyog/digit-ui-react-components";
+import { Header, LinkButton, Loader, Table } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,7 @@ const ApplicationAudit = ({ parentRoute }) => {
           <p>
             New Request{" "}
             <Link to={`/upyog-ui/employee/fsm/application-details/${id}`}>
-              <LinkButton label={t("ES_VIEW_APPLICATION")} style={{ color: "#1671ba", marginLeft: "8px" }} />
+              <LinkButton label={t("ES_VIEW_APPLICATION")} className="fsm-application-audit-action-btn" />
             </Link>
           </p>
         ) : (
@@ -75,7 +75,7 @@ const ApplicationAudit = ({ parentRoute }) => {
   if (isLoading || userList.isLoading) return <Loader />;
 
   return (
-    <div style={{ overflow: "auto" }}>
+    <div className="fsm-application-audit-wrapper">
       <Header>{t("ES_TITLE_APPLICATION_AUDIT")}</Header>
       <Table
         t={t}

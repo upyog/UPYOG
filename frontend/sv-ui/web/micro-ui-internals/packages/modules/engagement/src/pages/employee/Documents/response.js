@@ -1,6 +1,6 @@
 import { Banner, Card, Loader, CardText, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -42,16 +42,16 @@ const Response = (props) => {
   }
 
   return (
-   <div> 
-    <Card>
-      <BannerPicker t={t} data={mutation.data} mutation={mutation} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
-    </Card>
-    <ActionBar>
-    <Link to={"/sv-ui/employee"}>
-      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-    </Link>
-  </ActionBar>
- </div> 
+    <div>
+      <Card>
+        <BannerPicker t={t} data={mutation.data} mutation={mutation} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
+      </Card>
+      <ActionBar>
+        <Link to={"/sv-ui/employee"}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      </ActionBar>
+    </div>
   );
 };
 

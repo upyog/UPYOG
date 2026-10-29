@@ -19,7 +19,9 @@ import { useTranslation } from "react-i18next";
 const InboxSearchComposer = ({configs,headerLabel,additionalConfig,onFormValueChange=()=>{}}) => {
     const { t } = useTranslation();
 
-    const [enable, setEnable] = useState(false);
+    // Initialize enable state based on config type
+    const shouldAutoEnable = configs?.type === 'inbox' || configs?.type === 'download' || configs?.type === 'search';
+    const [enable, setEnable] = useState(shouldAutoEnable);
     const [state, dispatch] = useReducer(reducer, initialInboxState);
     const [showToast, setShowToast] = useState(false);
     //for mobile view
@@ -42,53 +44,45 @@ const InboxSearchComposer = ({configs,headerLabel,additionalConfig,onFormValueCh
         clearSessionFormData();
     },[]);
     
-    useEffect(() => {
-        //here if jsonpaths for search & table are same then searchform gets overridden
+    // Memoize requestCriteria to prevent infinite re-renders
+    const requestCriteria = useMemo(() => {
+        // Clone apiDetails to avoid mutation
+        const clonedApiDetails = _.cloneDeep(apiDetails);
         
+        // Apply search form values
         if (Object.keys(state.searchForm)?.length >= 0) {
-            const result = { ..._.get(apiDetails, apiDetails?.searchFormJsonPath, {}), ...state.searchForm }
+            const result = { ..._.get(clonedApiDetails, clonedApiDetails?.searchFormJsonPath, {}), ...state.searchForm }
             Object.keys(result).forEach(key => {
                 if (!result[key]) delete result[key]
             });
-            _.set(apiDetails, apiDetails?.searchFormJsonPath, result)
+            _.set(clonedApiDetails, clonedApiDetails?.searchFormJsonPath, result)
         }
+        
+        // Apply filter form values
         if (Object.keys(state.filterForm)?.length >= 0) {
-            const result = { ..._.get(apiDetails, apiDetails?.filterFormJsonPath, {}), ...state.filterForm }
+            const result = { ..._.get(clonedApiDetails, clonedApiDetails?.filterFormJsonPath, {}), ...state.filterForm }
             Object.keys(result).forEach(key => {
                 if (!result[key] || result[key]?.length===0) delete result[key]
             });
-            _.set(apiDetails, apiDetails?.filterFormJsonPath, result)
+            _.set(clonedApiDetails, clonedApiDetails?.filterFormJsonPath, result)
         }
         
+        // Apply table form values
         if(Object.keys(state.tableForm)?.length >= 0) {
-            _.set(apiDetails, apiDetails?.tableFormJsonPath, { ..._.get(apiDetails, apiDetails?.tableFormJsonPath, {}),...state.tableForm })  
+            _.set(clonedApiDetails, clonedApiDetails?.tableFormJsonPath, { ..._.get(clonedApiDetails, clonedApiDetails?.tableFormJsonPath, {}),...state.tableForm })  
         }
-        const searchFormParamCount = Object.keys(state.searchForm).reduce((count,key)=>state.searchForm[key]===""?count:count+1,0)
-        const filterFormParamCount = Object.keys(state.filterForm).reduce((count, key) => state.filterForm[key] === "" ? count : count + 1, 0)
         
-        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= apiDetails?.minParametersForSearchForm || filterFormParamCount >= apiDetails?.minParametersForFilterForm)){
-            setEnable(true)
-        }
-
-        if(configs?.type === 'inbox' || configs?.type === 'download') setEnable(true)
-
-    },[state])
-    
-
-    useEffect(() => {
-        onFormValueChange(state)
-    }, [state])
-    
-
-    let requestCriteria = {
-        url:configs?.apiDetails?.serviceName,
-        params:configs?.apiDetails?.requestParam,
-        body:configs?.apiDetails?.requestBody,
-        config: {
-            enabled: enable,
-        },
-        state
-    };
+        return {
+            url: configs?.apiDetails?.serviceName,
+            params: clonedApiDetails?.requestParam,
+            body: clonedApiDetails?.requestBody,
+            changeQueryName: configs?.apiDetails?.changeQueryName,
+            config: {
+                enabled: enable,
+            },
+            state
+        };
+    }, [configs?.apiDetails, state, enable]);
 
     //clear the reducer state when user moves away from inbox screen(it already resets when component unmounts)(keeping this code here for reference)
     // useEffect(() => {
@@ -111,13 +105,18 @@ const InboxSearchComposer = ({configs,headerLabel,additionalConfig,onFormValueCh
     
     const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria,configs.additionalDetails) : requestCriteria 
     
-    if(configs.customHookName){
-        var { isLoading, data, revalidate,isFetching,refetch,error } = eval(`Digit.Hooks.${configs.customHookName}(updatedReqCriteria)`);
-    }
-    else {
-       var { isLoading, data, revalidate,isFetching,error } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
-        
-    }
+    // console.log('InboxSearchComposer - masterName:', apiDetails?.masterName, 'moduleName:', apiDetails?.moduleName);
+    // console.log('InboxSearchComposer - preProcess exists:', !!Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess);
+    // console.log('InboxSearchComposer - updatedReqCriteria:', updatedReqCriteria);
+    
+    const hookName = configs.customHookName;
+    // Support nested hook paths like "workbench.useLocalisationSearch"
+    const customHook = hookName ? (
+        hookName.includes('.') 
+            ? hookName.split('.').reduce((obj, key) => obj?.[key], Digit.Hooks)
+            : Digit.Hooks[hookName]
+    ) : Digit.Hooks.useCustomAPIHook;
+    const { isLoading, data, revalidate, isFetching, refetch, error } = customHook(updatedReqCriteria);
 
     const closeToast = () => {
         setTimeout(() => {
@@ -125,7 +124,7 @@ const InboxSearchComposer = ({configs,headerLabel,additionalConfig,onFormValueCh
         }, 5000);
       };
 
-    useEffect(() => {
+useEffect(() => {
         if(error){
             setShowToast({ label:error?.message, isError: true });
             closeToast()
@@ -141,12 +140,13 @@ const InboxSearchComposer = ({configs,headerLabel,additionalConfig,onFormValueCh
     }, [additionalConfig?.search?.callRefetch])
     
 
+    // Cleanup only on unmount
     useEffect(() => {
         return () => {
             revalidate();
             setEnable(false);
         };
-    })
+    }, []); // Empty dependency array ensures cleanup runs only on unmount
 
     //for mobile view
     const handlePopupClose = () => {

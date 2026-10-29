@@ -1,9 +1,9 @@
-import { Loader, FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, FormComposerV2, Toast } from "@upyog/workbench-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { mdmsSchema } from "../../configs/sampleschema";
 import _ from "lodash";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const MDMSAdd = ({ FormSession }) => {
   // const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -17,7 +17,7 @@ const MDMSAdd = ({ FormSession }) => {
   const [session, setSession] = useState(sessionFormData);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  
   const reqCriteria = {
     url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/schema/v1/_search`,
     params: {},
@@ -85,14 +85,7 @@ const MDMSAdd = ({ FormSession }) => {
     );
   };
   const onFormValueChange = (setValue, formData, formState) => {
-    // if (!_.isEqual(sessionFormData, formData)) {
-    //   // const result = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
-    //   /* update session if any dependency */
-    //   // if (result?.["dependencyField"]) {
-    //   //   setValue("dependentField", );
-    //   // }
-    //   setSessionFormData({ ...sessionFormData, ...formData });
-    // }
+    
     if (!_.isEqual(session, formData)) {
       setSession({ ...session, ...formData });
     }

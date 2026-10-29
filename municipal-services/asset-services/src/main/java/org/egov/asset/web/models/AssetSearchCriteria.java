@@ -66,6 +66,9 @@ public class AssetSearchCriteria {
     @JsonProperty("acknowledgementIds")
     private List<String> acknowledgementIds;
 
+    @JsonProperty("isInterServiceCall")
+    private Boolean isInterServiceCall;
+
     public boolean isEmpty() {
         return (this.tenantId == null && this.status == null && this.ids == null && this.acknowledgementIds == null && this.applicationNo == null
                 && this.approvalNo == null && this.approvalDate == null && this.assetClassification == null && this.assetParentCategory == null

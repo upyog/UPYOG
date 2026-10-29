@@ -13,21 +13,11 @@ import { LocalityService } from "./services/elements/Localities";
 import { CustomService } from "./services/elements/CustomService";
 import { LocalizationService } from "./services/elements/Localization/service";
 import { LoginService } from "./services/elements/Login";
-import { PGRService } from "./services/elements/PGR";
-import { PaymentService } from "./services/elements/Payment";
 import * as dateUtils from "./services/atoms/Utils/Date";
 import Download from "./services/atoms/Download";
 import { WorkflowService } from "./services/elements/WorkFlow";
 import { MdmsService } from "./services/elements/MDMS";
-import { Complaint } from "./services/elements/Complaint";
 import { UserService } from "./services/elements/User";
-import HrmsService from "./services/elements/HRMS";
-import { InboxGeneral } from "./services/elements/InboxService";
-import EventsServices from "./services/elements/Events";
-
-
-import ShareFiles from "./services/molecules/ShareFiles";
-import { GetServiceDefinitions } from "./services/molecules/ServiceDefinitions";
 import { ULBService } from "./services/molecules/Ulb";
 import { ComponentRegistryService } from "./services/elements/ComponentRegistry";
 import StoreData from "./services/molecules/StoreData";
@@ -58,22 +48,13 @@ const initLibraries = () => {
   setupLibraries("LocalityService", LocalityService);
   setupLibraries("LoginService", LoginService);
   setupLibraries("LocalizationService", LocalizationService);
-  setupLibraries("PGRService", PGRService);
-  setupLibraries("HRMSService", HrmsService);
-  setupLibraries("PaymentService", PaymentService);
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);
   setupLibraries("UploadServices", UploadServices);
   setupLibraries("JsDictionary", JsDictionary);
-  setupLibraries("GetServiceDefinitions", GetServiceDefinitions);
-  setupLibraries("Complaint", Complaint);
   setupLibraries("ComponentRegistryService", ComponentRegistryService);
   setupLibraries("StoreData", StoreData);
-  setupLibraries("EventsServices", EventsServices);
-
-  setupLibraries("InboxGeneral", InboxGeneral);
-  setupLibraries("ShareFiles", ShareFiles);
   setupLibraries("Contexts", Contexts);
   setupLibraries("Hooks", Hooks);
   setupLibraries("Customizations", {});

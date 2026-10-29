@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { RatingAndFeedBack } from "../config/RatingAndFeedback";
@@ -8,7 +8,7 @@ import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, Clo
 
 const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser();
   let {redirectedFrom, propertyId, acknowldgementNumber, creationReason, tenantId, locality} = Digit.Hooks.useQueryParams();
   const isMobile = window.Digit.Utils.browser.isMobile();
@@ -92,8 +92,9 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
                 setShowToast({ key: false, label: "PT_FEEDBACK_SUBMITTED_SUCCESSFULLY" });
             }
             else
-            history.push({pathname:"/cnd-ui/citizen/feedback-acknowledgement",
-                state: {rating,comment,result}})
+            navigate("/cnd-ui/citizen/feedback-acknowledgement", {
+                state: {rating,comment,result}
+            });
 
         }
       })

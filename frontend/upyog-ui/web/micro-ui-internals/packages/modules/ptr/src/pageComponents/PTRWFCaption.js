@@ -13,7 +13,7 @@
  * @dependencies 
  * - `React` for component rendering.
  * - `useTranslation` hook from `react-i18next` for handling translations.
- * - `TelePhone` and `DisplayPhotos` components from `@upyog/digit-ui-react-components` for displaying phone numbers and images.
+ * - `TelePhone` and `DisplayPhotos` components from `@nudmcdgnpm/digit-ui-react-components` for displaying phone numbers and images.
  * 
  * @props
  * - `data`: Object containing workflow details such as date, name, mobile number, comments, and attachments.
@@ -27,7 +27,7 @@
  */
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components";
 
 
 const PTRWFCaption = ({ data,OpenImage }) => {
@@ -42,7 +42,7 @@ const PTRWFCaption = ({ data,OpenImage }) => {
       {data?.wfComment ? <div>{data?.wfComment?.map( e => 
       <div className="TLComments">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
-        <p style={{overflowX:"scroll"}}>{e}</p>
+        <p className="ptr-ptrwfcaption-wrapper">{e}</p>
       </div>
       )}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">

@@ -4,13 +4,11 @@ import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.asset.service.AssetDisposeService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.disposal.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,16 +16,19 @@ import java.util.List;
 @RequestMapping("/v1/disposal")
 public class AssetDisposalController {
 
-    @Autowired
-    private AssetDisposeService assetDisposeService;
+    private final AssetDisposeService assetDisposeService;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    public AssetDisposalController(AssetDisposeService assetDisposeService,
+                                   ResponseInfoFactory responseInfoFactory) {
+        this.assetDisposeService = assetDisposeService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     @PostMapping("/_create")
     public ResponseEntity<AssetDisposalResponse> createDisposal(@Valid @RequestBody AssetDisposalRequest request) {
         AssetDisposal disposal = assetDisposeService.createDisposal(request);
-        List<AssetDisposal> disposals = new ArrayList<>(Collections.singletonList(disposal));
+        List<AssetDisposal> disposals = Collections.singletonList(disposal);
         AssetDisposalResponse response = AssetDisposalResponse.builder()
                 .assetDisposals(disposals)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
@@ -49,8 +50,6 @@ public class AssetDisposalController {
     @PostMapping("/_search")
     public ResponseEntity<AssetDisposalResponse> searchDisposals(
             @RequestBody AssetDisposalSearchRequest searchRequest) {
-
-        // Extract search criteria and request info
         AssetDisposalSearchCriteria searchCriteria = searchRequest.getAssetDisposalSearchCriteria();
         RequestInfoWrapper requestInfoWrapper = searchRequest.getRequestInfoWrapper();
 

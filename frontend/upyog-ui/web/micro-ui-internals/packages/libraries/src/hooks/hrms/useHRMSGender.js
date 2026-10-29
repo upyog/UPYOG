@@ -1,18 +1,19 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useHRMSGenderMDMS = (tenantId, moduleCode, type, config = {}) => {
-  const useHRGenders = () => {
-    return useQuery("HR_GENDER_DETAILS", () => MdmsService.HRGenderType(tenantId, moduleCode ,type), config);
-  };
-  
-
   switch (type) {
     case "GenderType":
-      return useHRGenders();
+      return queryTemplate({
+        queryKey: ["HRMS_GENDER", tenantId],
+        queryFn: () =>
+          MdmsService.HRGenderType(tenantId, moduleCode, type),
+        config,
+      });
+
+    default:
+      return null;
   }
 };
-
-
 
 export default useHRMSGenderMDMS;

@@ -20,11 +20,11 @@ import {
   FirenocIcon,
   LoginIcon,
   CHBIcon
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
 import { APPLICATION_PATH } from "../../../pages/citizen/Home/EDCR/utils";
@@ -54,28 +54,35 @@ const defaultImage =
 /* 
 Feature :: Citizen Webview sidebar
 */
-const Profile = ({ info, stateName, t, profilePhotoUrl }) => (
-  <div className="profile-section">
-    <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
-    </div>
-    <div id="profile-name" className="label-container name-Profile">
-      <div className="label-text"> {info?.name} </div>
-    </div>
-    <div id="profile-location" className="label-container loc-Profile">
-      <div className="label-text"> {info?.mobileNumber} </div>
-    </div>
-    {info?.emailId && (
-      <div id="profile-emailid" className="label-container loc-Profile">
-        <div className="label-text"> {info.emailId} </div>
+const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed }) => {
+  const username = isSidebarCollapsed
+    ? info?.name?.split(' ').map(word => word[0]).join('').toUpperCase()
+    : info?.name;
+
+  return (
+    <div className="profile-section">
+      <div className="imageloader imageloader-loaded">
+        <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
       </div>
-    )}
-    <div className="profile-divider"></div>
-    {window.location.href.includes("/employee") &&
-      !window.location.href.includes("/employee/user/login") &&
-      !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
-  </div>
-);
+      <div id="profile-name" className="label-container name-Profile">
+        <div className="label-text"> {username} </div>
+      </div>
+      {!isSidebarCollapsed && <div id="profile-location" className="label-container loc-Profile">
+        <div className="label-text"> {info?.mobileNumber} </div>
+      </div>}
+      {!isSidebarCollapsed && info?.emailId && (
+        <div id="profile-emailid" className="label-container loc-Profile">
+          <div className="label-text"> {info.emailId} </div>
+        </div>
+      )}
+      <div className="profile-divider"></div>
+      {false && window.location.href.includes("/employee") &&
+        !window.location.href.includes("/employee/user/login") &&
+        !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
+    </div>
+  )
+};
+
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
   OBPSIcon: <OBPSIcon className="icon" />,
@@ -85,7 +92,7 @@ const IconsObject = {
   FSMIcon: <FSMIcon className="icon" />,
   WSIcon: <WSICon className="icon" />,
   MCollectIcon: <MCollectIcon className="icon" />,
-  CHBIcon:<CHBIcon className="icon" />,
+  CHBIcon: <CHBIcon className="icon" />,
   BillsIcon: <CollectionIcon className="icon" />,
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
@@ -96,14 +103,22 @@ const IconsObject = {
   Phone: <Phone className="icon" />,
   LoginIcon: <LoginIcon className="icon" />,
 };
-const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
+const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed, closeMobileSidebar }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const location = useLocation();
   const { pathname } = location;
   const { data: storeData, isFetched } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  const user = Digit.UserService.getUser();
+  const user = Digit.UserService.getUser().token !== null ? Digit.UserService.getUser() : {
+    access_token: "asdf", info: {
+      tanentID: "pg",
+      uuid: "asdf",
+      name: "Shubham Singh",
+      "mobileNumber": 1231231231,
+      emailId: "ss@gmail.com"
+    }
+  };
   let isMobile = window.Digit.Utils.browser.isMobile();
 
   const [isEmployee, setisEmployee] = useState(false);
@@ -113,7 +128,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
   useEffect(() => {
     const fetchPhoto = async () => {
-      const usersResponse = await Digit.UserService.userSearch(user?.info?.tenantId, { uuid: [user?.info?.uuid||user?.user?.[0]?.uuid] }, {});
+      const usersResponse = await Digit.UserService.userSearch(user?.info?.tenantId, { uuid: [user?.info?.uuid || user?.user?.[0]?.uuid] }, {});
       if (usersResponse?.user?.[0]?.photo) {
         try {
           const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
@@ -130,6 +145,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   }, [user?.info?.photo, tenantId]);
   const handleLogout = () => {
     toggleSidebar(false);
+    if (closeMobileSidebar) closeMobileSidebar();
     setShowDialog(true);
   };
   const handleOnSubmit = () => {
@@ -144,19 +160,22 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     return <Loader />;
   }
 
+  const handleNavClick = () => {
+    if (closeMobileSidebar) closeMobileSidebar();
+  };
+
   const redirectToLoginPage = () => {
-    // localStorage.clear();
-    // sessionStorage.clear();
-    history.push(`${APPLICATION_PATH}/citizen/login`);
+    if (closeMobileSidebar) closeMobileSidebar();
+    navigate(`${APPLICATION_PATH}/citizen/login`);
   };
   // Function to redirect the user to the EDCR scrutiny page
   const redirectToScrutinyPage = () => {
-    // localStorage.clear();
-    // sessionStorage.clear();
-    history.push(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
+    if (closeMobileSidebar) closeMobileSidebar();
+    navigate(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
   };
   const showProfilePage = () => {
-    history.push(`${APPLICATION_PATH}/citizen/user/profile`);
+    if (closeMobileSidebar) closeMobileSidebar();
+    navigate(`${APPLICATION_PATH}/citizen/user/profile`);
   };
   //const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
@@ -175,21 +194,24 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       itemComponent = item.text;
     }
     const Item = () => (
-      <span className="menu-item" {...item.populators}>
+      <span className="menu-item" {...item.populators} onClick={(e) => {
+        if (item.populators?.onClick) item.populators.onClick(e);
+        handleNavClick();
+      }}>
         {leftIcon}
         <div className="menu-label">{itemComponent}</div>
       </span>
     );
     if (item.type === "external-link") {
       return (
-        <a href={item.link}>
+        <a href={item.link} onClick={handleNavClick}>
           <Item />
         </a>
       );
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")}>
+        <Link to={item?.link.replace("/digit-ui/", "/upyog-ui/")} onClick={handleNavClick}>
           <Item />
         </Link>
       );
@@ -199,8 +221,8 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   };
   let profileItem;
 
-  if (isFetched && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} profilePhotoUrl={profilePhotoUrl}/>;
+  if (true && user && user.access_token) {
+    profileItem = <Profile info={user?.info} stateName={stateInfo?.name || "City A"} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed} />;
     menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line");
     menuItems = [
       ...menuItems,
@@ -213,16 +235,10 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
         },
       },
       {
-        text: t("CORE_COMMON_LOGOUT"),
-        element: "LOGOUT",
-        icon: "LogoutIcon",
-        populators: { onClick: handleLogout },
-      },
-      {
         text: (
           <React.Fragment>
-            {t("CS_COMMON_HELPLINE")}
-            <div className="telephone" style={{ marginTop: "-10%" }}>
+            <span className="sidebar-helpline-title">{t("CS_COMMON_HELPLINE")}</span>
+            <div className="telephone sidebar-helpline-telephone">
               <div className="link">
                 <a href={`tel:${filteredTenantContact}`}>{filteredTenantContact}</a>
               </div>
@@ -234,7 +250,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       },
     ];
   }
-  Object.keys(linkData)
+  Object.keys(linkData || {})
     ?.sort((x, y) => y.localeCompare(x))
     ?.map((key) => {
       if (linkData[key][0]?.sidebar === "digit-ui-links") {
@@ -250,34 +266,39 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   return (
     <React.Fragment>
-      <div>
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            top: "0px",
-            backgroundColor: "rgba(0, 0, 0, 0.54)",
-            pointerzevents: "auto",
-          }}
-        ></div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: isMobile ? "calc(100vh - 56px)" : "auto",
-            zIndex: "99",
-          }}
-        >
-          {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
-            {menuItems?.map((item, index) => (
-              <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
-                <MenuItem item={item} />
-              </div>
-            ))}
+      <div className="static-citizen-sidebar-inner">
+        <div className="sidebar-logo-header">
+          <div className="logo-design">
+            {isSidebarCollapsed ? <img src="/upyog-ui/images/logo-mobile.png" alt="UPYOG Logo" /> : <img src="/upyog-ui/images/logo-secondary.png" alt="UPYOG Logo" />}
           </div>
+          {isMobile && (
+            <button
+              type="button"
+              className="sidebar-mobile-close-btn"
+              onClick={closeMobileSidebar}
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+          )}
         </div>
-        <div>{showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}</div>
+        {profileItem}
+        <div className="drawer-desktop">
+          {menuItems?.map((item, index) => (
+            <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""} ${item?.element === "Helpline" || item?.id === "help-line" ? "sidebar-list-helpline" : ""}`} key={index}>
+              <MenuItem item={item} />
+            </div>
+          ))}
+        </div>
+        <div className="version-badge">
+          <span>v5.1</span>
+        </div>
+        <div className="citizen-logout">
+          <button onClick={handleLogout}>
+            <span>{IconsObject.LogoutIcon}</span><span>{t("CORE_COMMON_LOGOUT")}</span>
+          </button>
+        </div>
+        {showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}
       </div>
     </React.Fragment>
   );

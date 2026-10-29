@@ -12,7 +12,7 @@ const EmployeeSideBar = () => {
   const { t } = useTranslation();
   useEffect(() => {
     if (isLoading) {
-      return <Loader />;
+      return;
     }
     sidebarRef.current.style.cursor = "pointer";
     collapseNav();
@@ -43,7 +43,7 @@ const EmployeeSideBar = () => {
   //creating the object structure from mdms value for easy iteration
   let configEmployeeSideBar1 = {};
   data?.actions?.filter((e) => e.url === "url")?.forEach((item) => {
-    _.set(configEmployeeSideBar1,item.path,{...item}) 
+    _.set(configEmployeeSideBar1, item.path, { ...item })
   })
 
   data?.actions
@@ -51,7 +51,7 @@ const EmployeeSideBar = () => {
     .forEach((item) => {
       let index = item.path.split(".")[0];
       if (search == "" && item.path !== "") {
-         index = item.path.split(".")[0];
+        index = item.path.split(".")[0];
         if (index === "TradeLicense") index = "Trade License";
         if (!configEmployeeSideBar[index]) {
           configEmployeeSideBar[index] = [item];
@@ -59,7 +59,7 @@ const EmployeeSideBar = () => {
           configEmployeeSideBar[index].push(item);
         }
       } else if (item.path !== "" && t(`ACTION_TEST_${index?.toUpperCase()?.replace(/[ -]/g, "_")}`)?.toLowerCase().includes(search.toLowerCase())) {
-         index = item.path.split(".")[0];
+        index = item.path.split(".")[0];
         if (index === "TradeLicense") index = "Trade License";
         if (!configEmployeeSideBar[index]) {
           configEmployeeSideBar[index] = [item];
@@ -71,16 +71,16 @@ const EmployeeSideBar = () => {
   let res = [];
 
   //method is used for restructing of configEmployeeSideBar1 nested object into nested array object
-  function restructuringOfConfig (tempconfig){
+  function restructuringOfConfig(tempconfig) {
     const result = [];
-    for(const key in tempconfig){
-      const value= tempconfig[key];
-      if(typeof value === "object" && !(value?.id)){
-      const children = restructuringOfConfig(value);
-      result.push({label : key,children, icon:children?.[0]?.icon, to:""});
+    for (const key in tempconfig) {
+      const value = tempconfig[key];
+      if (typeof value === "object" && !(value?.id)) {
+        const children = restructuringOfConfig(value);
+        result.push({ label: key, children, icon: children?.[0]?.icon, to: "" });
       }
-      else{
-        result.push({label: key, value, icon:value?.leftIcon, to: key === "Home" ? "/sv-ui/employee" : value?.navigationURL});
+      else {
+        result.push({ label: key, value, icon: value?.leftIcon, to: key === "Home" ? "/sv-ui/employee" : value?.navigationURL });
       }
     }
 
@@ -116,18 +116,16 @@ const EmployeeSideBar = () => {
         });
       }
     }
-    if(res.find(a => a.moduleName === "HOME"))
-    {
+    if (res.find(a => a.moduleName === "HOME")) {
       //res.splice(0,1);
       const indx = res.findIndex(a => a.moduleName === "HOME");
       const home = res?.filter((ob) => ob?.moduleName === "HOME")
       let res1 = res?.filter((ob) => ob?.moduleName !== "HOME")
-      res = res1.sort((a,b) => a.moduleName.localeCompare(b.moduleName));
+      res = res1.sort((a, b) => a.moduleName.localeCompare(b.moduleName));
       home?.[0] && res.unshift(home[0]);
     }
-    else
-    {
-      res.sort((a,b) => a.moduleName.localeCompare(b.moduleName));
+    else {
+      res.sort((a, b) => a.moduleName.localeCompare(b.moduleName));
     }
     return res?.map((item, index) => {
       return <SubMenu item={item} key={index + 1} />;
@@ -162,7 +160,7 @@ const EmployeeSideBar = () => {
   };
 
   return (
-    <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{display:window.location.href.includes("main-dashboard-landing")?"none":""}}>
+    <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{ display: window.location.href.includes("main-dashboard-landing") ? "none" : "" }}>
       {renderSearch()}
       {splitKeyValue()}
     </div>

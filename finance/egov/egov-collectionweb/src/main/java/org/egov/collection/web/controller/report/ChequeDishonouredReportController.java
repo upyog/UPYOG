@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.DishonoredChequeBean;
@@ -18,7 +18,7 @@ import org.egov.infra.microservice.models.BankAccountServiceMapping;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -79,7 +79,7 @@ public class ChequeDishonouredReportController {
 
     @GetMapping(value = "/service/{accountNumber}")
     public @ResponseBody ResponseEntity getServiceByAccountNumber(
-            @PathVariable(name = "accountNumber", required = true) @SafeHtml String accountNumber) {
+            @PathVariable(name = "accountNumber", required = true) @SanitizeHtml String accountNumber) {
         try {
             List<BankAccountServiceMapping> bankAcntServiceMappings = microserviceUtils
                     .getBankAcntServiceMappings(accountNumber, null);

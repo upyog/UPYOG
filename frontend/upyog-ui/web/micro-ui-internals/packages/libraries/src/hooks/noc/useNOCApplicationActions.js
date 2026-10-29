@@ -1,8 +1,11 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import ApplicationUpdateActions from "../../services/molecules/NOC/ApplicationUpdateActions";
 
 const useNOCApplicationActions = (tenantId) => {
-  return useMutation((applicationData) => ApplicationUpdateActions(applicationData, tenantId));
+  return mutationTemplate({
+    mutationFn: (applicationData) =>
+      ApplicationUpdateActions(applicationData, tenantId),
+  });
 };
 
 export default useNOCApplicationActions;

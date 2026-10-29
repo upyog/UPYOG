@@ -1,16 +1,16 @@
 import React, { Fragment, useEffect, useCallback, useMemo,useState } from "react";
-import { SearchForm, Table, Card, Loader, Header, DownloadBtnCommon, DownloadIcon } from "@upyog/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header, DownloadBtnCommon, DownloadIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import CancelBillModal from "./CancelBillModal";
-import { useHistory } from "react-router-dom";
+
 import { join } from "lodash";
 import MobileCancelBill from "./MobileCancelBill";
 
 const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => {
-    const history = useHistory()
+    const navigate = Digit.Hooks.useCustomNavigate();
     const convertEpochToDate = (dateEpoch) => {
         if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
             return "NA";
@@ -37,7 +37,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
 
     
     const handleBillLinkClick = (row) => {
-        history.push(`/upyog-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}&from=ABG_CANCEL_BILL`,row)
+        navigate(`/upyog-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}&from=ABG_CANCEL_BILL`,row)
     }
 
     const getBillLink = (row) => {
@@ -155,7 +155,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
              }
         }
         //here do history.push to the response page and send filters there
-        history.push("/upyog-ui/employee/bills/response-cancelBill", {filters,currentBill});
+        navigate("/upyog-ui/employee/bills/response-cancelBill", {filters,currentBill});
         //call the cancel bill api from response page and show appropriate response
     }
 
@@ -182,22 +182,22 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
                 {t("ABG_CANCEL_BILL")}
             </Header>
             < Card className={"card-search-heading"}>
-                <span style={{ color: "#505A5F" }}>{t("WS_INFO_VALIDATION")}</span>
+                <span className="bills-index-wrapper">{t("WS_INFO_VALIDATION")}</span>
             </Card>
             <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchFields {...{ register, control, reset, tenantId, t,formState }} />
             </SearchForm>
             {isLoading && <Loader/>}
             {data && data?.length == 0 ?  (
-                <Card style={{ backgroundColor: "white", textAlign:"center" }}>
+                <Card className="bills-index-centered">
                 {t("ES_COMMON_NO_DATA")}
             </Card>):
             (isLoading===false && resultOk && 
-                <div style={{ backgroundColor: "white" }}>
-                    <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Roboto"}}>
+                <div className="bills-index-wrapper-2">
+                    <div className="sideContent bills-index-container-padding">
                     {t("ABG_SEARCH_RESULTS_HEADER")}
                     </div>
-                    <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
+                    <div className="sideContent bills-index-container-padding-2">
                         <span className="table-search-wrapper">
                             <DownloadBtn className="mrlg cursorPointer" onClick={() => handleExcelDownload(tabledata)} />
                         </span>

@@ -24,8 +24,8 @@ const SelectToDate = ({ onSelect, config, formData, register, control, errors, s
             control={control}
             name="toDate"
             defaultValue={formData?.toDate}
-            rules={{ required: true, validate: { isValidDate: isValidDate }}}
-            render={({ onChange, value }) => <TextInput type="date" isRequired={true} onChange={onChange} defaultValue={value} />}
+            rules={{ required: true, validate: { isValidDate: isValidDate } }}
+            render={({ field }) => <TextInput type="date" isRequired={true} onChange={field.onChange} defaultValue={field.value} />}
           />
           {errors && errors?.toDate && errors?.toDate?.type === "required" && <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>}
           {errors && errors?.toDate && errors?.toDate?.type === "isValidDate" && <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_INVALID`)}</CardLabelError>}

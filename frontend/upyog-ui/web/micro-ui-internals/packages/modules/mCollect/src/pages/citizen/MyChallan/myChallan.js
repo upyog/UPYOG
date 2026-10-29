@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Header, ResponseComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
-import { useHistory, Link } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const MyChallanResult = ({ template, header, actionButtonLabel }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const filters = {};
   const userInfo = Digit.UserService.getUser();
-  const tenantId = userInfo?.info?.tenantId;
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
   filters.mobileNumber = userInfo?.info?.mobileNumber;
 
-  const result = Digit.Hooks.mcollect.useMcollectSearchBill({ tenantId, filters });
+  const result = Digit.Hooks.mcollect.useMcollectSearchBill(
+    { tenantId, filters },
+    { enabled: !!(tenantId && filters.mobileNumber) }
+  );
 
   const onSubmit = (data) => {
-   history.push(`/upyog-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
+   navigate(`/upyog-ui/citizen/payment/my-bills/${data?.businesService}/${data?.ChannelNo}?workflow=mcollect`);
   };
 
   const payment = {};
@@ -63,11 +66,13 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
     };
   });
 
+  if (result?.isLoading) return <Loader />;
+
   return (
-    <div style={{ marginTop: "16px" }}>
+    <div className="mc-my-challan-top-spacing">
       <div >
         {header && (
-          <Header style={{ marginLeft: "8px" }}>
+          <Header className="mc-my-challan-header">
             {t(header)} ({searchResults?.length})
           </Header>
         )}
@@ -76,7 +81,7 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
         </div>
       </div>
 
-      <div style={{ marginLeft: "16px", marginTop: "16px", marginBottom: "46px" }}>
+      <div className="mc-my-challan-top-spacing-2">
         <p>{t("UC_NOT_ABLE_TO_FIND_BILL_MSG")} </p>
         <p className="link">
           <Link to="/upyog-ui/citizen/mcollect/search">{t("UC_CLICK_HERE_TO_SEARCH_LINK")}</Link>

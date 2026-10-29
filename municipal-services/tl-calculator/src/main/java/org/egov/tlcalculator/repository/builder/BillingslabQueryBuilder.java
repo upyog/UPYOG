@@ -94,7 +94,8 @@ public class BillingslabQueryBuilder {
 		}
 
 		if (null != billingSlabSearcCriteria.getUomValue()) {
-			queryBuilder.append(" AND toUom > ?");
+			// Include the upper boundary value while matching the configured UOM range.
+			queryBuilder.append(" AND toUom >= ?");
 			preparedStmtList.add(billingSlabSearcCriteria.getUomValue());
 		}
 		

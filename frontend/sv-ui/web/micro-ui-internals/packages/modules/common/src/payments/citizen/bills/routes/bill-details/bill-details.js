@@ -1,11 +1,11 @@
 import { Card, Header, KeyNote, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const BillDetails = ({ businessService }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state, pathname, search } = useLocation();
   const userInfo = Digit.UserService.getUser();
   let { consumerCode } = useParams();
@@ -13,7 +13,7 @@ const BillDetails = ({ businessService }) => {
   const [bill, setBill] = useState(state?.bill);
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
 
-  const { data, isLoading } =  Digit.Hooks.useFetchPayment({tenantId, businessService, consumerCode: consumerCode});
+  const { data, isLoading } = Digit.Hooks.useFetchPayment({ tenantId, businessService, consumerCode: consumerCode });
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
 
   const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
@@ -54,13 +54,22 @@ const BillDetails = ({ businessService }) => {
       setBill(requiredBill);
     }
   }, [isLoading]);
-  
+
   const onSubmit = () => {
     let paymentAmount = paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? getTotal() : amount;
-      history.push(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId});
-    
+    // navigate(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId});
+    navigate(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`,
+      {
+        state: {
+          paymentAmount,
+          tenantId: billDetails?.tenantId,
+        },
+      }
+    );
+
+
   };
-  
+
   if (isLoading) return <Loader />;
 
   return (
@@ -68,9 +77,9 @@ const BillDetails = ({ businessService }) => {
       <Header>{t("CS_PAYMENT_BILL_DETAILS")}</Header>
       <Card>
         <div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <KeyNote keyValue={t(label)} note={consumerCode} />
-        </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <KeyNote keyValue={t(label)} note={consumerCode} />
+          </div>
           {/* <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} /> */}
           <KeyNote keyValue={t("CS_PAYMENT_TOTAL_AMOUNT")} note={`₹ ${getTotal().toLocaleString("en-IN")}`} />
         </div>

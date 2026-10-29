@@ -1,9 +1,19 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { WorkflowService } from "../../services/elements/WorkFlow";
 
 const useWorkflowData = (tenantId, businessIds) => {
-  return useQuery("WORKFLOW_BY_ID", () => WorkflowService.getByBusinessId(tenantId, businessIds), { staleTime: Infinity });
+  const queryKey = [
+    "FSM_WORKFLOW_BY_ID",
+    tenantId,
+    JSON.stringify(businessIds),
+  ];
+
+  return queryTemplate({
+    queryKey,
+    queryFn: () =>
+      WorkflowService.getByBusinessId(tenantId, businessIds),
+    config: { staleTime: Infinity },
+  });
 };
 
 export default useWorkflowData;

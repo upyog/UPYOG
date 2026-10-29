@@ -17,11 +17,11 @@ import {
   Modal,
   CardText,
   Dropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ConfirmationBox from "../../../components/Confirmation";
 
 const Heading = (props) => {
@@ -46,7 +46,7 @@ const EditVendorDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   let { id: dsoId } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
@@ -121,9 +121,9 @@ const EditVendorDetails = (props) => {
       case "ADD_DRIVER":
         return setShowModal(true);
       case "EDIT":
-        return history.push("/upyog-ui/employee/fsm/registry/modify-vendor/" + dsoId);
+        return navigate("/upyog-ui/employee/vendor/registry/modify-vendor/" + dsoId);
       case "HOME":
-        return history.push("/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR");
+        return navigate("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
       default:
         break;
     }
@@ -192,7 +192,7 @@ const EditVendorDetails = (props) => {
         refetchDriver();
         setTimeout(() => {
           closeToast();
-          if (selectedAction === "DELETE") history.push(`/upyog-ui/employee/fsm/registry`);
+          if (selectedAction === "DELETE") navigate(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR`);
         }, 5000);
       },
     });
@@ -202,10 +202,10 @@ const EditVendorDetails = (props) => {
 
   const onEdit = (details, type, id) => {
     if (type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER") {
-      history.push("/upyog-ui/employee/fsm/registry/modify-driver/" + id);
+      navigate("/upyog-ui/employee/vendor/registry/modify-driver/" + id);
     } else {
       let registrationNumber = details?.values?.find((ele) => ele.title === "ES_FSM_REGISTRY_VEHICLE_NUMBER")?.value;
-      history.push("/upyog-ui/employee/fsm/registry/modify-vehicle/" + registrationNumber);
+      navigate("/upyog-ui/employee/vendor/registry/modify-vehicle/" + registrationNumber);
     }
   };
 
@@ -300,12 +300,12 @@ const EditVendorDetails = (props) => {
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_FSM_REGISTRY_VENDOR_DETAILS")}</Header>
+          <Header className="vnd-driver-details-header">{t("ES_FSM_REGISTRY_VENDOR_DETAILS")}</Header>
           <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
-            <Card style={{ position: "relative" }}>
+            <Card className="vnd-driver-details-card">
               {dsoData?.[0]?.employeeResponse?.map((detail, index) => (
                 <React.Fragment key={index}>
-                  {index > 0 && <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t(detail.title)}</CardSectionHeader>}
+                  {index > 0 && <CardSectionHeader className="vnd-driver-details-header-2">{t(detail.title)}</CardSectionHeader>}
                   <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
                     <StatusTable>
                       {detail?.values?.map((value, index) => {
@@ -327,12 +327,12 @@ const EditVendorDetails = (props) => {
                               <h2>
                                 {t(detail.type)} {index + 1}
                               </h2>
-                              <div style={{ display: "flex" }}>
+                              <div className="vnd-registered-vendor-search-flex-container">
                                 <span onClick={() => onEdit(data, detail.type, data.id)}>
-                                  <EditIcon style={{ cursor: "pointer", marginRight: "20px" }} className="edit" fill="#a82227" />
+                                  <EditIcon className="edit vnd-edit-vendor-details-clickable" fill="#a82227" />
                                 </span>
                                 <span onClick={() => onDelete(data, detail.type, data.id)}>
-                                  <DeleteIcon style={{ cursor: "pointer" }} className="delete" fill="#a82227" />
+                                  <DeleteIcon className="delete vnd-edit-vendor-details-clickable-2" fill="#a82227" />
                                 </span>
                               </div>
                             </div>
@@ -352,7 +352,7 @@ const EditVendorDetails = (props) => {
                       })}
                       {detail.type && (
                         <div
-                          style={{ color: "#a82227", cursor: "pointer", marginLeft: "16px" }}
+                          className="vnd-edit-vendor-details-clickable-3"
                           onClick={() => onActionSelect(detail.type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER" ? "ADD_DRIVER" : "ADD_VEHICLE")}
                         >
                           {t(`${detail.type}_ADD`)}
@@ -384,7 +384,7 @@ const EditVendorDetails = (props) => {
               actionSaveLabel={t(selectedAction === "DELETE" ? "ES_EVENT_DELETE" : "CS_COMMON_SUBMIT")}
               actionSaveOnSubmit={handleVendorUpdate}
             >
-              <Card style={{ boxShadow: "none" }}>{renderModalContent()}</Card>
+              <Card className="vnd-driver-details-card-2">{renderModalContent()}</Card>
             </Modal>
           )}
           {showToast && (
@@ -394,7 +394,7 @@ const EditVendorDetails = (props) => {
               onClose={closeToast}
             />
           )}
-          <ActionBar style={{ zIndex: "19" }}>
+          <ActionBar className="vnd-driver-details-wrapper">
             {displayMenu ? (
               <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE", "HOME"]} t={t} onSelect={onActionSelect} />
             ) : null}

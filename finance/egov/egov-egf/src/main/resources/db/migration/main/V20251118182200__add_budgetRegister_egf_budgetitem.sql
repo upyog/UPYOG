@@ -1,0 +1,2 @@
+-- ALTER TABLE IF EXISTS egf_budgetitem
+-- ADD COLUMN IF NOT EXISTS budget_register_id bigint;

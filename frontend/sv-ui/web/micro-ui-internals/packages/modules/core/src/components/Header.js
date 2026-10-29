@@ -7,7 +7,7 @@ const Header = () => {
   const { stateInfo } = storeData || {};
   const { t } = useTranslation()
 
-  if (isLoading) return <Loader/>;
+  if (isLoading) return <Loader />;
 
   return (
     <div className="bannerHeader">

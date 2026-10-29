@@ -150,30 +150,26 @@ export const Config = {
     searchResult: {
       label: "",
       uiConfig: {
-        columns: [
-          // {
-          //   label: "Unique Identifier",
-          //   jsonPath: "uniqueIdentifier",
-          //   additionalCustomization:true
-          // },
-          // {
-          //   label: "Id",
-          //   jsonPath: "data.id",
-          // },
-          // {
-          //   label: "Name",
-          //   jsonPath: "data.name",
-          // },
-          // {
-          //   label: "Code",
-          //   jsonPath: "data.code",
-          // },
-          // { label: "Description", jsonPath: "data.description" },
-          // {
-          //   label: "Active",
-          //   jsonPath: "data.active",
-          // }
-        ],
+      columns: [
+  {
+    Header: "Code",
+    accessor: (row) => row?.data?.code,
+  },
+  {
+    Header: "Name",
+    accessor: (row) => row?.data?.name,
+  },
+  {
+    Header: "Is Active",
+    accessor: (row) => row?.isActive,
+    Cell: ({ value }) =>
+      value ? (
+        <span style={{ color: "green" }}>Yes</span>
+      ) : (
+        <span style={{ color: "red" }}>No</span>
+      ),
+  },
+],
         enableGlobalSearch: false,
         enableColumnSort: true,
         resultsJsonPath: "mdms",

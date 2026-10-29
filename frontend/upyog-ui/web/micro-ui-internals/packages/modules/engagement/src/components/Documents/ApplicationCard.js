@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { areEqual } from "../../utils";
 
 const ApplicationCard = ({
@@ -18,7 +18,7 @@ const ApplicationCard = ({
   const [popup, setPopup] = useState(false);
   const [params, setParams] = useState(searchParams);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory()
+  const navigate = Digit.Hooks.useCustomNavigate();
   useEffect(() => {
     if (type) setPopup(true);
   }, [type]);
@@ -35,14 +35,14 @@ const ApplicationCard = ({
   const redirectToDetailsPage = (data) => {
     const details = responseData?.find((item) => (areEqual(item.postedBy, data["Posted By"]) && areEqual(item.name, data["Document Name"])));
     if (details) {
-      history.push(`/upyog-ui/employee/engagement/documents/inbox/details/${details?.name}`, { details })
+      navigate(`/upyog-ui/employee/engagement/documents/inbox/details/${details?.name}`, { details })
     }
   }
 
   let result;
   if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Card className="eng-application-card-flex-row">
         {t("CE_DOCUMENTS_NOT_FOUND")}<br />
         <Link className="link" to={`/upyog-ui/employee/engagement/documents/inbox/new-doc`}>{t('NEW_DOCUMENT_TEXT')}</Link>
       </Card>

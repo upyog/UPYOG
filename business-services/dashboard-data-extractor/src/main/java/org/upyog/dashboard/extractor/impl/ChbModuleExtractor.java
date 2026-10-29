@@ -1,0 +1,104 @@
+package org.upyog.dashboard.extractor.impl;
+
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.upyog.dashboard.util.ExtractorUtil;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Component;
+import org.upyog.dashboard.chb.dto.CHBAggregatedData;
+import org.upyog.dashboard.chb.dto.CHBDTO;
+import org.upyog.dashboard.chb.mapper.CHBRowMapper;
+import org.upyog.dashboard.common.constants.Module;
+import org.upyog.dashboard.config.SchemaMappingConfig;
+import org.upyog.dashboard.extractor.ModuleExtractor;
+import org.upyog.dashboard.chb.model.RawChbMetric;
+import org.upyog.dashboard.util.HierarchyParser;
+import org.upyog.dashboard.util.DatabaseQueryExecutor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Extracts CHB (Community Hall Booking) metrics for a given date and builds a CHBDTO
+ * ready for ingestion into the National Dashboard without reflection.
+ */
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
+
+    private final DatabaseQueryExecutor queryExecutor;
+    private final SchemaMappingConfig schemaMappingConfig;
+    private final HierarchyParser hierarchyParser;
+
+    @Override
+    public Module getModule() {
+        return Module.CHB;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Extracts CHB metrics for {@code targetDate} by executing the combined metrics query
+     * and mapping each row to a {@link CHBDTO}.
+     *
+     * @param targetDate the date for which CHB metrics should be extracted
+     * @return a list of {@link CHBDTO} payloads, one per tenant row returned by the query
+     */
+    @Override
+    public List<CHBDTO> extractData(List<String> tenantIds, LocalDate targetDate) {
+        String effectiveTenantId = ExtractorUtil.resolveEffectiveTenantId(tenantIds, getModule());
+        String dateStr = ExtractorUtil.formatDate(targetDate);
+        log.info("Starting Community Hall Booking (CHB) metrics extraction for tenants [{}] date: {}", effectiveTenantId, dateStr);
+
+        MapSqlParameterSource params = ExtractorUtil.buildStandardQueryParams(effectiveTenantId, targetDate);
+        List<CHBDTO> results = new ArrayList<>();
+
+        SchemaMappingConfig.ModuleQueries chbQueries = schemaMappingConfig.getQueriesForModule(Module.CHB);
+        if (chbQueries == null) {
+            throw new IllegalStateException("No query mapping found in chb-schema-mapping.yml for module CHB");
+        }
+
+        List<RawChbMetric> combinedResults = queryExecutor.executeQueryWithRetry(chbQueries.getCombinedMetricsQuery(), params, CHBRowMapper.COMBINED_ROW_MAPPER, "ChbModuleExtractor");
+        for (RawChbMetric rawChbMetric : combinedResults) {
+            results.add(buildChbDto(rawChbMetric, dateStr));
+        }
+        return results;
+    }
+
+
+    /**
+     * Converts a single raw row map into a populated {@link CHBDTO}.
+     *
+     * @param rawChbMetric the raw column values returned by the database
+     * @param dateStr the formatted date string (dd-MM-yyyy) for the target date
+     * @return a fully populated {@link CHBDTO} instance
+     */
+    private CHBDTO buildChbDto(RawChbMetric rawChbMetric, String dateStr) {
+        String currentTenantId = rawChbMetric.getTenantid();
+        Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
+
+        CHBAggregatedData combinedData = new CHBAggregatedData();
+        combinedData.setTotalActiveVenueAvailable(rawChbMetric.getTotalActiveVenueAvailable());
+        combinedData.setTotalApplicationReceived(rawChbMetric.getTotalApplicationReceived());
+        combinedData.setTotalCollections(rawChbMetric.getTotalCollections());
+        combinedData.setNoShowBookings(rawChbMetric.getNoShowBookings());
+        combinedData.setBookingsJson(rawChbMetric.getBookingsJson());
+        combinedData.setCreatedByListJson(rawChbMetric.getCreatedByListJson());
+
+        return CHBDTO.builder()
+                .date(dateStr)
+                .module(getModule().name())
+                .ward(parsedHierarchy.get(DashboardExtractorConstants.KEY_WARD))
+                .ulb(parsedHierarchy.get(DashboardExtractorConstants.KEY_ULB))
+                .region(parsedHierarchy.get(DashboardExtractorConstants.KEY_REGION))
+                .state(parsedHierarchy.get(DashboardExtractorConstants.KEY_STATE))
+                .combinedMetrics(combinedData)
+                .build();
+    }
+}

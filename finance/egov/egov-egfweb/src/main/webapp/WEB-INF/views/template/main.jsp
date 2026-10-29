@@ -49,15 +49,23 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <!DOCTYPE html>
 <html oncontextmenu="return false;">
 	<head>
-		<spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+<%
+	org.springframework.web.context.WebApplicationContext _wac = org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext(application);
+	if (_wac != null && _wac.getEnvironment() != null) {
+		String _analyticsEnabled = _wac.getEnvironment().getProperty("analytics.enabled");
+		if (_analyticsEnabled != null) pageContext.setAttribute("analyticsEnabled", Boolean.valueOf(_analyticsEnabled));
+		String _analyticsConfig = _wac.getEnvironment().getProperty("analytics.config");
+		if (_analyticsConfig != null) pageContext.setAttribute("analyticsConfig", _analyticsConfig);
+	}
+%>
 		<c:if test="${analyticsEnabled}">
-			<spring:eval expression="@environment.getProperty('analytics.config')" scope="application"/>
+			${analyticsConfig}
 		</c:if>
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">

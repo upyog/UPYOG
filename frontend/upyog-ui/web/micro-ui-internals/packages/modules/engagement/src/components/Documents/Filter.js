@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CloseSvg, Loader, SubmitBar, Dropdown, RefreshIcon } from "@upyog/digit-ui-react-components";
+import { CloseSvg, Loader, SubmitBar, Dropdown, RefreshIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 
@@ -67,7 +67,7 @@ const Filter = ({ type = "desktop", onClose, onSearch, onFilterChange, searchPar
                     t={t}
                 />
                 <div>
-                    <SubmitBar style={{ width: '100%' }} onSubmit={() => applyLocalFilters()} label={t("ES_COMMON_APPLY")} />
+                    <SubmitBar className="eng-filter-fullwidth" onSubmit={() => applyLocalFilters()} label={t("ES_COMMON_APPLY")} />
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, Fragment } from "react";
-import { FormStep, TextInput, CardLabel, Loader, CardLabelError, LabelFieldPair, SubmitBar, TextArea } from "@upyog/digit-ui-react-components";
+import React, { useEffect, useState, Fragment, useRef } from "react";
+import { FormStep, TextInput, CardLabel, Loader, CardLabelError, LabelFieldPair, SubmitBar, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import { fetchCurrentLocation, reverseGeocode } from "../components/locationUtils";
 import { fetchGrievanceCategories } from "../utils/index";
 import { styles } from "../utils/styles";
@@ -20,6 +20,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   const [isFetchingAddress, setIsFetchingAddress] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const spinnerRef = useRef(null);
   const [addressDetails, setAddressDetails] = useState(formData?.addressDetails || {});
   const [documents, setDocuments] = useState(formData?.documents || {});
   const [showAddressPopup, setShowAddressPopup] = useState(false);
@@ -66,6 +67,19 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       onSelect(config.key, formStepData, false, 0);
     }
   };
+
+  // CSP-friendly spinner animation: avoid injecting style tags/keyframes at runtime.
+  useEffect(() => {
+    const el = spinnerRef.current;
+    if (!el || !isLoading || typeof el.animate !== "function") return;
+
+    const animation = el.animate(
+      [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
+      { duration: 1000, iterations: Infinity, easing: "linear" }
+    );
+
+    return () => animation.cancel();
+  }, [isLoading]);
 
   const handleLocationChange = (e) => {
     setLocation(e.target.value);
@@ -254,7 +268,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               name="name"
               placeholder={t("PGR_AI_NAME")}
               value={name}
-              style={{ width: "45%", ...styles.textInputStyle }}
+              className="width-45" style={styles.textInputStyle}
               onChange={(e) => setName(e.target.value)}
             />
           </>
@@ -273,7 +287,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               name="phoneNumber"
               placeholder={t("PGR_AI_PHONE_NUMBER")}
               value={phoneNumber}
-              style={{ width: "45%", ...styles.textInputStyle }}
+              className="width-45" style={styles.textInputStyle}
               onChange={handlePhoneNumberChange}
             />
           </>
@@ -281,16 +295,10 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         <CardLabel style={styles.cardLabelStyle}>
           {`${t("PGR_AI_INPUT_GRIEVANCE")}`} <span style={styles.requiredAsterisk}>*</span>
         </CardLabel>
-        <div style={{
-          color: "#902434",
-          fontSize: "14px",
-          marginBottom: "8px",
-          fontStyle: "italic",
-          width: user.type === "EMPLOYEE" ? "45%" : "75%"
-        }}>
+        <div className={`pgrai-err-msg ${user.type === "EMPLOYEE" ? "field-width-emp45-cit75--emp" : "field-width-emp45-cit75"}`}>
           {t("START_TYPING_TO_GET_SUGGESTIONS")}
         </div>
-        <div style={{ position: "relative" }}>
+        <div className="pgrai-new-grievance-wrapper">
           <TextArea
             t={t}
             type="text"
@@ -298,7 +306,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             name="grievance"
             value={grievanceText}
             placeholder={t("PGR_AI_GRIEVANCE_PLACEHOLDER")}
-            style={{ width: user.type === "EMPLOYEE" ? "45%" : "44%", ...styles.textInputStyle }}
+            className={user.type === "EMPLOYEE" ? "width-45" : "width-44"} style={styles.textInputStyle}
             onChange={(e) => {
               const newValue = e.target.value;
               setGrievanceText(newValue);
@@ -313,7 +321,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           />
 
           {showSuggestions && suggestions.length > 0 && (
-            <div style={{ ...styles.suggestionContainer, width: "45%" }}>
+            <div className="width-45" style={styles.suggestionContainer}>
               {suggestions.map((suggestion, index) => (
                 <div
                   key={suggestion.id || index}
@@ -330,7 +338,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
         {isLoading && (
           <div style={styles.loaderContainer}>
-            <div className="spinner" style={styles.customLoader}></div>
+            <div ref={spinnerRef} style={styles.customLoader} />
             <span style={styles.loadingText}>{t("PGR_FINDING_SUGGESTIONS")}</span>
           </div>
         )}
@@ -350,10 +358,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             }
           }}
           optionKey="name"
-          style={{
-            width: user.type === "EMPLOYEE" ? "45%" : "75%",
-            ...styles.textInputStyle
-          }}
+          className={user.type === "EMPLOYEE" ? "field-width-emp45-cit75--emp" : "field-width-emp45-cit75"} style={styles.textInputStyle}
           placeholder={t("PGR_AI_GRIEVANCE_TYPE_PLACEHOLDER")}
           disable={isLoading || menuPaths.length === 0}
         />
@@ -380,10 +385,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             }
           }}
           optionKey="name"
-          style={{
-            width: user.type === "EMPLOYEE" ? "45%" : "75%",
-            ...styles.textInputStyle
-          }}
+          className={user.type === "EMPLOYEE" ? "field-width-emp45-cit75--emp" : "field-width-emp45-cit75"} style={styles.textInputStyle}
           placeholder={t("PGR_AI_GRIEVANCE_SUB_TYPE_PLACEHOLDER")}
           disable={isLoading || !grievanceType}
         />
@@ -399,7 +401,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             value={location}
             placeholder={t("PGR_AI_GRIEVANCE_LOCATION_PLACEHOLDER")}
             onChange={handleLocationChange}
-            style={{ paddingRight: "30px", width: user.type === "EMPLOYEE" ? "45%" : "75%", ...styles.textInputStyle }}
+            className={`padding-right-30 ${user.type === "EMPLOYEE" ? "width-45" : "width-75"}`} style={styles.textInputStyle}
           />
           {/* Icon for fetching the user's current location. 
       Clicking this triggers the handleFetchLocation function. */}
@@ -427,7 +429,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           <AddressPopup t={t} isOpen={showAddressPopup} onClose={() => setShowAddressPopup(false)} onSubmit={handleAddressSubmit} />
 
         )}
-        <LabelFieldPair style={{ marginTop: "16px" }}>
+        <LabelFieldPair className="pgrai-new-grievance-top-spacing">
           <CardLabel style={styles.cardLabelStyle}>{`${t("PGR_AI_LANDMARK")}`} <span style={styles.requiredAsterisk}>*</span></CardLabel>
         </LabelFieldPair>
         <TextInput
@@ -435,10 +437,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           type="text"
           name="landmark"
           placeholder={t("PGR_AI_LANDMARK_PLACEHOLDER")}
-          style={{
-            width: user.type === "EMPLOYEE" ? "45%" : "75%",
-            ...styles.textInputStyle
-          }}
+          className={user.type === "EMPLOYEE" ? "field-width-emp45-cit75--emp" : "field-width-emp45-cit75"} style={styles.textInputStyle}
           value={addressDetails.landmark || ""}
           onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}
           disabled={isLoading}
@@ -449,7 +448,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
        <div>
             <CardLabel style={styles.cardLabelStyle}>{`${t("PGR_AI_ADDRESS")}`}</CardLabel>
             <div className="field">
-              <TextInput t={t} value={address}readOnly style={{ ...styles.readOnlyInput,width: user.type === "EMPLOYEE" ? "45%" : "75%",   ...styles.textInputStyle  }} />
+              <TextInput t={t} value={address} readOnly className={user.type === "EMPLOYEE" ? "width-45" : "width-75"} style={Object.assign({}, styles.readOnlyInput, styles.textInputStyle)} />
             </div>
           </div>
         )}

@@ -50,7 +50,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	 <query name="getSubLedgerCodes">
-   		 <![CDATA[from CChartOfAccounts where id in (select glCodeId from CChartOfAccountDetail) and id in (:param_0)]]>
-   	 </query>
+	<query name="getSubLedgerCodes">
+		<![CDATA[from CChartOfAccounts where id in (select glCodeId.id from CChartOfAccountDetail) and id in (:param_0)]]>
+	</query>
  </hibernate-mapping>

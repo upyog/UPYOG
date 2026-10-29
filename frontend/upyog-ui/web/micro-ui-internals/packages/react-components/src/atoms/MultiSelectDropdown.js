@@ -86,10 +86,10 @@ const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, def
         value={option[optionsKey]}
         checked={alreadyQueuedSelectedState.find((selectedOption) => selectedOption[optionsKey] === option[optionsKey]) ? true : false}
         onChange={(e) => isPropsNeeded?onSelectToAddToQueue(e, option,props):isOBPSMultiple?onSelectToAddToQueue(e, option,BlockNumber):onSelectToAddToQueue(e, option)}
-        style={{minWidth: "24px", width: "100%"}}
+        className="rc-multi-select-dropdown-fullwidth"
       />
       <div className="custom-checkbox">
-        <CheckSvg style={{innerWidth: "24px", width: "24px"}}/>
+        <CheckSvg className="rc-multi-select-dropdown-icon"/>
       </div>
       <p className="label" style={index === optionIndex ? {
                     opacity: 1,

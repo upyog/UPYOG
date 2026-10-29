@@ -33,7 +33,7 @@ const MobileInbox = ({
   };
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="cnd-mobile-inbox-wrapper">
       <div className="inbox-container">
         <div className="filters-container">
           <ApplicationCard

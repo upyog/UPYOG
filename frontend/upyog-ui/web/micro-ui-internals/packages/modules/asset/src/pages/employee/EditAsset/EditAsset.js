@@ -1,9 +1,8 @@
-import { FormComposer, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { editConfig } from "../../../config/Create/editConfig";
 
 const EditAsset = () => {
@@ -12,11 +11,12 @@ const EditAsset = () => {
   const [canSubmit, setSubmitValve] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const queryClient = useQueryClient();
   const { id: applicationNo } = useParams();
   const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-   const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
-   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
+  const mutation = Digit.Hooks.asset.useEditUpdateAPI(tenantId, false);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
 
 
@@ -65,6 +65,36 @@ const convertStringToFloat = (amountString) => {
   return isNaN(floatValue) ? null : floatValue;
 };
 
+  const handleSubmit = (formData) => {
+    mutation.mutate(
+      {
+        Asset: formData,
+      },
+      {
+        onSuccess: (response) => {
+          queryClient.clear();
+          navigate("/upyog-ui/employee/asset/assetservice/edit-response", { 
+            replace: true, 
+            state: { 
+              Assets: formData,
+              isSuccess: true,
+              response: response
+            } 
+          });
+        },
+        onError: (error) => {
+          navigate("/upyog-ui/employee/asset/assetservice/edit-response", { 
+            replace: true, 
+            state: { 
+              Assets: formData,
+              isSuccess: false,
+              error: error
+            } 
+          });
+        }
+      }
+    );
+  };
 
   const onSubmit = (data) => {
     
@@ -130,10 +160,7 @@ const convertStringToFloat = (amountString) => {
       }, 
     };
     console.log('Form Data:- ', formData);
-
-    history.replace("/upyog-ui/employee/asset/assetservice/edit-response", { Assets: formData }); 
-    
-
+    handleSubmit(formData);
   };
     
 const configs = editConfig;    

@@ -1,11 +1,11 @@
-import { Card, CardHeader, CardText, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import BookingPopup from "../components/BookingPopup";
 
 const InfoPage = ({ t, onSelect, formData, config, userType }) => {
   const [existingDataSet, setExistingDataSet] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isExistingPopupRequired, setIsExistingPopupRequired] = useState(false);
+  const [isExistingPopupRequired, setIsExistingPopupRequired] = useState(true);
 
   // Module mapping for dynamic header
   const moduleMap = {
@@ -51,6 +51,7 @@ const InfoPage = ({ t, onSelect, formData, config, userType }) => {
             setShowModal(false);
           }}
           setExistingDataSet={setExistingDataSet}
+          moduleKey={moduleKey}
         />
       )}
     </React.Fragment>

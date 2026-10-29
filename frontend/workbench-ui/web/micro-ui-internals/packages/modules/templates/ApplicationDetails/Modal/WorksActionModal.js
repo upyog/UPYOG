@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@upyog/workbench-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { configApproveModal, configRejectModal, configCheckModal } from "../config";
 
@@ -139,11 +139,9 @@ const WorksActionModal = ({ t, action, tenantId, state, id, closeModal, submitAc
   }, [mdmsData]);
 
 
-  
-  const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: action?.assigneeRoles?.toString(), isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: action?.action === "CHECK" || action?.action === "TECHNICALSANCATION"});
-
-
-  employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+  // HRMS module removed - approver search disabled
+  const approverLoading = false;
+  const employeeDatav1 = { Employees: [] };
   
   useEffect(() => {
     setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])

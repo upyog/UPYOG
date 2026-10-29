@@ -53,8 +53,13 @@ const SearchApp = ({path}) => {
        config,
       );
     
+    const handleClear = () => {
+        setPayload({});
+        setShowToast(null);
+    }
+    
     return <React.Fragment>
-        <CNDSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={isSuccess && !isLoading ? (searchResult.length>0? searchResult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
+        <CNDSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} onClear={handleClear} data={isSuccess && !isLoading ? (searchResult.length>0? searchResult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (
         <Toast
           error={showToast.error}

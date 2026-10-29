@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.infra.microservice.models.RequestInfo;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,27 +20,27 @@ public class UserSearchRequest {
     private List<String> uuid;
 
     @JsonProperty("userName")
-    @SafeHtml
+    @SanitizeHtml
     private String userName;
 
     @JsonProperty("name")
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @JsonProperty("mobileNumber")
-    @SafeHtml
+    @SanitizeHtml
     private String mobileNumber;
 
     @JsonProperty("aadhaarNumber")
-    @SafeHtml
+    @SanitizeHtml
     private String aadhaarNumber;
 
     @JsonProperty("pan")
-    @SafeHtml
+    @SanitizeHtml
     private String pan;
 
     @JsonProperty("emailId")
-    @SafeHtml
+    @SanitizeHtml
     private String emailId;
 
     @JsonProperty("fuzzyLogic")
@@ -50,7 +50,7 @@ public class UserSearchRequest {
     private Boolean active;
 
     @JsonProperty("tenantId")
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     @JsonProperty("pageSize")
@@ -63,7 +63,7 @@ public class UserSearchRequest {
     private List<String> sort = Collections.singletonList("name");
 
     @JsonProperty("userType")
-    @SafeHtml
+    @SanitizeHtml
     private String userType;
 
     @JsonProperty("roleCodes")

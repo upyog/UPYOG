@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu } from "@upyog/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@upyog/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown } from "@upyog/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
+
 import { useTranslation } from "react-i18next";
 import useMCollectMDMS from "../../../../../../libraries/src/hooks/mcollect/useMCollectMDMS";
 import ServiceCategory from "../../../components/inbox/ServiceCategory";
@@ -11,7 +11,7 @@ import ServiceCategory from "../../../components/inbox/ServiceCategory";
 const SearchChallan = ({ config: propsConfig, formData }) => {
   const { t } = useTranslation();
   let validation = {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const [mobileNumber, setMobileNumber] = useState(formData?.mobileNumber || "");
@@ -27,7 +27,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
     return <Loader />;
   }
   const onChallanSearch = async (data) => {
-    //history.push(`/upyog-ui/citizen/mcollect/search-results`);
+    //navigate(`/upyog-ui/citizen/mcollect/search-results`);
     if (!mobileNumber && !challanNo && !Servicecateogry && !city) {
       return alert("Provide at least one parameter");
     } else if (!Servicecateogry) {
@@ -37,7 +37,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
       return alert("Please Provide City");
     }
      else {
-      history.push(
+      navigate(
         `/upyog-ui/citizen/mcollect/search-results?mobileNumber=${mobileNumber}&challanNo=${challanNo}&Servicecategory=${
           Servicecateogry ? Servicecateogry.code.replace("BILLINGSERVICE_BUSINESSSERVICE_","") : ""
         }&tenantId=${city.code}`
@@ -75,7 +75,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
   }
 
   return (
-    <div style={{ marginTop: "16px" }}>
+    <div className="mc-my-challan-top-spacing">
       {/* <FormComposer
         onSubmit={onChallanSearch}
         noBoxShadow
@@ -93,10 +93,9 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         label={propsConfig.texts.submitButtonLabel}
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
-        cardStyle={{ margin: "auto",maxWidth:"960px" }}
+        cardStyle={{ maxWidth: "960px" }}
         headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
         onSelect={onChallanSearch}
-        componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
         isDisabled={!Servicecateogry || !city.code}
         forcedError={t(mobileNumberError)}
         //onSkip={onSkip}
@@ -137,14 +136,14 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         )}
         <CardLabel>{`${t("UC_SEARCH_MOBILE_NO_LABEL")}`}</CardLabel>
         <div className="field-container">
-          <span className="employee-card-input employee-card-input--front" style={{ marginTop: "-1px" }}>
+          <span className="citizen-card-input citizen-card-input--front mc-search-challan-top-spacing">
             +91
           </span>
           <TextInput
             type={"mobileNumber"}
             t={t}
             isMandatory={false}
-            style={{maxWidth:"500px"}}
+            className="mc-search-challan-wrapper"
             optionKey="i18nKey"
             name="mobileNumber"
             value={mobileNumber}

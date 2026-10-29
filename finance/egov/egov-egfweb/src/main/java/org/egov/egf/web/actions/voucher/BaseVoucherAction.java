@@ -256,11 +256,15 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 		if (headerFields.contains("scheme") && null != voucherHeader.getFundId() && null != voucherHeader.getFundId().getId())
 			addDropdownData("schemeList",
 					getPersistenceService().findAllBy("from Scheme where fund=?", voucherHeader.getFundId()));
-		if (headerFields.contains("subscheme") && voucherHeader.getVouchermis() != null
+		if (headerFields.contains("subscheme") && null != voucherHeader && null != voucherHeader.getVouchermis()
 				&& null != voucherHeader.getVouchermis().getSchemeid())
+			/*
+			 * LTS Migration Note [Hibernate 6 HQL Property Casing]:
+			 * Property 'isactive' matches exact SubScheme entity field definition to satisfy Hibernate 6 SQM syntax rules.
+			 */
 			addDropdownData("subschemeList",
 					getPersistenceService().findAllBy(
-							"from SubScheme where scheme.id=? and isActive=true order by name",
+							"from SubScheme where scheme.id=? and isactive=true order by name",
 							voucherHeader.getVouchermis().getSchemeid().getId()));
 	}
 
@@ -510,8 +514,13 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 		// the account code those are detail codes.
 		final List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
 		for (final VoucherDetails voucherDetails : billDetailslist) {
+			/*
+			 * Hibernate 6: glCodeId is a CChartOfAccounts association. Comparing
+			 * it to a Long subquery (select id ...) throws SemanticException.
+			 * Match on the association's glcode instead.
+			 */
 			final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-					" from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+					" from CChartOfAccountDetail where glCodeId.glcode=?",
 					voucherDetails.getGlcodeDetail());
 			if (null != chartOfAccountDetail) {
 				accountDetailMap = new HashMap<>();

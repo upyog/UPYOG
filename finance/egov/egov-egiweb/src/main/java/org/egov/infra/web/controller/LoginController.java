@@ -53,6 +53,8 @@ import org.egov.infra.admin.common.service.IdentityRecoveryService;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.service.LocationService;
 import org.egov.infra.validation.ValidatorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -66,9 +68,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/**
+ * LTS Migration Fix (WildFly 40): System.out is discarded under WildFly;
+ * login processing is logged with SLF4J instead.
+ */
 @Controller
 @RequestMapping(value = "/login")
 public class LoginController {
+
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private IdentityRecoveryService identityRecoveryService;
@@ -123,7 +131,7 @@ public class LoginController {
     @PostMapping
     public String login() {
     
-    	System.out.println("***********EGI WEB LOGIN PROCESSING**************");
+    	log.info("EGI web login processing");
     	return "home";
     }
 }

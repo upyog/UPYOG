@@ -1,0 +1,40 @@
+//todo: cleanup the css and remove unused classes will take care during optimization
+.est-search-application {
+  padding: 0;
+
+  @media (max-width: 768px) {
+    padding: 0;
+  }
+
+  &__header {
+    margin-bottom: 15px;
+    
+    :global(header.h1) {
+      font-size: 24px !important;
+      margin-bottom: 0;
+
+      @media (max-width: 768px) {
+        font-size: 18px !important;
+      }
+    }
+  }
+
+  &__empty-card {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  &__create-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  &__cards {
+    margin-top: 16px;
+  }
+}

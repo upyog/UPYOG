@@ -3,7 +3,7 @@
  * Uses the SVSearch page where the data is strtured and returned here
  */
 
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { SVSearch } from "../../services/molecules/SV/Search";
 
 const useSVApplicationDetail = (t, tenantId, applicationNumber, isDraftApplication,config = {}, userType, args) => {
@@ -18,12 +18,15 @@ const useSVApplicationDetail = (t, tenantId, applicationNumber, isDraftApplicati
       applicationDetails
     }
   };
-
+// Updated: TanStack Query v5 requires useQuery to accept a single object instead of positional arguments.
+// Updated: queryKey and queryFn are now explicit keys inside the object — positional args removed.
   return useQuery(
-    ["APPLICATION_SEARCH", "SV_SEARCH", applicationNumber,isDraftApplication, userType, args],
-    () => SVSearch.applicationDetails(t, tenantId, applicationNumber,isDraftApplication, userType, args),
-    { select: defaultSelect, ...config }
- 
+    {
+      queryKey: ["APPLICATION_SEARCH", "SV_SEARCH", applicationNumber,isDraftApplication, userType, args],
+      queryFn: () => SVSearch.applicationDetails(t, tenantId, applicationNumber,isDraftApplication, userType, args),
+      select: defaultSelect,
+      ...config
+    }
   );
 };
 

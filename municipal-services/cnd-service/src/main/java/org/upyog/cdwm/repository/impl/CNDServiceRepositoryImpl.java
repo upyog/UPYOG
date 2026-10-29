@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -13,10 +12,10 @@ import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
-import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
-import org.upyog.cdwm.repository.rowMapper.DocumentDetailsRowMapper;
-import org.upyog.cdwm.repository.rowMapper.FacilityCenterDetailRowMapper;
-import org.upyog.cdwm.repository.rowMapper.WasteTypeDetailsRowMapper;
+import org.upyog.cdwm.repository.row_mapper.CNDApplicationDetailRowmapper;
+import org.upyog.cdwm.repository.row_mapper.DocumentDetailsRowMapper;
+import org.upyog.cdwm.repository.row_mapper.FacilityCenterDetailRowMapper;
+import org.upyog.cdwm.repository.row_mapper.WasteTypeDetailsRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
@@ -34,17 +33,21 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class CNDServiceRepositoryImpl implements CNDServiceRepository {
 
-    @Autowired
-    private CNDConfiguration config;
+    private final CNDConfiguration config;
 
-    @Autowired
-    private Producer producer;
+    private final Producer producer;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private CNDServiceQueryBuilder queryBuilder;
+    private final CNDServiceQueryBuilder queryBuilder;
+
+    public CNDServiceRepositoryImpl(CNDConfiguration config, Producer producer, JdbcTemplate jdbcTemplate,
+            CNDServiceQueryBuilder queryBuilder) {
+        this.config = config;
+        this.producer = producer;
+        this.jdbcTemplate = jdbcTemplate;
+        this.queryBuilder = queryBuilder;
+    }
     
     /**
      * Saves the CND application request data and pushes it to Kafka.
@@ -59,7 +62,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     }
 
     private void pushCNDApplicationToKafka(CNDApplicationRequest cndApplicationRequest) {
-        if(config.getIsUserProfileEnabled()) {
+        if (Boolean.TRUE.equals(config.getIsUserProfileEnabled())) {
             producer.push(config.getCndApplicationWithProfileSaveTopic(), cndApplicationRequest);
         }
         else {
@@ -77,7 +80,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCNDApplicationQuery(cndServiceSearchCriteria, preparedStmtList);
         log.info("Final query for getCndApplicationDetails: {} with params: {}", query, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), new CNDApplicationDetailRowmapper());
+        return jdbcTemplate.query(query, new CNDApplicationDetailRowmapper(), preparedStmtList.toArray());
     }
     
     
@@ -96,7 +99,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCNDWasteQuery(cndServiceSearchCriteria, preparedStmtList);
         log.info("Final query for getCndWasteDetails: {} with params: {}", query, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), new WasteTypeDetailsRowMapper());
+        return jdbcTemplate.query(query, new WasteTypeDetailsRowMapper(), preparedStmtList.toArray());
     }
     
   
@@ -114,7 +117,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCNDDocQuery(cndServiceSearchCriteria, preparedStmtList);
         log.info("Final query for getCndDocumentDetails: {} with params: {}", query, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), new DocumentDetailsRowMapper());
+        return jdbcTemplate.query(query, new DocumentDetailsRowMapper(), preparedStmtList.toArray());
     }
     
     /**
@@ -135,7 +138,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCNDFacilityCenterDetailQuery(cndServiceSearchCriteria, preparedStmtList);
         log.info("Final query for getCndFacilityDetails: {} with params: {}", query, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), new FacilityCenterDetailRowMapper());
+        return jdbcTemplate.query(query, new FacilityCenterDetailRowMapper(), preparedStmtList.toArray());
     }
     
     /**
@@ -154,7 +157,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         }
 
         log.info("Final query for getCNDApplicationsCount: {} with params: {}", query, preparedStatement);
-        return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+        return jdbcTemplate.queryForObject(query, Integer.class, preparedStatement.toArray());
     }
 
     /**

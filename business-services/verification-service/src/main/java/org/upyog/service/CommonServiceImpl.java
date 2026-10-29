@@ -4,11 +4,9 @@ import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.config.MainConfiguration;
 import org.upyog.config.ModuleConfig;
-import org.upyog.constants.VerificationSearchConstants;
 import org.upyog.mapper.CommonDetailsMapper;
 import org.upyog.mapper.CommonDetailsMapperFactory;
 import org.upyog.repository.ServiceRequestRepository;
@@ -30,26 +28,23 @@ public class CommonServiceImpl implements CommonService {
 	private final Map<String, String> moduleEndpoints;
 	private final Map<String, String> moduleUniqueIdParams;
 	private final CommonDetailsMapperFactory mapperFactory;
+	private final ObjectMapper objectMapper;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final UserService userService;
+	private final MainConfiguration mainConfiguration;
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private MainConfiguration mainConfiguration;
-
-	@Autowired
-	public CommonServiceImpl(ModuleConfig moduleConfig, CommonDetailsMapperFactory mapperFactory) {
+	public CommonServiceImpl(ModuleConfig moduleConfig, CommonDetailsMapperFactory mapperFactory,
+			ObjectMapper objectMapper, ServiceRequestRepository serviceRequestRepository,
+			UserService userService, MainConfiguration mainConfiguration) {
 
 		this.moduleHosts = moduleConfig.getHost();
 		this.moduleEndpoints = moduleConfig.getEndpoint();
 		this.moduleUniqueIdParams = moduleConfig.getUniqueIdParam();
 		this.mapperFactory = mapperFactory;
+		this.objectMapper = objectMapper;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.userService = userService;
+		this.mainConfiguration = mainConfiguration;
 	}
 
 	@Override
@@ -71,13 +66,11 @@ public class CommonServiceImpl implements CommonService {
 			throw new IllegalArgumentException("Invalid module name or endpoint not configured: " + moduleName);
 		}
 
-		// Retrieve the unique ID parameter for the given module
 		String uniqueIdParam = moduleUniqueIdParams.get(moduleName);
 		if (uniqueIdParam == null) {
 			throw new IllegalArgumentException("No unique ID parameter configured for module: " + moduleName);
 		}
 
-		// Construct the full URL dynamically
 		StringBuilder urlBuilder = new StringBuilder();
 		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber)
 				.append("&tenantId=").append(tenantId);
@@ -94,7 +87,14 @@ public class CommonServiceImpl implements CommonService {
 			log.info("API call successful for URL: {}", urlBuilder.toString());
 			JsonNode jsonNode = objectMapper.valueToTree(result);
 			CommonDetailsMapper mapper = mapperFactory.getMapper(moduleName);
-			return mapper.mapJsonToCommonDetails(jsonNode);
+			CommonDetails commonDetails = mapper.mapJsonToCommonDetails(jsonNode);
+			if(commonDetails.getStatus().equalsIgnoreCase("Pending")) {
+				return null;
+			}
+			else{
+				return commonDetails;
+			}
+			
 		} catch (Exception e) {
 			log.error("API call failed for URL: {}, Error: {}", urlBuilder.toString(), e.getMessage());
 			throw new CustomException("Error fetching details for module: " + moduleName, "MODULE_API_ERROR");
@@ -102,11 +102,10 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	/**
-	 * Retrieves the system user’s RequestInfo based on a predefined system
+	 * Retrieves the system user's RequestInfo based on a predefined system
 	 * username.
-	 * 
-	 * @param userService The UserService instance used to fetch user details.
-	 * @return A RequestInfo object containing the system user’s details.
+	 *
+	 * @return A RequestInfo object containing the system user's details.
 	 * @throws IllegalStateException if the system user is not found.
 	 */
 	private RequestInfo getSystemUserDetails() {

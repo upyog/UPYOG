@@ -26,7 +26,7 @@
  */
 
 import React, { useState,useEffect} from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, TextArea, SearchIcon, Toast} from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, TextArea, SearchIcon, Toast} from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/PTRTimeline";
@@ -165,24 +165,6 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
         isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || (!(pathname.includes("revised") || pathname.includes("renew")) && !locality) || !addressline1 }
       >
         <div>
-          <style>
-        {`
-        .select-wrap .options-card {
-        width: 100% !important;
-        -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-        box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-        position: absolute;
-        z-index: 20;
-        margin-top: 4px;
-        --bg-opacity: 1;
-        background-color: #fff;
-        background-color: rgba(255, 255, 255, var(--bg-opacity));
-        overflow: scroll;
-        max-height: 250px; 
-        min-height:50px;
-         } `
-        }
-      </style>
           <CardLabel>{`${t("PTR_PROPERTY_NO")}`}</CardLabel>
             <div className="field-container">
             <TextInput
@@ -196,13 +178,13 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
               style={inputStyles}
               ValidationRequired={false}
               {...(validation = {
-                isRequired: true,
+                isRequired: false,
                 pattern: "^[a-zA-Z0-9/-]*$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
             />
-            <div style={{ position: "relative", zIndex: "100", right: user.type === "EMPLOYEE" ? "52%" :"95px", marginTop: "-14px", marginRight:"-20px", cursor:"pointer" }} onClick={handleSearchClick}> <SearchIcon /> </div>
+            <div className={`input-search-icon-badge ${user.type === "EMPLOYEE" ? "right-52-pct" : "right-95-px"}`} onClick={handleSearchClick}> <SearchIcon /> </div>
             </div>
           <CardLabel>{`${t("PTR_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
@@ -214,7 +196,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={houseNo}
             placeholder={"Enter House No"}
             onChange={setApplicantHouseNo}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -235,7 +217,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={houseName}
             placeholder={"Enter House Name"}
             onChange={sethouseName}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={false}
           />
 
@@ -249,7 +231,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={streetName}
             placeholder={"Enter Street Name"}
             onChange={setApplicantStreetName}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               pattern: "^[a-zA-Z0-9 ,\\-]+$",
@@ -268,7 +250,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={addressline1}
             placeholder={"Enter Address"}
             onChange={setaddressline1}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -289,7 +271,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={addressline2}
             placeholder={"Enter Address"}
             onChange={setaddressline2}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -308,7 +290,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={landmark}
             placeholder={"Enter Landmark"}
             onChange={setApplicantLandmark}
-            style={{ width: "50%" }}
+            className="ptr-ptrselect-address-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -324,7 +306,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             name={"city"}
             defaultValue={city}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={city}
@@ -332,6 +314,18 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
                 option={allCities}
                 optionKey="i18nKey"
                 t={t}
+                optionCardStyles={{
+                  width: "100%",
+                  boxShadow:
+                    "0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)",
+                  position: "absolute",
+                  zIndex: 20,
+                  marginTop: "4px",
+                  backgroundColor: "rgba(255, 255, 255, 1)",
+                  overflow: "scroll",
+                  maxHeight: "250px",
+                  minHeight: "50px",
+                }}
                 placeholder={"Select"}
               />
             )}
@@ -342,13 +336,24 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             name={"locality"}
             defaultValue={locality}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={locality}
                 select={setLocality}
                 option={structuredLocality}
-                optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+                optionCardStyles={{
+                  width: "100%",
+                  boxShadow:
+                    "0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)",
+                  position: "absolute",
+                  zIndex: 20,
+                  marginTop: "4px",
+                  backgroundColor: "rgba(255, 255, 255, 1)",
+                  overflow: "scroll",
+                  maxHeight: "250px",
+                  minHeight: "50px",
+                }}
                 optionKey="i18nKey"
                 t={t}
                 placeholder={"Select"}
@@ -366,7 +371,7 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             value={pincode}
             onChange={setAddressPincode}
             placeholder="Enter Pincode"
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             validation={{
               required: false,

@@ -48,9 +48,9 @@
 
 package org.egov.infra.web.security.filter;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -59,7 +59,7 @@ import java.io.IOException;
 public class XSSFilter implements Filter {
 
 	@Override
-	public void init(final javax.servlet.FilterConfig filterConfig) throws ServletException {
+	public void init(final jakarta.servlet.FilterConfig filterConfig) throws ServletException {
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class XSSFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(final javax.servlet.ServletRequest request, final javax.servlet.ServletResponse response, final javax.servlet.FilterChain filterChain) throws IOException, ServletException {
+	public void doFilter(final jakarta.servlet.ServletRequest request, final jakarta.servlet.ServletResponse response, final jakarta.servlet.FilterChain filterChain) throws IOException, ServletException {
 		final XSSRequestWrapper xssRequest = new XSSRequestWrapper((HttpServletRequest) request);
 		filterChain.doFilter(xssRequest, response);
 	}

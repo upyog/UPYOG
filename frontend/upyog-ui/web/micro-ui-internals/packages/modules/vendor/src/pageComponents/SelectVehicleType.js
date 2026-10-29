@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { CardLabel, Dropdown, LabelFieldPair, TextInput, Loader } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, TextInput, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -7,7 +7,7 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
 
   // Fetch Vehicle Data
   const { data: vehicleData, isLoading: vehicleLoading } = Digit.Hooks.fsm.useMDMS(stateId, "Vehicle", "VehicleMakeModel");
-
+console.log("vehicleDatavehicleData",vehicleData);
   // Fetch Service Type Data
   const { data: serviceTypeData, isLoading: serviceLoading } = Digit.Hooks.useCustomMDMS(tenantId, "tenant", [{ name: "citymodule" }], {
     select: (data) => data?.tenant?.citymodule,

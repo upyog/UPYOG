@@ -1,5 +1,5 @@
-
-/**	Creates a callback that proxies node callback style arguments to an Express Response object.
+/** this file is not used any where in the service
+ *	Creates a callback that proxies node callback style arguments to an Express Response object.
  *	@param {express.Response} res	Express HTTP Response
  *	@param {number} [status=200]	Status code to send on success
  *
@@ -8,7 +8,7 @@
  *			collection.find({}, toRes(res));
  *		}
  */
-export function toRes(res, status=200) {
+ export function toRes(res, status=200) {
 	return (err, thing) => {
 		if (err) return res.status(400).send(err);
 

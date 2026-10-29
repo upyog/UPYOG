@@ -1,0 +1,90 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: National Dashboard Kafka Pipeline
+  description: |
+    Kafka pipeline for national dashboard record transformation and persistence.
+
+    This service is event-driven and does not expose domain REST APIs. It consumes
+    national dashboard records from Kafka, maps each record to the configured module
+    index, and publishes transformed payloads for downstream indexing and analytics.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /national-dashboard
+x-api-id: org.egov.nationaldashboard.kafkapipeline
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Spring Actuator health endpoint for service liveness monitoring.
+      responses:
+        '200':
+          description: Service is healthy
+          schema:
+            $ref: '#/definitions/HealthResponse'
+      tags:
+        - Health
+  /info:
+    get:
+      summary: Service info
+      description: Returns build and application metadata from Spring Actuator.
+      responses:
+        '200':
+          description: Service metadata retrieved successfully
+          schema:
+            type: object
+      tags:
+        - Health
+definitions:
+  HealthResponse:
+    type: object
+    description: Standard Spring Actuator health response
+    properties:
+      status:
+        type: string
+        example: UP
+  NationalDashboardEvent:
+    type: object
+    description: |
+      Kafka message consumed from topic configured by
+      `kafka.topics.national.events` (default: persist-national-records).
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      Records:
+        type: array
+        description: National dashboard metric records to transform and publish
+        items:
+          $ref: '#/definitions/NationalDashboardRecord'
+    required:
+      - Records
+  NationalDashboardRecord:
+    type: object
+    description: Single national dashboard metric record within a pipeline event
+    properties:
+      module:
+        type: string
+        description: Module code used to resolve the target index mapping
+        example: PT
+      date:
+        type: string
+        description: Metric date
+      ulb:
+        type: string
+        description: ULB identifier
+      ward:
+        type: string
+        description: Ward identifier
+      region:
+        type: string
+        description: Region or district
+      state:
+        type: string
+        description: State name or code
+      metrics:
+        type: object
+        description: Module-specific KPI metrics

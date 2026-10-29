@@ -48,13 +48,13 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.CFunction;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -81,7 +81,7 @@ public class FunctionHibernateDAO implements FunctionDAO {
     }
 
     public List<CFunction> findAll() {
-        return (List<CFunction>) getCurrentSession().createCriteria(CFunction.class).list();
+        return getCurrentSession().createQuery("from CFunction", CFunction.class).list();
     }
 
     @PersistenceContext
@@ -93,22 +93,27 @@ public class FunctionHibernateDAO implements FunctionDAO {
     }
 
     public List getAllActiveFunctions() {
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf'.
+         * In Hibernate 6, HQL query parser strictly validates entity field names against Java class properties.
+         * The CFunction Java entity uses 'isActive' and 'isNotLeaf' as getter/setter property names.
+         */
         return getCurrentSession()
-                .createQuery("from CFunction where isactive = true and isnotleaf=false order by name").list();
-
+                .createQuery("from CFunction where isActive = true and isNotLeaf=false order by name").list();
     }
 
     @Override
     public CFunction getFunctionByCode(final String functionCode) {
         final Query qry = getCurrentSession().createQuery("from CFunction where code=:code");
-        qry.setString("code", functionCode);
+        qry.setParameter("code", functionCode);
         return (CFunction) qry.uniqueResult();
     }
 
     @Override
     public CFunction getFunctionById(final Long Id) {
         final Query qry = getCurrentSession().createQuery("from CFunction where id=:id");
-        qry.setLong("id", Id);
+        qry.setParameter("id", Id);
         return (CFunction) qry.uniqueResult();
     }
 

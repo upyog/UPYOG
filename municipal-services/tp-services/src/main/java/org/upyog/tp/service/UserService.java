@@ -3,11 +3,11 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -31,14 +31,19 @@ import jakarta.validation.Valid;
 @Service
 public class UserService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final TreePruningConfiguration requestConfig;
 
-    @Autowired
-    private TreePruningConfiguration requestConfig;
+    public UserService(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository,
+                       TreePruningConfiguration requestConfig) {
+        this.mapper = mapper;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.requestConfig = requestConfig;
+    }
 
     /**
      * Retrieves an existing user or creates a new user if not found.
@@ -49,7 +54,6 @@ public class UserService {
      * @return The existing or newly created user.
      */
     public User fetchExistingUser(String tenantId, ApplicantDetail applicantDetail, RequestInfo requestInfo) {
-        // Fetch existing user details
         UserDetailResponse userDetailResponse = getUserDetails(applicantDetail, requestInfo, tenantId);
         List<User> existingUsers = userDetailResponse.getUser();
         if (CollectionUtils.isEmpty(existingUsers)) {
@@ -59,7 +63,7 @@ public class UserService {
         return existingUsers.get(0);
     }
 
-    private UserDetailResponse createUser(RequestInfo requestInfo, User user, String tenantId) {
+    private UserDetailResponse createUser(RequestInfo requestInfo, User user) {
 
         StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
                 .append(requestConfig.getUserCreateEndpointV2());
@@ -80,7 +84,7 @@ public class UserService {
 
         User userRequest = new User();
         userRequest.setName(applicant.getName());
-        userRequest.setUserName(applicant.getMobileNumber()); // Username will be mobile number
+        userRequest.setUserName(applicant.getMobileNumber());
         userRequest.setMobileNumber(applicant.getMobileNumber());
         userRequest.setAlternatemobilenumber(applicant.getAlternateNumber());
         userRequest.setEmailId(applicant.getEmailId());
@@ -113,7 +117,7 @@ public class UserService {
         User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
         AddressV2 addressV2 = convertApplicantAddressToUserAddress(address, tenantId);
         user.addAddressItem(addressV2);
-        UserDetailResponse userDetailResponse = createUser(requestInfo, user, tenantId);
+        UserDetailResponse userDetailResponse = createUser(requestInfo, user);
         String newUuid = userDetailResponse.getUser().get(0).getUuid();
         log.info("New user uuid returned from user service: {}", newUuid);
         return userDetailResponse.getUser().get(0);
@@ -151,8 +155,7 @@ public class UserService {
 
         StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
                 .append(requestConfig.getUserSearchEndpointV2());
-        UserDetailResponse userDetailResponse = userServiceCall(userSearchRequest, uri);
-        return userDetailResponse;
+        return userServiceCall(userSearchRequest, uri);
     }
 
     /**
@@ -176,13 +179,10 @@ public class UserService {
             if (response != null) {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
                 parseResponse(responseMap, dobFormat);
-                UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-                return userDetailResponse;
-            } else {
-                return new UserDetailResponse();
+                return mapper.convertValue(responseMap, UserDetailResponse.class);
             }
+            return new UserDetailResponse();
         }
-        // Which Exception to throw?
         catch (IllegalArgumentException e) {
             throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
         }
@@ -206,13 +206,13 @@ public class UserService {
             users.forEach(map -> {
 
                 map.put("createdDate", TreePruningUtil.dateTolong((String) map.get("createdDate"), format1));
-                if ((String) map.get("lastModifiedDate") != null)
-                    map.put("lastModifiedDate",
-                            TreePruningUtil.dateTolong((String) map.get("lastModifiedDate"), format1));
+                if ((String) map.get(LAST_MODIFIED_DATE) != null)
+                    map.put(LAST_MODIFIED_DATE,
+                            TreePruningUtil.dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
                 if ((String) map.get("dob") != null)
                     map.put("dob", TreePruningUtil.dateTolong((String) map.get("dob"), dobFormat));
-                if ((String) map.get("pwdExpiryDate") != null)
-                    map.put("pwdExpiryDate", TreePruningUtil.dateTolong((String) map.get("pwdExpiryDate"), format1));
+                if ((String) map.get(PWD_EXPIRY_DATE) != null)
+                    map.put(PWD_EXPIRY_DATE, TreePruningUtil.dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
             });
         }
     }
@@ -240,7 +240,6 @@ public class UserService {
         if (user == null) {
             return null;
         }
-        // Convert User to ApplicantDetail
         return ApplicantDetail.builder()
                 .name(user.getName())
                 .emailId(user.getEmailId())
@@ -282,12 +281,6 @@ public class UserService {
      * Enriches a generic booking object with user details by using reflection to dynamically
      * access and invoke methods on TreePruningBookingDetail.
      *
-     * This method:
-     * - Extracts the applicant UUID, address detail ID, and booking ID from the booking object.
-     * - Uses the applicant UUID to fetch user details via a user search service.
-     * - Populates the booking object with applicant and optionally address details.
-     * - Supports TreePruning bookings using reflection.
-     *
      * @param booking         The booking object TreePruningBookingDetail.
      * @param searchCriteria  The corresponding search criteria object used to determine enrichment behavior.
      */
@@ -323,9 +316,7 @@ public class UserService {
             if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
                 User user = userDetailResponse.getUser().get(0);
 
-                // Step 1: Get method named "getAuditDetails"
                 Method getAuditDetails = booking.getClass().getMethod("getAuditDetails");
-                // Step 2: Invoke the method and cast the result to AuditDetails
                 AuditDetails auditDetails = (AuditDetails) getAuditDetails.invoke(booking);
 
                 Object applicantDetail = convertUserToApplicantDetail(user, applicantUuid, bookingId, auditDetails);
@@ -354,7 +345,7 @@ public class UserService {
         if (address == null) {
             log.info("The address details are empty or null");
         }
-        AddressV2 addressdetails = AddressV2.builder().
+        return AddressV2.builder().
                 address(address.getAddressLine1()).
                 address2(address.getAddressLine2()).
                 city(address.getCity()).
@@ -365,25 +356,15 @@ public class UserService {
                 tenantId(tenantId).
                 type(address.getAddressType()).
                 build();
-
-        return addressdetails;
     }
 
     /**
      * Creates a new address for the user UUID provided in the treePruningRequest.
      *
-     * This method:
-     * 1. Converts the address details from the application into a user address.
-     * 2. Builds an AddressRequest object with the converted address, user UUID, and request information.
-     * 3. Sends the AddressRequest to the user service to create the new address.
-     * 4. Parses the response to extract and return the first created address, if available.
-     *
-     * If the response is null or an error occurs during processing, appropriate logs are generated
-     * and the method returns null.
-     *
      * @param address The request object containing the application data and user information.
      * @return The newly created Address object, or null if creation fails.
      */
+    @SuppressWarnings("unchecked")
     public AddressV2 createNewAddressV2ByUserUuid(AddressV2 address, @Valid RequestInfo requestInfo, String applicantUuid) {
         AddressRequestV2 addressRequest = AddressRequestV2.builder().requestInfo(requestInfo).address(address).userUuid(applicantUuid).build();
 

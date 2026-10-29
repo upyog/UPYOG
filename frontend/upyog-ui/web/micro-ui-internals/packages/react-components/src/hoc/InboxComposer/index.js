@@ -36,6 +36,7 @@ const InboxComposer = ({
   onSortFormReset,
   formState: inboxFormState,
   className,
+  isMobile: isMobileFromProps,
 }) => {
   const { t } = useTranslation();
 
@@ -97,7 +98,7 @@ const InboxComposer = ({
     }
   }, [inboxFormState, resetSearchForm, resetFilterForm]);
 
-  const isMobile = window.Digit.Utils.browser.isMobile();
+  const isMobile = isMobileFromProps !== undefined ? isMobileFromProps : window.Digit.Utils.browser.isMobile();
 
   if (isMobile) {
     const CurrentMobileModalComponent = useCallback(
@@ -110,6 +111,7 @@ const InboxComposer = ({
       FilterFormFields,
       registerSearchFormField,
       searchFormState,
+      controlSearchForm,
       handleSearchFormSubmit,
       onResetSearchForm,
       registerFilterFormField,
@@ -170,15 +172,20 @@ const InboxComposer = ({
 
   const isEnabledCommonModules =
     window.location.href.includes("/obps/") ||
-    window.location.href.includes("/noc/") ;
+    window.location.href.includes("/noc/") ||
+    window.location.href.includes("/ws/water/inbox") ||
+    window.location.href.includes("/ws/sewerage/inbox") ||
+    window.location.href.includes("/water/inbox") ||
+    window.location.href.includes("/sewerage/inbox");
 
-  const isEnabledWSCommonModules = window.location.href.includes("/ws/water/inbox") || window.location.href.includes("/ws/sewerage/inbox") ||
-  window.location.href.includes("/ws/water/bill-amendment/inbox") ||
-  window.location.href.includes("/ws/sewerage/bill-amendment/inbox");
+  const isEnabledWSCommonModules =
+    window.location.href.includes("/ws/water/bill-amendment/inbox") ||
+    window.location.href.includes("/ws/sewerage/bill-amendment/inbox") ||
+    window.location.href.includes("/bill-amend/inbox");
 
   if (isEnabledCommonModules) {
     return (
-      <div className="inbox-container">
+      <div className={`inbox-container ${className || ""}`}>
         <div className="filters-container">
           <InboxLinks {...PropsForInboxLinks} />
           <div>
@@ -190,23 +197,26 @@ const InboxComposer = ({
             </FilterForm>
           </div>
         </div>
-        <div style={propsForInboxTable?.tableStyle ? { flex: 1, ...propsForInboxTable?.tableStyle}:{flex: 1}}>
+        <div
+          className="inbox-content-wrapper pt-desktop-inbox-flex-1"
+          style={propsForInboxTable?.tableStyle ? { flex: 1, minWidth: 0, ...propsForInboxTable?.tableStyle } : { flex: 1, minWidth: 0 }}
+        >
           <SearchForm onSubmit={onSearchFormSubmit} handleSubmit={handleSearchFormSubmit} id="search-form" className="rm-mb form-field-flex-one">
             <SearchFormFields
               registerRef={registerSearchFormField}
               searchFormState={searchFormState}
               {...{ controlSearchForm }}
               searchFieldComponents={
-                <div style={window.location.href.includes("/citizen/obps") ? {display : "flex"} : {}}>
+                <div style={window.location.href.includes("/citizen/obps") ? { display: "flex" } : {}}>
                   <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form" className="submit-bar-search" />
-                  <p onClick={onResetSearchForm} className="clear-search" style={{ paddingTop: "9px", color: " #a82227" }}>
+                  <p onClick={onResetSearchForm} className="clear-search rc-index-spacing">
                     {t(`ES_COMMON_CLEAR_SEARCH`)}
                   </p>
                 </div>
               }
             />
           </SearchForm>
-          <div className="result" style={{ marginLeft: "24px", flex: 1 }}>
+          <div className="result pt-desktop-inbox-result pt-desktop-inbox-result-inbox rc-index-spacing-2">
             {isInboxLoading ? (
               <Loader />
             ) : (
@@ -216,7 +226,12 @@ const InboxComposer = ({
                     {propsForInboxTable.noResultsMessage ? t(propsForInboxTable.noResultsMessage) : t("CS_MYAPPLICATIONS_NO_APPLICATION")}
                   </Card>
                 ) : (
-                  <Table t={t} {...propsForInboxTable} />
+                  <Table
+                    t={t}
+                    {...propsForInboxTable}
+                    data={propsForInboxTable?.data || []}
+                    columns={propsForInboxTable?.columns || []}
+                  />
                 )}
               </div>
             )}
@@ -258,7 +273,12 @@ const InboxComposer = ({
                 {propsForInboxTable.noResultsMessage ? t(propsForInboxTable.noResultsMessage) : t("CS_MYAPPLICATIONS_NO_APPLICATION")}
               </Card>
             ) : (
-              <Table t={t} {...propsForInboxTable} />
+              <Table
+                t={t}
+                {...propsForInboxTable}
+                data={propsForInboxTable?.data || []}
+                columns={propsForInboxTable?.columns || []}
+              />
             )}
           </div>
         )}
@@ -294,7 +314,12 @@ const InboxComposer = ({
               {propsForInboxTable.noResultsMessage ? t(propsForInboxTable.noResultsMessage) : t("CS_MYAPPLICATIONS_NO_APPLICATION")}
             </Card>
           ) : (
-            <Table t={t} {...propsForInboxTable} />
+            <Table
+              t={t}
+              {...propsForInboxTable}
+              data={propsForInboxTable?.data || []}
+              columns={propsForInboxTable?.columns || []}
+            />
           )}
         </div>
       )}

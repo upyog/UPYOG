@@ -1,7 +1,6 @@
-import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { CustomButton, Menu } from "@nudmcdgnpm/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { CustomButton, Menu, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 
 const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
@@ -15,7 +14,7 @@ const ChangeCity = (prop) => {
   const [dropDownData, setDropDownData] = useState(null);
   const [selectCityData, setSelectCityData] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]); //selectedCities?.[0]?.value
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const isDropdown = prop.dropdown || false;
   let selectedCities = [];
 
@@ -31,8 +30,9 @@ const ChangeCity = (prop) => {
     setDropDownData(city);
     if (window.location.href.includes("/sv-ui/employee/")) {
       const redirectPath = location.state?.from || "/sv-ui/employee";
-      history.replace(redirectPath);
+      navigate(redirectPath, { replace: true }); // ✅ v6
     }
+
     window.location.reload();
   };
 
@@ -53,7 +53,7 @@ const ChangeCity = (prop) => {
 
   // if (isDropdown) {
   return (
-    <div style={prop?.mobileView ? {color: "#767676"} : {}}>
+    <div style={prop?.mobileView ? { color: "#767676" } : {}}>
       <Dropdown
         option={selectCityData}
         selected={selectCityData.find((cityValue) => cityValue.value === dropDownData?.value)}

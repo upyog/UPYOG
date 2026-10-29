@@ -37,7 +37,7 @@ const ViewDocument = ({ match }) => {
       };
     }
   });
-  
+
   /* 
     Logic to view image on load of screen
     if (data?.documentList?.[0]?.filestoreId) {

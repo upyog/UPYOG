@@ -50,17 +50,14 @@ package org.egov.commons.service;
 
 import org.egov.common.entity.EducationalQualification;
 import org.egov.commons.repository.EducationalQualificationRepository;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
@@ -94,12 +91,11 @@ public class EducationalQualificationService {
     }
 
     public List<EducationalQualification> findAll() {
-        return qualificationRepository.findAll(new Sort(
-                Sort.Direction.ASC, "name"));
+        return qualificationRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public EducationalQualification findOne(Long id) {
-        return qualificationRepository.findOne(id);
+        return qualificationRepository.findById(id).orElse(null);
     }
 
     public EducationalQualification findByCode(String code){
@@ -114,18 +110,18 @@ public class EducationalQualificationService {
     }
     
     @SuppressWarnings("unchecked")
-    public List<EducationalQualification> search(
-            EducationalQualification qualification) {
-        final Criteria criteria = getCurrentSession().createCriteria(
-                EducationalQualification.class);
-        if (null != qualification.getName())
-            criteria.add(Restrictions
-                    .ilike("name", qualification.getName(), MatchMode.ANYWHERE));
-        if (qualification.getIsActive() != null
-                && qualification.getIsActive())
-            criteria.add(Restrictions.eq("isActive",
-                    qualification.getIsActive()));
-        return criteria.list();
-
+    public List<EducationalQualification> search(EducationalQualification qualification) {
+        StringBuilder hql = new StringBuilder("from EducationalQualification where 1=1");
+        if (qualification.getName() != null)
+            hql.append(" and lower(name) like :name");
+        if (qualification.getIsActive() != null && qualification.getIsActive())
+            hql.append(" and isActive = :isActive");
+        org.hibernate.query.Query<EducationalQualification> query =
+                getCurrentSession().createQuery(hql.toString(), EducationalQualification.class);
+        if (qualification.getName() != null)
+            query.setParameter("name", "%" + qualification.getName().toLowerCase() + "%");
+        if (qualification.getIsActive() != null && qualification.getIsActive())
+            query.setParameter("isActive", qualification.getIsActive());
+        return query.list();
     }
 }

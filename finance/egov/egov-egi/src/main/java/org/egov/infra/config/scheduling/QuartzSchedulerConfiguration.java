@@ -70,6 +70,15 @@ import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX;
 
+/**
+ * LTS Migration Fix (JDK 17 / Quartz 2.5): shared scheduler factory used by EGI jobs.
+ * <p>
+ * Quartz 2.5 no longer brings {@code mchange-commons-java}
+ * onto the compile classpath; that artifact is declared explicitly in
+ * {@code egov-egi/pom.xml}. Scheduler property keys and clustering behaviour
+ * are unchanged.
+ * </p>
+ */
 public class QuartzSchedulerConfiguration {
 
     private static final String APP_SCHEDULER_NAME = "ERP_APP_SCHEDULER";

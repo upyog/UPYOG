@@ -1,8 +1,8 @@
 import { WSService } from "../../services/elements/WS";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const useWSUpdateAPI = (businessService = "WATER") => {
-    return useMutation((data) =>  WSService.update(data, businessService));
+    return mutationTemplate({ mutationFn: (data) =>  WSService.update(data, businessService) });
 };
 
 export default useWSUpdateAPI;

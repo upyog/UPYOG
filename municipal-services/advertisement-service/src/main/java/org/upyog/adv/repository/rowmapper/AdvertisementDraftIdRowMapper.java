@@ -13,14 +13,14 @@ import org.upyog.adv.web.models.AdvertisementDraftDetail;
  * to a list of AdvertisementDraftDetail objects. It focuses on extracting only the draft ID
  * from each row in the ResultSet and populating it into AdvertisementDraftDetail objects.
  */
+@SuppressWarnings("java:S2638")
 public class AdvertisementDraftIdRowMapper implements ResultSetExtractor<List<AdvertisementDraftDetail>> {
 
-
+    @Override
     public List<AdvertisementDraftDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
         List<AdvertisementDraftDetail> draftList = new ArrayList<>();
         while (rs.next()) {
-            // Mapping only draft_id
             AdvertisementDraftDetail draftDetail = new AdvertisementDraftDetail();
             draftDetail.setDraftId(rs.getString("draft_id"));
             draftList.add(draftDetail);

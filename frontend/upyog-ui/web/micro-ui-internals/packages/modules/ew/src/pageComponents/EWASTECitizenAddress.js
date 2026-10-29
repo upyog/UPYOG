@@ -1,8 +1,8 @@
-import { CardLabel, FormStep, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/EWASTETimeline";
+import { useForm } from "react-hook-form";
 
 /**
  * Form component for capturing citizen address details in the E-Waste module.
@@ -123,7 +123,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
         />
 
         {/* Input field for house number */}
-        <CardLabel>{`${t("EWASTE_HOUSE_NO")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("EWASTE_HOUSE_NO")}`}<span className="ew-ewastecitizen-address-required-asterisk">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -156,7 +156,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
         />
 
         {/* Input field for address line 1 */}
-        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}`}<span className="ew-ewastecitizen-address-required-asterisk">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}

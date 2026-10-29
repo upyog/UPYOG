@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Custom React Hook: useEnabledMDMS
@@ -23,7 +23,11 @@ import { useQuery } from "react-query";
  */
 
 const useEnabledMDMS = (tenantId, moduleName, masterDetails = [], config = {}) => {
-    return useQuery([tenantId, moduleName, masterDetails], () => Digit.Hooks.useSelectedMDMS(moduleName).getMultipleTypesWithFilter(tenantId, moduleName, masterDetails), config);
+    return useQuery({
+        queryKey: [tenantId, moduleName, masterDetails],
+        queryFn: () => Digit.Hooks.useSelectedMDMS(moduleName).getMultipleTypesWithFilter(tenantId, moduleName, masterDetails),
+        ...config
+    });
 };
 
 

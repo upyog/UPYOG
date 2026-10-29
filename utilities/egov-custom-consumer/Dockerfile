@@ -1,6 +1,4 @@
-FROM egovio/apline-jre:8u121-mdms-1.0
-
-MAINTAINER Sivaprakash<sivaprakash.ramasamy@tarento.com>
+FROM eclipse-temurin:17-jre-alpine
 
 
 # INSTRUCTIONS ON HOW TO BUILD JAR:
@@ -11,7 +9,7 @@ MAINTAINER Sivaprakash<sivaprakash.ramasamy@tarento.com>
 
 #RUN cd /opt && wget "https://codeload.github.com/egovernments/egov-mdms-data/zip/master" -O master.zip && unzip master.zip && rm -rf master.zip mdms && mv egov-mdms-data-master mdms 
 
-COPY /target/egov-custom-consumer-0.0.1-SNAPSHOT.jar /opt/egov/egov-custom-consumer.jar
+COPY /target/egov-custom-consumer-1.1.1-SNAPSHOT.jar /opt/egov/egov-custom-consumer.jar
 
 COPY start.sh /usr/bin/start.sh
 

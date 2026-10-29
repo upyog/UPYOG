@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber, Toast } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/EWASTETimeline";
 
 /**
@@ -160,7 +160,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             onChange={setOwnerEmail}
             ValidationRequired={true}
           />
-          {error && <p style={{ color: "red", fontSize: "12px" }}>{error}</p>}
+          {error && <p className="ew-ewasteowner-info-required-asterisk">{error}</p>}
         </div>
       </FormStep>
       {showToast && (

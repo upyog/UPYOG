@@ -74,14 +74,15 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.LongType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -324,10 +325,10 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             final String sqlStr = "select distinct (f.name)  as name,f.id as id  from eg_dept_functionmap m,function f where departmentid=:deptId"
                     + " and  budgetaccount_Type=:accountType and f.id= m.functionid order by f.name";
 
-            final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
+            final NativeQuery sqlQuery = persistenceService.getSession().createNativeQuery(sqlStr);
 
-            sqlQuery.setInteger("deptId", deptId).setString("accountType", accountType);
-            sqlQuery.addScalar(NAME).addScalar("id", LongType.INSTANCE)
+            sqlQuery.setParameter("deptId", deptId).setParameter("accountType", accountType);
+            sqlQuery.addScalar(NAME).addScalar("id", StandardBasicTypes.LONG)
                     .setResultTransformer(Transformers.aliasToBean(CFunction.class));
             if (!sqlQuery.list().isEmpty())
                 functionList = sqlQuery.list();
@@ -348,8 +349,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         final String sqlStr = "select  distinct (bg.name) as name ,bg.id  as id from egf_budgetgroup bg where bg.isActive=true "
                 + "  order  by bg.name";
 
-        final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
-        sqlQuery.addScalar(NAME).addScalar("id", LongType.INSTANCE)
+        final NativeQuery sqlQuery = persistenceService.getSession().createNativeQuery(sqlStr);
+        sqlQuery.addScalar(NAME).addScalar("id", StandardBasicTypes.LONG)
                 .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
         budgetGroupList = sqlQuery.list();
         return BUDGETGROUP;

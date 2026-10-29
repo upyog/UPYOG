@@ -13,12 +13,15 @@ import org.egov.edcr.contract.EdcrRequest;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.utils.StringUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
 
 /**
- * @author vinoth
+ * Validates EDCR REST API request payloads for allowed characters and HTML safety.
  *
+ * <p>Uses Log4j 2 for logging, Jsoup {@link Safelist#basic()} for HTML sanitization
+ * checks on string fields, and {@link org.egov.infra.utils.StringUtils} from the
+ * infra module for string utilities.</p>
  */
 @Service
 public class EdcrValidator {
@@ -113,7 +116,7 @@ public class EdcrValidator {
                 String value;
                 try {
                     value = (String) f.get(obj);
-                    boolean isValid = Jsoup.isValid(String.valueOf(value), Whitelist.basic());
+                    boolean isValid = Jsoup.isValid(String.valueOf(value), Safelist.basic());
                     if (!isValid) {
                         error.setErrorCode("EDCR-30");
                         error.setErrorMessage(String.format(INVALID_VAL, f.getName()));

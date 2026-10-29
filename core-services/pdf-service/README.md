@@ -31,10 +31,18 @@ Please refer to the  below Swagger API contarct for PDF service to understand th
 5. For large request generate PDF in multiple files due to upload size restriction by file-store service.
 6. Supports localisation.
 
+### Technology Stack
+- **Runtime**: Node.js 22 LTS
+- **Framework**: Express 4.18
+- **Module System**: Native ES Modules (ESM)
+- **Kafka Client**: KafkaJS 2.x
+
 ### External Libraries Used
 [PDFMake](https://github.com/bpampuch/pdfmake ):- For generating PDFs
 
 [Mustache.js](https://github.com/janl/mustache.js/ ):- As templating engine to populate format as defined in format config, from request json based on mappings defined in data config
+
+[KafkaJS](https://kafka.js.org/ ):- Kafka client for Node.js, used for consuming and producing Kafka messages
 
 ### Configuration
 PDF service use two config files for a pdf generation as per requirement
@@ -61,7 +69,7 @@ PDF generation service read these such files at start-up to support PDF generati
 
 - `QRCode mapping`: This mapping is used to draw QR codes in the PDFs. The text to be shown after scan can be combination of static text and variables from direct and externalApi mappings. 
 
-**The format config file contain the following aspect :**
+***The format config file contain the following aspect :***
 
 - `key`: The key for the pdf, it is used as a path parameter in URL to identify for which PDF has to  generate.
 
@@ -184,3 +192,41 @@ This API request to PDF generation service, generate pdf and return the download
 ### Kafka Producers
 
 - ```PDF_GEN_CREATE```: PDF-Service sends create response data to this topic for egov-persister service to store data in DB.
+
+### Environment Variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `DATA_CONFIG_URLS` | Comma separated URLs/file paths for data config JSONs | - |
+| `FORMAT_CONFIG_URLS` | Comma separated URLs/file paths for format config JSONs | - |
+| `KAFKA_BROKER_HOST` | Kafka broker host:port | `localhost:9092` |
+| `EGOV_HOST` | UPYOG host URL | `https://upyog-test.niua.org/` |
+| `SERVER_PORT` | Server port | `8080` |
+| `EGOV_LOCALISATION_HOST` | Localisation service host | `http://egov-localization:8080/` |
+| `EGOV_FILESTORE_SERVICE_HOST` | Filestore service host | `http://egov-filestore:8080/` |
+| `DB_HOST` | PostgreSQL host | `localhost` |
+| `DB_PORT` | PostgreSQL port | `5432` |
+| `DB_NAME` | PostgreSQL database name | `PdfGen` |
+| `DB_USER` | PostgreSQL user | `postgres` |
+| `DB_PASSWORD` | PostgreSQL password | `postgres` |
+| `DATE_TIMEZONE` | Timezone for date formatting | `Asia/Kolkata` |
+| `SAVE_PDF_DIR` | Directory for bulk PDF temp files | `/mnt/pdf/` |
+| `MAX_NUMBER_PAGES` | Max pages per PDF file | `80` |
+
+### Local Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Set required environment variables
+export DATA_CONFIG_URLS="file:///path/to/data-config.json"
+export FORMAT_CONFIG_URLS="file:///path/to/format-config.json"
+export KAFKA_BROKER_HOST="localhost:9092"
+
+# Start the service
+npm start
+
+# Start in dev mode (auto-restart on file changes)
+npm run dev
+```

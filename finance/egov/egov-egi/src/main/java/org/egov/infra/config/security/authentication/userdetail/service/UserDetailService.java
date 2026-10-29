@@ -54,6 +54,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+/**
+ * LTS Migration Fix (WildFly 40): System.out is discarded under WildFly;
+ * commented diagnostic logs use SLF4J placeholders instead.
+ */
 public class UserDetailService implements UserDetailsService {
     
 	@Autowired
@@ -67,21 +71,21 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-//    	 System.out.println("************** retrieving user information - started*******************");
+//    	 log.info("retrieving user information - started");
 //         User user= this.loadUserFromMS(username);
 ////         User user= this.getDummyUser();
-//         System.out.println("************** retrieving user information - end*******************");
+//         log.info("retrieving user information - end");
 //         return new CurrentUser(user);
     	return null;
     }
     
 //    private User loadUserFromMS(String accessToken)
 //    {
-//    	System.out.println("*************** User Info microservice - started ****************");
-//    	System.out.println("Recieved token:"+accessToken);
+//    	log.info("User Info microservice - started");
+//    	log.info("Received token: {}", accessToken);
 //    	//MicroserviceUtils msutil = new MicroserviceUtils();
 //    	CustomUserDetails user = msUtil.getUserDetails(accessToken);
-//    	System.out.println("*************** User Info microservice - end ****************");
+//    	log.info("User Info microservice - end");
 //    	return this.parepareCurrentUser(user);
 //    }
 //    
@@ -100,7 +104,7 @@ public class UserDetailService implements UserDetailsService {
 //    	user.setName(userdetails.getName());
 //    	user.setPwdExpiryDate(new Date(2090,01,01));
 //    	user.setLocale(userdetails.getLocale());
-//    	System.out.println("***************** is password expired :  "+user.getPwdExpiryDate().isAfterNow());
+//    	log.info("is password expired :  {}", user.getPwdExpiryDate().isAfterNow());
 //    	
 ////    	for(Role _role:userdetails.getRoles()){
 ////    		
@@ -134,7 +138,7 @@ public class UserDetailService implements UserDetailsService {
 //        	user.setName("egovernments");
 //        	user.setPwdExpiryDate(new Date(2090,01,01));
 //        	user.setLocale("en_lan");
-//        	System.out.println("***************** is password expired :  "+user.getPwdExpiryDate().isAfterNow());
+//        	log.info("is password expired :  {}", user.getPwdExpiryDate().isAfterNow());
 //        	
 //        	Role role = new Role();
 //        	role.setId(4L);

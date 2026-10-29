@@ -132,7 +132,7 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -1200,8 +1200,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
     public void setupDropDownForSL(final List<Long> glcodeIdList) {
         List<CChartOfAccounts> glcodeList = null;
+        // Hibernate 6: glCodeId is a CChartOfAccounts association; compare ids (Long),
+        // not entity vs Long (SemanticException).
         final Query glcodeListQuery = persistenceService.getSession().createQuery(
-                " from CChartOfAccounts where id in (select glCodeId from CChartOfAccountDetail) and id in  ( :IDS )");
+                " from CChartOfAccounts where id in (select d.glCodeId.id from CChartOfAccountDetail d) and id in (:IDS)");
         glcodeListQuery.setParameterList("IDS", glcodeIdList);
         glcodeList = glcodeListQuery.list();
         if (glcodeIdList.isEmpty())

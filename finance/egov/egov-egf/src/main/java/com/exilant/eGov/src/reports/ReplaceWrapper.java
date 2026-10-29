@@ -47,13 +47,17 @@
  */
 package com.exilant.eGov.src.reports;
 
-import org.displaytag.decorator.ColumnDecorator;
+import org.displaytag.decorator.DisplaytagColumnDecorator;
+import org.displaytag.exception.DecoratorException;
+import org.displaytag.properties.MediaTypeEnum;
+
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Simple column decorator which Which replace the string.
  * @author Sumit
  */
-public class ReplaceWrapper implements ColumnDecorator
+public class ReplaceWrapper implements DisplaytagColumnDecorator
 {
     static String replace(final String str, final String pattern, final String replace) {
         int s = 0;
@@ -70,7 +74,8 @@ public class ReplaceWrapper implements ColumnDecorator
     }
 
     @Override
-    public final String decorate(final Object columnValue)
+    public final Object decorate(final Object columnValue, final PageContext pageContext, final MediaTypeEnum media)
+            throws DecoratorException
     {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("columnValue:"+columnValue);
 

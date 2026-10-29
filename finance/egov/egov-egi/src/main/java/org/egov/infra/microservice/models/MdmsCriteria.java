@@ -2,10 +2,10 @@ package org.egov.infra.microservice.models;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class MdmsCriteria {
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
     
     private List<ModuleDetail> moduleDetails;

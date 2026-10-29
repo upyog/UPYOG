@@ -1,4 +1,4 @@
-package org.upyog.pgrai.web.models.pgrV1;
+package org.upyog.pgrai.web.models.pgrv1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,9 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.upyog.pgrai.web.models.AuditDetails;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
@@ -75,7 +72,7 @@ public class Service   {
   private String address;
 
   @JsonProperty("email")
-  @Email
+  @jakarta.validation.constraints.Email
   private String email;
 
   @JsonProperty("deviceId")
@@ -95,8 +92,8 @@ public class Service   {
   private String lastName;
 
   @JsonProperty("phone")
-  @NotEmpty
-  @Pattern(regexp="(^$|[0-9]{10})")
+  @NotBlank
+  @Pattern(regexp="(^$|\\d{10})")
   private String phone;
 
   @JsonProperty("attributes")

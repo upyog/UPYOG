@@ -1,11 +1,11 @@
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class FileReq {
-    @SafeHtml
+    @SanitizeHtml
     private String fileStoreId;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
     
     public String getFileStoreId() {

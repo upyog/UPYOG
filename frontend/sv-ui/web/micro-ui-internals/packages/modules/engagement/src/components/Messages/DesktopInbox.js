@@ -9,7 +9,7 @@ import Filter from "./Filter";
 
 const GetCell = (value) => <span className="">{value}</span>;
 
-const GetStatusCell = (value) => value === "Active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span> 
+const GetStatusCell = (value) => value === "Active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
 
 const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconName, links, globalSearch, searchFields, searchParams, onFilterChange, pageSizeLimit, totalRecords, currentPage, onNextPage, onPrevPage, onPageSizeChange }) => {
   const columns = React.useMemo(() => {
@@ -18,7 +18,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
         Header: t("EVENTS_MESSAGE_LABEL"),
         accessor: "name",
         Cell: ({ row }) => {
-         
+
           return (
             <div>
               <span className="link">
@@ -52,7 +52,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
   })
 
   let result;
- 
+
   if (isLoading) {
     result = <Loader />
   } else if (data?.length > 0) {
@@ -83,7 +83,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
   return (
     <div className="inbox-container">
       <div className="filters-container">
-      <EventLink title={title} icon={iconName} links={links} />
+        <EventLink title={title} icon={iconName} links={links} />
         <div>
           <Filter onFilterChange={onFilterChange} searchParams={searchParams} />
         </div>

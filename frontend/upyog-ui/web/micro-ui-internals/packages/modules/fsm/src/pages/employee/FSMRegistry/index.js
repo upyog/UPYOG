@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, InfoIcon } from "@upyog/digit-ui-react-components";
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import { Header, InfoIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams, useLocation,  } from "react-router-dom";
 
 import RegisryInbox from "../../../components/RegistryInbox";
 
@@ -32,7 +32,7 @@ const FSMRegistry = () => {
   const [vehicleIds, setVehicleIds] = useState("");
   const [driverIds, setDriverIds] = useState("");
   const [tableData, setTableData] = useState([]);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const selectedTabs = queryParams.get("selectedTabs");
@@ -242,9 +242,9 @@ const FSMRegistry = () => {
             label: t("ES_FSM_REGISTRY_SEARCH_VEHICLE_NUMBER"),
             name: "registrationNumber",
             labelChildren: (
-              <div className="tooltip" style={{ paddingLeft: "10px", marginBottom: "-3px" }}>
+              <div className="tooltip fsm-add-vehicle-bottom-spacing">
                 <InfoIcon />
-                <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize: "14px" }}>
+                <span className="tooltiptext fsm-add-vehicle-text-style">
                   {t("ES_FSM_VEHICLE_FORMAT_TIP")}
                 </span>
               </div>
@@ -288,7 +288,7 @@ const FSMRegistry = () => {
     console.log("ddddddd",window.contextPath)
     setTab(tab);
     if (selectedTabs !== tab) {
-      history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=${tab}`);
+      navigate(`/upyog-ui/employee/fsm/registry?selectedTabs=${tab}`);
     }
   };
 

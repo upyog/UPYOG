@@ -164,3 +164,5 @@ CREATE INDEX IF NOT EXISTS idx_ug_bulk_ingest_job_status ON ug_bulk_ingest_job (
 | `aws.s3.bucket` | `${AWS_S3_BUCKET}` | Target S3 bucket name. |
 | `aws.s3.folder` | `${AWS_S3_FOLDER}` | S3 folder path prefix. |
 | `external.api.audit.detail.topic` | `external-api-audit-details` | Kafka topic for inbound/outbound API audit events consumed by egov-persister. |
+| `external.api.audit.request.initiated.topic` | `external-api-request-initiated` | Kafka topic for inbound API request audit events. |
+| `external.api.audit.response.received.topic` | `external-api-response-received` | Kafka topic for inbound API response audit events. |

@@ -17,6 +17,7 @@ import org.apache.kafka.streams.state.WindowStore;
 import org.apache.kafka.streams.state.WindowStoreIterator;
 import org.json.JSONObject;
 
+import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -75,6 +76,8 @@ public class TelemetryDeduplicator {
             eventIdStore = (WindowStore<E, Long>) context.getStateStore(storeName);
         }
 
+        // Kafka Streams 3.x: Transformer#punctuate was removed from the interface; only transform/close remain.
+        @Override
         public KeyValue<K, V> transform(final K key, final V value) {
             E eventId = idExtractor.apply(key, value);
             if (eventId == null) {
@@ -112,12 +115,6 @@ public class TelemetryDeduplicator {
         }
 
         @Override
-        public KeyValue<K, V> punctuate(final long timestamp) {
-            // our windowStore segments are closed automatically
-            return null;
-        }
-
-        @Override
         public void close() {
             // Note: The store should NOT be closed manually here via `eventIdStore.close()`!
             // The Kafka Streams API will automatically close stores when necessary.
@@ -136,20 +133,16 @@ public class TelemetryDeduplicator {
 
         long maintainDurationPerEventInMs = TimeUnit.MINUTES.toMillis(deDupStorageTime);
 
-        // The number of segments has no impact on "correctness".
-        // Using more segments implies larger overhead but allows for more fined grained record expiration
-        // Note: the specified retention time is a _minimum_ time span and no strict upper time bound
-        int numberOfSegments = 3;
-
         // retention period must be at least window size -- for this use case, we don't need a longer retention period
         // and thus just use the window size as retention time
         long retentionPeriod = maintainDurationPerEventInMs;
 
+        // Kafka Streams 2.1+: persistentWindowStore(retention, segment, windowSize) — 3.x uses java.time.Duration (Kafka 3 / Java 17 stack).
         StoreBuilder<WindowStore<String, Long>> dedupStoreBuilder = Stores.windowStoreBuilder(
-                Stores.persistentWindowStore(storeName,
-                        retentionPeriod,
-                        numberOfSegments,
-                        maintainDurationPerEventInMs,
+                Stores.persistentWindowStore(
+                        storeName,
+                        Duration.ofMillis(retentionPeriod),
+                        Duration.ofMillis(maintainDurationPerEventInMs),
                         false
                 ),
                 Serdes.String(),

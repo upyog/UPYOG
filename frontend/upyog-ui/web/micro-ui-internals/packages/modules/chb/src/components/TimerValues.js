@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Toast } from "@upyog/digit-ui-react-components";
+import React, { useState, useEffect, useRef } from 'react';
+import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { useTranslation } from "react-i18next";
 
 /**
  * TimerValues Component
@@ -39,50 +40,60 @@ import { Toast } from "@upyog/digit-ui-react-components";
  * - A component that displays the remaining time for the booking slot and handles slot availability checks.
  * - Displays toast notifications for errors or warnings related to slot availability.
  */
-export const TimerValues = ({t, timerValues, SlotSearchData}) => {
-  const [timeRemaining, setTimeRemaining] = useState(0 || timerValues); // Initialize with `timerValues`
+export const TimerValues = ({ timerValues, SlotSearchData, draftId = "" }) => {
+  const { t } = useTranslation();
+  // Seed from the passed-in timer value so the page shows a value immediately 
+  // the slot-search effect below then corrects it to the exact remaining time.
+  const [timeRemaining, setTimeRemaining] = useState(timerValues || 0);
   const [showToast, setShowToast] = useState(null);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const [hasFetched, setHasFetched] = useState(false); // To track if data has been fetched once
+
+  // Guards against a duplicate fetch 
+  const hasFetchedRef = useRef(false);
+
   // Refetch logic for CHB (Community Hall Booking)
-//   const { refetch } = Digit.Hooks.chb.useChbSlotSearch({
-//     tenantId:tenantId,
-//     filters: {
-//       communityHallCode: SlotSearchData?.communityHallCode,
-//       bookingStartDate: SlotSearchData?.bookingStartDate,
-//       bookingEndDate: SlotSearchData?.bookingEndDate,
-//       hallCode: SlotSearchData?.hallCode,
-//       isTimerRequired: true,
-//     },
-//     enabled: false,
-//   });
+  const { refetch } = Digit.Hooks.chb.useChbSlotSearch({
+    tenantId: tenantId,
+    filters: {
+      bookingId: "",
+      draftId: draftId,
+      venueCode: SlotSearchData?.venueCode,
+      bookingStartDate: SlotSearchData?.bookingStartDate,
+      bookingEndDate: SlotSearchData?.bookingEndDate,
+      unitCode: SlotSearchData?.unitCode,
+      isTimerRequired: true,
+      fromTime: SlotSearchData?.fromTime,
+      toTime: SlotSearchData?.toTime
+    },
+    enabled: false,
+  });
 
-//   useEffect(() => {
-//     const fetchSlotData = async () => {
-//       try {
-//           // Fetching data for Community Hall Booking Service
-//           const result = await refetch();
-//           const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
-//             (slot) => slot.slotStaus === "BOOKED"
-//           );
+  useEffect(() => {
+    const fetchSlotData = async () => {
+      try {
+        // Fetching data for Community Hall Booking Service
+        const result = await refetch();
+        const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
+          (slot) => slot.slotStaus === "BOOKED"
+        );
 
-//           if (isSlotBooked) {
-//             setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
-//           } else {
-//             setTimeRemaining(result?.data.timerValue || 0);
-//           }
-//       } catch (error) {
-//         setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
-//       }
-//     };
+        if (isSlotBooked) {
+          setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
+        } else {
+          setTimeRemaining(result?.data?.timerValue || 0);
+        }
+      } catch (error) {
+        setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+      }
+    };
 
-//     // Only fetch if timeRemaining is 0 and data hasn't been fetched before
-//     if (timeRemaining === 0 && !hasFetched) {
-//       fetchSlotData();
-//       setHasFetched(true); // Mark that the data has been fetched once
-//     }
+    // Fetch once per mount; the ref guard skips StrictMode's second dev invoke.
+    if (!hasFetchedRef.current) {
+      hasFetchedRef.current = true;
+      fetchSlotData();
+    }
 
-//   }, [refetch, t, timeRemaining, hasFetched]);
+  }, [refetch, t]);
 
   // Timer decrement logic (every second)
   useEffect(() => {

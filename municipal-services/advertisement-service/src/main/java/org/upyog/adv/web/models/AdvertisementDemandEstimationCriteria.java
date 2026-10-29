@@ -1,9 +1,9 @@
 package org.upyog.adv.web.models;
 
-import jakarta.validation.*;
-import jakarta.validation.constraints.*;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
+
 
 
 import org.egov.common.contract.request.RequestInfo;

@@ -1,4 +1,4 @@
-import { CardSectionHeader, CardSubHeader, CheckPoint, ConnectingCheckPoints, Loader } from "@upyog/digit-ui-react-components";
+import { CardSectionHeader, CardSubHeader, CheckPoint, ConnectingCheckPoints, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import WFCaption from "./WFCaption";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
   - The component uses:
     - React for rendering.
     - `i18next` for internationalization.
-    - UI components from the `@upyog/digit-ui-react-components` library for displaying headers, checkpoints, and loaders.
+    - UI components from the `@nudmcdgnpm/digit-ui-react-components` library for displaying headers, checkpoints, and loaders.
 */
 const WFApplicationTimeline = (props) => {
   const { application, tenantId: propTenantId } = props; 
@@ -76,8 +76,8 @@ const WFApplicationTimeline = (props) => {
 
   return (
     <Fragment>
-      <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-        <CardSubHeader style={{ fontSize: "24px" }}>{t("PGR_AI_GRIEVANCE_TIMELINE")}</CardSubHeader>
+      <CardSectionHeader className="pgrai-wfapplication-timeline-header">
+        <CardSubHeader className="pgrai-wfapplication-timeline-header-2">{t("PGR_AI_GRIEVANCE_TIMELINE")}</CardSubHeader>
       </CardSectionHeader>
 
       {timelineData.length === 1 ? (

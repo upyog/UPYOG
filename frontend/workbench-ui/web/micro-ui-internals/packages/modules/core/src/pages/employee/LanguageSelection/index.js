@@ -1,13 +1,12 @@
-import { Card, CustomButton, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CustomButton, SubmitBar } from "@upyog/workbench-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 
 const LanguageSelection = () => {
   const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { languages, stateInfo } = storeData || {};
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
   const [selected, setselected] = useState(selectedLanguage);
@@ -17,7 +16,7 @@ const LanguageSelection = () => {
   };
 
   const handleSubmit = (event) => {
-    history.push(`/${window?.contextPath}/employee/user/login`);
+    navigate(`/${window?.contextPath}/employee/user/login`);
   };
 
   if (isLoading) return null;

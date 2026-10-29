@@ -79,14 +79,14 @@ function ApplicationDetailsContent({
     return `${day}/${month}/${year}`;
   };
   const getTimelineCaptions = (checkpoint, index = 0, timeline) => {
-      const caption = {
-        date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
-        name: checkpoint?.assignes?.[0]?.name,
-        wfComment: checkpoint?.wfComment,
-        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
-        thumbnailsToShow: checkpoint?.thumbnailsToShow
-      };
-      return <TLCaption data={caption} OpenImage={OpenImage} />;
+    const caption = {
+      date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
+      name: checkpoint?.assignes?.[0]?.name,
+      wfComment: checkpoint?.wfComment,
+      mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+      thumbnailsToShow: checkpoint?.thumbnailsToShow
+    };
+    return <TLCaption data={caption} OpenImage={OpenImage} />;
   };
 
   const getTranslatedValues = (dataValue, isNotTranslated) => {
@@ -110,20 +110,20 @@ function ApplicationDetailsContent({
   const toggleTimeline = () => {
     setShowAllTimeline((prev) => !prev);
   }
-// this is file open service
+  // this is file open service
   const openFilePDF = (fileId) => {
     Digit.UploadServices.Filefetch([fileId], Digit.ULBService.getStateId()).then((res) => {
-  
+
       // Extract the concatenated URL string
       const concatenatedUrls = res?.data?.fileStoreIds?.[0]?.url;
-  
+
       if (concatenatedUrls) {
         // Split the string by commas to get individual URLs
         const urlArray = concatenatedUrls.split(',');
-  
+
         // Pick the first URL (or any other logic to decide which URL to open)
         const fileUrl = urlArray[0];
-  
+
         if (fileUrl) {
           window.open(fileUrl, '_blank'); // Open the file in a new tab
         } else {
@@ -136,9 +136,9 @@ function ApplicationDetailsContent({
       console.error('Error fetching file:', error);
     });
   };
-  
+
   return (
-    <Card style={{ position: "relative" }} className={isSV?"employeeCard-override":""}>
+    <Card style={{ position: "relative" }} className={isSV ? "employeeCard-override" : ""}>
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <React.Fragment key={index}>
           <div>
@@ -147,8 +147,8 @@ function ApplicationDetailsContent({
             ) : (
               <React.Fragment>
                 <CardSectionHeader
-                  style={ 
-                      { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
+                  style={
+                    { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
                   }
                 >
                   {t(detail.title)}
@@ -160,45 +160,45 @@ function ApplicationDetailsContent({
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
 
             {detail?.isTable && (
-              <table style={{ tableLayout: "fixed", width: "63%", borderCollapse: "collapse",border: "1px solid black" }}>
+              <table style={{ tableLayout: "fixed", width: "63%", borderCollapse: "collapse", border: "1px solid black" }}>
                 <tr style={{ textAlign: "centre" }}>
-                  {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px", paddingLeft: "0px",  border: "1px solid black" }}>{t(header)}</th>
+                  {detail?.headers.map((header, hIdx) => (
+                    <th key={hIdx} style={{ padding: "10px", paddingLeft: "0px", border: "1px solid black" }}>{t(header)}</th>
                   ))}
                 </tr>
                 {detail?.tableRows.map((row, index) => {
-                  return <tr>
-                  {row.map((element, idx) => (
-                    Array.isArray(element) && element.length > 1 ? (
-                      <td style={{ paddingTop: "20px", textAlign: "centre", border: "1px solid black", verticalAlign: "middle" }} key={idx}>
-                      <div style={{ display: "flex", flexWrap: "nowrap", gap: "5px" }}>
-                        {element.map((file, fileIndex) => (
-                          <a
-                            key={fileIndex} // Ensure each <a> tag has a unique key
-                            onClick={() => openFilePDF(file.fileStoreId)}
-                            rel="noopener noreferrer"
-                            style={{ marginRight: "5px", display: "inline-block", cursor: "pointer"  }}
-                          >
-                            <PDFSvg style={{ width: "35px", height: "35px" }}/>
-                          </a>
-                        ))}
-                      </div>
-                    </td>
-                    
-                    ) : (
-                      <td key={idx} style={{ paddingTop: "20px", textAlign: "center", border: "1px solid black" }}>
-                        {t(element)}
-                      </td>
-                    )
-                  ))}
-                </tr>
+                  return <tr key={index}>
+                    {row.map((element, idx) => (
+                      Array.isArray(element) && element.length > 1 ? (
+                        <td style={{ paddingTop: "20px", textAlign: "centre", border: "1px solid black", verticalAlign: "middle" }} key={idx}>
+                          <div style={{ display: "flex", flexWrap: "nowrap", gap: "5px" }}>
+                            {element.map((file, fileIndex) => (
+                              <a
+                                key={fileIndex} // Ensure each <a> tag has a unique key
+                                onClick={() => openFilePDF(file.fileStoreId)}
+                                rel="noopener noreferrer"
+                                style={{ marginRight: "5px", display: "inline-block", cursor: "pointer" }}
+                              >
+                                <PDFSvg style={{ width: "35px", height: "35px" }} />
+                              </a>
+                            ))}
+                          </div>
+                        </td>
+
+                      ) : (
+                        <td key={idx} style={{ paddingTop: "20px", textAlign: "center", border: "1px solid black" }}>
+                          {t(element)}
+                        </td>
+                      )
+                    ))}
+                  </tr>
                 })}
               </table>
             )}
 
-            {detail?.additionalDetails?.documents && <DocumentPreview documents={detail?.additionalDetails?.documents} />}  
+            {detail?.additionalDetails?.documents && <DocumentPreview documents={detail?.additionalDetails?.documents} />}
 
-              <StatusTable>
+            <StatusTable>
               {detail?.title &&
                 detail?.values?.map((value, index) => {
                   if (value.map === true && value.value !== "N/A") {
@@ -227,26 +227,26 @@ function ApplicationDetailsContent({
                     );
                   }
                   return (
-                    <div>
-                        {(<Row
-                          key={t(value.title)}
-                          label={t(value.title)}
-                          text={getTextValue(value)}
-                          last={index === detail?.values?.length - 1}
-                          caption={value.caption}
-                          className="border-none"
-                          privacy={value?.privacy}
-                          labelStyle={{
-                            wordBreak: "break-all",
-                            fontWeight: value.isBold ? 'bold' : 'normal',
-                            fontStyle: value.isBold ? 'italic' : 'normal'
-                          }}
-                          textStyle={{
-                            wordBreak: "break-all",
-                            fontWeight: value.isBold ? 'bold' : 'normal',
-                            fontStyle: value.isBold ? 'italic' : 'normal'
-                          }}
-                        />
+                    <div key={t(value.title)}>
+                      {(<Row
+                        key={t(value.title)}
+                        label={t(value.title)}
+                        text={getTextValue(value)}
+                        last={index === detail?.values?.length - 1}
+                        caption={value.caption}
+                        className="border-none"
+                        privacy={value?.privacy}
+                        labelStyle={{
+                          wordBreak: "break-all",
+                          fontWeight: value.isBold ? 'bold' : 'normal',
+                          fontStyle: value.isBold ? 'italic' : 'normal'
+                        }}
+                        textStyle={{
+                          wordBreak: "break-all",
+                          fontWeight: value.isBold ? 'bold' : 'normal',
+                          fontStyle: value.isBold ? 'italic' : 'normal'
+                        }}
+                      />
                       )}
                     </div>
                   )
@@ -267,7 +267,7 @@ function ApplicationDetailsContent({
         </React.Fragment>
       ))}
 
-      
+
 
 
       {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (

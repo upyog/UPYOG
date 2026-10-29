@@ -17,7 +17,6 @@ import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.adv.config.BookingConfiguration;
@@ -48,14 +47,18 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class ADVNotificationService {
-	@Autowired
-	private BookingConfiguration config;
-	@Autowired
-	private NotificationUtil util;
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-	@Autowired
-	private ADVEncryptionService advEncryptionService;
+	private final BookingConfiguration config;
+	private final NotificationUtil util;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final ADVEncryptionService advEncryptionService;
+
+	public ADVNotificationService(BookingConfiguration config, NotificationUtil util,
+			ServiceRequestRepository serviceRequestRepository, ADVEncryptionService advEncryptionService) {
+		this.config = config;
+		this.util = util;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.advEncryptionService = advEncryptionService;
+	}
 
 	public void process(BookingRequest bookingRequest, String status) {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
@@ -104,7 +107,7 @@ public class ADVNotificationService {
 	 */
 	private void sendMessageNotification(String localizationMessages, BookingRequest bookingRequest, String status) {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
-		Map<String, String> messageMap = new HashMap<String, String>();
+		Map<String, String> messageMap = new HashMap<>();
 		String message = null;
 		try {
 			messageMap = util.getCustomizedMsg(bookingRequest.getBookingApplication(), localizationMessages, status,
@@ -124,11 +127,11 @@ public class ADVNotificationService {
 		log.info("Message for sending sms notification : " + message);
 		if (message != null) {
 			List<SMSRequest> smsRequests = new LinkedList<>();
-			if (config.getIsSMSNotificationEnabled()) {
-				Map<String, String> mobileNumberToOwner = new HashMap<String, String>();
+			if (Boolean.TRUE.equals(config.getIsSMSNotificationEnabled())) {
+				Map<String, String> mobileNumberToOwner = new HashMap<>();
 				mobileNumberToOwner.put(bookingDetail.getApplicantDetail().getApplicantMobileNo(),
 						bookingDetail.getApplicantDetail().getApplicantName());
-				enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
+				enrichSMSRequest(smsRequests, mobileNumberToOwner, message);
 				if (!CollectionUtils.isEmpty(smsRequests))
 					util.sendSMS(smsRequests);
 			}
@@ -138,7 +141,7 @@ public class ADVNotificationService {
 
 	private void sendEventNotification(String localizationMessages, BookingRequest bookingRequest, String status) {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
-		Map<String, String> messageMap = new HashMap<String, String>();
+		Map<String, String> messageMap = new HashMap<>();
 		String message = null;
 		try {
 			messageMap = util.getCustomizedMsg(bookingRequest.getBookingApplication(), localizationMessages, status,
@@ -154,27 +157,24 @@ public class ADVNotificationService {
 			e.printStackTrace();
 		}
 		log.info("Message for sending event notification : " + message);
-		if (message != null) {
-			if (null != config.getIsUserEventsNotificationEnabled()) {
-				if (config.getIsUserEventsNotificationEnabled()) {
-					EventRequest eventRequest = getEventsForAdvertisementEventRequest(bookingRequest, message,
-							messageMap.get(NotificationUtil.ACTION_LINK));
-					if (null != eventRequest)
-						util.sendEventNotification(eventRequest);
-				}
-			}
+		if (message != null && Boolean.TRUE.equals(config.getIsUserEventsNotificationEnabled())) {
+			EventRequest eventRequest = getEventsForAdvertisementEventRequest(bookingRequest, message,
+					messageMap.get(NotificationUtil.ACTION_LINK));
+			if (null != eventRequest)
+				util.sendEventNotification(eventRequest);
 		}
 	}
 
 	/**
 	 * Enriches the smsRequest with the customized messages
-	 * 
-	 * @param bpaRequest  The bpaRequest from kafka topic
-	 * @param smsRequests List of SMSRequets
+	 *
+	 * @param smsRequests List of SMS requests to enrich
+	 * @param mobileNumberToOwner Map of mobile numbers to owner names
+	 * @param message SMS message text
 	 */
-	private void enrichSMSRequest(BookingRequest bookingRequest, List<SMSRequest> smsRequests,
-			Map<String, String> mobileNumberToOwner, String message) {
-		smsRequests.addAll(util.createSMSRequest(bookingRequest, message, mobileNumberToOwner));
+	private void enrichSMSRequest(List<SMSRequest> smsRequests, Map<String, String> mobileNumberToOwner,
+			String message) {
+		smsRequests.addAll(util.createSMSRequest(message, mobileNumberToOwner));
 	}
 
 	private EventRequest getEventsForAdvertisementEventRequest(BookingRequest request, String message,
@@ -245,8 +245,6 @@ public class ADVNotificationService {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 			log.info("User fetched in fetUserUUID method of ADV notfication consumer" + user.toString());
-//			if (null != user) {
-//				String uuid = JsonPath.read(user, "$.user[0].uuid");
 			if (user != null) {
 				String uuid = JsonPath.read(user, "$.user[0].uuid");
 				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);

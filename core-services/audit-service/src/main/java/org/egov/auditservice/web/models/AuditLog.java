@@ -5,11 +5,11 @@ import lombok.*;
 import org.egov.auditservice.web.models.enums.OperationType;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-03-30T07:20:03.639Z[GMT]")
+@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-03-30T07:20:03.639Z[GMT]")
 @Getter
 @Setter
 @AllArgsConstructor

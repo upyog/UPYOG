@@ -50,7 +50,7 @@ package org.egov.infra.utils;
 
 public final class ApplicationConstant {
 
-    public static final String CITY_CODE_KEY = "cityCode";
+    public static final String  CITY_CODE_KEY = "cityCode";
     public static final String CITY_NAME_KEY = "cityname";
     public static final String CITY_URL_KEY = "cityurl";
     public static final String CITY_LOGO_FS_UUID_KEY = "citylogo";

@@ -51,16 +51,27 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * LTS Migration Fix (Hibernate 6): field uniqueness check used by {@link Unique}.
+ * <p>
+ * Hibernate 6: Hibernate {@code Criteria} was replaced with JPA
+ * {@link CriteriaBuilder}. {@code Restrictions.eq().ignoreCase()} became
+ * {@code cb.lower}; {@code uniqueResult() == null} became {@code result.isEmpty()}.
+ * </p>
+ */
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
 
     private Unique unique;
@@ -94,17 +105,48 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
     }
 
-    private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
-        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
-        if (fieldValue instanceof String)
-            criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
-        else
-            criteria.add(Restrictions.eq(fieldName, fieldValue));
-        if (id != null)
-            criteria.add(Restrictions.ne(unique.id(), id));
-        return criteria.setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
-    }
+    private boolean checkUnique(final Object arg0, final Number id, final String fieldName)
+            throws IllegalAccessException {
 
+        // Hibernate 6: CriteriaBuilder setup
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        // Hibernate 6: target entity is the superclass or the concrete class.
+        Class<?> targetClass = unique.isSuperclass()
+                ? arg0.getClass().getSuperclass()
+                : arg0.getClass();
+
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
+        Root<?> root = cq.from(targetClass);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Hibernate 6: string fields compared case-insensitively; others with cb.equal.
+        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+        if (fieldValue instanceof String) {
+            // Hibernate 6: Restrictions.eq().ignoreCase() → cb.lower()
+            predicates.add(cb.equal(
+                    cb.lower(root.get(fieldName)),
+                    ((String) fieldValue).toLowerCase()
+            ));
+        } else {
+            // Hibernate 6: Restrictions.eq() → cb.equal()
+            predicates.add(cb.equal(root.get(fieldName), fieldValue));
+        }
+
+        // Hibernate 6: Restrictions.ne() → cb.notEqual()
+        if (id != null) {
+            predicates.add(cb.notEqual(root.get(unique.id()), id));
+        }
+
+        // Hibernate 6: Projections.id() + setMaxResults(1) + uniqueResult() == null
+        cq.select(root.get(unique.id()))
+                .where(cb.and(predicates.toArray(new Predicate[0])));
+
+        List<Object> result = entityManager.createQuery(cq)
+                .setMaxResults(1)
+                .getResultList();
+
+        return result.isEmpty();  // Hibernate 6: uniqueResult() == null → isEmpty()
+    }
 }

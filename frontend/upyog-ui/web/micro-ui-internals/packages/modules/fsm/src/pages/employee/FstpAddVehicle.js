@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, Header, InfoIcon } from "@upyog/digit-ui-react-components";
-import { useForm, Controller } from "react-hook-form";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, Header, InfoIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 
 const FstpAddVehicle = ({ onSelect }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [vehicleNumber, setVehicleNumber] = useState("");
 
   let inputs = {
@@ -32,7 +31,7 @@ const FstpAddVehicle = ({ onSelect }) => {
   };
 
   const onSubmit = (data) => {
-    history.push(`/upyog-ui/employee/fsm/fstp-fsm-request/${data.vehicleNumber.trim()}`);
+    navigate(`/upyog-ui/employee/fsm/fstp-fsm-request/${data.vehicleNumber.trim()}`);
   };
 
   function onChange(e) {

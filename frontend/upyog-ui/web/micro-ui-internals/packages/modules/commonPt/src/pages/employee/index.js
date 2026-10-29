@@ -1,7 +1,7 @@
-import { BreadCrumb, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BreadCrumb, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Switch, useLocation } from "react-router-dom";
+import { Link, useLocation, Routes, Route } from "react-router-dom";
 import { CommonPTLinks } from "../../Module";
 import ViewProperty from "../pageComponents/ViewProperty";
 import NewApplication from "./NewApplication";
@@ -70,25 +70,19 @@ const EmployeeApp = ({ path, url, userType }) => {
   const locationCheck = window.location.href.includes("/employee/commonpt/new-application");
 
   return (
-    <Switch>
-      <React.Fragment>
-        <div className="ground-container">
-          {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "12px" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
-              {t("ES_COMMON_HOME")}
-            </Link>{" "}
-            / <span>{getBreadCrumb()}</span>
-          </p> */}
-          <div style={locationCheck ? { marginLeft: "12px" } : {}}>
-            <BreadCrumb crumbs={crumbs} />
-          </div>
-          <PrivateRoute exact path={`${path}/`} component={() => <CommonPTLinks matchPath={path} userType={userType} />} />
-          <PrivateRoute path={`${path}/new-application`} component={() => <NewApplication parentUrl={url} />} />
-          <PrivateRoute path={`${path}/search`} component={() => <Search />} />
-          <PrivateRoute path={`${path}/view-property`} component={() => <ViewProperty />} />
+    <React.Fragment>
+      <div className="ground-container">
+        <div style={locationCheck ? { marginLeft: "12px" } : {}}>
+          <BreadCrumb crumbs={crumbs} />
         </div>
-      </React.Fragment>
-    </Switch>
+        <Routes>
+          <Route path="*" element={<PrivateRoute><CommonPTLinks matchPath={path} userType={userType} /></PrivateRoute>} />
+          <Route path="new-application/*" element={<PrivateRoute><NewApplication parentUrl={url} /></PrivateRoute>} />
+          <Route path="search" element={<PrivateRoute><Search /></PrivateRoute>} />
+          <Route path="view-property" element={<PrivateRoute><ViewProperty /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </React.Fragment>
   );
 };
 

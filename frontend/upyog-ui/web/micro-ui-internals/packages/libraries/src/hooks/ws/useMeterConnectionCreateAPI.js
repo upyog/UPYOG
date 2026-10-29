@@ -1,8 +1,8 @@
 import { WSService } from "../../services/elements/WS";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const useMeterReadingCreateAPI = (businessService = "WS") => {
-    return useMutation((data) => WSService.meterConnectioncreate(data, businessService));
+    return mutationTemplate({ mutationFn: (data) => WSService.meterConnectioncreate(data, businessService) });
 };
 
 export default useMeterReadingCreateAPI; 

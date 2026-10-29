@@ -62,6 +62,15 @@ import org.springframework.data.envers.repository.support.EnversRevisionReposito
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+/**
+ * LTS Migration Fix (Spring Data 3): enables JPA repositories with Envers revision support.
+ * <p>
+ * Elasticsearch repositories are excluded because the Spring Data Elasticsearch
+ * 5.x client APIs are not compatible with the Elasticsearch 2.4.x cluster still
+ * referenced by this application. Auditing records the current {@link User}
+ * via {@link AuditorAware}.
+ * </p>
+ */
 @Configuration
 @EnableJpaRepositories(basePackages = "org.egov.**.repository",
         excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = ElasticsearchRepository.class),
@@ -72,8 +81,14 @@ public class RepositoryConfiguration {
     @Autowired
     private UserService userService;
 
+    /**
+     * Supplies the authenticated user for JPA auditing fields.
+     * Spring Data 3 requires {@link AuditorAware} to return {@link java.util.Optional}.
+     *
+     * @return auditor that yields the current user, or empty when unauthenticated
+     */
     @Bean
     public AuditorAware<User> springSecurityAwareAuditor() {
-        return userService::getCurrentUser;
+        return () -> java.util.Optional.ofNullable(userService.getCurrentUser());
     }
 }

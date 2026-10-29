@@ -1,6 +1,6 @@
 import React,{ useState }  from "react";
-import { Card, Banner, CardText, SubmitBar } from "@upyog/digit-ui-react-components";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Card, Banner, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PgrRoutes, getRoute } from "../../constants/Routes";
 import { useTranslation } from "react-i18next";
@@ -38,13 +38,13 @@ const BannerPicker = ({ response }) => {
 
 const Response = (props) => {
   const { t } = useTranslation();
-  const { match } = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const appState = useSelector((state) => state)["pgr"];
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
   const [enable, setEnable] = useState(false)
   let id= appState?.complaints?.response?.ServiceWrappers?.[0]?.service?.serviceRequestId
-  const { isLoading, error, isError, complaintDetails, revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId:"pg.citya", id },{ enabled: enable ? true : false});
+  const { isLoading, error, isError, data: complaintDetails, refetch: revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId:"pg.citya", id },{ enabled: enable ? true : false});
   
   const handleDownloadPdf = async (e) => {
     const tenantInfo = tenants.find((tenant) => tenant.code === "pg.citya");
@@ -57,11 +57,11 @@ const Response = (props) => {
     <Card>
       {appState.complaints.response && <BannerPicker response={appState} />}
       <CardText>{t("ES_COMMON_TRACK_COMPLAINT_TEXT")}</CardText>
-      <div className="abc" style={{display:"flex"}}>
+      <div className="abc pgr-response-flex-container">
       <Link to="/upyog-ui/employee">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
-      {appState.complaints.response && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} style={{marginLeft:"10px"}}/>}
+      {appState.complaints.response && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} className="pgr-response-spacing"/>}
       </div>
     </Card>
   );

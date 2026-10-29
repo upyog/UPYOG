@@ -1,22 +1,18 @@
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 
 const useTradeLicenseSearch = ({ tenantId, filters, auth }, config = {}) => {
   const client = useQueryClient();
-
   const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
-  const { isLoading, error, data } = useQuery(["tradeSearchList", tenantId, filters], () => Digit.TLService.TLsearch(args), config);
-  useEffect (() => {
-    if(config?.filters?.tenantId)
-    Digit.LocalizationService.getLocale({modules: [`rainmaker-${config.filters?.tenantId}`], locale: Digit.StoreData.getCurrentLanguage(), tenantId: `${config?.filters?.tenantId}`});
-  },[config?.filters?.tenantId]);
-//   if (!isLoading && data && data?.Properties && Array.isArray(data.Properties) && data.Properties.length > 0) {
-//     data.Properties[0].units = data.Properties[0].units || [];
-//     data.Properties[0].units = data.Properties[0].units.filter((unit) => unit.active);
-//     data.Properties[0].owners = data.Properties[0].owners || [];
-//     data.Properties[0].owners = data.Properties[0].owners.filter((owner) => owner.status === "ACTIVE");
-//   }
-  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["tradeSearchList", tenantId, filters]) };
+  const { isLoading, error, data } = queryTemplate({ queryKey: ["tradeSearchList", tenantId, filters], queryFn: () => Digit.TLService.TLsearch(args), config });
+
+  useEffect(() => {
+    if (config?.filters?.tenantId)
+      Digit.LocalizationService.getLocale({ modules: [`rainmaker-${config.filters?.tenantId}`], locale: Digit.StoreData.getCurrentLanguage(), tenantId: `${config?.filters?.tenantId}` });
+  }, [config?.filters?.tenantId]);
+
+  return { isLoading, error, data, revalidate: () => client.invalidateQueries({ queryKey: ["tradeSearchList", tenantId, filters] }) };
 };
 
 export default useTradeLicenseSearch;

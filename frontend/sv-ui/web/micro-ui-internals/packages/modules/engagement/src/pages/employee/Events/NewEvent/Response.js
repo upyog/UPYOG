@@ -2,7 +2,7 @@ import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@nudmcdgnp
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 const BannerPicker = (props) => {
@@ -83,7 +83,7 @@ const Response = (props) => {
           isLoading={(updateEventMutation.isIdle && !mutationHappened) || updateEventMutation.isLoading}
         />
         <CardText>
-        {searchParams?.update ? (updateEventMutation.isSuccess || successData) ? t('ENGAGEMENT_EVENT_UPDATED') : t(`ENGAGEMENT_EVENT_UPDATED_FAILED`) : (updateEventMutation.isSuccess || successData) ? t('ENGAGEMENT_EVENT_DELETED') : t('ENGAGEMENT_EVENT_DELETED_FAILED')}
+          {searchParams?.update ? (updateEventMutation.isSuccess || successData) ? t('ENGAGEMENT_EVENT_UPDATED') : t(`ENGAGEMENT_EVENT_UPDATED_FAILED`) : (updateEventMutation.isSuccess || successData) ? t('ENGAGEMENT_EVENT_DELETED') : t('ENGAGEMENT_EVENT_DELETED_FAILED')}
         </CardText>
         <ActionBar>
           <Link to={"/sv-ui/employee"}>

@@ -9,7 +9,7 @@ import { UserService } from "../../elements/User";
  * get citizen selected tenant
  * get all ulbs of employee
  *
- * @author jagankumar-egov
+ * @author NUMD Team
  *
  * @example
  * Digit.ULBService.getCurrentTenantId()
@@ -20,7 +20,7 @@ export const ULBService = {
   /**
    * Custom method to get employee's current selected city
    *
-   * @author jagankumar-egov
+   * @author NUMD Team
    *
    * @example
    * Digit.ULBService.getCurrentTenantId()
@@ -44,7 +44,7 @@ export const ULBService = {
   /**
    * Custom method to get current environment home / state tenant
    *
-   * @author jagankumar-egov
+   * @author NUMD Team
    *
    * @example
    * Digit.ULBService.getStateId()
@@ -57,7 +57,7 @@ export const ULBService = {
   /**
    * Custom method to get employee's current ulb object
    *
-   * @author jagankumar-egov
+   * @author NUMD Team
    *
    * @example
    * Digit.ULBService.getCurrentUlb()

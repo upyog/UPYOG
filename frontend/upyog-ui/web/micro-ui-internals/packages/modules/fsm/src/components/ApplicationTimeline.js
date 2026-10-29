@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams,  } from "react-router-dom";
 import {
   Header,
   ActionLinks,
@@ -13,9 +13,10 @@ import {
   LinkButton,
   Loader,
   Rating,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import TLCaption from "./TLCaption";
+import { APPLICATION_PATH } from "../utils";
 
 export const ApplicationTimeline = (props) => {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export const ApplicationTimeline = (props) => {
         <>
           {data?.nextActions.length > 0 && (
             <div>
-              <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
+              <Link to={`${APPLICATION_PATH}/citizen/fsm/rate/${props.id}`}>
                 <ActionLinks>{t("CS_FSM_RATE")}</ActionLinks>
               </Link>
             </div>
@@ -71,7 +72,7 @@ export const ApplicationTimeline = (props) => {
       return (
         <div>
           <Rating withText={true} text={t(`CS_FSM_YOU_RATED`)} currentRating={checkpoint.rating} />
-          <Link to={`/upyog-ui/citizen/fsm/rate-view/${props.id}`}>
+          <Link to={`${APPLICATION_PATH}/citizen/fsm/rate-view/${props.id}`}>
             <ActionLinks>{t("CS_FSM_RATE_VIEW")}</ActionLinks>
           </Link>
         </div>
@@ -99,11 +100,12 @@ export const ApplicationTimeline = (props) => {
     switch (nextAction?.action) {
       case "PAY":
         return (
-          <div style={{ marginTop: "24px" }}>
+          <div className="fsm-application-timeline-top-spacing">
             <Link
               to={{
-                pathname: `/upyog-ui/citizen/payment/my-bills/FSM.TRIP_CHARGES/${props.id}/?tenantId=${props.application.tenantId}`,
-                state: { tenantId: props.application.tenantId },
+                pathname: `/upyog-ui/citizen/payment/my-bills/FSM.TRIP_CHARGES/${props.id}/`,
+                search: `?tenantId=${props.application?.tenantId}`,
+                state: { tenantId: props.application?.tenantId },
               }}
             >
               {window.location.href.includes("citizen/fsm/") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />}
@@ -112,8 +114,8 @@ export const ApplicationTimeline = (props) => {
         );
       case "SUBMIT_FEEDBACK":
         return (
-          <div style={{ marginTop: "24px" }}>
-            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
+          <div className="fsm-application-timeline-top-spacing">
+            <Link to={`${APPLICATION_PATH}/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
           </div>
@@ -145,7 +147,7 @@ export const ApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="fsm-application-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

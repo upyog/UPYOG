@@ -1,30 +1,45 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-/**
- * Custom hook for executing an ADS search using React Query.
- * 
- * This hook takes in tenant ID, filters, and authentication details to fetch
- * search results. It handles loading states and errors, and includes a
- * method to refetch data. The hook also allows for custom configurations 
- */
-const useADSSearch = ({ tenantId, filters, auth,searchedFrom="" }, config = {}) => {
+const useADSSearch = (
+  { tenantId, filters, auth },
+  config = {}
+) => {
   const client = useQueryClient();
 
-  const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
+  const args = tenantId
+    ? { tenantId, filters, auth }
+    : { filters, auth };
 
-  const defaultSelect = (data) => {
-    if(data.bookingApplication.length > 0)  data.bookingApplication[0].bookingNo = data.bookingApplication[0].bookingNo || [];
-      
+  const queryKey = [
+    "ADS_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+    auth,
+  ];
+
+  const queryFn = () => Digit.ADSServices.search(args);
+
+  const select = (data) => {
+    if (data?.bookingApplication?.length > 0) {
+      data.bookingApplication[0].bookingNo =
+        data.bookingApplication[0].bookingNo || [];
+    }
     return data;
   };
 
-  const { isLoading, error, data, isSuccess,refetch } = useQuery(["adsSearchList", tenantId, filters, auth, config], () => Digit.ADSServices.search(args), {
-    
-    select: defaultSelect,
-    ...config,
+  const query = queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
   });
 
-  return { isLoading, error, data, isSuccess,refetch, revalidate: () => client.invalidateQueries(["adsSearchList", tenantId, filters, auth]) };
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useADSSearch;

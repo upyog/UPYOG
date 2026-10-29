@@ -48,13 +48,13 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Functionary;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class FunctionaryHibernateDAO extends FunctionaryDAO {
     }
 
     public List<Functionary> findAll() {
-        return (List<Functionary>) getCurrentSession().createCriteria(Functionary.class).list();
+        return getCurrentSession().createQuery("from Functionary", Functionary.class).list();
     }
 
     @PersistenceContext
@@ -108,15 +108,15 @@ public class FunctionaryHibernateDAO extends FunctionaryDAO {
     }
 
     public Functionary getFunctionaryByCode(final BigDecimal functionaryCode) {
-        final Query qry = getCurrentSession().createQuery("from Functionary where code=:code");
-        qry.setBigDecimal("code", functionaryCode);
-        return (Functionary) qry.uniqueResult();
+        final Query<Functionary> qry = getCurrentSession().createQuery("from Functionary where code=:code", Functionary.class);
+        qry.setParameter("code", functionaryCode);
+        return qry.uniqueResult();
     }
 
     public Functionary getFunctionaryByName(final String name) {
-        final Query qry = getCurrentSession().createQuery("from Functionary where name=:name");
-        qry.setString("name", name);
-        return (Functionary) qry.uniqueResult();
+        final Query<Functionary> qry = getCurrentSession().createQuery("from Functionary where name=:name", Functionary.class);
+        qry.setParameter("name", name);
+        return qry.uniqueResult();
     }
 
 }

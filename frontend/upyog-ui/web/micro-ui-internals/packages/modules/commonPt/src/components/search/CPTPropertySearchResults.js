@@ -1,12 +1,12 @@
-import { DetailsCard, Loader, Table } from "@upyog/digit-ui-react-components";
+import { DetailsCard, Loader, Table } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 
 const GetCell = (value) => <span className="cell-text">{value}</span>;
 
 const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchConfig, redirectToUrl }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state } = useLocation();
   const search = useLocation().search;
   const urlPropertyId = new URLSearchParams(search).get("propertyId");
@@ -35,7 +35,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
                 <span
                   onClick={() => {
                     //sessionStorage.setItem("propertyDetailsBC",JSON.stringify({...state}))
-                    history.push(
+                    navigate(
                       `/upyog-ui/employee/commonpt/view-property?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}&redirectToUrl=${redirectToUrl}`,
                       { ...state }
                     );
@@ -81,7 +81,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
                     <span
                       onClick={() => {
                         //sessionStorage.setItem("propertyDetailsBC",JSON.stringify({...state}))
-                        history.push(urlParams ? `${redirectToUrl}?${urlParams?.replace(urlPropertyId,row.original["propertyId"])}` : `${redirectToUrl}?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}`, { ...state });
+                        navigate(urlParams ? `${redirectToUrl}?${urlParams?.replace(urlPropertyId,row.original["propertyId"])}` : `${redirectToUrl}?propertyId=${row.original["propertyId"]}&tenantId=${tenantId}`, { ...state });
                         const scrollConst = redirectToUrl?.includes("employee/tl") ? 1600 : 300;
                         setTimeout(() => window.scrollTo(0, scrollConst), 400);
                       }}

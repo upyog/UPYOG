@@ -8,7 +8,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
@@ -27,31 +26,28 @@ import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.workflow.State;
 
 import digit.models.coremodels.PaymentRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class WaterTankerServiceImpl implements WaterTankerService {
 
-	@Autowired
-	EnrichmentService enrichmentService;
+	private final EnrichmentService enrichmentService;
 
-	@Autowired
-	RequestServiceRepository requestServiceRepository;
+	private final RequestServiceRepository requestServiceRepository;
 
-	@Autowired
-	WorkflowService workflowService;
+	private final WorkflowService workflowService;
 
-	@Autowired
-	DemandService demandService;
+	private final DemandService demandService;
 
-	@Autowired
-	RequestServiceConfiguration config;
+	private final RequestServiceConfiguration config;
 
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
 	@Override
+	@SuppressWarnings({ "java:S112", "java:S5411" })
 	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest) {
 
 		log.info("Create water tanker booking for user : " + waterTankerRequest.getRequestInfo().getUserInfo().getUuid()
@@ -85,12 +81,11 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
 
-		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
-
-		return waterTankerDetail;
+		return waterTankerRequest.getWaterTankerBookingDetail();
 	}
 
 	@Override
+	@SuppressWarnings("java:S5411")
 	public List<WaterTankerBookingDetail> getWaterTankerBookingDetails(RequestInfo requestInfo,
 			WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
 		/*

@@ -1,5 +1,4 @@
-import { DatePicker, Dropdown, CheckBox, TextArea, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
-import { DustbinIcon } from "@upyog/digit-ui-react-components";
+import { DatePicker, Dropdown, CheckBox, TextArea, TextInput, CardLabelError, DustbinIcon} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import TimePicker from "react-time-picker";
@@ -101,21 +100,27 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
     switch (type?.value) {
       case "LONG_ANSWER_TYPE":
         return <div>
-          <TextArea 
-            placeholder={t("LONG_ANSWER_TYPE")}
-            disabled={isInputDisabled}
-            name={"longAnsDescription"}
-            inputRef={register({
+          {(() => {
+            const { ref: longAnsRef, ...longAnsRest } = register("longAnsDescription", {
               maxLength: {
                 value: 500,
                 message: t("EXCEEDS_500_CHAR_LIMIT"),
               }
-            })}
+            });
+            return (
+              <TextArea
+                placeholder={t("LONG_ANSWER_TYPE")}
+                disabled={isInputDisabled}
+                name="longAnsDescription"
+                inputRef={longAnsRef}
+                {...longAnsRest}
               />
+            );
+          })()}
           {formState?.errors && <CardLabelError>{formState?.errors?.longAnsDescription?.message}</CardLabelError>}
               </div>;
       case "DATE_ANSWER_TYPE":
-        return <DatePicker stylesForInput={{ width: "calc(100% - 290px)" }} style={{width:"202px"}} disabled={isInputDisabled}/>;
+        return <DatePicker stylesForInput={{ width: "calc(100% - 290px)" }} className="eng-new-survey-form-wrapper" disabled={isInputDisabled}/>;
       case "TIME_ANSWER_TYPE":
         return <TextInput type="time" textInputStyle={{width:"202px"}} disable={isInputDisabled}/>;
       case "MULTIPLE_ANSWER_TYPE":
@@ -149,7 +154,7 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
             formDisabled={formDisabled}
             maxLength={60}
             titleHover={t("MAX_LENGTH_60")}
-            labelstyle={{marginLeft:"-20px"}}
+            className="margin-left-minus-20"
             // name={"checkBoxDesc"}
             // inputRef={register({
             //     maxLength: {
@@ -163,17 +168,23 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
         );
       default:
         return<div> 
-                <TextInput 
-                placeholder={t("SHORT_ANSWER_TYPE")} 
-                name={"shortAnsDescription"}
-                disabled={isInputDisabled}
-                inputRef={register({
-                  maxLength: {
-                    value: 200,
-                    message: t("EXCEEDS_200_CHAR_LIMIT"),
-                  }
-                })}
-                />
+                {(() => {
+                  const { ref: shortAnsRef, ...shortAnsRest } = register("shortAnsDescription", {
+                    maxLength: {
+                      value: 200,
+                      message: t("EXCEEDS_200_CHAR_LIMIT"),
+                    }
+                  });
+                  return (
+                    <TextInput
+                      placeholder={t("SHORT_ANSWER_TYPE")}
+                      name="shortAnsDescription"
+                      disabled={isInputDisabled}
+                      inputRef={shortAnsRef}
+                      {...shortAnsRest}
+                    />
+                  );
+                })()}
                 {formState?.errors && <CardLabelError>{formState?.errors?.shortAnsDescription?.message}</CardLabelError>}
               </div>;
     }
@@ -184,29 +195,35 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
       <span className="newSurveyForm_quesno">{`${t("CS_COMMON_QUESTION")} ${index + 1} `}</span>
       <span className="newSurveyForm_mainsection">
         <div className="newSurveyForm_questions">
-          <div style={{width: "75%"}}>
-            <TextInput
-              placeholder={t("CS_COMMON_TYPE_QUESTION")}
-              //value={t(Digit.Utils.locale.getTransformedLocale(surveyQuestionConfig.questionStatement))}
-              value={surveyQuestionConfig.questionStatement}
-              onChange={(ev) => {
-                setSurveyQuestionConfig((prevState) => ({ ...prevState, questionStatement: ev.target.value }));
-              }}
-              textInputStyle={{width: "100%"}}
-              name={`QUESTION_SURVEY_${index}`}
-              disable={disableInputs}
-              inputRef={register({
+          <div className="eng-new-survey-form-wrapper-2">
+            {(() => {
+              const { ref: questionRef, onChange: questionOnChange, ...questionRest } = register(`QUESTION_SURVEY_${index}`, {
                 required: t("ES_ERROR_REQUIRED"),
                 maxLength: {
                   value: 100,
                   message: t("EXCEEDS_100_CHAR_LIMIT"),
                 },
-                pattern:{
+                pattern: {
                   value: /^[A-Za-z_-][A-Za-z0-9_\ -?]*$/,
                   message: t("ES_SURVEY_DONT_START_WITH_NUMBER")
                 }
-              })}
-            />
+              });
+              return (
+                <TextInput
+                  placeholder={t("CS_COMMON_TYPE_QUESTION")}
+                  value={surveyQuestionConfig.questionStatement}
+                  textInputStyle={{width: "100%"}}
+                  name={`QUESTION_SURVEY_${index}`}
+                  disable={disableInputs}
+                  inputRef={questionRef}
+                  {...questionRest}
+                  onChange={(ev) => {
+                    questionOnChange(ev);
+                    setSurveyQuestionConfig((prevState) => ({ ...prevState, questionStatement: ev.target.value }));
+                  }}
+                />
+              );
+            })()}
             {formState?.errors && <CardLabelError>{formState?.errors?.[`QUESTION_SURVEY_${index}`]?.message}</CardLabelError>}
           </div>
           <Dropdown
@@ -231,15 +248,15 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
               label={t("CS_COMMON_REQUIRED")}
               pageType={"employee"}
               disable={disableInputs}
-              style={{marginTop:"2px"}}
+              className="eng-new-survey-form-top-spacing"
             />
           </div>
           {index!==0 && <div className="newSurveyForm_seprator" />}
           {index!==0 && <div className={`pointer ${disableInputs ? 'disabled-btn':''}`} onClick={() => dispatch({ type: "removeForm", payload: { index } })}>
-          <div className="tooltip" /* style={{position:"relative"}} */>
-              <div style={{display: "flex", /* alignItems: "center", */ gap: "0 4px"}}>
+          <div className="tooltip" /* className="custom-style" */>
+              <div className="eng-new-survey-form-flex-container">
             <DustbinIcon />
-            <span className="tooltiptext" style={{ position:"absolute",width:"100px", marginLeft:"50%", fontSize:"medium" }}>
+            <span className="tooltiptext eng-new-survey-form-spacing">
               {t("CS_INFO_DELETE")}
               </span>
               </div>

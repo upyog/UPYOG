@@ -77,11 +77,11 @@ const MobileInbox = ({
   });
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="fsm-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {/* {!isFstpOperator && !isSearch && <ApplicationLinks linkPrefix={parentRoute} isMobile={true} />} */}
-          <div style={{ display: "none" }}>
+          <div className="fsm-mobile-inbox-hidden">
             {!isSearch && <Filter searchParams={searchParams} applications={data} onFilterChange={onFilterChange} type="mobile" />}
           </div>
           <ApplicationCard

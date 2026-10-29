@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@upyog/digit-ui-react-components";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation, useParams,  } from "react-router-dom";
 import getPDFData from "../../getPDFData";
 import { getVehicleType } from "../../utils";
 import { ApplicationTimeline } from "../../components/ApplicationTimeline";
@@ -9,7 +9,7 @@ import { ApplicationTimeline } from "../../components/ApplicationTimeline";
 const ApplicationDetails = () => {
   const { t } = useTranslation();
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state: locState } = useLocation();
   const tenantId = locState?.tenantId || Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
@@ -34,7 +34,7 @@ const ApplicationDetails = () => {
   }
 
   if (application?.applicationDetails?.length === 0) {
-    history.goBack();
+    navigate(-1);
   }
 
   const handleDownloadPdf = async () => {
@@ -127,10 +127,10 @@ const ApplicationDetails = () => {
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px", display:"flex", alignItems:"center"}}>
-        <div  style={{flexGrow:1, textAlign:"left"}}>
+        <div  className="fsm-application-details-wrapper">
         <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
         </div>
-        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center", marginTop:"-25px", justifyContent:"flex-end",gap:"10px"}}>
+        <div className="fsm-application-details-flex-row">
         {dowloadOptions && dowloadOptions.length > 0 && !showReceiptOptions && (
           <MultiLink
             className="multilinkWrapper"
@@ -139,9 +139,9 @@ const ApplicationDetails = () => {
             options={dowloadOptions}
           />
         )}   
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} className="fsm-application-details-action-btn" onClick={handleViewTimeline}></LinkButton>
         </div> 
-        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center",gap:"10px", marginTop:"-25px", zIndex:"10"}}>
+        <div className="fsm-application-details-flex-row-2">
         {receiptOptions && receiptOptions.length > 0 && showReceiptOptions && (
           <MultiLink
             className="multilinkWrapper"
@@ -152,7 +152,7 @@ const ApplicationDetails = () => {
         )}   
         </div>    
       </div>
-      <Card className="fsm" style={{ position: "relative" }}>
+      <Card className="fsm fsm-registry-inbox-wrapper">
         {application?.applicationDetails?.map(({ title, value, child, caption, map }, index) => {
           return (
             <KeyNote key={index} keyValue={t(title)} note={t(value) || ((!map || !child) && "N/A")} caption={t(caption)}>

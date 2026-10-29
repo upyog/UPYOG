@@ -114,11 +114,11 @@ public class DataCollection {
     }
 
     public void addValue(final String name, final float value) {
-        addValueHelper(name, new Float(value));
+        addValueHelper(name, Float.valueOf(value));
     }
 
     public void addValue(final String name, final double value) {
-        addValueHelper(name, new Double(value));
+        addValueHelper(name, Double.valueOf(value));
     }
 
     public void addValue(final String name, final boolean value) {

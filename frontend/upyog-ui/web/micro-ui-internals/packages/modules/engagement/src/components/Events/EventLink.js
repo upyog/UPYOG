@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, DocumentIcon, EventCalendar } from "@upyog/digit-ui-react-components";
+import { Card, DocumentIcon, EventCalendar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -7,8 +7,8 @@ const EventLink = ({ title = "EVENTS_EVENTS_HEADER", links, icon = 'calender' })
   const { t } = useTranslation();
 
   const GetLogo = () => (
-    <div className="header" style={{ justifyContent: "flex-start" }}>
-      <span className="logo" style={{ backgroundColor: "#fff" }}>
+    <div className="header eng-event-link-wrapper">
+      <span className="logo eng-event-link-wrapper-2">
         {icon === "calender" ? <EventCalendar /> : icon === "survey" ? 'surveyIcon' :  <DocumentIcon />}
       </span>
       {" "}

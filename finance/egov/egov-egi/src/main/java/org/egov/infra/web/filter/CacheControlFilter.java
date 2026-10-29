@@ -50,14 +50,14 @@ package org.egov.infra.web.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
@@ -100,8 +100,13 @@ public class CacheControlFilter implements Filter {
 		final HTTPUtilities httpUtilities = ESAPI.httpUtilities();
 		httpUtilities.setCurrentHTTP((HttpServletRequest) request, (HttpServletResponse) response);
 		httpUtilities.setHeader(CACHE_CONTROL_HEADER, "public,max-age=" + expireInSeconds);
-		httpUtilities.setHeader(PRAGMA_HEADER, "");
-		httpUtilities.setHeader(ETAG_HEADER, "");
+
+		// ESAPI 2.5.x Validation Exception Fix:
+		// Passing empty strings "" to ESAPI httpUtilities.setHeader() causes ESAPI IntrusionDetector
+		// to log ValidationException ("setHeader: Input required").
+		// Headers are set directly on httpServletResponse to bypass ESAPI empty string validation warnings.
+		httpServletResponse.setHeader(PRAGMA_HEADER, "no-cache");
+		httpServletResponse.setHeader(ETAG_HEADER, "");
 
 		httpServletResponse.setDateHeader(EXPIRE_HEADER, System.currentTimeMillis() + expireInSeconds * 1000L);
 		chain.doFilter(request, httpServletResponse);

@@ -12,9 +12,9 @@ import lombok.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.*;
 
 import static org.springframework.util.ObjectUtils.isEmpty;

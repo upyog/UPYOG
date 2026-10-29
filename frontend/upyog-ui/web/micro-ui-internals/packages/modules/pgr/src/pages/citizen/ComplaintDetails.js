@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LinkButton } from "@upyog/digit-ui-react-components";
+import { LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { LOCALIZATION_KEY } from "../../constants/Localization";
 
@@ -17,7 +17,7 @@ import {
   ImageViewer,
   Loader,
   Toast,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import TimeLine from "../../components/TimeLine";
 
@@ -55,7 +55,7 @@ const ComplaintDetailsPage = (props) => {
   let { id } = useParams();
 
   let tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.ULBService.getCurrentTenantId(); // ToDo: fetch from state
-  const { isLoading, error, isError, complaintDetails, revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
+  const { isLoading, error, isError, data:complaintDetails, refetch:revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
 
   const [imageShownBelowComplaintDetails, setImageToShowBelowComplaintDetails] = useState({});
 
@@ -141,18 +141,18 @@ const ComplaintDetailsPage = (props) => {
   return (
     <React.Fragment>
       <div className="complaint-summary">
-        <div style={{display:"flex",justifyContent:"space-between",maxWidth:"960px"}}>
+        <div className="pgr-complaint-details-flex-row">
         <Header>{t(`${LOCALIZATION_KEY.CS_HEADER}_COMPLAINT_SUMMARY`)}</Header>
-        <div style={{ color:"#A52A2A"}}>
+        <div className="pgr-complaint-details-wrapper">
         <LinkButton label={t("VIEW_TIMELINE")}  onClick={handleViewTimeline} ></LinkButton>
         </div>
         </div>
-        {Object.keys(complaintDetails).length > 0 ? (
+        {Object?.keys(complaintDetails || {}).length > 0 ? (
           <React.Fragment>
             <Card>
               <CardSubHeader>{t(`SERVICEDEFS.${complaintDetails.audit.serviceCode.toUpperCase()}`)}</CardSubHeader>
               <StatusTable>
-                {Object.keys(complaintDetails.details).map((flag, index, arr) => (
+                {Object?.keys(complaintDetails.details).map((flag, index, arr) => (
                   <Row
                     key={index}
                     label={t(flag)}

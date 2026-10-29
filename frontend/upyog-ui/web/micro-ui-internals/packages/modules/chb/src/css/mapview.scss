@@ -1,0 +1,484 @@
+/* ==========================================================================
+   CHB Module - Map View Stylesheet (mapview.scss)
+   ========================================================================== */
+
+// SCSS Color Variables
+$chb-primary-color: #a82227;
+$chb-primary-hover: #8c1b20;
+$chb-primary-bg: #fff8f8;
+$chb-badge-bg: #f0f4f8;
+$chb-success-color: #2e7d32;
+$chb-user-marker-color: #1d4ed8;
+
+/* ----------------------------------------------------------------
+   Main Map Layout & Search Filter Bar
+   ---------------------------------------------------------------- */
+
+.chb-close-btn {
+  cursor: pointer;
+}
+
+.chb-mapview-wrapper {
+  margin-left: 10px;
+  margin-right: 10px;
+
+  .chb-mapview-search-label {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .chb-mapview-filter-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    z-index: 2000;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+
+    .chb-mapview-type-dropdown-container {
+      width: 240px;
+      min-width: 200px;
+
+      .chb-mapview-type-dropdown {
+        width: 100%;
+        margin: 0;
+        position: relative;
+        z-index: 2002;
+      }
+    }
+
+    .chb-mapview-name-dropdown-container {
+      width: 300px;
+      min-width: 240px;
+
+      .chb-mapview-name-dropdown {
+        width: 100%;
+        margin: 0;
+        position: relative;
+        z-index: 2001;
+      }
+    }
+
+    .chb-mapview-action-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+
+      .chb-mapview-submit-btn {
+        margin: 0;
+      }
+
+      .chb-mapview-clear-link {
+        cursor: pointer;
+        white-space: nowrap;
+        margin: 0;
+      }
+    }
+  }
+
+  .chb-mapview-loader-container {
+    height: 86vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chb-mapview-map-container {
+    height: 84vh;
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-top: 0;
+  }
+}
+
+/* ----------------------------------------------------------------
+   User Location Marker
+   ---------------------------------------------------------------- */
+
+.user-location-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .user-location-dot {
+    font-size: 24px;
+    color: $chb-user-marker-color;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Leaflet Popup Custom Styling
+   ---------------------------------------------------------------- */
+
+.chb-map-popup-card {
+  position: relative;
+  width: 320px;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0b0c0c;
+
+  .chb-map-popup-top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+
+    .chb-map-popup-header-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+
+      .chb-map-popup-badge {
+        background: $chb-badge-bg;
+        color: $chb-primary-color;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 3px;
+        display: inline-block;
+        align-self: flex-start;
+        margin-bottom: 2px;
+      }
+
+      .chb-map-popup-title {
+        font-size: 13px;
+        color: #0b0c0c;
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      .chb-map-popup-address {
+        font-size: 11px;
+        color: #505a5f;
+        line-height: 1.2;
+      }
+    }
+
+    .chb-map-popup-image {
+      width: 100px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      flex-shrink: 0;
+    }
+  }
+
+  .chb-map-popup-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 4px;
+
+    .chb-map-popup-stat {
+      font-size: 11px;
+      color: #0b0c0c;
+      line-height: 1.3;
+    }
+
+    .chb-map-popup-amenities {
+      font-size: 10px;
+      color: $chb-success-color;
+      line-height: 1.3;
+    }
+
+    .chb-map-popup-desc {
+      color: #505a5f;
+      font-size: 11px;
+      max-height: 36px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+  }
+
+  .chb-map-popup-tnc-box {
+    margin-top: 8px;
+    background: $chb-primary-bg;
+    border-left: 3px solid $chb-primary-color;
+    padding: 6px 8px;
+    border-radius: 3px;
+
+    .chb-map-popup-tnc-header {
+      font-weight: bold;
+      font-size: 11px;
+      color: $chb-primary-color;
+      margin-bottom: 2px;
+    }
+
+    .chb-map-popup-tnc-content {
+      font-size: 10px;
+      color: #4b5563;
+      max-height: 48px;
+      overflow-y: auto;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chb-map-popup-tnc-item {
+      font-size: 10px;
+      color: #4b5563;
+    }
+  }
+
+  .chb-map-popup-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    .chb-map-popup-direction-link {
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 11px;
+    }
+
+    .chb-map-popup-btn-group {
+      display: flex;
+      gap: 6px;
+
+      .chb-view-details-btn {
+        background-color: #f3f4f6;
+        color: #1f2937;
+        border: 1px solid #d1d5db;
+        padding: 5px 9px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 11px;
+
+        &:hover {
+          background-color: #e5e7eb;
+        }
+      }
+
+      .chb-book-now-btn {
+        background-color: $chb-primary-color;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 11px;
+
+        &:hover {
+          background-color: $chb-primary-hover;
+        }
+      }
+    }
+  }
+}
+
+/* ----------------------------------------------------------------
+   Details Modal Custom Styling
+   ---------------------------------------------------------------- */
+
+.chb-details-modal-wrapper {
+  .popup-module {
+    background-color: #fff;
+    position: relative;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+
+  .popup-module-main {
+    padding: 0;
+  }
+
+  .popup-module-action-bar {
+    display: none;
+  }
+
+  .header-bar-main {
+    position: sticky;
+    top: 0;
+    background-color: #f5f5f5;
+    z-index: 10;
+  }
+}
+
+.chb-modal-header-text {
+  color: $chb-primary-color;
+  margin: 20px 25px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.chb-modal-content-body {
+  padding: 20px;
+
+  .chb-modal-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+
+    .chb-modal-grid-label {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .chb-modal-code-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: $chb-primary-color;
+    }
+
+    .chb-modal-grid-value-bold {
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .chb-modal-grid-value {
+      font-size: 14px;
+      color: #0f172a;
+    }
+
+    .chb-modal-grid-span2 {
+      grid-column: span 2;
+    }
+  }
+
+  .chb-modal-section-container {
+    margin-bottom: 20px;
+
+    .chb-modal-section-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0b0c0c;
+      margin-bottom: 8px;
+    }
+
+    .chb-modal-units-flex {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      .chb-modal-unit-card {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 10px 14px;
+        min-width: 160px;
+
+        .chb-modal-unit-card-title {
+          font-weight: 600;
+          font-size: 14px;
+          color: $chb-primary-color;
+        }
+
+        .chb-modal-unit-card-capacity {
+          font-size: 12px;
+          color: #475569;
+          margin-top: 2px;
+        }
+
+        .chb-modal-unit-card-rent {
+          font-size: 12px;
+          color: #16a34a;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .chb-modal-desc-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .chb-modal-amenities-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .chb-modal-amenity-chip {
+        background-color: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .chb-modal-tnc-container {
+    margin-top: 20px;
+
+    .chb-modal-tnc-scrollbox {
+      background-color: #fefefe;
+      padding: 16px 20px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      max-height: 280px;
+      overflow-y: auto;
+
+      .chb-modal-tnc-ol {
+        padding-left: 20px;
+        margin: 0;
+
+        .chb-modal-tnc-li {
+          margin-bottom: 8px;
+          font-size: 13px;
+          line-height: 1.6;
+          color: #374151;
+        }
+      }
+
+      .chb-modal-tnc-empty-msg {
+        margin: 0;
+        font-size: 13px;
+        color: #6b7280;
+      }
+    }
+  }
+
+  .chb-modal-remarks-container {
+    margin-top: 16px;
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    padding: 12px 16px;
+    border-radius: 6px;
+
+    .chb-modal-remarks-heading {
+      font-size: 13px;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 4px;
+    }
+
+    .chb-modal-remarks-text {
+      font-size: 12px;
+      color: #78350f;
+      line-height: 1.5;
+    }
+  }
+
+  .chb-modal-footer-action-bar {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}

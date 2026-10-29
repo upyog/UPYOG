@@ -17,7 +17,7 @@
  */
 
 
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -34,13 +34,13 @@ export const PTRMyApplications = () => {
   let off;
   if (!isNaN(parseInt(filter))) {
     off = filter;
-    t1 = parseInt(filter) + 50;
+    t1 = parseInt(filter) + 10;
   } else {
-    t1 = 4;
+    t1 = 10;
   }
   let filter1 = !isNaN(parseInt(filter))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
+    ? { limit: "10", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId, mobileNumber:user?.mobileNumber}
+    : { limit: "10", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePTRSearch({ filters: filter1 }, { filters: filter1 });
   
@@ -77,20 +77,19 @@ export const PTRMyApplications = () => {
               <PetApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
             </div>
           ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PTR_NO_APPLICATION_FOUND_MSG")}</p>}
+        {!applicationsList?.length > 0 && <p className="ptr-index-top-spacing">{t("PTR_NO_APPLICATION_FOUND_MSG")}</p>}
 
         {applicationsList?.length !== 0 && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className="ptr-index-top-spacing">
               <span className="link">{<Link to={`/upyog-ui/citizen/ptr/petservice/my-application/${t1}`}>{t("PTR_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}
       </div>
 
-      <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-        {t("PTR_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
-        <span className="link" style={{ display: "block" }}>
+      <p className="ptr-index-top-spacing">
+        <span className="link ptr-index-wrapper">
           <Link to="/upyog-ui/citizen/ptr/petservice/new-application/info">{t("PTR_COMMON_CLICK_HERE_TO_REGISTER_NEW_PET")}</Link>
         </span>
       </p>

@@ -1,13 +1,27 @@
 import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React from "react";
+import React, { useState } from "react";
 import { CND_VARIABLES } from "../utils";
+import BookingPopup from "../components/BookingPopup";
 
 // First page whic will render and shows the Pre-requistes to fill the application Form
 
-const CndRequirementDetails = ({ t, onSelect }) => {
+const CndRequirementDetails = ({ t, onSelect, config }) => {
   sessionStorage.removeItem("docReqScreenByBack");
-  
- 
+  const [existingDataSet, setExistingDataSet] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [isExistingPopupRequired, setIsExistingPopupRequired] = useState(true);
+
+  const handleOpenModal = () => {
+    isExistingPopupRequired ? setShowModal(true) : goNext();
+  };
+
+  const goNext = () => {
+    if (existingDataSet && Object.keys(existingDataSet).length > 0) {
+      onSelect(config.key, existingDataSet);
+    } else {
+      onSelect(config.key, {});
+    }
+  };
 
   return (
     <React.Fragment>
@@ -28,9 +42,22 @@ const CndRequirementDetails = ({ t, onSelect }) => {
            </CardText>
         </div>
         <span>
-          <SubmitBar label={t(CND_VARIABLES.NEXT)} onSubmit={onSelect} />
+          <SubmitBar label={t(CND_VARIABLES.NEXT)} onSubmit={handleOpenModal} />
         </span>
       </Card>
+
+      {showModal && (
+        <BookingPopup
+          t={t}
+          closeModal={() => setShowModal(false)}
+          actionCancelOnSubmit={() => setShowModal(false)}
+          onSubmit={() => {
+            goNext();
+            setShowModal(false);
+          }}
+          setExistingDataSet={setExistingDataSet}
+        />
+      )}
     </React.Fragment>
   );
 };

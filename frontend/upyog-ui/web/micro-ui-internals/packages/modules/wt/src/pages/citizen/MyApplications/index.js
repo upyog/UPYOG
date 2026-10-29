@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@upyog/digit-ui-react-components";
+import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import WTApplication from "./wt-application";
@@ -29,11 +28,13 @@ import { APPLICATION_PATH } from "../../../utils";
  * 
  * @returns {JSX.Element} A list of filtered water tanker applications with search and filter options.
  */
+
 export const WTMyApplications = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
-
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
   const [filters, setFilters] = useState(null);
@@ -50,33 +51,54 @@ export const WTMyApplications = () => {
   } else {
     t1 = 4;
   }
-
-  let initialFilters = !isNaN(parseInt(filter))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId, MobileNumber:user?.mobileNumber }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId ,MobileNumber:user?.mobileNumber };
-
+  let initialFilters = !isNaN(parseInt(filter)) ? {
+    limit: "50",
+    sortOrder: "ASC",
+    sortBy: "createdTime",
+    offset: off,
+    tenantId,
+    MobileNumber: user?.mobileNumber
+  } : {
+    limit: "4",
+    sortOrder: "ASC",
+    sortBy: "createdTime",
+    offset: "0",
+    tenantId,
+    MobileNumber: user?.mobileNumber
+  };
   useEffect(() => {
     setFilters(initialFilters);
   }, [filter]);
 
   // Conditionally enable hooks based on service type
-  const { isLoading: isLoadingTanker, data: dataTanker } = Digit.Hooks.wt.useTankerSearchAPI(
-    { filters },
-    { enabled: !!filters && (serviceType === "watertanker") }
-  );
-  const { isLoading: isLoadingToilet, data: dataToilet } = Digit.Hooks.wt.useMobileToiletSearchAPI(
-    { filters },
-    { enabled: !!filters && (serviceType === "mobileToilet") }
-  );
-  const { isLoading: isLoadingTreePruning, data: dataTreePruning } = Digit.Hooks.wt.useTreePruningSearchAPI(
-    { filters },
-    { enabled: !!filters && (serviceType === "treePruning") }
-  );
+  const {
+    isLoading: isLoadingTanker,
+    data: dataTanker
+  } = Digit.Hooks.wt.useTankerSearchAPI({
+    filters
+  }, {
+    enabled: !!filters && serviceType === "watertanker"
+  });
+  const {
+    isLoading: isLoadingToilet,
+    data: dataToilet
+  } = Digit.Hooks.wt.useMobileToiletSearchAPI({
+    filters
+  }, {
+    enabled: !!filters && serviceType === "mobileToilet"
+  });
+  const {
+    isLoading: isLoadingTreePruning,
+    data: dataTreePruning
+  } = Digit.Hooks.wt.useTreePruningSearchAPI({
+    filters
+  }, {
+    enabled: !!filters && serviceType === "treePruning"
+  });
 
   // Use the results conditionally based on the `serviceType`
   let isLoading = false;
   let filteredData = [];
-
   if (serviceType === "watertanker") {
     isLoading = isLoadingTanker;
     filteredData = dataTanker?.waterTankerBookingDetail || [];
@@ -88,13 +110,8 @@ export const WTMyApplications = () => {
     filteredData = dataTreePruning?.treePruningBookingDetails;
   } else {
     isLoading = isLoadingTanker || isLoadingToilet || isLoadingTreePruning;
-    filteredData = [
-      ...(dataToilet?.mobileToiletBookingDetails || []),
-      ...(dataTanker?.waterTankerBookingDetail || []),
-      ...(dataTreePruning?.treePruningBookingDetails || [])
-    ];
+    filteredData = [...(dataToilet?.mobileToiletBookingDetails || []), ...(dataTanker?.waterTankerBookingDetail || []), ...(dataTreePruning?.treePruningBookingDetails || [])];
   }
-
   const handleSearch = () => {
     setServiceType(tempServiceType); // Apply service type selection only on search
 
@@ -102,13 +119,12 @@ export const WTMyApplications = () => {
     const searchFilters = {
       ...initialFilters,
       bookingNo: trimmedSearchTerm || undefined,
-      status: status?.code || undefined,
+      status: status?.code || undefined
     };
-    
+
     // Update the filters state to trigger refetch
     setFilters(searchFilters);
   };
-
   if (isLoading) {
     return <Loader />;
   }
@@ -119,7 +135,7 @@ export const WTMyApplications = () => {
     { label: t("TREE_PRUNING"), code: "treePruning" }
   ];
 
-  const statusOptions = [
+  const statusOptionForWaterTanker = [
     { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
     { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
     { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
@@ -127,124 +143,109 @@ export const WTMyApplications = () => {
     { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
   ];
 
-  const statusOptionForTreePruning = [
-  {
-    i18nKey: "BOOKING_CREATED",
-    code: "BOOKING_CREATED",
-    value: t("TP_BOOKING_CREATED")
-  },
-  {
-    i18nKey: "PENDING_FOR_APPROVAL",
-    code: "PENDING_FOR_APPROVAL",
-    value: t("TP_PENDING_FOR_APPROVAL")
-  },
-  {
-    i18nKey: "PAYMENT_PENDING",
-    code: "PAYMENT_PENDING",
-    value: t("TP_PAYMENT_PENDING")
-  },
-  {
-    i18nKey: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
-    code: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
-    value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
-  },
-  {
-    i18nKey: "TEAM_ASSIGNMENT_FOR_EXECUTION",
-    code: "TEAM_ASSIGNMENT_FOR_EXECUTION",
-    value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
-  },
-  {
-    i18nKey: "TREE_PRUNING_SERVICE_COMPLETED",
-    code: "TREE_PRUNING_SERVICE_COMPLETED",
-    value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
-  }
-];
+  const statusOptionForMobileToilet = [
+    { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
+    { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
+    { i18nKey: "Mobile Toilet Delivered", code: "MOBILE_TOILET_DELIVERED", value: t("MOBILE_TOILET_DELIVERED") },
+    { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
+    { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
+  ];
 
-  return (
-    <React.Fragment>
-      <Header>{`${t("MY_BOOKINGS")} (${filteredData.length})`}</Header>
-      <Card>
-        <div style={{ marginLeft: "16px" }}>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
-            <div style={{ flex: 1 }}>
-              <CardLabel>{t("SERVICE_TYPE")}</CardLabel>
+  const statusOptionForTreePruning = [
+    {
+      i18nKey: "BOOKING_CREATED",
+      code: "BOOKING_CREATED",
+      value: t("TP_BOOKING_CREATED")
+    }, {
+      i18nKey: "PENDING_FOR_APPROVAL",
+      code: "PENDING_FOR_APPROVAL",
+      value: t("TP_PENDING_FOR_APPROVAL")
+    }, {
+      i18nKey: "PAYMENT_PENDING",
+      code: "PAYMENT_PENDING",
+      value: t("TP_PAYMENT_PENDING")
+    }, {
+      i18nKey: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+      code: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+      value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
+    }, {
+      i18nKey: "TEAM_ASSIGNMENT_FOR_EXECUTION",
+      code: "TEAM_ASSIGNMENT_FOR_EXECUTION",
+      value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
+    }, {
+      i18nKey: "TREE_PRUNING_SERVICE_COMPLETED",
+      code: "TREE_PRUNING_SERVICE_COMPLETED",
+      value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
+    }];
+  return <React.Fragment>
+    <Header>{`${t("MY_BOOKINGS")} (${filteredData.length})`}</Header>
+    <Card>
+      <div className="wt-index-ml-md">
+        <div className="wt-index-row-center-flex">
+          <div className="wt-index-flex-1">
+            <CardLabel>{t("SERVICE_TYPE")}</CardLabel>
+            <Dropdown selected={serviceOptions.find(option => option.code === tempServiceType)} select={option => {
+              setTempServiceType(option.code);
+              setStatus("");
+            }} option={serviceOptions} placeholder={t("Select Service Type")} optionKey="label" t={t} />
+          </div>
+          <div className="wt-index-flex-1">
+            <CardLabel>{t("BOOKING_NO")}</CardLabel>
+            <TextInput placeholder={t("Enter Booking No.")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          </div>
+          <div className="wt-index-flex-1">
+            <div className="wt-index-col-flex">
+              <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
               <Dropdown
-                selected={serviceOptions.find((option) => option.code === tempServiceType)}
-                select={(option) => {
-                  setTempServiceType(option.code);
-                  setStatus("");
-                }}
-                option={serviceOptions}
-                placeholder={t("Select Service Type")}
-                optionKey="label"
+                className="form-field wt-index-full-width"
+                selected={status}
+                select={setStatus}
+                option={
+                  tempServiceType === 'treePruning'
+                    ? statusOptionForTreePruning
+                    : tempServiceType === 'watertanker'
+                      ? statusOptionForWaterTanker
+                      : tempServiceType === 'mobileToilet'
+                        ? statusOptionForMobileToilet
+                        : []
+                }
+                placeholder={t("Select Status")}
+                optionKey="value"
                 t={t}
               />
             </div>
-            <div style={{ flex: 1 }}>
-              <CardLabel>{t("BOOKING_NO")}</CardLabel>
-              <TextInput
-                placeholder={t("Enter Booking No.")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-                <Dropdown
-                  className="form-field"
-                  selected={status}
-                  select={setStatus}
-                  option={tempServiceType === 'treePruning' ? statusOptionForTreePruning : statusOptions}
-                  placeholder={t("Select Status")}
-                  optionKey="value"
-                  style={{ width: "100%" }}
-                  t={t}
-                />
-              </div>
-            </div>
-            <div>
-              <div style={{marginTop:"17%"}}>
-              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-              <p className="link" style={{marginLeft:"30%",marginTop:"10px",display: "block"}}
-                      onClick={() => {setSearchTerm(""),setStatus("") }}>{t(`ES_COMMON_CLEAR_ALL`)}
-                </p>
-              </div>
-            </div>
           </div>
-            <Link to={`request-service/service-type`}>
-              <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("NEW_REQUEST")+" +"} />
-            </Link>
-        </div>
-      </Card>
-      <div>
-        {filteredData.length > 0 &&
-          filteredData.map((application, index) => (
-            <div key={index}>
-              <WTApplication
-                application={application}
-                tenantId={tenantId}
-                buttonLabel={t("SUMMARY")}
-              />
-            </div>
-          ))}
-        {filteredData.length === 0 && !isLoading && (
-          <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-            {t("NO_APPLICATION_FOUND_MSG")}
-          </p>
-        )}
-        {filteredData.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0) + (dataTreePruning?.count || 0)) > t1 && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">
-                <Link to={`${APPLICATION_PATH}/citizen/wt/status/${t1}`}>
-                  {t("LOAD_MORE_MSG")}
-                </Link>
-              </span>
-            </p>
+            <div className="wt-index-item">
+              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+              <p className="link wt-index-btn-block-mt-sm" onClick={() => {
+                setSearchTerm(""), setStatus("");
+              }}>{t(`ES_COMMON_CLEAR_ALL`)}
+              </p>
+            </div>
           </div>
-        )}
+        </div>
+        <Link to={`${APPLICATION_PATH}/citizen/wt/request-service/service-type`}>
+          <SubmitBar label={t("NEW_REQUEST") + " +"} className="wt-index-btn-rounded" />
+        </Link>
       </div>
-    </React.Fragment>
-  );
+    </Card>
+    <div>
+      {filteredData.length > 0 && filteredData.map((application, index) => <div key={index}>
+        <WTApplication application={application} tenantId={tenantId} buttonLabel={t("SUMMARY")} />
+      </div>)}
+      {filteredData.length === 0 && !isLoading && <p className="wt-index-mt-md-ml-md">
+        {t("NO_APPLICATION_FOUND_MSG")}
+      </p>}
+      {filteredData.length !== 0 && (dataToilet?.count || 0) + (dataTanker?.count || 0) + (dataTreePruning?.count || 0) > t1 && <div>
+        <p className="wt-index-mt-md-ml-md">
+          <span className="link">
+            <Link to={`${APPLICATION_PATH}/citizen/wt/status/${t1}`}>
+              {t("LOAD_MORE_MSG")}
+            </Link>
+          </span>
+        </p>
+      </div>}
+    </div>
+  </React.Fragment>;
 };

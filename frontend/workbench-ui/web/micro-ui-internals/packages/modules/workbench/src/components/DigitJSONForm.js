@@ -11,7 +11,7 @@ import {
   SVG,
   Menu,
   CollapseAndExpandGroups,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/workbench-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -22,19 +22,11 @@ import { titleId } from "@rjsf/utils";
 import CustomDropdown from "./MultiSelect";
 import CustomCheckbox from "./Checbox";
 /*
-
 created the foem using rjfs json form 
-
 https://rjsf-team.github.io/react-jsonschema-form/docs/
-
-*/
-
-/*
 The  DigitJSONForm  component is a custom form component built using the  react-jsonschema-form  library.
  It takes in a schema, an onSubmit function, an optional uiSchema, 
  a showToast and showErrorToast as props.  
-
-
 */
 const uiSchema = {
   "ui:title": " ",
@@ -42,34 +34,20 @@ const uiSchema = {
   "ui:submitButtonOptions": {
     props: {
       disabled: false,
-      className: "btn btn-info",
+      className: "btn btn-info object-jk",
     },
     norender: true,
     submitText: "Submit",
-  },
-  "ui:submitButtonOptions": {
-    props: {
-      className: "object-jk",
-    },
   },
 };
 
 function transformErrors(errors) {
   const { t } = this;
-  console.log(errors, "errors");
-  // Custom validation logic for all widgets
-  // You can modify or add error messages based on your requirements
   return errors.map((error) => {
     error.message = t(Digit.Utils.workbench.getMDMSLabel(`WBH_ERROR_${error?.name}`));
     if (error?.name === "pattern") {
       error.message += ` : ${error?.params?.pattern}`;
     }
-    // if (error.property === '.name' && error.name === 'minLength') {
-    //   error.message = 'Name must be at least 3 characters';
-    // }
-    // if (error.property === '.email' && error.name === 'format') {
-    //   error.message = 'Invalid email format';
-    // }
     return error;
   });
 }
@@ -174,7 +152,7 @@ function ArrayFieldTemplate(props) {
 function ObjectFieldTemplate(props) {
   const children = props.properties.map((element) => {
     return (
-      <div className="field-wrapper object-wrapper" id={`${props?.idSchema?.["$id"]}_${element.name}`}>
+      <div key={element.name} className="field-wrapper object-wrapper" id={`${props?.idSchema?.["$id"]}_${element.name}`}>
         {element.content}
       </div>
     );
@@ -222,7 +200,7 @@ function CustomFieldTemplate(props) {
           {required ? "*" : null}
         </label>
         {description}
-        <span class="all-input-field-wrapper">
+        <span className="all-input-field-wrapper">
           {children}
           {errors}
           {help}
@@ -305,16 +283,12 @@ const DigitJSONForm = ({
           uiSchema={{ ...uiSchema, ...inputUiSchema }}
           onError={onError}
           disabled={disabled}
-          // disabled the error onload
-          // focusOnFirstError={true}
           /* added logic to show live validations after form submit is clicked */
           liveValidate={liveValidate}
-          // liveValidate={formData && Object.keys(formData) && Object.keys(formData)?.length > 0}
         >
           {(screenType === "add" || screenType === "edit") && (
             <ActionBar style={{ zIndex: "0" }}>
               <SubmitBar label={screenType === "edit" ? t("WBH_ADD_MDMS_UPDATE_ACTION") : t("WBH_ADD_MDMS_ADD_ACTION")} submit="submit" />
-              {/* <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)}  /> */}
             </ActionBar>
           )}
           {screenType === "view" && (

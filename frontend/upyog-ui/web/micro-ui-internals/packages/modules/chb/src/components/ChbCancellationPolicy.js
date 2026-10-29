@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { CardLabel, CardText, CardLabelDesc, CardSubHeader, Modal } from "@upyog/digit-ui-react-components";
+import React, { useState,useEffect } from 'react';
+import { CardLabel, CardText, CardLabelDesc, CardSubHeader, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // Close button component
 const Close = () => (
@@ -54,46 +54,51 @@ const CloseBtn = (props) => {
  * - A component that displays modals for cancellation policy, price breakup, and demand estimation.
  * - Includes a close button to hide the modals.
  */
-const ChbCancellationPolicy = ({ slotDetail }) => {
+const ChbCancellationPolicy = ({ slotDetail, SlotSearchData }) => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
   const [showdemandEstimation,setShowDemandEstimation]=useState(false);
   const { t } = useTranslation();
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const { data: cancelpolicyData } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+  const { data: cancelpolicyData } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: `${SlotSearchData?.venueTypes?.parentMasterType}` }],
     {
       select: (data) => {
-        const formattedData = data?.["CHB"]?.["CommunityHalls"];
+        const formattedData = data?.["CHB"]?.[`${SlotSearchData?.venueTypes?.parentMasterType}`];
         return formattedData;
       },
   });
+
+
   const DateConvert = (date) => {
     if (!date) return "";
     const [day, month, year] = date.split("-");
     return `${year}-${month}-${day}`; // For the <input type="date" /> format
   };
-  let hallDetails = slotDetail.map((slot) => {
-    return { 
-      hallCode: slot.hallCode1,
-      bookingDate:DateConvert(slot.bookingDate),
-      bookingFromTime:slot.fromTime,
-      bookingToTime:slot.toTime,
-      status:"BOOKING_CREATED",
-      capacity:slot.capacity
-    }; });
+
+  const hallDetails = slotDetail?.map((slot) => ({
+      unitCode: SlotSearchData?.searchData?.unitCode,
+      bookingDate: DateConvert(slot.bookingDate),
+      bookingFromTime: SlotSearchData?.searchData?.fromTime,
+      bookingToTime: SlotSearchData?.searchData?.toTime,
+      status: "BOOKING_CREATED"
+    })) || [];
+
   const mutation = Digit.Hooks.chb.useDemandEstimation();
       let formdata = {
         tenantId:tenantId,
         bookingSlotDetails:hallDetails,
-        communityHallCode:slotDetail[0].code
+        venueCode: SlotSearchData?.searchData?.venueCode
         
       };
 
-  if(showdemandEstimation===false){
-    mutation.mutate(formdata);
-    setShowDemandEstimation(true);
-  }
+  useEffect(() => {
+    if (!showdemandEstimation && hallDetails?.length) {
+      mutation.mutate(formdata);
+      setShowDemandEstimation(true);
+    }
+  }, [showdemandEstimation]);
+  
   const handleCancellationPolicyClick = () => {
     setShowCancellationPolicy(!showCancellationPolicy);
   };
@@ -109,43 +114,45 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
       .map((line, index) => `${line.trim()}`);
 
     return (
-      <ol style={{ paddingLeft: '20px' }}>
+      <ol className="chb-chb-cancellation-policy-spacing">
         {policyLines.map((line, index) => (
-          <li key={index} style={{ marginBottom: '10px' }}><CardLabelDesc>{line}</CardLabelDesc></li>
+          <li key={index} className="chb-chb-cancellation-policy-bottom-spacing"><CardLabelDesc>{line}</CardLabelDesc></li>
         ))}
       </ol>
     );
   };
+
+
 
   const calculateTotalAmount = (CalculationType) => {
     return CalculationType.reduce((total, item) => total + item.taxAmount, 0);
   };
   return (
     <div>
-      <CardSubHeader style={{ color: '#a82227', fontSize: '18px'}}>
-        Total Booking Amount
+      <CardSubHeader className="chb-chb-cancellation-policy-header">
+        {t("CHB_TOTAL_BOOKING_AMOUNT")}
       </CardSubHeader>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ marginLeft: '30px', marginRight: '60px', fontSize: '16px', fontWeight: 'bold' }}>
+      <div className="chb-chb-cancellation-policy-flex-row">
+        <div className="chb-chb-cancellation-policy-spacing-2">
           Rs {mutation.data?.demands[0]?.demandDetails ? calculateTotalAmount(mutation.data?.demands[0]?.demandDetails) : 'Loading...'} /-
         </div>
         <div 
           onClick={handlePriceBreakupClick} 
-          style={{ cursor: 'pointer', margin: '0 18px', color: '#a82227', fontSize: '20px', textDecoration: 'none' }}
+          className="chb-chb-cancellation-policy-clickable"
         >
-          Estimate Price Breakup
+          {t("CHB_PRICE_BREAKUP")}
         </div>
         <div 
           onClick={handleCancellationPolicyClick} 
-          style={{ cursor: 'pointer', color: '#a82227', fontSize: '20px', textDecoration: 'none' }}
+          className="chb-chb-cancellation-policy-clickable-2"
         >
-          Terms and Conditions
+          {t("CHB_TERMS_CONDITION")}
         </div>
       </div>
 
       {showCancellationPolicy && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Terms and Conditions</CardSubHeader>}
+          headerBarMain={<CardSubHeader className="chb-chb-cancellation-policy-header-2">{t('CHB_TERMS_AND_CONDITIONS')}</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '80%', overflowY: 'auto' }}
           children={
@@ -155,7 +162,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
                   {renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)}
                 </div>
               ) : (
-                <CardLabel style={{ fontSize: '20px' }}>Loading...</CardLabel>
+                <CardLabel className="chb-chb-cancellation-policy-card">Loading...</CardLabel>
               )}
             </div>
           }
@@ -170,7 +177,6 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
           formId="modalForm"
           isDisabled={false}
           hideSubmit={true}  // Ensure submit is hidden
-          style={{}}
           popupModuleMianStyles={{ padding: "10px" }}
           headerBarMainStyle={{position: "sticky",top: 0, backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}
@@ -181,23 +187,23 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
       )}
       {showPriceBreakup && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Price Breakup</CardSubHeader>}
+          headerBarMain={<CardSubHeader className="chb-chb-cancellation-policy-header-2">{t('CHB_PRICE_BREAKUP')}</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '60vh', width: '60%', overflowY: 'auto' }}
           children={
             <div>
-              <CardLabelDesc style={{ marginBottom: '15px' }}>Estimate Price Details</CardLabelDesc>
+              <CardLabelDesc className="chb-chb-cancellation-policy-card-2">{t("CHB_ESTIMATE_PRICE_DETAILS)")}</CardLabelDesc>
               <ul>
                 {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => (
-                  <li key={index} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <li key={index} className="chb-chb-cancellation-policy-flex-row-2">
                     <CardText>{t(`${demands.taxHeadMasterCode}`)}</CardText>
                     <CardText>Rs {demands.taxAmount}</CardText>
                   </li>
                 ))}
               </ul>
               <hr />
-              <div style={{ fontWeight: 'bold', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
-                <CardLabelDesc>Total</CardLabelDesc>
+              <div className="chb-chb-cancellation-policy-flex-row-3">
+                <CardLabelDesc>{t("CHB_TOTAL")}</CardLabelDesc>
                 <CardLabelDesc>Rs {mutation.data?.demands[0]?.demandDetails && calculateTotalAmount(mutation.data?.demands[0]?.demandDetails)}</CardLabelDesc>
               </div>
             </div>
@@ -213,7 +219,6 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
           formId="modalForm"
           isDisabled={false}
           hideSubmit={true}  // Ensure submit is hidden
-          style={{}}
           // popupModuleMianStyles={{ padding: "10px" }}
           headerBarMainStyle={{position: "sticky",top: 0, backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}

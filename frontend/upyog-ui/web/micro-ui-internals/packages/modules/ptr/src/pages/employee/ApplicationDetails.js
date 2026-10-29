@@ -28,11 +28,11 @@
  * @date 2025-03-31
  */
 
-import { Header, MultiLink, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Header, MultiLink, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, Link, useHistory } from "react-router-dom";
+import { useParams, Link,  } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import getPetAcknowledgementData from "../../getPetAcknowledgementData";
 
@@ -49,7 +49,7 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("ptr");
 
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   // isAction is added to enable or disable the actionbar
   let isAction = false;
@@ -174,10 +174,10 @@ const ApplicationDetails = () => {
 
     return (
     <div>
-      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+      <div className={`${"employee-application-details"} ptr-application-details-bottom-spacing`}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}> 
-        <div style={{zIndex: "10",  position: "relative"}}>
+        <div className="ptr-application-details-flex-row"> 
+        <div className="ptr-application-details-wrapper">
         {dowloadOptions && dowloadOptions.length > 0 && (
           <MultiLink
             className="multilinkWrapper"
@@ -214,7 +214,7 @@ const ApplicationDetails = () => {
 
       {/* link added for the renewal application */}
       {(appDetailsToShow?.applicationData?.applicationData?.status == "Expired") && <Link to={`/upyog-ui/employee/ptr/petservice/revised-application`}  >
-        <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} />
+        <SubmitBar className="ptr-pet-application-bottom-spacing" label={"Renewal"} />
       </Link>}
 
     </div>

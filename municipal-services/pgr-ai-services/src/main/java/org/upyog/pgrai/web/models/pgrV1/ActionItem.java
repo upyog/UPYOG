@@ -1,4 +1,4 @@
-package org.upyog.pgrai.web.models.pgrV1;
+package org.upyog.pgrai.web.models.pgrv1;
 
 import lombok.*;
 import org.springframework.validation.annotation.Validated;

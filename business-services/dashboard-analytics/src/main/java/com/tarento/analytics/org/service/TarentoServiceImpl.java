@@ -216,13 +216,22 @@ public class TarentoServiceImpl implements ClientService {
 				logger.info("indexName in  executeConfiguredQueries:: {}"+indexName);
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
 				try {
-					JsonNode aggrNode = restService.search(indexName,objectNode.toString());
-					if(nodes.has(indexName)) { 
-						indexName = indexName + "_" + randIndexCount;
-						randIndexCount += 1;
+					JsonNode aggrNode = restService.search(indexName, objectNode.toString());
+					if (aggrNode != null) {
+						if (nodes.has(indexName)) {
+							indexName = indexName + "_" + randIndexCount;
+							randIndexCount += 1;
+						}
+						if (aggrNode.has(Constants.JsonPaths.AGGREGATIONS)) {
+							nodes.set(indexName, aggrNode.get(Constants.JsonPaths.AGGREGATIONS));
+						} else {
+							logger.error("Search response does not contain '{}' for index {}",
+									Constants.JsonPaths.AGGREGATIONS, indexName);
+						}
+					} else {
+						logger.error("Search returned null for index {}", indexName);
 					}
-					nodes.set(indexName,aggrNode.get(Constants.JsonPaths.AGGREGATIONS));
-				}catch (Exception e) {
+				} catch (Exception e) {
 					logger.error("Encountered an Exception while Executing the Query : " + e.getMessage());
 					throw new RuntimeException(e);
 				}

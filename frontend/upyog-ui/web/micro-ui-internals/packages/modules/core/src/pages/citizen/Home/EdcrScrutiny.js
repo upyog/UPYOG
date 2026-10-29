@@ -1,6 +1,6 @@
-import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, useTransition } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 import { stringReplaceAll, sortDropdownNames } from "../../../../../obps/src/utils";
 import { useTranslation } from "react-i18next";
 
@@ -17,7 +17,7 @@ const EDCRScrutiny = ({ config, onSelect, userType, formData, ownerIndex = 0, ad
         const [error, setError] = useState(null);
         const [uploadMessage, setUploadMessage] = useState("");
         const [showToast, setShowToast] = useState(null);
-        const history = useHistory();
+        const navigate = Digit.Hooks.useCustomNavigate();
         const { t } = useTranslation();
 
         let validation = {};
@@ -65,10 +65,7 @@ const EDCRScrutiny = ({ config, onSelect, userType, formData, ownerIndex = 0, ad
                     setUploadMessage("");
                 }
                 if (isShowToast) {
-                    history.replace(
-                        `/upyog-ui/citizen/core/edcr/scrutiny/acknowledgement`,
-                        { data: isShowToast?.label || "BPA_INTERNAL_SERVER_ERROR", type: "ERROR" }
-                    );
+                    navigate(`/upyog-ui/citizen/core/edcr/scrutiny/acknowledgement`, { replace: true, state: { data: isShowToast?.label || "BPA_INTERNAL_SERVER_ERROR", type: "ERROR" } });
                 }
             }, [isShowToast]);
             
@@ -139,7 +136,7 @@ const EDCRScrutiny = ({ config, onSelect, userType, formData, ownerIndex = 0, ad
                                 error={error}
                                 uploadMessage={uploadMessage}
                         />
-                        <div style={{ disabled: "true", height: "30px", width: "100%", fontSize: "14px" }}>{t("EDCR_UPLOAD_FILE_LIMITS_LABEL")}</div>
+                        <div className="core-edcr-scrutiny-fullwidth">{t("EDCR_UPLOAD_FILE_LIMITS_LABEL")}</div>
                         {isShowToast && <Toast error={isShowToast.key} label={t(isShowToast.label)} onClose={() => setIsShowToast(null)} isDleteBtn={true} />}
                         {/* {isSubmitBtnDisable ? <Loader /> : null} */}
 

@@ -4,8 +4,8 @@
                     "head": "ES_TITILE_APPLICANT_DETAILS",
                     "body": [
                         {
-                            "route":"searchhall",
-                            "component":"CHBSearchHall",
+                            "route":"searchvenue",
+                            "component":"VenueSearch",
                             "nextStep": "info",
                             "key": "slotlist",
                             "type": "component"

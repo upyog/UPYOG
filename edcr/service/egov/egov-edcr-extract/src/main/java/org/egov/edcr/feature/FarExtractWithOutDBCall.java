@@ -7,13 +7,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.common.entity.edcr.Block;
@@ -25,7 +23,6 @@ import org.egov.common.entity.edcr.GeneralStair;
 import org.egov.common.entity.edcr.Lift;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Stair;
-import org.egov.common.entity.edcr.SubFeatureColorCode;
 import org.egov.common.entity.edcr.TypicalFloor;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.commons.mdms.config.MdmsConfiguration;
@@ -42,10 +39,7 @@ import org.egov.edcr.entity.blackbox.StairDetail;
 import org.egov.edcr.service.LayerNames;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.microservice.models.RequestInfo;
+import org.egov.infra.admin.master.service.ICityService;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,7 +65,7 @@ public class FarExtractWithOutDBCall extends FeatureExtract {
     @Autowired
     private MDMSValidator mDMSValidator;
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     private static final String VALIDATION_WRONG_COLORCODE_FLOORAREA = "msg.error.wrong.colourcode.floorarea";
     public static final String RULE_31_1 = "31(1)";

@@ -55,7 +55,7 @@ package com.exilant.eGov.src.domain;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,12 +125,12 @@ public class GeneralLedgerDetail {
 				"INSERT INTO GeneralLedgerDetail (id, generalLedgerId, detailKeyId,")
 						.append(" detailTypeId,amount) VALUES ( ?, ?, ?, ?, ?)");
 
-		final Query pst = persistenceService.getSession().createSQLQuery(insertQuery.toString());
-		pst.setLong(0, Long.valueOf(id));
-		pst.setLong(1, Long.valueOf(glId));
-		pst.setLong(2, Long.valueOf(detailKeyId));
-		pst.setLong(3, Long.valueOf(detailTypeId));
-		pst.setBigDecimal(4, new BigDecimal(detailAmt));
+		final Query pst = persistenceService.getSession().createNativeQuery(insertQuery.toString());
+		pst.setParameter(1, Long.valueOf(id));
+		pst.setParameter(2, Long.valueOf(glId));
+		pst.setParameter(3, Long.valueOf(detailKeyId));
+		pst.setParameter(4, Long.valueOf(detailTypeId));
+		pst.setParameter(5, new BigDecimal(detailAmt));
 		pst.executeUpdate();
         if (LOGGER.isInfoEnabled())
             LOGGER.info(insertQuery);

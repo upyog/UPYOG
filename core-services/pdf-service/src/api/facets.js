@@ -1,5 +1,6 @@
+// this file is not used any where in the service
 import resource from 'resource-router-middleware';
-import facets from '../models/facets';
+import facets from '../models/facets.js';
 
 export default ({ config, db }) => resource({
 
@@ -17,19 +18,19 @@ export default ({ config, db }) => resource({
 
 	/** GET / - List all entities */
 	index({ params }, res) {
-		return res.json(facets);
+		res.json(facets);
 	},
 
 	/** POST / - Create a new entity */
 	create({ body }, res) {
 		body.id = facets.length.toString(36);
 		facets.push(body);
-		return res.json(body);
+		res.json(body);
 	},
 
 	/** GET /:id - Return a given entity */
 	read({ facet }, res) {
-		return res.json(facet);
+		res.json(facet);
 	},
 
 	/** PUT /:id - Update a given entity */

@@ -33,16 +33,16 @@ const Inbox = ({ tenants }) => {
     }
 
     const fetchNextPage = useCallback(() => {
-        setSearchParams((prevSearchParams) => ({...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) + parseInt(prevSearchParams?.limit))}));
-        
+        setSearchParams((prevSearchParams) => ({ ...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) + parseInt(prevSearchParams?.limit)) }));
+
     }, [])
 
     const fetchPrevPage = () => {
-        setSearchParams((prevSearchParams) => ({...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) - parseInt(prevSearchParams?.limit))}));
+        setSearchParams((prevSearchParams) => ({ ...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) - parseInt(prevSearchParams?.limit)) }));
     };
 
     const handlePageSizeChange = (e) => {
-        setSearchParams((prevSearchParams) => ({...prevSearchParams, limit:e.target.value}));
+        setSearchParams((prevSearchParams) => ({ ...prevSearchParams, limit: e.target.value }));
     };
 
     useEffect(() => {
@@ -111,7 +111,6 @@ const Inbox = ({ tenants }) => {
                 totalRecords={response?.totalCount}
                 title={"DOCUMENTS_DOCUMENT_HEADER"}
                 iconName={"document"}
-                links={links}
                 currentPage={parseInt(searchParams.offset / searchParams.limit)}
                 onNextPage={fetchNextPage}
                 onPrevPage={fetchPrevPage}

@@ -1,9 +1,9 @@
 package org.upyog.adv.web.models.transaction;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +11,6 @@ import java.util.Map;
 import org.egov.common.contract.request.User;
 import org.upyog.adv.web.models.AuditDetails;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;

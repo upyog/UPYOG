@@ -85,7 +85,8 @@
 
 <egi-fund>
 	<type>hql</type>
-	<query>from Fund where isactive = true and isnotleaf!=true order by upper(name)</query>
+	<!-- LTS: use isnotleaf=false (not !=true) so Hibernate 6 / SQL does not drop NULL rows inconsistently -->
+	<query>from Fund where isactive = true and isnotleaf = false order by upper(name)</query>
 </egi-fund> 
 
 <egi-fundSource>

@@ -10,11 +10,11 @@ import PropTypes from "prop-types";
  *
  * @example
  *  // Primary button
-    <Button label={t(configs?.label)} onButtonClick={()=>{}} type="button" style={{ marginLeft: "10px" }} />
+    <Button label={t(configs?.label)} onButtonClick={()=>{}} type="button" className="custom-style" />
     // Secondary button & Optional with Icon
-    <Button label={t(configs?.label)} variation="secondary" icon={<AddFilled />} onButtonClick={()=>{}} type="button" style={{ marginLeft: "10px" }} />
+    <Button label={t(configs?.label)} variation="secondary" icon={<AddFilled />} onButtonClick={()=>{}} type="button" className="custom-style" />
     // Disabled Button
-    <Button label={t("Disabled")} onButtonClick={()=>{}} type="button" style={{ marginLeft: "10px" }} isDisabled={true} />
+    <Button label={t("Disabled")} onButtonClick={()=>{}} type="button" className="custom-style" isDisabled={true} />
  */
 
 const Button = (props) => {
@@ -30,7 +30,7 @@ const Button = (props) => {
       onChange={props?.onChange}
     >
       {props?.icon && props.icon}
-      <h2 style={{ ...props?.textStyles, ...{ width: "100%" } }}>{props.label}</h2>
+      <h2 className="width-full" style={props?.textStyles}>{props.label}</h2>
       {props.children}
     </button>
   );

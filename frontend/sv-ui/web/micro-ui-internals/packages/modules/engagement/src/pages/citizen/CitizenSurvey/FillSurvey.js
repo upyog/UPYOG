@@ -1,5 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import  { useState, useEffect } from "react";
 import CitizenSurveyDisplayForm from "../../../components/Surveys/CitizenSurveyDisplayForm";
 import NoSurveyFoundPage from "../../../components/Surveys/NoSurveyFoundPage";
@@ -68,7 +67,7 @@ const FillSurvey = ({ location }) => {
   
   //sort survey questions based on qorder field, in surveyData.questions array, here and then render
   surveyData?.attributes?.sort((a,b)=>a.order-b.order)
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   // useEffect(() => {
   //   if(data && initialData?.Surveys?.[0]?.hasResponded == true || initialData?.Surveys?.[0]?.hasResponded === "true")
@@ -100,7 +99,7 @@ const FillSurvey = ({ location }) => {
         }
       };
   
-      history.push("/sv-ui/citizen/engagement/surveys/submit-response", details);
+      navigate("/sv-ui/citizen/engagement/surveys/submit-response", details);
     }
 
     

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCashPaymentDetails } from "./ManualReciept";
 import { useCardPaymentDetails } from "./card";
 import { useChequeDetails } from "./cheque";
@@ -11,7 +11,7 @@ import isEqual from "lodash/isEqual";
 export const CollectPayment = (props) => {
   const { IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   let { consumerCode, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -133,13 +133,11 @@ export const CollectPayment = (props) => {
     try {
       const resposne = await Digit.PaymentService.createReciept(tenantId, recieptRequest);
       queryClient.invalidateQueries();
-      history.push(
-        IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}` : 
-        `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}`
+      navigate(
+        IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
+          }?IsDisconnectionFlow=${IsDisconnectionFlow}` :
+          `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
+          }?IsDisconnectionFlow=${IsDisconnectionFlow}`
       );
     } catch (error) {
       setToast({ key: "error", action: error?.response?.data?.Errors?.map((e) => t(e.code)) })?.join(" , ");
@@ -154,8 +152,8 @@ export const CollectPayment = (props) => {
   }, [selectedPaymentMode]);
 
   let config = [
-        {
-      head:  t("COMMON_PAYMENT_HEAD"),
+    {
+      head: t("COMMON_PAYMENT_HEAD"),
       body: [
         {
           label: t("PAY_TOTAL_AMOUNT"),
@@ -262,7 +260,7 @@ export const CollectPayment = (props) => {
     let conf = config.concat(formConfigMap[formState?.paymentMode?.code] || []);
     conf = conf?.concat(cashConfig);
     return conf;
-};
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -270,8 +268,8 @@ export const CollectPayment = (props) => {
 
   return (
     <React.Fragment>
-       <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <Header styles={{ marginLeft: "15px" }}>{t("PAYMENT_COLLECT")}</Header>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Header styles={{ marginLeft: "15px" }}>{t("PAYMENT_COLLECT")}</Header>
       </div>
       <FormComposer
         cardStyle={{ paddingBottom: "100px" }}
@@ -280,7 +278,7 @@ export const CollectPayment = (props) => {
         onSubmit={onSubmit}
         formState={formState}
         defaultValues={getDefaultValues()}
-        isDisabled={( !bill.totalAmount > 0 )}
+        isDisabled={(!bill || !bill.totalAmount || bill.totalAmount <= 0)}
         onFormValueChange={(setValue, formValue) => {
           if (!isEqual(formValue.paymentMode, selectedPaymentMode)) {
             setFormState(formValue);

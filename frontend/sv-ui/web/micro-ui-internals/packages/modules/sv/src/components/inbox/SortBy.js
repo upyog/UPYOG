@@ -20,7 +20,7 @@ const SortBy = (props) => {
       : { code: "ASC", name: t("ES_INBOX_DATE_LATEST_LAST") };
   });
 
-  function clearAll() {}
+  function clearAll() { }
 
   function onSort(option) {
     props.onSort([{ id: "createdTime", desc: option.code === "DESC" ? true : false }]);

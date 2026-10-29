@@ -44,4 +44,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="accNumList" status="status">{"Text":"<s:property	value="%{chartofaccounts.glcode+'--'+accountnumber+'--'+bankbranch.bank.name}" />", "Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
+  --%><%--
+  LTS Migration Fix (Struts 7 OGNL): bean properties must be read as #s.property
+  (not implicit current row). Nested chartofaccounts / bankbranch.bank are
+  unproxied in CommonAction.prepareAccountsForDropdown so Hibernate 6 ByteBuddy
+  proxies do not blank the Bank → Account No dropdown.
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="accNumList" status="status">{"Text":"<s:property value="%{#s.chartofaccounts.glcode + '--' + #s.accountnumber + '--' + #s.bankbranch.bank.name}" />", "Value":"<s:property value="%{#s.id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

@@ -1,26 +1,25 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { initLibraries } from "@egovernments/digit-ui-libraries";
+import { createRoot } from 'react-dom/client';
+import { initLibraries } from "@upyog/workbench-ui-libraries";
 import "./index.css";
 import App from './App';
-import { TLCustomisations } from './Customisations/tl/TLCustomisation';
-
 
 initLibraries();
 
 
-window.Digit.Customizations = { PGR: {} ,TL:TLCustomisations};
+window.Digit.Customizations = {};
 
 const user = window.Digit.SessionStorage.get("User");
 
-if (!user || !user.access_token || !user.info) {
+if (!user?.access_token || !user?.info) {
   // login detection
 
   const parseValue = (value) => {
     try {
       return JSON.parse(value)
-    } catch (e) {
-      return value
+    } catch (error) {
+      console.warn("Failed to parse JSON value, returning raw string:", error);
+      return value;
     }
   }
 
@@ -53,10 +52,12 @@ if (!user || !user.access_token || !user.info) {
   // end
 }
 
-ReactDOM.render(
+// ✅ React 18+ root API
+const root = createRoot(document.getElementById('root'));
+
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 

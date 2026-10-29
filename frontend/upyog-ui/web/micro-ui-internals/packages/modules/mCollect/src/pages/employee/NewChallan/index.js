@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Toast, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { newConfig as newConfigMcollect } from "../../../config/config";
-import { useHistory, useRouteMatch } from "react-router-dom";
+
 import { stringReplaceAll } from "../../../utils";
-//import { convertDateToEpoch } from "../../../utils";
 
 const getformDataforEdit = (ChallanData,fetchBillData) => {
   let defaultval = {
@@ -15,170 +14,154 @@ const getformDataforEdit = (ChallanData,fetchBillData) => {
     building: ChallanData[0].address.buildingName,
     streetName: ChallanData[0].address.street,
     pincode: ChallanData[0].address.pincode || "143001",
-    mohalla: {...ChallanData[0].address.locality, i18nkey:`${stringReplaceAll(ChallanData[0].tenantId,".","_").toUpperCase()}_ADMIN_${ChallanData[0]?.address?.locality?.code}`},
-    category: {code:ChallanData[0].businessService, i18nkey:`BILLINGSERVICE_BUSINESSSERVICE_${ChallanData[0]?.businessService.split(".")[0].toUpperCase()}`},
-    categoryType: {code:ChallanData[0].businessService, i18nkey:`BILLINGSERVICE_BUSINESSSERVICE_${stringReplaceAll(ChallanData[0].businessService,".","_").toUpperCase()}`},
-    fromDate : ChallanData[0]
-        ? new Date(ChallanData[0].taxPeriodFrom).getFullYear().toString() +
-          "-" +
-          `${(new Date(ChallanData[0].taxPeriodFrom).getMonth() + 1) < 10?"0":""}${(new Date(ChallanData[0].taxPeriodFrom).getMonth() + 1)}` +
-          "-" +
-          `${(new Date(ChallanData[0].taxPeriodFrom).getDate() < 10?"0":"")}${new Date(ChallanData[0].taxPeriodFrom).getDate()}`
-        : null,
-    toDate : ChallanData[0]
-        ? new Date(ChallanData[0].taxPeriodTo).getFullYear().toString() +
-          "-" +
-          `${(new Date(ChallanData[0].taxPeriodTo).getMonth() + 1) < 10?"0":""}${(new Date(ChallanData[0].taxPeriodTo).getMonth() + 1)}` +
-          "-" +
-          `${(new Date(ChallanData[0].taxPeriodTo).getDate() < 10?"0":"")}${new Date(ChallanData[0].taxPeriodTo).getDate()}`
-        : null
+    mohalla: { ...ChallanData[0].address.locality, i18nkey: `${stringReplaceAll(ChallanData[0].tenantId, ".", "_").toUpperCase()}_ADMIN_${ChallanData[0]?.address?.locality?.code}` },
+    category: { code: ChallanData[0].businessService, i18nkey: `BILLINGSERVICE_BUSINESSSERVICE_${ChallanData[0]?.businessService.split(".")[0].toUpperCase()}` },
+    categoryType: { code: ChallanData[0].businessService, i18nkey: `BILLINGSERVICE_BUSINESSSERVICE_${stringReplaceAll(ChallanData[0].businessService, ".", "_").toUpperCase()}` },
+    fromDate: ChallanData[0]
+      ? new Date(ChallanData[0].taxPeriodFrom).getFullYear().toString() +
+        "-" +
+        `${(new Date(ChallanData[0].taxPeriodFrom).getMonth() + 1) < 10 ? "0" : ""}${new Date(ChallanData[0].taxPeriodFrom).getMonth() + 1}` +
+        "-" +
+        `${new Date(ChallanData[0].taxPeriodFrom).getDate() < 10 ? "0" : ""}${new Date(ChallanData[0].taxPeriodFrom).getDate()}`
+      : null,
+    toDate: ChallanData[0]
+      ? new Date(ChallanData[0].taxPeriodTo).getFullYear().toString() +
+        "-" +
+        `${(new Date(ChallanData[0].taxPeriodTo).getMonth() + 1) < 10 ? "0" : ""}${new Date(ChallanData[0].taxPeriodTo).getMonth() + 1}` +
+        "-" +
+        `${new Date(ChallanData[0].taxPeriodTo).getDate() < 10 ? "0" : ""}${new Date(ChallanData[0].taxPeriodTo).getDate()}`
+      : null,
   };
-  defaultval[`${ChallanData[0]?.businessService.split(".")[0]}`] = {};
+  const prefix = ChallanData[0]?.businessService.split(".")[0];
+  defaultval[prefix] = {};
   if (fetchBillData.Bill[0].billDetails[0].billAccountDetails.length > 0) {
-    fetchBillData.Bill[0].billDetails[0].billAccountDetails.map(
-      (ele) => ((defaultval[`${ChallanData[0]?.businessService.split(".")[0]}`])[`${ele.taxHeadCode.split(".")[1]}`] = `${ele.amount}`)
+    fetchBillData.Bill[0].billDetails[0].billAccountDetails.forEach(
+      (ele) => (defaultval[prefix][`${ele.taxHeadCode.split(".")[1]}`] = `${ele.amount}`)
     );
   }
-  sessionStorage.setItem("InitialTaxFeilds",JSON.stringify(defaultval[`${ChallanData[0]?.businessService.split(".")[0]}`]));
+  sessionStorage.setItem("InitialTaxFeilds", JSON.stringify(defaultval[prefix]));
   return defaultval;
+};
 
-}
-
-
-const NewChallan = ({ChallanData}) => {
+const NewChallan = ({ ChallanData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
-  const { url } = useRouteMatch();
-  let isEdit = false;
-  if (url.includes("modify-challan")) {
-    isEdit = true;
-  }
-  const [canSubmit, setSubmitValve] = useState(false);
-  const defaultValues = {};
-  const history = useHistory();
-  // delete
-  const [_formData, setFormData, _clear] = Digit.Hooks.useSessionStorage("store-data", null);
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", {});
-  const [defaultUpdatedValue, setdefaultUpdatedValue] = useState(false)
+  const { url } = Digit.Hooks.useModuleBasePath();
+  const isEdit = url.includes("modify-challan");
+  const navigate = Digit.Hooks.useCustomNavigate();
   const isMobile = window.Digit.Utils.browser.isMobile();
 
-
-
+  const [canSubmit, setSubmitValve] = useState(false);
   const [showToast, setShowToast] = useState(null);
-  const [error, setError] = useState(null);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", {});
 
   const stateId = Digit.ULBService.getStateId();
-  let { data: newConfig, isLoading } = Digit.Hooks.mcollect.useMcollectFormConfig.getFormConfig(stateId, {});
-  let lastModTime = ChallanData ? ChallanData[0].auditDetails.lastModifiedTime : null;
+  const { data: newConfig } = Digit.Hooks.mcollect.useMcollectFormConfig.getFormConfig(stateId, {});
+
+  const lastModTime = ChallanData ? ChallanData[0].auditDetails.lastModifiedTime : null;
   const { data: fetchBillData } = ChallanData
     ? Digit.Hooks.useFetchBillsForBuissnessService(
-        {
-          businessService: ChallanData[0].businessService,
-          consumerCode: ChallanData[0].challanNo,
-        },
+        { businessService: ChallanData[0].businessService, consumerCode: ChallanData[0].challanNo },
         { lastModTime }
       )
     : {};
 
-  useEffect(() => {
-    if(isEdit && fetchBillData)
-    {
-      let formdata = getformDataforEdit(ChallanData, fetchBillData);
-      setdefaultUpdatedValue(true)
-      sessionStorage.setItem("mcollectEditObject", JSON.stringify({consomerDetails1:[{...formdata}]}))
-    }
-  },[isEdit,fetchBillData])
-
-  const closeToast = () => {
-    setShowToast(null);
-    setError(null);
-  };
+  // Compute edit defaults only after fetchBillData is ready — declared AFTER the hook
+  let editDefaults = null;
+  if (isEdit && fetchBillData && ChallanData) {
+    const formdata = getformDataforEdit(ChallanData, fetchBillData);
+    editDefaults = { consomerDetails1: [{ ...formdata }] };
+    sessionStorage.setItem("mcollectEditObject", JSON.stringify(editDefaults));
+  }
 
   useEffect(() => {
     setMutationHappened(false);
     clearSuccessData();
+    return () => sessionStorage.removeItem("mcollectFormData");
   }, []);
 
-  window.onunload = function () {
-    sessionStorage.removeItem("mcollectFormData");
-  }
   const onFormValueChange = (setValue, formData, formState) => {
     setSubmitValve(!Object.keys(formState.errors).length);
   };
 
   const onSubmit = (data) => {
-    let mcollectFormValue = JSON.parse(sessionStorage.getItem("mcollectFormData"));
-    data = mcollectFormValue? mcollectFormValue : data?.consomerDetails1?.[0];
-    let TaxHeadMasterKeys= data[`${data?.category?.code?.split(".")[0]}`] ? Object.keys(data[`${data?.category?.code?.split(".")[0]}`]) : [];
-    let TaxHeadMasterValues = data[`${data?.category?.code?.split(".")[0]}`] ? Object.values(data[`${data?.category?.code?.split(".")[0]}`]) : [];
-    let Challan = {};
-    if(!isEdit){
-      let temp = data?.category?.code;
-      Challan = {
-        citizen: {
-          name: data.ConsumerName,
-          mobileNumber: data.mobileNumber,
-          emailId: data.emailId
-        },
-        //businessService: selectedCategoryType ? temp + "." + humanized(selectedCategoryType.code, temp) : "",
-        businessService:data?.categoryType?.code,
-        consumerType: data?.category?.code?.split(".")[0],
-        description: data?.comments,
-        taxPeriodFrom: Date.parse(data?.fromDate),
-        taxPeriodTo: Date.parse(data?.toDate),
-        tenantId: tenantId,
-        address: {
-          buildingName: data.building,
-          doorNo: data.doorNo,
-          street: data.streetName,
-          locality: { code: data?.mohalla?.code },
-          pincode: data.pincode,
-        },
-        amount: TaxHeadMasterKeys.map((ele,index) => {
-          return {
-            taxHeadCode: `${data?.category?.code?.split(".")[0]}.${ele}`,
-            amount: TaxHeadMasterValues[index] ? Math.round(TaxHeadMasterValues[index]) : 0,
-          };
-        }),
-      };
-    } else {
-      Challan = {
-        accountId: ChallanData[0].accountId,
-        citizen: ChallanData[0].citizen,
-        applicationStatus: ChallanData[0].applicationStatus,
-        auditDetails: ChallanData[0].auditDetails,
-        id: ChallanData[0].id,
-        businessService: ChallanData[0].businessService,
-        challanNo: ChallanData[0].challanNo,
-        consumerType: data?.category?.code,
-        description: data.comments,
-        taxPeriodFrom: Date.parse(data.fromDate),
-        taxPeriodTo: Date.parse(data.toDate),
-        tenantId: tenantId,
-        address: ChallanData[0].address,
-          amount: TaxHeadMasterKeys.map((ele,index) => {
-          return {
-            taxHeadCode: `${data?.category?.code?.split(".")[0]}.${ele}`,
-            amount: TaxHeadMasterValues[index] ? Math.round(TaxHeadMasterValues[index]) : 0,
-          };
-        }),
-      };
-    }
+    const mcollectFormValue = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+    const rhfFlat = {
+      ...data?.consomerDetails1?.[0],
+      ...data?.addressDetails?.[0],
+      city:         data?.serviceDetails?.[0]?.city,
+      category:     data?.serviceDetails?.[0]?.category,
+      categoryType: data?.serviceDetails?.[0]?.categoryType,
+      fromDate:     data?.serviceDetails?.[0]?.fromDate,
+      toDate:       data?.serviceDetails?.[0]?.toDate,
+      comments:     data?.serviceDetails?.[0]?.comments,
+      ...Object.fromEntries(
+        Object.entries(data?.serviceDetails?.[0] || {}).filter(([k]) =>
+          !["city","category","categoryType","fromDate","toDate","comments",
+            "mohalla","doorNo","building","streetName","pincode",
+            "ConsumerName","mobileNumber","emailId"].includes(k)
+        )
+      ),
+    };
+    const merged = { ...mcollectFormValue, ...rhfFlat };
+
+    const categoryPrefix = merged?.category?.code?.split(".")[0];
+    const amountArray = Object.entries(merged)
+      .filter(([key]) => categoryPrefix && key.startsWith(`${categoryPrefix}_`) &&
+        !["category","categoryType","fromDate","toDate","city","ConsumerName",
+          "mobileNumber","emailId","doorNo","building","streetName","pincode","mohalla","comments"].includes(key))
+      .map(([key, val]) => ({
+        taxHeadCode: key.replace("_", "."),
+        amount: val ? Math.round(val) : 0,
+      }));
+
+    const Challan = isEdit
+      ? {
+          accountId: ChallanData[0].accountId,
+          citizen: ChallanData[0].citizen,
+          applicationStatus: ChallanData[0].applicationStatus,
+          auditDetails: ChallanData[0].auditDetails,
+          id: ChallanData[0].id,
+          businessService: ChallanData[0].businessService,
+          challanNo: ChallanData[0].challanNo,
+          consumerType: merged?.category?.code,
+          description: merged.comments,
+          taxPeriodFrom: Date.parse(merged.fromDate),
+          taxPeriodTo: Date.parse(merged.toDate),
+          tenantId,
+          address: ChallanData[0].address,
+          amount: amountArray,
+        }
+      : {
+          citizen: { name: merged.ConsumerName, mobileNumber: merged.mobileNumber, emailId: merged.emailId },
+          businessService: merged?.categoryType?.code,
+          consumerType: merged?.category?.code?.split(".")[0],
+          description: merged?.comments,
+          taxPeriodFrom: Date.parse(merged?.fromDate),
+          taxPeriodTo: Date.parse(merged?.toDate),
+          tenantId,
+          address: {
+            buildingName: merged.building,
+            doorNo: merged.doorNo,
+            street: merged.streetName,
+            locality: { code: merged?.mohalla?.code },
+            pincode: merged.pincode,
+          },
+          amount: amountArray,
+        };
 
     if (isEdit) {
-      Digit.MCollectService.update({ Challan: Challan }, tenantId)
-        .then((result, err) => {
-          if (result.challans && result.challans.length > 0) {
+      Digit.MCollectService.update({ Challan }, tenantId)
+        .then((result) => {
+          if (result.challans?.length > 0) {
             const challan = result.challans[0];
-            sessionStorage.removeItem('mcollectEditObject');
-            let LastModifiedTime = Digit.SessionStorage.set("isMcollectAppChanged", challan.auditDetails.lastModifiedTime);
+            sessionStorage.removeItem("mcollectEditObject");
+            Digit.SessionStorage.set("isMcollectAppChanged", challan.auditDetails.lastModifiedTime);
             Digit.MCollectService.generateBill(challan.challanNo, tenantId, challan.businessService, "challan").then((response) => {
-              if (response.Bill && response.Bill.length > 0) {
-                history.push(
-                  `/upyog-ui/employee/mcollect/acknowledgement?purpose=challan&status=success&tenantId=${tenantId}&billNumber=${
-                    response.Bill[0].billNumber
-                  }&serviceCategory=${response.Bill[0].businessService}&challanNumber=${response.Bill[0].consumerCode}&isEdit=${true}`,
+              if (response.Bill?.length > 0) {
+                navigate(
+                  `/upyog-ui/employee/mcollect/acknowledgement?purpose=challan&status=success&tenantId=${tenantId}&billNumber=${response.Bill[0].billNumber}&serviceCategory=${response.Bill[0].businessService}&challanNumber=${response.Bill[0].consumerCode}&isEdit=true`,
                   { from: url }
                 );
               }
@@ -187,14 +170,14 @@ const NewChallan = ({ChallanData}) => {
         })
         .catch((e) => setShowToast({ key: "error", label: e?.response?.data?.Errors[0].message }));
     } else {
-      Digit.MCollectService.create({ Challan: Challan }, tenantId)
-        .then((result, err) => {
-          if (result.challans && result.challans.length > 0) {
+      Digit.MCollectService.create({ Challan }, tenantId)
+        .then((result) => {
+          if (result.challans?.length > 0) {
             const challan = result.challans[0];
             sessionStorage.removeItem("mcollectFormData");
             Digit.MCollectService.generateBill(challan.challanNo, tenantId, challan.businessService, "challan").then((response) => {
-              if (response.Bill && response.Bill.length > 0) {
-                history.push(
+              if (response.Bill?.length > 0) {
+                navigate(
                   `/upyog-ui/employee/mcollect/acknowledgement?purpose=challan&status=success&tenantId=${tenantId}&billNumber=${response.Bill[0].billNumber}&serviceCategory=${response.Bill[0].businessService}&challanNumber=${response.Bill[0].consumerCode}`,
                   { from: url }
                 );
@@ -202,55 +185,48 @@ const NewChallan = ({ChallanData}) => {
             });
           }
         })
-        .catch((e) => {setShowToast({ key: "error", label: e?.response?.data?.Errors[0].message })});
+        .catch((e) => setShowToast({ key: "error", label: e?.response?.data?.Errors[0].message }));
     }
   };
-  let configs = newConfig || [];
-  //let configs = [];
-  //let newConfig;
-  newConfig=newConfig?newConfig:newConfigMcollect;
-  newConfig?.map((conf) => {
-    if (conf.head !== "ES_NEW_APPLICATION_PROPERTY_ASSESSMENT" && conf.head) {
-      configs.push(conf);
-    }
-  });
-  configs=newConfig;
-  function checkHead(head) {
-    if (head === "ES_NEW_APPLICATION_LOCATION_DETAILS") {
-      return "TL_CHECK_ADDRESS";
-    } else if (head === "ES_NEW_APPLICATION_OWNERSHIP_DETAILS") {
-      return "TL_OWNERSHIP_DETAILS_HEADER";
-    } else {
-      return head;
-    }
-  }
+
+  const configs = (newConfig || newConfigMcollect || []);
+
+  const checkHead = (head) => {
+    if (head === "ES_NEW_APPLICATION_LOCATION_DETAILS") return "TL_CHECK_ADDRESS";
+    if (head === "ES_NEW_APPLICATION_OWNERSHIP_DETAILS") return "TL_OWNERSHIP_DETAILS_HEADER";
+    return head;
+  };
+
+  // In edit mode, don't mount FormComposer until editDefaults is ready —
+  // RHF useForm only reads defaultValues once on mount, so we must wait.
+  if (isEdit && !editDefaults) return <Loader />;
 
   return (
     <div>
-      <div style={isMobile?{}:{ marginLeft: "15px" }}>
-        <Header>{isEdit ? t("UC_UPDATE_CHALLAN"):t("UC_COMMON_HEADER")}</Header>
+      <div style={isMobile ? {} : { marginLeft: "15px" }}>
+        <Header>{isEdit ? t("UC_UPDATE_CHALLAN") : t("UC_COMMON_HEADER")}</Header>
       </div>
-      {isEdit && !(JSON.parse(sessionStorage.getItem("mcollectEditObject"))) && !defaultUpdatedValue ? <Loader />
-       :<FormComposer
+      <FormComposer
         heading={t("")}
-        //isDisabled={!canSubmit}
         label={t("ES_COMMON_APPLICATION_SUBMIT")}
-        config={configs.map((config) => {
-          return {
-            ...config,
-            body: config.body.filter((a) => {
-              return !a.hideInEmployee;
-            }),
-            head: checkHead(config.head),
-          };
-        })}
+        config={configs.map((config) => ({
+          ...config,
+          body: config.body.filter((a) => !a.hideInEmployee),
+          head: checkHead(config.head),
+        }))}
         fieldStyle={{ marginRight: 0 }}
         onSubmit={onSubmit}
-        defaultValues={defaultValues}
+        defaultValues={isEdit ? editDefaults : {}}
         onFormValueChange={onFormValueChange}
         breaklineStyle={{ border: "0px" }}
-      />}
-      {showToast && <Toast error={showToast?.key === "error" ? true : false} label={showToast?.label} onClose={closeToast} />}
+      />
+      {showToast && (
+        <Toast
+          error={showToast?.key === "error"}
+          label={showToast?.label}
+          onClose={() => setShowToast(null)}
+        />
+      )}
     </div>
   );
 };

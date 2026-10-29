@@ -107,7 +107,11 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           optionsKey={config?.optionsKey}
           value={value}
           onSelect={(e) => {
-            onChange(e, config.name);
+            if (typeof onChange === 'function') {
+              onChange(e, config.name);
+            } else {
+              console.error('CustomDropdown: onChange is not a function', { onChange, config });
+            }
           }}
           disable={disable}
           selectedOption={value}
@@ -126,7 +130,11 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           optionKey={config?.optionsKey}
           value={value}
           select={(e) => {
-            onChange(e, config.name);
+            if (typeof onChange === 'function') {
+              onChange(e, config.name);
+            } else {
+              console.error('CustomDropdown: onChange is not a function', { onChange, config });
+            }
           }}
           disable={disable}
           selected={value || config.defaultValue}

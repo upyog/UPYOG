@@ -46,7 +46,7 @@ const DayAndTimeSlot = ({ t, day, onDayToggle, onSameForAllChange, isSameForAll,
             />
 
             {day?.startTime && day?.endTime && <CheckBox
-              style={{ width: "100%"}}
+              style={{ width: "100%" }}
               checked={!isSameForAll}
               onChange={() => onSameForAllChange(day?.startTime, day?.endTime)}
               label="Same for All Fields"

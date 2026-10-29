@@ -1,4 +1,4 @@
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -116,7 +116,8 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
               <span className="link">
                 <Link
                   to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["challanNo"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
+                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["challanNo"]}/${row.original?.["tenantId"]}`,
+                    search: `?workflow=mcollect`,
                   }}
                 >
                   {t(`UC_${action}`)}
@@ -143,12 +144,12 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
     result = <Loader />;
   } else if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="mc-desktop-inbox-card">
         {/* TODO Change localization key */}
         {t("CS_MYAPPLICATIONS_NO_APPLICATION")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="mc-desktop-inbox-centered">
               {text}
             </p>
           ))}
@@ -188,7 +189,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
   }
 
   return (
-    <div className="inbox-container" style={{overflow: "auto"}}>
+    <div className="inbox-container mc-desktop-inbox-wrapper">
       {!props.isSearch && (
         <div className="filters-container">
           <InboxLinks parentRoute={props.parentRoute} businessService={props.businessService} />
@@ -212,7 +213,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div className="mc-desktop-inbox-wrapper-2">
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -221,7 +222,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className={`result ${!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>

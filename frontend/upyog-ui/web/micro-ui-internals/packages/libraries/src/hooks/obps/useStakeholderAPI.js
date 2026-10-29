@@ -1,8 +1,11 @@
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { OBPSService } from "../../services/elements/OBPS";
-import { useMutation } from "react-query";
 
-const useStakeholderAPI = (tenantId, type = false) => {
-      return useMutation((data) => OBPSService.BPAREGupdate(data, tenantId));  
-  };
+const useStakeholderAPI = (tenantId) => {
+  return mutationTemplate({
+    mutationFn: (data) =>
+      OBPSService.BPAREGupdate(data, tenantId),
+  });
+};
 
-  export default useStakeholderAPI;
+export default useStakeholderAPI;

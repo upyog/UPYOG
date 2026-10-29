@@ -1,7 +1,6 @@
-import { CardLabel, Dropdown, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectLocalityOrGramPanchayat = ({ t, config, onSelect, userType, formData, formState }) => {
@@ -304,7 +303,7 @@ if(formData?.address?.gramPanchayat)
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
-                  style={{ width: "86%" }}
+                  className="fsm-select-locality-or-gram-panchayat-wrapper"
                   type="text"
                   id="newLocality"
                   key="newLocality"
@@ -335,7 +334,7 @@ if(formData?.address?.gramPanchayat)
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_GRAM_PANCHAYAT")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <TextInput
-                  style={{ width: "86%" }}
+                  className="fsm-select-locality-or-gram-panchayat-wrapper"
                   type="text"
                   id="newGp"
                   key="newGp"
@@ -362,7 +361,7 @@ if(formData?.address?.gramPanchayat)
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{t("CS_VILLAGE_NAME")}</CardLabel>
                 <TextInput
-                  style={{ width: "86%" }}
+                  className="fsm-select-locality-or-gram-panchayat-wrapper"
                   type="text"
                   id="village"
                   key="village"

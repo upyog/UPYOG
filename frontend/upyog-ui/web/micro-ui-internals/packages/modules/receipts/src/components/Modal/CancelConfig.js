@@ -1,4 +1,4 @@
-import { Dropdown } from "@upyog/digit-ui-react-components";
+import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
 export const configCancelConfig = ({ t, selectedReason, Reasons, selectReason }) => {

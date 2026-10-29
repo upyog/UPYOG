@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import FSMLink from "./inbox/FSMLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";
@@ -266,14 +266,14 @@ const DesktopInbox = (props) => {
     result = <Loader />;
   } else if ((props.isSearch && !props.shouldSearch) || props?.data?.table?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="fsm-desktop-inbox-card">
         {/* TODO Change localization key */}
         {
           // t("CS_MYCOMPLAINTS_NO_COMPLAINTS")
           t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={{ textAlign: "center" }}>
+              <p key={index} className="fsm-desktop-inbox-centered">
                 {text}
               </p>
             ))
@@ -328,7 +328,7 @@ const DesktopInbox = (props) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1, marginLeft: "24px" }}>
+      <div className="fsm-desktop-inbox-spacing">
         <SearchApplication
           onSearch={props.onSearch}
           type="desktop"
@@ -336,7 +336,7 @@ const DesktopInbox = (props) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" style={{ marginLeft: FSTP ? "" : !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className={`result ${!props?.isSearch && !FSTP ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>
