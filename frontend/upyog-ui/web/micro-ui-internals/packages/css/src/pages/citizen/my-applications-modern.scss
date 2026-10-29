@@ -335,11 +335,18 @@
         font-weight: 600 !important;
         text-decoration: none !important;
         transition: all 0.2s ease !important;
+        cursor: pointer;
+        font-family: inherit;
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: #f1f5f9 !important;
           border-color: #94a3b8 !important;
           color: #0f172a !important;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
       }
     }

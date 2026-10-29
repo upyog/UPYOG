@@ -1,5 +1,5 @@
 import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PTApplication from "./pt-application";
@@ -7,46 +7,98 @@ import PTApplication from "./pt-application";
 export const PTMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const user = Digit.UserService.getUser()?.info;
-  let filter = window.location.href.split("/").pop();
-  let t1;
-  let off;
-  if (!isNaN(parseInt(filter))) {
-    off = filter;
-    t1 = parseInt(filter) + 50;
-  } else {
-    t1 = 4;
-  }
-  let filter1 = !isNaN(parseInt(filter))
-    ? {
-        limit: "50",
-        sortOrder: "ASC",
-        sortBy: "createdTime",
-        offset: off,
-        tenantId,
-        status: "INWORKFLOW",
-      }
-    : {
-        limit: "4",
-        sortOrder: "ASC",
-        sortBy: "createdTime",
-        offset: "0",
-        mobileNumber: user?.mobileNumber,
-        tenantId,
-        status: "INWORKFLOW",
-      };
+  const user = Digit.UserService.getUser()?.info || Digit.UserService.getUser()?.userInfo;
 
-  const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertySearch(
+  const [offset, setOffset] = useState(() => {
+    const filter = window.location.href.split("/").pop();
+    const parsed = parseInt(filter, 10);
+    return !isNaN(parsed) ? parsed : 0;
+  });
+  const [limit, setLimit] = useState(() => {
+    const filter = window.location.href.split("/").pop();
+    const parsed = parseInt(filter, 10);
+    return !isNaN(parsed) ? 50 : 4;
+  });
+  const [applications, setApplications] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const filterParams = useMemo(
+    () => ({
+      limit: `${limit}`,
+      sortOrder: "ASC",
+      sortBy: "createdTime",
+      offset: `${offset}`,
+      mobileNumber: user?.mobileNumber,
+      tenantId,
+      status: "INWORKFLOW",
+    }),
+    [limit, offset, user?.mobileNumber, tenantId]
+  );
+
+  const { isLoading, isFetching, isError, error, data } = Digit.Hooks.pt.usePropertySearch(
     {
-      filters: filter1,
+      tenantId,
+      filters: filterParams,
     },
     {
-      filters: filter1,
+      filters: filterParams,
+      enabled: Boolean(tenantId && user?.mobileNumber),
     }
   );
 
-  const { Properties: applicationsList } = data || {};
-  let combinedApplicationNumber = applicationsList?.length > 0 ? applicationsList?.map((ob) => ob?.acknowldgementNumber) : [];
+  useEffect(() => {
+    if (!isFetching && data?.Properties) {
+      const incoming = data.Properties || [];
+      setApplications((prev) => {
+        if (offset === 0) {
+          const seen = new Set();
+          return incoming.filter((app) => {
+            const id = app?.acknowldgementNumber || app?.propertyId;
+            if (!id || seen.has(id)) return false;
+            seen.add(id);
+            return true;
+          });
+        }
+        const existingIds = new Set(
+          prev.map((app) => app?.acknowldgementNumber || app?.propertyId).filter(Boolean)
+        );
+        const uniqueNew = incoming.filter((app) => {
+          const id = app?.acknowldgementNumber || app?.propertyId;
+          return id && !existingIds.has(id);
+        });
+        return [...prev, ...uniqueNew];
+      });
+
+      if (incoming.length < limit) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+      setIsLoadingMore(false);
+    } else if (!isFetching && data && !data?.Properties?.length) {
+      if (offset === 0) {
+        setApplications([]);
+      }
+      setHasMore(false);
+      setIsLoadingMore(false);
+    }
+  }, [data, isFetching, offset, limit]);
+
+  useEffect(() => {
+    if (isError) {
+      setIsLoadingMore(false);
+    }
+  }, [isError]);
+
+  const handleLoadMore = () => {
+    if (isLoadingMore || isFetching) return;
+    setIsLoadingMore(true);
+    setOffset((prev) => prev + limit);
+    setLimit(50);
+  };
+
+  let combinedApplicationNumber = applications?.length > 0 ? applications.map((ob) => ob?.acknowldgementNumber).filter(Boolean) : [];
   let serviceSearchArgs = {
     tenantId: tenantId,
     referenceIds: combinedApplicationNumber,
@@ -74,7 +126,7 @@ export const PTMyApplications = () => {
     else return t("CS_CF_TRACK");
   }
 
-  if (isLoading || serviceloading) {
+  if ((isLoading || serviceloading) && applications.length === 0) {
     return <Loader />;
   }
 
@@ -85,9 +137,9 @@ export const PTMyApplications = () => {
           <Header className="pt-citizen-my-apps-title">
             {t("CS_TITLE_MY_APPLICATIONS")}
           </Header>
-          {applicationsList && (
+          {applications && applications.length > 0 && (
             <span className="pt-citizen-my-apps-count-badge">
-              {applicationsList.length}
+              {applications.length}
             </span>
           )}
         </div>
@@ -103,13 +155,13 @@ export const PTMyApplications = () => {
         </Link>
       </div>
 
-      {applicationsList?.length > 0 ? (
+      {applications?.length > 0 ? (
         <div className="pt-citizen-applications-grid">
-          {applicationsList.map((application, index) => (
+          {applications.map((application, index) => (
             <PTApplication
-              key={application?.acknowldgementNumber || index}
+              key={application?.acknowldgementNumber || application?.propertyId || index}
               application={application}
-              tenantId={user?.permanentCity}
+              tenantId={user?.permanentCity || tenantId}
               buttonLabel={getLabelValue(application)}
             />
           ))}
@@ -136,16 +188,20 @@ export const PTMyApplications = () => {
         </div>
       )}
 
-      {applicationsList?.length > 0 && (
+      {applications?.length > 0 && (
         <div className="pt-citizen-apps-footer-card">
-          <div className="pt-citizen-load-more-wrap">
-            <Link
-              to={`/upyog-ui/citizen/pt/property/my-applications/${t1}`}
-              className="pt-citizen-load-more-btn"
-            >
-              {t("PT_LOAD_MORE_MSG")}
-            </Link>
-          </div>
+          {hasMore && (
+            <div className="pt-citizen-load-more-wrap">
+              <button
+                type="button"
+                onClick={handleLoadMore}
+                className="pt-citizen-load-more-btn"
+                disabled={isLoadingMore || isFetching}
+              >
+                {isLoadingMore || isFetching ? `${t("PT_LOAD_MORE_MSG")}...` : t("PT_LOAD_MORE_MSG")}
+              </button>
+            </div>
+          )}
           <div className="pt-citizen-help-text">
             <span>{t("PT_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}</span>{" "}
             <Link

@@ -7,15 +7,15 @@ const getSearchParamsObj = (field, data, key, t) => {
   let obj = {}
   if (data[key] === undefined || data[key] === '' || field === undefined || data[key] === t('ALL'))
     return
-  
+
   switch (field?.type) {
     case "string":
-      if(data[key] === undefined || data[key] === "")
+      if (data[key] === undefined || data[key] === "")
         return
       obj["name"] = key
       obj["input"] = data[key];
-      return obj 
-      
+      return obj
+
     case "singlevaluelist":
       var defaultValueObj = field.defaultValue
       var isLoc = field.localisationRequired;
@@ -30,8 +30,8 @@ const getSearchParamsObj = (field, data, key, t) => {
       return obj
 
     case "multivaluelist":
-      if(data?.[key]?.[0]?.name === "All")
-       return 
+      if (data?.[key]?.[0]?.name === "All")
+        return
       var defaultValueObj = field.defaultValue
       var isLoc = field.localisationRequired;
       var input
@@ -43,22 +43,22 @@ const getSearchParamsObj = (field, data, key, t) => {
       obj["name"] = key
       obj["input"] = input;
       return obj
-      
+
     case "epoch":
-  obj["name"] = key;
+      obj["name"] = key;
 
-  if (key === "fromDate") {
-    const from = new Date(data.fromDate);
-    from.setHours(0, 0, 0, 0);
-    obj["input"] = from.getTime();
-  } else {
-    const to = new Date(data.toDate);
-    to.setHours(23, 59, 59, 999);
-    obj["input"] = to.getTime();
-  }
+      if (key === "fromDate") {
+        const from = new Date(data.fromDate);
+        from.setHours(0, 0, 0, 0);
+        obj["input"] = from.getTime();
+      } else {
+        const to = new Date(data.toDate);
+        to.setHours(23, 59, 59, 999);
+        obj["input"] = to.getTime();
+      }
 
-  return obj;
-      
+      return obj;
+
     default:
       return
   }
@@ -73,20 +73,20 @@ const EnhancedReport = (props) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState([]);
   const [searchData, setSearchData] = useState({});
-  
+
   // Get tenant ID from session or default
   const tenantId = Digit.ULBService.getCurrentTenantId() || "as";
   // Fetch report metadata
-  const { isLoading: SearchFormIsLoading, data: SearchFormUIData, error: metaError } = 
+  const { isLoading: SearchFormIsLoading, data: SearchFormUIData, error: metaError } =
     Digit.Hooks.reports.useReportMeta.fetchMetaData(moduleName, reportName, tenantId);
 
   // Fetch report data
-  const { isLoading: isLoadingReportsData, data: ReportsData, error: dataError } = 
+  const { isLoading: isLoadingReportsData, data: ReportsData, error: dataError } =
     Digit.Hooks.reports.useReportMeta.fetchReportData(moduleName, reportName, tenantId, filter, {
       enabled: isFormSubmitted
     });
 
-    console.log("SearchFormUIData", SearchFormUIData, "");
+  console.log("SearchFormUIData", SearchFormUIData, "");
 
   const SearchApplication = Digit.ComponentRegistryService.getComponent("ReportSearchApplication");
 
@@ -108,10 +108,10 @@ const EnhancedReport = (props) => {
   }, [ReportsData]);
 
   const onSubmit = (data) => {
-    setSearchData(data);   
+    setSearchData(data);
     const reportData = SearchFormUIData?.reportDetails?.searchParams || [];
     let searchParams = [];
-    
+
     Object.keys(data).forEach((key) => {
       const field = reportData.find(field => field.name === key);
       const obj = getSearchParamsObj(field, data, key, t);
@@ -161,77 +161,6 @@ const EnhancedReport = (props) => {
 
   return SearchApplication ? (
     <div className="rpt-enhanced-report-spacing">
-      <style>{`
-        .report-scroll-container {
-          width: 100%;
-          display: block;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          margin-top: 20px;
-          background-color: white;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          padding: 2px;
-        }
-        .report-scroll-container::-webkit-scrollbar {
-          height: 10px;
-        }
-        .report-scroll-container::-webkit-scrollbar-track {
-          background: #f1f1f1; 
-        }
-        .report-scroll-container::-webkit-scrollbar-thumb {
-          background: #c1c1c1; 
-        }
-        .report-scroll-container::-webkit-scrollbar-thumb:hover {
-          background: #a8a8a8; 
-        }
-        .reports-table {
-          width: auto !important;
-          min-width: 100%;
-          max-width: none !important;
-          border-collapse: collapse;
-        }
-        .reports-table th, .reports-table td {
-          border: 1px solid #ddd;
-          padding: 12px;
-          text-align: left;
-          white-space: nowrap !important;
-        }
-        .reports-table .cell-text {
-          white-space: nowrap !important;
-        }
-        .reports-table th {
-          background-color: #a82227;
-          color: white;
-          font-weight: bold;
-        }
-        .reports-table td {
-          color: #0b0c0c;
-        }
-        .reports-table tr:hover {
-          background-color: #f5f5f5;
-        }
-        /* Styles for the HTML snippet structure provided */
-        .report-result-table {
-          margin-top: 20px;
-          background: white;
-          padding: 16px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .report-table-header th, .report-header-cell, .dataTable th {
-          background-color: #a82227 !important;
-          color: white !important;
-          padding: 12px !important;
-          font-weight: bold !important;
-          border: 1px solid #ddd !important;
-        }
-        .dataTable td {
-          padding: 10px !important;
-          border: 1px solid #ddd !important;
-        }
-        .multilink-link-button {
-          color: #a82227 !important;
-        }
-      `}</style>
       <SearchApplication
         onSubmit={onSubmit}
         isLoading={SearchFormIsLoading}

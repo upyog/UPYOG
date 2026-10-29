@@ -190,6 +190,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
           <CardLabel>{`${t("MYCITY_CODE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <span className={"form-pt-dropdown-only"}>
             <RadioOrSelect
+              name="pt-address-city"
               options={cities.sort((a, b) => a.name.localeCompare(b.name))}
               selectedOption={selectedCity}
               optionKey="i18nKey"
@@ -205,6 +206,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
           {selectedCity && localities && (
             <span className={"form-pt-dropdown-only"}>
               <RadioOrSelect
+                name="pt-address-locality"
                 dropdownStyle={{ paddingBottom: "20px" }}
                 isMandatory={config.isMandatory}
                 options={localities.sort((a, b) => a.name.localeCompare(b.name))}
