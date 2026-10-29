@@ -816,8 +816,8 @@ const EmployeeDashboard = ({ modules = [], isStandalone = false }) => {
             {userRole} — {dateStr} · shift 09:30–17:30
           </p>
         </div>
-
-        <div className="employee-workspace-actions">
+        {/* Commenting the below section. Once API/business usecase are ready same will be enabled */}
+        {/* <div className="employee-workspace-actions">
           <button
             className="employee-btn-new"
             onClick={() => setShowQuickMenu((prev) => !prev)}
@@ -845,7 +845,7 @@ const EmployeeDashboard = ({ modules = [], isStandalone = false }) => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* 2. "ACT NOW" HERO SLA RISK BANNER */}

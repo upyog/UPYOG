@@ -47,6 +47,7 @@ const App = () => {
           <Route path={`property/search-results`} element={<SearchResultsComponent />} />
           <Route path={`property/application/:acknowledgementIds/:tenantId`} element={<PrivateRoute><PTApplicationDetails /></PrivateRoute>} />
           <Route path={`property/my-applications`} element={<PrivateRoute><PTMyApplications /></PrivateRoute>} />
+          <Route path={`property/my-applications/:offset`} element={<PrivateRoute><PTMyApplications /></PrivateRoute>} />
           <Route path={`property/my-properties`} element={<PrivateRoute><MyProperties /></PrivateRoute>} />
           <Route path={`property/my-properties/:offset`} element={<PrivateRoute><MyProperties /></PrivateRoute>} />
           <Route path={`property/my-payments`} element={<PrivateRoute><PTMyPayments /></PrivateRoute>} />

@@ -789,6 +789,7 @@
   .moduleLinkHomePageBackButton {
     border: none;
     top: 76px;
+    color: white;
 
     svg {
       fill: #ffffff;
@@ -972,7 +973,12 @@
     .moduleLinkHomePageBackButton {
       top: calc(7vw + 20px);
       margin-left: 5px;
+
       @apply ml-md;
+
+      .back-btn2 p {
+        color: #fff;
+      }
     }
   }
 
@@ -1254,4 +1260,360 @@
   padding: 40px 0;
   display: flex;
   justify-content: center;
+}
+
+/* Due Renewals Modal */
+.due-renewals-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: drmFadeIn 0.2s ease-out;
+}
+
+@keyframes drmFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.due-renewals-modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 660px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.due-renewals-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fafbfc;
+
+  .due-renewals-modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .due-renewals-modal-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .due-renewals-modal-count-badge {
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+  }
+
+  .due-renewals-modal-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #64748b;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+  }
+}
+
+.due-renewals-summary-card {
+  margin: 16px 24px 0 24px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .due-renewals-summary-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .due-renewals-summary-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #9a3412;
+    }
+
+    .due-renewals-summary-amount {
+      font-size: 22px;
+      font-weight: 800;
+      color: #c2410c;
+    }
+  }
+
+  .due-renewals-summary-right {
+    .due-renewals-summary-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: #9a3412;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(254, 215, 170, 0.8);
+    }
+  }
+}
+
+.due-renewals-search-wrap {
+  margin: 14px 24px 0 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  svg {
+    position: absolute;
+    left: 12px;
+    pointer-events: none;
+  }
+
+  .due-renewals-search-input {
+    width: 100%;
+    padding: 10px 36px 10px 38px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #a82227;
+      box-shadow: 0 0 0 3px rgba(168, 34, 39, 0.1);
+    }
+  }
+
+  .due-renewals-search-clear {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+  }
+}
+
+.due-renewals-items-list {
+  padding: 16px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.due-renewals-item-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .due-renewals-item-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+
+    .due-renewals-item-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .due-renewals-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+
+      .due-renewals-item-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .due-renewals-item-title {
+          font-size: 15px;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .due-renewals-item-badge {
+          background: #f1f5f9;
+          color: #475569;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 1px 6px;
+          border-radius: 4px;
+          text-transform: uppercase;
+        }
+      }
+
+      .due-renewals-item-subtitle {
+        font-size: 13px;
+        color: #475569;
+        font-weight: 500;
+      }
+
+      .due-renewals-item-due-date {
+        font-size: 12px;
+        color: #64748b;
+
+        span {
+          font-weight: 600;
+          color: #475569;
+        }
+      }
+    }
+  }
+
+  .due-renewals-item-action-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+
+    @media (max-width: 600px) {
+      width: 100%;
+      justify-content: space-between;
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .due-renewals-item-amount-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+
+      @media (max-width: 600px) {
+        align-items: flex-start;
+      }
+
+      .due-renewals-item-amount-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: #64748b;
+        text-transform: uppercase;
+      }
+
+      .due-renewals-item-amount {
+        font-size: 16px;
+        font-weight: 800;
+        color: #c2410c;
+      }
+    }
+
+    .due-renewals-pay-btn {
+      background: #a82227;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover {
+        background: #8b1c20;
+        box-shadow: 0 4px 10px rgba(168, 34, 39, 0.25);
+      }
+    }
+  }
+}
+
+.due-renewals-empty-state {
+  padding: 36px 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.due-renewals-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid #f1f5f9;
+  background: #fafbfc;
+  display: flex;
+  justify-content: flex-end;
+
+  .due-renewals-close-action-btn {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+  }
 }

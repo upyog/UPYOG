@@ -1,4 +1,4 @@
-import { Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
@@ -7,8 +7,9 @@ const ForgotPassword = ({ layout, config: propsConfig, t, emp = {}, setEmp = () 
   const [user, setUser] = useState(null);
   const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
-  const {isEmployeeV2 = false} = layout?.loginUI
-  
+  const [mobileNumber, setMobileNumber] = useState(emp?.mobileNumber || "");
+  const [selectedCity, setSelectedCity] = useState(emp?.city || null);
+
   useEffect(() => {
     if (!user) {
       Digit.UserService.setType("employee");
@@ -23,106 +24,118 @@ const ForgotPassword = ({ layout, config: propsConfig, t, emp = {}, setEmp = () 
     setShowToast(null);
   };
 
-  const onForgotPassword = async (data) => {
-      navigate(`/upyog-ui/employee/user/change-password?mobile_number=${emp.mobileNumber}&tenantId=${emp.city.city.code}`);
+  const isMobileValid = /^[6-9]\d{9}$/.test(mobileNumber);
 
-    // if (!data.city) {
-    //   alert("Please Select City!");
-    //   return;
-    // }
-    // const requestData = {
-    //   otp: {
-    //     mobileNumber: data.mobileNumber,
-    //     userType: "citizen",
-    //     type: "passwordreset",
-    //     tenantId: data.city.code,
-    //   },
-    // };
-    // try {
-    //   await Digit.UserService.sendOtp(requestData, data.city.code);
-    //   navigate(`/upyog-ui/employee/user/change-password?mobile_number=${data.mobileNumber}&tenantId=${data.city.code}`);
-    // } catch (err) {
-    //   setShowToast(err?.response?.data?.error?.fields?.[0]?.message || "Invalid login credentials!");
-    //   setTimeout(closeToast, 5000);
-    // }
+  const onForgotPassword = async (e) => {
+    e?.preventDefault?.();
+    if (!selectedCity) {
+      setShowToast(t("ERR_HRMS_INVALID_CITY") || "Please Select City!");
+      setTimeout(closeToast, 5000);
+      return;
+    }
+    if (!isMobileValid) {
+      setShowToast(t("ERR_HRMS_INVALID_MOBILE_NUMBER") || "Please enter a valid mobile number!");
+      setTimeout(closeToast, 5000);
+      return;
+    }
+    navigate(
+      `/upyog-ui/employee/user/change-password?mobile_number=${mobileNumber}&tenantId=${selectedCity?.city?.code || selectedCity?.code}`
+    );
   };
 
   const navigateToLogin = () => {
     navigate("/upyog-ui/employee/user/login", { replace: true });
   };
-  console.log("forget", emp);
-  
-  const [userId, city] = propsConfig.inputs;
-  const config = [
-    {
-      body: [
-        {
-          label: t(userId.label),
-          type: userId.type,
-          populators: {
-            name: userId.name,
-            placeholder: "Enter Number",
-            onChange: (e) => setEmp({...emp, [userId.name]: e.target.value }),
-            componentInFront: "+91",
-            customProps: {
-              classes: "forgetPassword"
-            },
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                optionKey="name"
-                id={city.name}
-                placeholder={"Select City"}
-                className="login-city-dd forgetPasswordDropdown"
-                select={(d) => {
-                  setEmp({...emp, city: d})
-                }}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
-      ],
-    },
-  ];
+
+  const getLocalized = (key, fallback) => {
+    if (!key) return fallback;
+    const val = t(key);
+    return !val || val === key ? fallback : val;
+  };
 
   if (isLoading) {
     return <Loader />;
   }
 
-  const footer = showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />;
+  const footer = showToast && <Toast error={true} label={showToast} onClose={closeToast} />;
 
   return (
-    <>
+    <div className="login-mobile-step">
+      <div className="login-form-header">
+        <h2>{getLocalized(propsConfig?.texts?.header, "Forgot Password")}</h2>
+        <p>{getLocalized("ES_FORGOT_PASSWORD_DESC", "Enter your registered mobile number and city to reset your password.")}</p>
+      </div>
+
+      <form onSubmit={onForgotPassword} className="login-form-body">
+        {/* City Selection */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_COMMON_CITY", "City")}</label>
+          <div className="city-selection">
+            <span className="login-input-icon" aria-hidden="true">
+              <img src={"/upyog-ui/images/search.svg"} alt="search icon" />
+            </span>
+            <Dropdown
+              className="city-selection-dropdown"
+              selected={selectedCity}
+              select={(city) => {
+                setSelectedCity(city);
+                setEmp({ ...emp, city });
+              }}
+              option={cities}
+              optionKey="i18nKey"
+              t={t}
+              placeholder={getLocalized("SEARCH_YOUR_CITY", "Search your city...")}
+            />
+          </div>
+        </div>
+
+        {/* Mobile Number */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_COMMON_MOBILE_NUMBER", "Mobile Number")}</label>
+          <div className="login-input-wrap">
+            <input
+              type="tel"
+              name="mobileNumber"
+              autoComplete="tel"
+              inputMode="numeric"
+              maxLength={10}
+              value={mobileNumber}
+              placeholder={getLocalized("ENTER_MOBILE_NUMBER", "Enter Mobile Number")}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                setMobileNumber(value);
+                setEmp({ ...emp, mobileNumber: value });
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="login-actions">
+          <button type="submit" className="login-primary-button" disabled={!selectedCity || !isMobileValid}>
+            {getLocalized(propsConfig?.texts?.submitButtonLabel, "Continue")}
+          </button>
+
+          <div className="login-divider">OR</div>
+
+          <button type="button" className="login-secondary-button" onClick={navigateToLogin}>
+            <span className="login-secondary-button__content">
+              {getLocalized("CORE_COMMON_BACK_TO_LOGIN", "Back to Login")}
+            </span>
+          </button>
+        </div>
+
+        <p className="login-security">
+          <span className="login-security-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </span>
+          <span>{getLocalized("CORE_LOGIN_SECURITY_MSG", "Secure and encrypted official login portal")}</span>
+        </p>
+      </form>
       {footer}
-      <FormComposer
-        onSubmit={onForgotPassword}
-        noBoxShadow
-        inline
-        submitInForm
-        config={config}
-        label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
-        onSecondayActionClick={navigateToLogin}
-        heading={propsConfig.texts.header}
-        description={propsConfig.texts.description}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ margin: "0 auto", width: "100%", maxWidth: "408px", marginTop: isEmployeeV2 ? "160px" : "auto" }}
-        cardClassName="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%", backgroundColor: "#5a1166" }}
-        className="employeeForgotPassword"
-      />
-    </>
+    </div>
   );
 };
 

@@ -23,6 +23,7 @@ import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/Stat
 import UpyogBot from "./UpyogBot";
 import HeaderBoxSection from "../../../components/HeaderBoxSection";
 import UserActionLayout from "../../../components/UserActionLayout";
+import DueRenewalsModal from "../../../components/DueRenewalsModal";
 
 const Home = ({ layout }) => {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ const Home = ({ layout }) => {
   const [user, setUser] = useState(Digit.UserService.getUser() || null);
   const [UIType, setUIType] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDueRenewalsModalOpen, setIsDueRenewalsModalOpen] = useState(false);
   const DEFAULT_REDIRECT_URL = "/upyog-ui/citizen";
   const { data: { stateInfo, uiHomePage } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
   let isMobile = window.Digit.Utils.browser.isMobile();
@@ -187,8 +189,16 @@ const Home = ({ layout }) => {
     setUIType(DashboardLayout.case2);
   }, []);
 
-  const userActionCards = buildUserActionCards(aggregateData, t, navigate, tenantId);
-  const taskSummaryCards = buildTaskSummaryCards(aggregateData, t, navigate);
+  const responses = aggregateData?.responses || {};
+  const dueRenewalsRaw = responses?.["due-renewals"]?.data?.bills || responses?.["due-renewals"]?.data || [];
+  const dueRenewals = Array.isArray(dueRenewalsRaw) ? dueRenewalsRaw : [];
+
+  const actionHandlers = {
+    onOpenDueRenewals: () => setIsDueRenewalsModalOpen(true),
+  };
+
+  const userActionCards = buildUserActionCards(aggregateData, t, navigate, tenantId, actionHandlers);
+  const taskSummaryCards = buildTaskSummaryCards(aggregateData, t, navigate, actionHandlers);
   const hasAnyData = userActionCards.length > 0;
   const userName = user?.info?.name || user?.name || "Citizen";
 
@@ -335,6 +345,14 @@ const Home = ({ layout }) => {
         ) : null}
         {/* <ChatBot /> text bot commented as we are using new speech bot*/}
         <UpyogBot />
+
+        <DueRenewalsModal
+          isOpen={isDueRenewalsModalOpen}
+          onClose={() => setIsDueRenewalsModalOpen(false)}
+          bills={dueRenewals}
+          tenantId={tenantId}
+          navigate={navigate}
+        />
       </div>
     </div>
   );
@@ -367,7 +385,7 @@ const getModuleIcon = (service = "") => {
   return "📋";
 };
 
-const buildUserActionCards = (aggregateData, t, navigate, tenantId) => {
+const buildUserActionCards = (aggregateData, t, navigate, tenantId, handlers = {}) => {
   const responses = aggregateData?.responses || {};
 
   const dueRenewalsRaw = responses?.["due-renewals"]?.data?.bills || responses?.["due-renewals"]?.data || [];
@@ -390,15 +408,25 @@ const buildUserActionCards = (aggregateData, t, navigate, tenantId) => {
   if (dueRenewals.length > 0) {
     cards.push({
       title: getLabel(t, "CITIZEN_DUE_RENEWALS", "Due Renewals"),
-      viewAllLabel: dueRenewals.length > 3 ? getLabel(t, "COMMON_VIEW_ALL", "View All") : undefined,
+      viewAllLabel: getLabel(t, "COMMON_VIEW_ALL", "View All"),
       onViewAll: () => {
-        if (dueRenewals[0]?.redirectUrl) navigate(dueRenewals[0].redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
-        else navigate("/upyog-ui/citizen");
+        if (handlers?.onOpenDueRenewals) {
+          handlers.onOpenDueRenewals();
+        } else if (dueRenewals[0]?.redirectUrl) {
+          navigate(dueRenewals[0].redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
+        } else {
+          navigate("/upyog-ui/citizen");
+        }
       },
       footerLabel: getLabel(t, "CITIZEN_VIEW_ALL_BILLS", "View All Due Bills"),
       onFooterClick: () => {
-        if (dueRenewals[0]?.redirectUrl) navigate(dueRenewals[0].redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
-        else navigate("/upyog-ui/citizen");
+        if (handlers?.onOpenDueRenewals) {
+          handlers.onOpenDueRenewals();
+        } else if (dueRenewals[0]?.redirectUrl) {
+          navigate(dueRenewals[0].redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
+        } else {
+          navigate("/upyog-ui/citizen");
+        }
       },
       items: dueRenewals.slice(0, 4).map((bill) => {
         const dateStr = bill?.dueDate ? new Date(bill.dueDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "";
@@ -506,7 +534,7 @@ const buildUserActionCards = (aggregateData, t, navigate, tenantId) => {
   return cards;
 };
 
-const buildTaskSummaryCards = (aggregateData, t, navigate) => {
+const buildTaskSummaryCards = (aggregateData, t, navigate, handlers = {}) => {
   const responses = aggregateData?.responses || {};
   const quickSummary = responses?.["quick-summary"]?.data || {};
 
@@ -536,8 +564,13 @@ const buildTaskSummaryCards = (aggregateData, t, navigate) => {
       value: pendingBillsCount || quickSummary?.pendingPayment || 0,
       actionLabel: getLabel(t, "PAY_NOW", "Pay now"),
       onClick: () => {
-        if (dueRenewals[0]?.redirectUrl) navigate(dueRenewals[0].redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
-        else navigate("/upyog-ui/citizen");
+        if (handlers?.onOpenDueRenewals) {
+          handlers.onOpenDueRenewals();
+        } else if (dueRenewals[0]?.redirectUrl) {
+          navigate(dueRenewals[0].redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
+        } else {
+          navigate("/upyog-ui/citizen");
+        }
       },
     },
     {

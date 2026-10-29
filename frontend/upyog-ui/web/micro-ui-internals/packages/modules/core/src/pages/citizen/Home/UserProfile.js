@@ -568,7 +568,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
                 {/* Alt Mobile Number */}
                 <div className="employee-profile-form-item">
-                  <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_ALT_MOBILE_NUMBER") || "Alternate Mobile Number"}</label>
+                  <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_ALT_MOBILE_NUMBER") || "Alternate Mobile Number"} *</label>
                   <MobileNumber
                     value={altMobileNumber}
                     name="altMobileNumber"

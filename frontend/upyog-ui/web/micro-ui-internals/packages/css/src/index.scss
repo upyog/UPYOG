@@ -91,6 +91,7 @@
 @import "./components/dynamicCheckPage.scss";
 @import "./components/dynamicObjectRenderer.scss";
 @import "./components/chatbot.scss";
+@import "./components/UpyogBot.scss";
 
 @import "./pages/employee/index.scss";
 @import "./pages/employee/cardfix.scss";
@@ -767,7 +768,7 @@ input[type="number"] {
     cursor: pointer !important;
     font-size: 15px !important;
     font-weight: 600 !important;
-    color: #ffffff !important;
+    color: #ffffff;
     border-bottom: none !important;
     gap: 6px !important;
 
@@ -782,6 +783,12 @@ input[type="number"] {
       color: #000000 !important;
     }
   }
+
+
+}
+
+.back-btn2 .moduleLinkHomePageBackButton {
+  color: #ffffff !important;
 }
 
 @media only screen and (max-width: 768px) {

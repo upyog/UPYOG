@@ -1,7 +1,7 @@
 var globalConfigs = (function () {
     var stateTenantId = 'pg'
     var gmaps_api_key = 'AIzaSyAQOd09-vjmk1sXFb_ZQYDz2nlfhXq7Wf8'
-    var finEnv = 'upyog'
+    var finEnv = 'upyog-sandbox'
     var centralInstanceEnabled = false;
     var footerBWLogoURL = 'https://s3.ap-south-1.amazonaws.com/egov-uat-assets/digit-footer-bw.png'
     var footerLogoURL = 'https://s3.ap-south-1.amazonaws.com/egov-uat-assets/digit-footer.png'

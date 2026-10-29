@@ -124,12 +124,12 @@ export const setOwnerDetails = (data) => {
         name: owners[0]?.name,
         ownerType: owners[0]?.ownerType?.code || "NONE",
         documents: document,
-        additionalDetails:{ownerSequence:0, ownerName: owners[0]?.name}
+        additionalDetails: { ownerSequence: 0, ownerName: owners[0]?.name }
       });
       data.institution = institution;
       data.owners = owner;
     } else {
-      owners.map((ownr,index) => {
+      owners.map((ownr, index) => {
         let document = [];
         if (ownr?.ownerType?.code != "NONE") {
           document.push({
@@ -154,7 +154,7 @@ export const setOwnerDetails = (data) => {
           permanentAddress: ownr?.permanentAddress,
           relationship: ownr?.relationship?.code,
           documents: document,
-          additionalDetails:{ownerSequence:index, ownerName:ownr?.name}
+          additionalDetails: { ownerSequence: index, ownerName: ownr?.name }
         });
       });
       data.owners = owner;
@@ -297,7 +297,7 @@ export const getusageCategory = (data, i) => {
 };
 
 export const getunits = (data) => {
-  console.log("datadatadatadatadatadatadata",data)
+  console.log("datadatadatadatadatadatadata", data)
   let unit = [];
   if (data?.selfOccupied?.i18nKey === "PT_YES_IT_IS_SELFOCCUPIED" && data?.IsAnyPartOfThisFloorUnOccupied.i18nKey === "PT_COMMON_YES") {
     unit.push({
@@ -370,7 +370,7 @@ export const getunits = (data) => {
 };
 
 export const getunitarray = (i, unitsdata, unit, data) => {
-  console.log("unitsdataunitsdataunitsdata",unitsdata)
+  console.log("unitsdataunitsdataunitsdata", unitsdata)
   if (unitsdata[i].active === true) {
     unit.push(unitsdata[i]);
   } else if (
@@ -493,7 +493,7 @@ export const setPropertyDetails = (data) => {
       units: data?.units,
       landArea: data?.landArea?.floorarea,
       propertyType: data?.PropertyType?.code,
-      noOfFloors: data?.noOfFloors?.code+1,
+      noOfFloors: data?.noOfFloors?.code + 1,
       superBuiltUpArea: null,
       usageCategory: data?.units?.[0]?.usageCategory,
     };
@@ -524,28 +524,28 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
-  console.log("data",data)
+  console.log("data", data)
   // let dataNew = data?.units?.map((value) => {
   //   let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
   //   return { ...value, additionalDetails }
   // })
-  const unitValues=[];
-  unitValues.length=0;
-    if(data?.units && data?.units.length!==0 && Array.isArray(data.units)){
-        data.units.forEach((unit)=>{
-            const unitDetails={
-                RentedMonths:unit?.rentedMonths || null,
-                NonRentedMonthsUsage: unit?.nonRentedMonthsUsage || null,
-                floorNo: unit?.floorNo?.code || null,
+  const unitValues = [];
+  unitValues.length = 0;
+  if (data?.units && data?.units.length !== 0 && Array.isArray(data.units)) {
+    data.units.forEach((unit) => {
+      const unitDetails = {
+        RentedMonths: unit?.rentedMonths || null,
+        NonRentedMonthsUsage: unit?.nonRentedMonthsUsage || null,
+        floorNo: unit?.floorNo?.code || null,
 
-            };
-            console.log("unitdetails", unitDetails)
-            //if(unitDetails.RentedMonths!==null && unitDetails.NonRentedMonthsUsage!==null){
-                unitValues.push(unitDetails)
-            //}
-            
-        })
-    }
+      };
+      console.log("unitdetails", unitDetails)
+      //if(unitDetails.RentedMonths!==null && unitDetails.NonRentedMonthsUsage!==null){
+      unitValues.push(unitDetails)
+      //}
+
+    })
+  }
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -589,11 +589,11 @@ export const convertToProperty = (data = {}) => {
         noOofBasements: noOofBasements,
         basement1: basement1,
         basement2: basement2,
-        unit:unitValues,
-        electricity:data.electricity.electricity,
-        uid:data.uid.uid,
+        unit: unitValues,
+        electricity: data.electricity.electricity,
+        uid: data.uid.uid,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
-        structureType:data?.propertyStructureDetails?.structureType,
+        structureType: data?.propertyStructureDetails?.structureType,
         owners: data.owners,
         digipin: data?.address?.digipin || "",
       },
@@ -608,30 +608,27 @@ export const convertToProperty = (data = {}) => {
 
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
-Object.keys(ob1).map((key) =>{
-  if(typeof ob1[key] == "object")
-  {
-    if(key == "institution")
-    {
-      if((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name)
-      comp=1
-      else if(ob1[key]?.type?.code !== ob2[key]?.type?.code)
-      comp=1
-      
+  Object.keys(ob1).map((key) => {
+    if (typeof ob1[key] == "object") {
+      if (key == "institution") {
+        if ((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name)
+          comp = 1
+        else if (ob1[key]?.type?.code !== ob2[key]?.type?.code)
+          comp = 1
+
+      }
+      else if (ob1[key]?.code !== ob2[key]?.code)
+        comp = 1
     }
-    else if(ob1[key]?.code !== ob2[key]?.code)
-    comp=1
-  }
+    else {
+      if ((ob1[key] || ob2[key]) && ob1[key] !== ob2[key])
+        comp = 1
+    }
+  });
+  if (comp == 1)
+    return false
   else
-  {
-    if((ob1[key] || ob2[key]) && ob1[key] !== ob2[key])
-    comp=1
-  }
-});
-if(comp==1)
-return false
-else
-return true;
+    return true;
 }
 
 export const setUpdateOwnerDetails = (data = []) => {
@@ -741,9 +738,9 @@ export const setUpdatedDocumentDetails = (data) => {
 
 export const convertToUpdateProperty = (data = {}, t) => {
   //const units = data?.additionalDetails?.unit || [];
-  console.log("convertToUpdateProperty",data)
-  data.isUpdateProperty =true
-  data.isEditProperty=false
+  console.log("convertToUpdateProperty", data)
+  data.isUpdateProperty = true
+  data.isEditProperty = false
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -754,16 +751,18 @@ export const convertToUpdateProperty = (data = {}, t) => {
   let noOfFloors = data?.noOfFloors;
   let noOofBasements = data?.noOofBasements;
   let unit = data?.units;
-  data.units = data?.units?.map((ob) => {return({
-    ...ob, unitType : ob?.unitType?.code
-  })})
+  data.units = data?.units?.map((ob) => {
+    return ({
+      ...ob, unitType: ob?.unitType?.code
+    })
+  })
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
   data = setAddressDetails(data);
   data = setUpdateOwnerDetails(data);
   data = setUpdatedDocumentDetails(data);
   data = setPropertyDetails(data);
-  data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
+  data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(), ".", "_")}`);
 
   const formdata = {
     Property: {
@@ -798,11 +797,13 @@ export const convertToUpdateProperty = (data = {}, t) => {
         basement1: basement1,
         basement2: basement2,
         ageOfProperty: data.propertyStructureDetails.ageOfProperty,
-        structureType:data?.propertyStructureDetails?.structureType,
+        structureType: data?.propertyStructureDetails?.structureType,
         digipin: data?.address?.digipin || "",
+        electricity: data.electricity.electricity,
+        uid: data.uid.uid,
       },
 
-      creationReason: window.location.href.includes("edit-application")?"UPDATE":getCreationReason(data),
+      creationReason: window.location.href.includes("edit-application") ? "UPDATE" : getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
       workflow: getWorkflow(data),
@@ -902,7 +903,7 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
 };
 
 /* methid to get date from epoch */
-export const convertEpochToDate = (dateEpoch,businessService) => {
+export const convertEpochToDate = (dateEpoch, businessService) => {
   // Returning null in else case because new Date(null) returns initial date from calender
   if (dateEpoch) {
     const dateFromApi = new Date(dateEpoch);
@@ -911,10 +912,10 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if(businessService == "PT")
-    return `${day}-${month}-${year}`;
+    if (businessService == "PT")
+      return `${day}-${month}-${year}`;
     else
-    return `${day}/${month}/${year}`;
+      return `${day}/${month}/${year}`;
   } else {
     return null;
   }
@@ -928,199 +929,220 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,payments,pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
   let response = { filestoreIds: [payments?.fileStoreId] };
   if (!payments?.fileStoreId) {
-    let assessmentYear="",assessmentYearForReceipt="";
-    let count=0;
-    let toDate,fromDate;
-  if(payments.paymentDetails[0].businessService=="PT" || payments.paymentDetails[0].businessService=="PT.MUTATION"){
-     let arrearRow={};  let arrearArray=[];
-        let taxRow={};  let taxArray=[];
-       
+    let assessmentYear = "", assessmentYearForReceipt = "";
+    let count = 0;
+    let toDate, fromDate;
+    if (payments.paymentDetails[0].businessService == "PT" || payments.paymentDetails[0].businessService == "PT.MUTATION") {
+      let arrearRow = {}; let arrearArray = [];
+      let taxRow = {}; let taxArray = [];
 
-        let roundoff=0,tax=0,firecess=0,cancercess=0,penalty=0,rebate=0,interest=0,usage_exemption=0,special_category_exemption=0,adhoc_penalty=0,adhoc_rebate=0,total=0;
-        let roundoffT=0,taxT=0,firecessT=0,cancercessT=0,penaltyT=0,rebateT=0,interestT=0,usage_exemptionT=0,special_category_exemptionT=0,adhoc_penaltyT=0,adhoc_rebateT=0,totalT=0;
 
-   
-        payments.paymentDetails[0].bill.billDetails.map(element => {
+      let roundoff = 0, tax = 0, firecess = 0, cancercess = 0, penalty = 0, rebate = 0, interest = 0, usage_exemption = 0, special_category_exemption = 0, adhoc_penalty = 0, adhoc_rebate = 0, total = 0;
+      let roundoffT = 0, taxT = 0, firecessT = 0, cancercessT = 0, penaltyT = 0, rebateT = 0, interestT = 0, usage_exemptionT = 0, special_category_exemptionT = 0, adhoc_penaltyT = 0, adhoc_rebateT = 0, totalT = 0;
 
-        if(element.amount >0 || element.amountPaid>0)
-        { count=count+1;
-          toDate=convertEpochToDate(element.toPeriod).split("/")[2];
-          fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
-          assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
-          assessmentYearForReceipt=fromDate+"-"+toDate;
-        
-     element.billAccountDetails.map(ele => {
-    if(ele.taxHeadCode == "PT_TAX")
-  {tax=ele.adjustedAmount;
-    taxT=ele.amount}
-  else if(ele.taxHeadCode == "PT_TIME_REBATE")
-  {rebate=ele.adjustedAmount;
-    rebateT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_CANCER_CESS")
-  {cancercess=ele.adjustedAmount;
-  cancercessT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_FIRE_CESS")
-  {firecess=ele.adjustedAmount;
-    firecessT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_TIME_INTEREST")
-  {interest=ele.adjustedAmount;
-    interestT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_TIME_PENALTY")
-  {penalty=ele.adjustedAmount;
-    penaltyT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
-  {special_category_exemption=ele.adjustedAmount;
-    special_category_exemptionT=ele.amount;}	
-  else if(ele.taxHeadCode == "PT_ROUNDOFF")
-  {roundoff=ele.adjustedAmount;
-    roundoffT=ele.amount;}	
-  else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
-  {usage_exemption=ele.adjustedAmount;
-    usage_exemptionT=ele.amount;}	
-  else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
-  {adhoc_penalty=ele.adjustedAmount;
-    adhoc_penaltyT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
-  {adhoc_rebate=ele.adjustedAmount;
-    adhoc_rebateT=ele.amount;}
 
-  totalT=totalT+ele.amount;
-  });
-arrearRow={
-"year":assessmentYearForReceipt,
-"tax":tax,
-"firecess":firecess,
-"cancercess":cancercess,
-"penalty":penalty,
-"rebate": rebate,
-"interest":interest,
-"usage_exemption":usage_exemption,
-"special_category_exemption": special_category_exemption,
-"adhoc_penalty":adhoc_penalty,
-"adhoc_rebate":adhoc_rebate,
-"roundoff":roundoff,
-"total":element.amountPaid
-};
-taxRow={
-  "year":assessmentYearForReceipt,
-  "tax":taxT,
-  "firecess":firecessT,
-  "cancercess":cancercessT,
-  "penalty":penaltyT,
-  "rebate": rebateT,
-  "interest":interestT,
-  "usage_exemption":usage_exemptionT,
-  "special_category_exemption": special_category_exemptionT,
-  "adhoc_penalty":adhoc_penaltyT,
-  "adhoc_rebate":adhoc_rebateT,
-  "roundoff":roundoffT,
-  "total":element.amount
-  };
-arrearArray.push(arrearRow);
-taxArray.push(taxRow);
-          } 
- 
-  
-        });
+      payments.paymentDetails[0].bill.billDetails.map(element => {
 
-        if(count==0)
-        {
-          let toDate=convertEpochToDate( payments.paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
-          let fromDate=convertEpochToDate( payments.paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
-          assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
-          assessmentYearForReceipt=fromDate+"-"+toDate;
-       
-        
-          payments.paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
-       
-      if(ele.taxHeadCode == "PT_TAX")
-      {tax=ele.adjustedAmount;
-      taxT=ele.amount}
-      else if(ele.taxHeadCode == "PT_TIME_REBATE")
-      {rebate=ele.adjustedAmount;
-      rebateT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_CANCER_CESS")
-      {cancercess=ele.adjustedAmount;
-      cancercessT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_FIRE_CESS")
-      {firecess=ele.adjustedAmount;
-      firecessT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_TIME_INTEREST")
-      {interest=ele.adjustedAmount;
-      interestT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_TIME_PENALTY")
-      {penalty=ele.adjustedAmount;
-      penaltyT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
-      {special_category_exemption=ele.adjustedAmount;
-      special_category_exemptionT=ele.amount;}	
-      else if(ele.taxHeadCode == "PT_ROUNDOFF")
-      {roundoff=ele.adjustedAmount;
-      roundoffT=ele.amount;}	
-      else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
-      {usage_exemption=ele.adjustedAmount;
-      usage_exemptionT=ele.amount;}	
-      else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
-      {adhoc_penalty=ele.adjustedAmount;
-      adhoc_penaltyT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
-      {adhoc_rebate=ele.adjustedAmount;
-      adhoc_rebateT=ele.amount;}
-    
-      total=total+ele.adjustedAmount;
-      totalT=totalT+ele.amount;
+        if (element.amount > 0 || element.amountPaid > 0) {
+          count = count + 1;
+          toDate = convertEpochToDate(element.toPeriod).split("/")[2];
+          fromDate = convertEpochToDate(element.fromPeriod).split("/")[2];
+          assessmentYear = assessmentYear == "" ? fromDate + "-" + toDate + "(Rs." + element.amountPaid + ")" : assessmentYear + "," + fromDate + "-" + toDate + "(Rs." + element.amountPaid + ")";
+          assessmentYearForReceipt = fromDate + "-" + toDate;
+
+          element.billAccountDetails.map(ele => {
+            if (ele.taxHeadCode == "PT_TAX") {
+              tax = ele.adjustedAmount;
+              taxT = ele.amount
+            }
+            else if (ele.taxHeadCode == "PT_TIME_REBATE") {
+              rebate = ele.adjustedAmount;
+              rebateT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_CANCER_CESS") {
+              cancercess = ele.adjustedAmount;
+              cancercessT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_FIRE_CESS") {
+              firecess = ele.adjustedAmount;
+              firecessT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_TIME_INTEREST") {
+              interest = ele.adjustedAmount;
+              interestT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_TIME_PENALTY") {
+              penalty = ele.adjustedAmount;
+              penaltyT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_OWNER_EXEMPTION") {
+              special_category_exemption = ele.adjustedAmount;
+              special_category_exemptionT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_ROUNDOFF") {
+              roundoff = ele.adjustedAmount;
+              roundoffT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION") {
+              usage_exemption = ele.adjustedAmount;
+              usage_exemptionT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_ADHOC_PENALTY") {
+              adhoc_penalty = ele.adjustedAmount;
+              adhoc_penaltyT = ele.amount;
+            }
+            else if (ele.taxHeadCode == "PT_ADHOC_REBATE") {
+              adhoc_rebate = ele.adjustedAmount;
+              adhoc_rebateT = ele.amount;
+            }
+
+            totalT = totalT + ele.amount;
+          });
+          arrearRow = {
+            "year": assessmentYearForReceipt,
+            "tax": tax,
+            "firecess": firecess,
+            "cancercess": cancercess,
+            "penalty": penalty,
+            "rebate": rebate,
+            "interest": interest,
+            "usage_exemption": usage_exemption,
+            "special_category_exemption": special_category_exemption,
+            "adhoc_penalty": adhoc_penalty,
+            "adhoc_rebate": adhoc_rebate,
+            "roundoff": roundoff,
+            "total": element.amountPaid
+          };
+          taxRow = {
+            "year": assessmentYearForReceipt,
+            "tax": taxT,
+            "firecess": firecessT,
+            "cancercess": cancercessT,
+            "penalty": penaltyT,
+            "rebate": rebateT,
+            "interest": interestT,
+            "usage_exemption": usage_exemptionT,
+            "special_category_exemption": special_category_exemptionT,
+            "adhoc_penalty": adhoc_penaltyT,
+            "adhoc_rebate": adhoc_rebateT,
+            "roundoff": roundoffT,
+            "total": element.amount
+          };
+          arrearArray.push(arrearRow);
+          taxArray.push(taxRow);
+        }
+
 
       });
-    arrearRow={
-    "year":assessmentYearForReceipt,
-    "tax":tax,
-    "firecess":firecess,
-    "cancercess":cancercess,
-    "penalty":penalty,
-    "interest":interest,
-    "usage_exemption":usage_exemption,
-    "special_category_exemption": special_category_exemption,
-    "adhoc_penalty":adhoc_penalty,
-    "adhoc_rebate":adhoc_rebate,
-    "roundoff":roundoff,
-    "total": payments.paymentDetails[0].bill.billDetails[0].amountPaid
 
-    };
-    taxRow={
-      "year":assessmentYearForReceipt,
-      "tax":taxT,
-      "firecess":firecessT,
-      "cancercess":cancercessT,
-      "penalty":penaltyT,
-      "rebate": rebateT,
-      "interest":interestT,
-      "usage_exemption":usage_exemptionT,
-      "special_category_exemption": special_category_exemptionT,
-      "adhoc_penalty":adhoc_penaltyT,
-      "adhoc_rebate":adhoc_rebateT,
-      "roundoff":roundoffT,
-      "total": payments.paymentDetails[0].bill.billDetails[0].amount
-    };
-    arrearArray.push(arrearRow);
-    taxArray.push(taxRow);
-    
-}  
-     
-  const details = {
-      "assessmentYears": assessmentYear,
-      "arrearArray":arrearArray,
-      "taxArray": taxArray
+      if (count == 0) {
+        let toDate = convertEpochToDate(payments.paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+        let fromDate = convertEpochToDate(payments.paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+        assessmentYear = assessmentYear == "" ? fromDate + "-" + toDate : assessmentYear + "," + fromDate + "-" + toDate;
+        assessmentYearForReceipt = fromDate + "-" + toDate;
+
+
+        payments.paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
+
+          if (ele.taxHeadCode == "PT_TAX") {
+            tax = ele.adjustedAmount;
+            taxT = ele.amount
           }
-    payments.paymentDetails[0].additionalDetails=details;   
-        }
+          else if (ele.taxHeadCode == "PT_TIME_REBATE") {
+            rebate = ele.adjustedAmount;
+            rebateT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_CANCER_CESS") {
+            cancercess = ele.adjustedAmount;
+            cancercessT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_FIRE_CESS") {
+            firecess = ele.adjustedAmount;
+            firecessT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_TIME_INTEREST") {
+            interest = ele.adjustedAmount;
+            interestT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_TIME_PENALTY") {
+            penalty = ele.adjustedAmount;
+            penaltyT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_OWNER_EXEMPTION") {
+            special_category_exemption = ele.adjustedAmount;
+            special_category_exemptionT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_ROUNDOFF") {
+            roundoff = ele.adjustedAmount;
+            roundoffT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION") {
+            usage_exemption = ele.adjustedAmount;
+            usage_exemptionT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_ADHOC_PENALTY") {
+            adhoc_penalty = ele.adjustedAmount;
+            adhoc_penaltyT = ele.amount;
+          }
+          else if (ele.taxHeadCode == "PT_ADHOC_REBATE") {
+            adhoc_rebate = ele.adjustedAmount;
+            adhoc_rebateT = ele.amount;
+          }
+
+          total = total + ele.adjustedAmount;
+          totalT = totalT + ele.amount;
+
+        });
+        arrearRow = {
+          "year": assessmentYearForReceipt,
+          "tax": tax,
+          "firecess": firecess,
+          "cancercess": cancercess,
+          "penalty": penalty,
+          "interest": interest,
+          "usage_exemption": usage_exemption,
+          "special_category_exemption": special_category_exemption,
+          "adhoc_penalty": adhoc_penalty,
+          "adhoc_rebate": adhoc_rebate,
+          "roundoff": roundoff,
+          "total": payments.paymentDetails[0].bill.billDetails[0].amountPaid
+
+        };
+        taxRow = {
+          "year": assessmentYearForReceipt,
+          "tax": taxT,
+          "firecess": firecessT,
+          "cancercess": cancercessT,
+          "penalty": penaltyT,
+          "rebate": rebateT,
+          "interest": interestT,
+          "usage_exemption": usage_exemptionT,
+          "special_category_exemption": special_category_exemptionT,
+          "adhoc_penalty": adhoc_penaltyT,
+          "adhoc_rebate": adhoc_rebateT,
+          "roundoff": roundoffT,
+          "total": payments.paymentDetails[0].bill.billDetails[0].amount
+        };
+        arrearArray.push(arrearRow);
+        taxArray.push(taxRow);
+
+      }
+
+      const details = {
+        "assessmentYears": assessmentYear,
+        "arrearArray": arrearArray,
+        "taxArray": taxArray
+      }
+      payments.paymentDetails[0].additionalDetails = details;
+    }
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
   }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  window.open(fileStore[response?.filestoreIds[0]], "_blank");
 
 };
 
@@ -1132,14 +1154,14 @@ export const checkArrayLength = (obj = [], length = 0) => {
 };
 
 export const getWorkflow = (data = {}) => {
-  console.log("isEditPropertyisEditProperty",data.isEditProperty,getCreationReason(data))
+  console.log("isEditPropertyisEditProperty", data.isEditProperty, getCreationReason(data))
   return {
-    action: data?.isEditProperty || getCreationReason(data) == "UPDATE"? "OPEN" : "OPEN",
+    action: data?.isEditProperty || getCreationReason(data) == "UPDATE" ? "OPEN" : "OPEN",
     businessService: `PT.${getCreationReason(data)}`,
     moduleName: "PT",
   };
 };
 
 export const getCreationReason = (data = {}) => {
-  return data?.isUpdateProperty  ? "UPDATE" : "CREATE";
+  return data?.isUpdateProperty ? "UPDATE" : "CREATE";
 };

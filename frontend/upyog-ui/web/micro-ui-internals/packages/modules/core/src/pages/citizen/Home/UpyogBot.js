@@ -2,8 +2,6 @@
 import React, { useState, useRef } from "react";
 // Chatbot launcher logo image
 import logo from "./logo.png";
-// CSS keyframe animations and inline style objects for the chatbot UI
-import { animations, styles } from "./UpyogBotStyles";
 
 /**
  * Upyog Component
@@ -14,7 +12,7 @@ import { animations, styles } from "./UpyogBotStyles";
  *     The chatbot UI header is displayed with logo and close button.
  *     An iframe loads the external UPYOG voice assistant.
  *  Clicking the close button triggers `handleChatbotClose()`, collapsing the popup and showing the launcher button again.
- *  CSS animations are injected dynamically for smooth UI transitions.
+ *  Styling and animations are managed via UpyogBot.scss (no inline CSS to comply with CSP).
  */
 
 function UpyogBot() {
@@ -63,46 +61,40 @@ function UpyogBot() {
 
   return (
     <>
-      {/* Inject CSS keyframe animations required by the chatbot UI */}
-      <style>{animations}</style>
-
       {/* Launcher button — visible only when the chatbot is closed */}
       {!isOpen && (
         <button
           className="chat-launcher"
-          style={styles.launcherButton}
           onClick={toggleChatbot}
+          aria-label="Open Upyog Voice Assistant"
         >
           {/* Logo acts as the visual trigger for opening the chatbot */}
           <img
             src={logo}
             alt="UPYOGITA"
-            style={styles.launcherImage}
+            className="chat-launcher-img"
           />
         </button>
       )}
 
       {/* Chatbot popup — visible only when isOpen is true */}
       {isOpen && (
-        <div
-          className="chat-popup"
-          style={styles.popup}
-        >
+        <div className="chat-popup">
           {/* Popup header: logo on the left, close button on the right */}
-          <div style={styles.header}>
-            <div style={styles.logoWrapper}>
+          <div className="chat-popup-header">
+            <div className="chat-popup-logo-wrapper">
               <img
                 src={logo}
                 alt="UPYOGITA"
-                style={styles.logoImage}
+                className="chat-popup-logo-img"
               />
             </div>
 
             {/* Close button — collapses the popup back to the launcher */}
             <button
-              className="close-btn"
+              className="close-btn chat-popup-close-btn"
               onClick={handleChatbotClose}
-              style={styles.closeButton}
+              aria-label="Close Upyog Voice Assistant"
             >
               {/* SVG cross icon (18×18 viewport mapped to 20px render size) */}
               <svg
@@ -135,7 +127,7 @@ function UpyogBot() {
             src={Digit.UpyogBotService.url()}
             onLoad={handleIframeLoad}
             title="UPYOG Chatbot"
-            style={styles.iframe}
+            className="chat-popup-iframe"
             allow="microphone"
           />
         </div>

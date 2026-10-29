@@ -960,9 +960,6 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar, toggl
           </div>
         ))}
       </div>
-      <div>
-        <span>v5.1</span>
-      </div>
       <div className="citizen-logout sidebar-skeleton-logout">
         <div className="sidebar-skeleton-pulse sidebar-skeleton-logout-btn" />
       </div>
