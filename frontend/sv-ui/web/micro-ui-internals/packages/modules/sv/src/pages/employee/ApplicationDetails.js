@@ -1,4 +1,4 @@
-import { Header, MultiLink, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Header, MultiLink, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const ApplicationDetails = () => {
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const businessService = "street-vending"
-  const isDraftApplication=false
+  const isDraftApplication = false
 
 
   // isAction is added to enable or disable the actionbar
@@ -31,10 +31,10 @@ const ApplicationDetails = () => {
     isAction = true;
   }
 
-  const { isLoading, data: applicationDetails } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber,isDraftApplication);
+  const { isLoading, data: applicationDetails } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber, isDraftApplication);
 
   // hook used to work with the mutation function
-  const {mutate} = Digit.Hooks.sv.useSVApplicationAction(tenantId);
+  const { mutate } = Digit.Hooks.sv.useSVApplicationAction(tenantId);
 
   // fetches workflowDetails from the hook useworkflowdetails
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
@@ -147,33 +147,33 @@ const ApplicationDetails = () => {
       label: t("SV_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-    
+
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("SV_ID_CARD"),
       onClick: () => printId(),
     });
-  
+
   return (
     <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("SV_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
-         
-      <div style={{zIndex: "10",  position: "relative"}}>
-        {dowloadOptions && dowloadOptions.length > 0 && (
-          <MultiLink
-            className="multilinkWrapper"
-            onHeadClick={() => setShowOptions(!showOptions)}
-            displayOptions={showOptions}
-            options={dowloadOptions}
-            downloadBtnClassName={"employee-download-btn-className"}
-            optionsClassName={"employee-options-btn-className"}
-          // ref={menuRef}
-          />
-        )}
+        <div style={{ zIndex: "10", display: "flex", flexDirection: "row-reverse", alignItems: "center", marginTop: "-25px" }}>
+
+          <div style={{ zIndex: "10", position: "relative" }}>
+            {dowloadOptions && dowloadOptions.length > 0 && (
+              <MultiLink
+                className="multilinkWrapper"
+                onHeadClick={() => setShowOptions(!showOptions)}
+                displayOptions={showOptions}
+                options={dowloadOptions}
+                downloadBtnClassName={"employee-download-btn-className"}
+                optionsClassName={"employee-options-btn-className"}
+              // ref={menuRef}
+              />
+            )}
+          </div>
         </div>
-      </div>
       </div>
 
       <ApplicationDetailsTemplate

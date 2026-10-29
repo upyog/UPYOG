@@ -1,11 +1,11 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ViewTimeline from "../../components/ViewTimeline";
 import get from "lodash/get";
 import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
-import { checkForNA,SVDocumnetPreview, getOrderDocuments } from "../../utils";
+import { checkForNA, SVDocumnetPreview, getOrderDocuments } from "../../utils";
 
 
 const SvApplicationDetails = () => {
@@ -50,14 +50,14 @@ const SvApplicationDetails = () => {
     },
     { enabled: applicationNo ? true : false }
   );
-    // Step 1: Prepare document list safely
+  // Step 1: Prepare document list safely
   const getApplicationDocs = streetVendingDetails?.documentDetails?.map((doc) => ({
     ...doc,
     module: "StreetVending",
   })) || [];
 
   // Step 2: Fetch PDF details only if documents exist
-  const { data: pdfDetails } = Digit.Hooks.useDocumentSearch(getApplicationDocs, {enabled: getApplicationDocs.length > 0});
+  const { data: pdfDetails } = Digit.Hooks.useDocumentSearch(getApplicationDocs, { enabled: getApplicationDocs.length > 0 });
 
   // Step 3: Extract only StreetVending PDFs
   const applicationDocs = pdfDetails?.pdfFiles?.filter((pdf) => pdf?.module === "StreetVending") || [];
@@ -133,7 +133,7 @@ const SvApplicationDetails = () => {
       onClick: () => printIdCard(),
     });
 
-    const vendorPersonalDetails = streetVendingDetails?.vendorDetail?.find((item)=>item.relationshipType==="VENDOR") || {};
+  const vendorPersonalDetails = streetVendingDetails?.vendorDetail?.find((item) => item.relationshipType === "VENDOR") || {};
 
   return (
     <React.Fragment>
@@ -194,7 +194,7 @@ const SvApplicationDetails = () => {
             <Row className="border-none" label={t("SV_VENDING_LOCALITY")} text={streetVendingDetails?.localityValue || t("CS_NA")} />
             <Row className="border-none" label={t("SV_VENDING_TYPE")} text={streetVendingDetails?.vendingActivity || t("CS_NA")} />
             {streetVendingDetails?.vendingActivity === "STATIONARY" && (
-            <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
+              <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
             <Row className="border-none" label={t("SV_LOCAL_AUTHORITY_NAME")} text={streetVendingDetails?.localAuthorityName || t("CS_NA")} />
             <Row className="border-none" label={t("SV_CATEGORY")} text={t(streetVendingDetails?.disabilityStatus) || t("CS_NA")} />
           </StatusTable>

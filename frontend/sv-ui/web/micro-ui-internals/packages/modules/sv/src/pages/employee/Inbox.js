@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 import SVDesktopInbox from "../../components/SVDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
@@ -49,23 +49,23 @@ const Inbox = ({
 
   const { isFetching, isLoading: hookLoading, searchResponseKey, data, searchFields, ...rest } = useNewInboxAPI
     ? Digit.Hooks.useNewInboxGeneral({
-        tenantId,
-        ModuleCode: moduleCode,
-        filters: { ...searchParams, ...paginationParams, sortParams },
-      })
+      tenantId,
+      ModuleCode: moduleCode,
+      filters: { ...searchParams, ...paginationParams, sortParams },
+    })
     : Digit.Hooks.useInboxGeneral({
-        tenantId,
-        businessService: moduleCode,
-        isInbox,
-        filters: { ...searchParams, ...paginationParams, sortParams },
-        rawWfHandler,
-        rawSearchHandler,
-        combineResponse,
-        wfConfig,
-        searchConfig: { ...enableSarch, ...searchConfig },
-        middlewaresWf,
-        middlewareSearch,
-      });
+      tenantId,
+      businessService: moduleCode,
+      isInbox,
+      filters: { ...searchParams, ...paginationParams, sortParams },
+      rawWfHandler,
+      rawSearchHandler,
+      combineResponse,
+      wfConfig,
+      searchConfig: { ...enableSarch, ...searchConfig },
+      middlewaresWf,
+      middlewareSearch,
+    });
 
 
 
@@ -117,7 +117,7 @@ const Inbox = ({
           searchParams={searchParams}
           sortParams={sortParams}
           linkPrefix={`${parentRoute}/application-details/`}
-          tableConfig={rest?.tableConfig ? rest?.tableConfig:TableConfig(t)["SV"]}
+          tableConfig={rest?.tableConfig ? rest?.tableConfig : TableConfig(t)["SV"]}
           filterComponent={filterComponent}
           EmptyResultInboxComp={EmptyResultInboxComp}
           useNewInboxAPI={useNewInboxAPI}

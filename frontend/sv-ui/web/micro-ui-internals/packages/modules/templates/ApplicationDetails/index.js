@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
@@ -50,9 +50,9 @@ const ApplicationDetails = (props) => {
     oldValue,
     isInfoLabel = false,
     clearDataDetails,
-    isAction=false
+    isAction = false
   } = props;
-  
+
   useEffect(() => {
     if (showToast) {
       workflowDetails.revalidate();
@@ -62,7 +62,7 @@ const ApplicationDetails = (props) => {
   function onActionSelect(action) {
     sessionStorage.setItem("SELECTED_ACTION", action?.action);
     if (action) {
-      if(action?.isToast){
+      if (action?.isToast) {
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
         setTimeout(closeToast, 5000);
       }
@@ -74,7 +74,7 @@ const ApplicationDetails = (props) => {
 
           navigate(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
         }
-        else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION"){
+        else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION") {
           navigate(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
         }
         else {
@@ -125,13 +125,13 @@ const ApplicationDetails = (props) => {
             setTimeout(closeToast, 5000);
             queryClient.clear();
             queryClient.refetchQueries("APPLICATION_SEARCH");
-  
+
           },
         });
       }
       closeModal();
     }
-  
+
   };
 
   if (isLoading || isEnableLoader) {

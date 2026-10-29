@@ -13,7 +13,7 @@ import {
   Toast,
   CardText,
   CardSubHeader,
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useLocation } from "react-router-dom";
@@ -34,7 +34,7 @@ export const SelectPaymentType = (props) => {
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
- 
+
   // const menu = ["AXIS"];
   let { consumerCode, businessService } = useParams();
   const tenantId = state?.tenantId || __tenantId || Digit.ULBService.getCurrentTenantId();
@@ -82,7 +82,7 @@ export const SelectPaymentType = (props) => {
           emailId: "sriranjan.srivastava@owc.com"
         },
         // success
-        callbackUrl:  
+        callbackUrl:
           `${window.location.protocol}//${window.location.host}/sv-ui/citizen/payment/success/${businessService}/${/*wrkflow === "WNS"? encodeURIComponent(consumerCode):*/consumerCode}/${tenantId}?propertyId=${consumerCode}`,
         additionalDetails: {
           isWhatsapp: false,
@@ -97,8 +97,8 @@ export const SelectPaymentType = (props) => {
         window.location = redirectUrl;
       }
       else if (d?.paymentType == "NTTDATA") {
-        let redirect= redirectUrl.split("returnURL=")
-        let url=redirect[0].split("?")[1].split("&")
+        let redirect = redirectUrl.split("returnURL=")
+        let url = redirect[0].split("?")[1].split("&")
         const options = {
           "atomTokenId": url[0].split("=")[1],
           "merchId": url[1].split("=")[1],
@@ -153,9 +153,9 @@ export const SelectPaymentType = (props) => {
 
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
 
-          gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          
+          gatewayParam["successUrl"] = redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0] + 'eg_pg_txnid=' + gatewayParam?.orderId;
+          gatewayParam["failUrl"] = redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0] + 'eg_pg_txnid=' + gatewayParam?.orderId;
+
           for (var key of orderForNDSLPaymentSite) {
 
             newForm.append(
@@ -169,14 +169,14 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-          makePayment(gatewayParam.txURL,newForm);
+          makePayment(gatewayParam.txURL, newForm);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
-     // window.location = redirectUrl;
+      // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {
@@ -203,10 +203,10 @@ export const SelectPaymentType = (props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Header>{t("PAYMENT_CS_HEADER")}</Header>
         <Card>
-        
+
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
             <CardLabel className="dark">{t("PAYMENT_CS_TOTAL_AMOUNT_DUE")}</CardLabel>
-            <CardSectionHeader> ₹ { paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>
+            <CardSectionHeader> ₹ {paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>
           </div>
           <CardLabel>{t("PAYMENT_CS_SELECT_METHOD")}</CardLabel>
           {menu?.length && (
@@ -214,10 +214,10 @@ export const SelectPaymentType = (props) => {
               name="paymentType"
               defaultValue={menu[0]}
               control={control}
-              render={({field}) => <RadioButtons selectedOption={field.value} options={menu} onSelect={field.onChange} />}
+              render={({ field }) => <RadioButtons selectedOption={field.value} options={menu} onSelect={field.onChange} />}
             />
           )}
-          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} /*disabled={timerEnabledForBusinessService(businessService)? Time ===0:null}*/ />}       
+          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} /*disabled={timerEnabledForBusinessService(businessService)? Time ===0:null}*/ />}
         </Card>
       </form>
       <InfoBanner label={t("CS_COMMON_INFO")} text={t("PAYMENT_REDIRECT_NOTICE")} />

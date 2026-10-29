@@ -1,4 +1,4 @@
-import { CitizenHomeCard, PTIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -30,86 +30,86 @@ import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-mo
 
 
 const componentsToRegister = {
-   Create:SVCreate,
-   SVApplicantDetails,
-   SVBusinessDetails,
-   GIS,
-   SVRequiredDoc,
-   SVDayAndTimeSlot,
-   SVAdrressDetails,
-   SVBankDetails,
-   SVDocumentsDetail,
-   CheckPage:SVCheckPage,
-   SVEmpCreate,
-   SVAcknowledgement,
-   SVApplicationDetails: ApplicationDetails,
-   SVMyApplications,
-   SvApplicationDetails,
-   Caption,
-   ViewTimeline,
-   SVSpecialCategory,
-   RenewPopup,
+  Create: SVCreate,
+  SVApplicantDetails,
+  SVBusinessDetails,
+  GIS,
+  SVRequiredDoc,
+  SVDayAndTimeSlot,
+  SVAdrressDetails,
+  SVBankDetails,
+  SVDocumentsDetail,
+  CheckPage: SVCheckPage,
+  SVEmpCreate,
+  SVAcknowledgement,
+  SVApplicationDetails: ApplicationDetails,
+  SVMyApplications,
+  SvApplicationDetails,
+  Caption,
+  ViewTimeline,
+  SVSpecialCategory,
+  RenewPopup,
   EnhancedReport,
   ReportSearchApplication
-  };
-  
-  // function to register the component as per standard 
-  const addComponentsToRegistry = () => {
-    Object.entries(componentsToRegister).forEach(([key, value]) => {
-      Digit.ComponentRegistryService.setComponent(key, value);
-    });
-  };
+};
 
-  // Parent component of module
-  export const SVModule = ({ stateCode, userType, tenants }) => {
-    const location = useLocation();
-    const path = location.pathname;
-    const url = location.pathname;
+// function to register the component as per standard 
+const addComponentsToRegistry = () => {
+  Object.entries(componentsToRegister).forEach(([key, value]) => {
+    Digit.ComponentRegistryService.setComponent(key, value);
+  });
+};
+
+// Parent component of module
+export const SVModule = ({ stateCode, userType, tenants }) => {
+  const location = useLocation();
+  const path = location.pathname;
+  const url = location.pathname;
 
 
-    const moduleCode = "SV";
-    const language = Digit.StoreData.getCurrentLanguage();
-    const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
-    addComponentsToRegistry();
-    Digit.SessionStorage.set("SV_TENANTS", tenants);
-    // Fixed: React 19 requires useEffect to return either a cleanup function or nothing (undefined).
-    // Old code used arrow function shorthand which returned the result of the && expression.
-    // When userType !== "employee", the && expression returned false — an invalid return value in React 19.
-    // When userType === "employee", it returned a Promise from getLocale() — also invalid in React 19.
-    // Fixed: Replaced with block body using if statement — returns undefined implicitly, which is valid.
-    // Fixed: Added  userType to dependency array — best practice to include all values used inside useEffect.
-    useEffect(() => {
-      if (userType === "employee") {
-        Digit.LocalizationService.getLocale({
-          modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
-          locale: Digit.StoreData.getCurrentLanguage(),
-          tenantId: Digit.ULBService.getCurrentTenantId(),
-        });
-      }
-    }, [userType]);
-
-  
+  const moduleCode = "SV";
+  const language = Digit.StoreData.getCurrentLanguage();
+  const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  addComponentsToRegistry();
+  Digit.SessionStorage.set("SV_TENANTS", tenants);
+  // Fixed: React 19 requires useEffect to return either a cleanup function or nothing (undefined).
+  // Old code used arrow function shorthand which returned the result of the && expression.
+  // When userType !== "employee", the && expression returned false — an invalid return value in React 19.
+  // When userType === "employee", it returned a Promise from getLocale() — also invalid in React 19.
+  // Fixed: Replaced with block body using if statement — returns undefined implicitly, which is valid.
+  // Fixed: Added  userType to dependency array — best practice to include all values used inside useEffect.
+  useEffect(() => {
     if (userType === "employee") {
-      return <EmployeeApp path={path} url={url} userType={userType} />;
-    } else return <CitizenApp />;
-  };
-  
-  export const SVLinks = ({ matchPath, userType }) => {
-    const { t } = useTranslation();
-    const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("SV", {});
-  
-    useEffect(() => {
-      clearParams();
-    }, []);
-  
-    return <CitizenHomeCard header={t("STREET_VENDING_SERVICES")}  Icon={() => <PTIcon className="fill-path-primary-main" />} />;
-  };
-  
-  // export the components outside of module to enable and access of module
-  export const SVComponents = {
-    SVModule, 
-    SVLinks,
-    SVCard,
-    SV_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-    SVInboxTableConfig: TableConfig
-  };
+      Digit.LocalizationService.getLocale({
+        modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
+        locale: Digit.StoreData.getCurrentLanguage(),
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+      });
+    }
+  }, [userType]);
+
+
+  if (userType === "employee") {
+    return <EmployeeApp path={path} url={url} userType={userType} />;
+  } else return <CitizenApp />;
+};
+
+export const SVLinks = ({ matchPath, userType }) => {
+  const { t } = useTranslation();
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("SV", {});
+
+  useEffect(() => {
+    clearParams();
+  }, []);
+
+  return <CitizenHomeCard header={t("STREET_VENDING_SERVICES")} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+};
+
+// export the components outside of module to enable and access of module
+export const SVComponents = {
+  SVModule,
+  SVLinks,
+  SVCard,
+  SV_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  SVInboxTableConfig: TableConfig
+};

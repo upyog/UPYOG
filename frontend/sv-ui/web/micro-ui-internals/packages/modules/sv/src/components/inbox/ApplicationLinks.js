@@ -1,9 +1,9 @@
-import { Card, ShippingTruck } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, ShippingTruck } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
+const ApplicationLinks = ({ linkPrefix, classNameForMobileView = "" }) => {
   const { t } = useTranslation();
 
   const allLinks = [

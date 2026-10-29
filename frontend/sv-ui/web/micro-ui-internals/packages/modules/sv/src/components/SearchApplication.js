@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 /** The SVSearchApplication component renders the input fields and table with its data
@@ -19,7 +19,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            isDraftApplication:"false",
+            isDraftApplication: "false",
             fromDate: today,
             toDate: today
         }
@@ -43,9 +43,9 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     const renewalStatusOptions = [
         { i18nKey: "SV_ELIGIBLE_TO_RENEW", code: "ELIGIBLE_TO_RENEW", value: "Eligible to Renew" },
         { i18nKey: "SV_RENEW_IN_PROGRESS", code: "RENEW_IN_PROGRESS", value: "Renew in Progress" },
-        { i18nKey: "SV_RENEW_APPLICATION_CREATED", code: "RENEW_APPLICATION_CREATED", value: "Renew Application Created" },  
+        { i18nKey: "SV_RENEW_APPLICATION_CREATED", code: "RENEW_APPLICATION_CREATED", value: "Renew Application Created" },
         { i18nKey: "SV_RENEWED", code: "RENEWED", value: "Renewed" }
-    ];          
+    ];
 
     // hook for fetching vending type data
     const { data: vendingTypeData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
@@ -208,7 +208,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     />
                 </SearchField>
 
-                    <SearchField>
+                <SearchField>
                     <label>{t("SV_VENDING_TYPE")}</label>
                     <Controller
                         control={control}
@@ -285,7 +285,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 </SearchField>
 
                 {/* Empty Field added for the formatting of the form */}
-                <SearchField></SearchField> 
+                <SearchField></SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                     <p style={{ marginTop: "10px" }}
@@ -297,9 +297,9 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                                 mobileNumber: "",
                                 status: "",
                                 vendingLocality: null,
-                                vendingType: null,     
-                                paymentStatus: null,   
-                                renewalStatus: null, 
+                                vendingType: null,
+                                paymentStatus: null,
+                                renewalStatus: null,
                                 offset: 0,
                                 limit: 10,
                                 sortBy: "commencementDate",

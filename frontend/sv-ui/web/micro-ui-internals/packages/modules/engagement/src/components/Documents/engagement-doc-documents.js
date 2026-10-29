@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, TextInput, UploadFile, CardLabelError, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardLabel, LabelFieldPair, TextInput, UploadFile, CardLabelError, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, useMemo } from "react";
 import { Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
@@ -87,7 +87,7 @@ const EngagementDocUploadDocument = ({ userType, t, onSelect, setValue, config, 
           <Controller
             name={config.key + ".filestoreId"}
             control={control}
-            render={({field}) => (
+            render={({ field }) => (
               <UploadFile
                 id={"city-engagement-doc"}
                 onUpload={(d) => selectFile(d, field)}

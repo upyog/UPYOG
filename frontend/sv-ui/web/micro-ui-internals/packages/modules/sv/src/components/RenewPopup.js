@@ -1,5 +1,5 @@
-import React,{useState,useEffect} from "react";
-import { Modal, Card,SubmitBar, CheckBox} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import React, { useState, useEffect } from "react";
+import { Modal, Card, SubmitBar, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import { demandPayloadData } from "../utils";
 
 const Close = () => (
@@ -55,28 +55,28 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
 
     return (
         <React.Fragment>
-        <Modal
-            headerBarMain={<Heading label={t("SV_WANT_TO_EDIT")}/>}
-            headerBarEnd={<CloseBtn onClick={closeModal} />}
-            actionCancelLabel={t("CS_COMMON_BACK")}
-            actionCancelOnSubmit={closeModal}
-            hideSubmit={true}
-            formId="modal-action"
-        >
-            <Card style={{ boxShadow: "none" }}>
-            <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '20px', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                }}>
-                {<SubmitBar label={t("SV_YES_PROCEED_WITH_APPLICATION")} onSubmit={proceedWithApplication} />}
-                {<SubmitBar label={t("SV_NO_PROCEED_PAYEMNT")} onSubmit={onRedirectedToCheckPage} />}
-            </div>
-            </Card>
-        </Modal>
-    </React.Fragment>
+            <Modal
+                headerBarMain={<Heading label={t("SV_WANT_TO_EDIT")} />}
+                headerBarEnd={<CloseBtn onClick={closeModal} />}
+                actionCancelLabel={t("CS_COMMON_BACK")}
+                actionCancelOnSubmit={closeModal}
+                hideSubmit={true}
+                formId="modal-action"
+            >
+                <Card style={{ boxShadow: "none" }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '20px',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}>
+                        {<SubmitBar label={t("SV_YES_PROCEED_WITH_APPLICATION")} onSubmit={proceedWithApplication} />}
+                        {<SubmitBar label={t("SV_NO_PROCEED_PAYEMNT")} onSubmit={onRedirectedToCheckPage} />}
+                    </div>
+                </Card>
+            </Modal>
+        </React.Fragment>
     );
 };
 export default RenewPopup;

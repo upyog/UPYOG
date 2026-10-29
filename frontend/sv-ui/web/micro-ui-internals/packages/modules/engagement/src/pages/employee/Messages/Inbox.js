@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
-import { Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 import DesktopInbox from "../../../components/Messages/DesktopInbox";
 import MobileInbox from "../../../components/Messages/MobileInbox";
 

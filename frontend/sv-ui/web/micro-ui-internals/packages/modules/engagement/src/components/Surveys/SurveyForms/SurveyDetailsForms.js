@@ -1,4 +1,4 @@
-import { CardLabelError, Dropdown, RemoveableTag, TextInput, MultiSelectDropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardLabelError, Dropdown, RemoveableTag, TextInput, MultiSelectDropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useMemo } from "react";
 import { Controller } from "react-hook-form";
 
@@ -17,11 +17,11 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
   const checkRemovableTagDisabled = (isFormDisabled, isActiveSurveyEdit) => {
 
     //survey details page 
-    if (!isActiveSurveyEdit && isFormDisabled){
+    if (!isActiveSurveyEdit && isFormDisabled) {
       return true
     }
     //active survey editing
-    else if(isActiveSurveyEdit){
+    else if (isActiveSurveyEdit) {
       return true
     }
     //inactive survey editing
@@ -45,7 +45,7 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
                     <RemoveableTag
                       key={index}
                       text={ulb.name}
-                      disabled = {checkRemovableTagDisabled(disableInputs,enableDescriptionOnly)}
+                      disabled={checkRemovableTagDisabled(disableInputs, enableDescriptionOnly)}
                       onClick={() => {
                         field.onChange(field?.value?.filter((loc) => loc.code !== ulb.code));
                       }}
@@ -56,7 +56,7 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
             );
             return (
               <div style={{ display: "grid", gridAutoFlow: "row" }}>
-                 {/* <Dropdown
+                {/* <Dropdown
                   allowMultiselect={true}
                   optionKey={"i18nKey"}
                   option={userUlbs}
@@ -95,13 +95,13 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
         <TextInput
           name="title"
           type="text"
-          {...registerRef("title",{
+          {...registerRef("title", {
             required: t("ES_ERROR_REQUIRED"),
             maxLength: {
               value: 60,
               message: t("EXCEEDS_60_CHAR_LIMIT"),
             },
-            pattern:{
+            pattern: {
               value: /^[A-Za-z_-][A-Za-z0-9_\ -]*$/,
               message: t("ES_SURVEY_DONT_START_WITH_NUMBER")
             }
@@ -116,18 +116,18 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
         <TextInput
           name="description"
           type="text"
-          {...registerRef("description",{
+          {...registerRef("description", {
             //required: t("ES_ERROR_REQUIRED"),
             maxLength: {
               value: 140,
               message: t("EXCEEDS_140_CHAR_LIMIT"),
             },
-            pattern:{
+            pattern: {
               value: /^[A-Za-z_-][A-Za-z0-9_\ -]*$/,
               message: t("ES_SURVEY_DONT_START_WITH_NUMBER")
             }
           })}
-          disable={enableDescriptionOnly ?  !enableDescriptionOnly : disableInputs}
+          disable={enableDescriptionOnly ? !enableDescriptionOnly : disableInputs}
         />
         {surveyFormState?.errors?.description && <CardLabelError>{surveyFormState?.errors?.["description"]?.message}</CardLabelError>}
       </span>

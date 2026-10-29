@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CustomButton, Dropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CustomButton, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 const ChangeLanguage = (prop) => {
   const isDropdown = prop.dropdown || false;

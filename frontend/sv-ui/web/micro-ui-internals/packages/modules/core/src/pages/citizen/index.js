@@ -1,9 +1,9 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes, Link, useLocation } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
-import { AppHome, processLinkData } from "../../components/Home";    
+import { AppHome, processLinkData } from "../../components/Home";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
 import CitizenHome from "./Home";
@@ -68,7 +68,7 @@ const Home = ({
   const isMobile = window.Digit.Utils.browser.isMobile();
   const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
-  
+
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const navigate = Digit.Hooks.useCustomNavigate();
   const location = useLocation();
@@ -78,35 +78,35 @@ const Home = ({
 
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
-      <Route 
-        key={index} 
+      <Route
+        key={index}
         path={`${code.toLowerCase()}/*`}
         element={
-          <Module 
-            stateCode={stateCode} 
-            moduleCode={code} 
-            userType="citizen" 
-            tenants={getTenants(tenants, appTenants)} 
+          <Module
+            stateCode={stateCode}
+            moduleCode={code}
+            userType="citizen"
+            tenants={getTenants(tenants, appTenants)}
           />
         }
       />
     ) : null;
-   });
-  
+  });
+
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let mdmsDataObj = isLinkDataFetched ? processLinkData(linkData, code, t) : undefined;
-      mdmsDataObj?.links && mdmsDataObj?.links.sort((a, b) => {
-        return a.orderNumber - b.orderNumber;
-      });
+    mdmsDataObj?.links && mdmsDataObj?.links.sort((a, b) => {
+      return a.orderNumber - b.orderNumber;
+    });
     return (
-     <React.Fragment key={`module-${index}`}>
-        <Route 
+      <React.Fragment key={`module-${index}`}>
+        <Route
           path={`${code.toLowerCase()}-home`}
           element={
             <div className="moduleLinkHomePage">
-              <img 
-                src={"https://niuatt-filestore.s3.ap-south-1.amazonaws.com/pg/logo/Street+Vendors+Management+2.png" || bannerImage || stateInfo?.bannerUrl} 
-                alt="noimagefound" 
+              <img
+                src={"https://niuatt-filestore.s3.ap-south-1.amazonaws.com/pg/logo/Street+Vendors+Management+2.png" || bannerImage || stateInfo?.bannerUrl}
+                alt="noimagefound"
               />
               <div className="moduleLinkHomePageModuleLinks">
                 {mdmsDataObj && (
@@ -117,17 +117,17 @@ const Home = ({
                   />
                 )}
               </div>
-              <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
+              <StaticDynamicCard moduleCode={code?.toUpperCase()} />
             </div>
           }
         />
-       
-        <Route 
+
+        <Route
           path={`${code.toLowerCase()}-faq`}
           element={<FAQsSection module={code?.toUpperCase()} />}
         />
-       
-        <Route 
+
+        <Route
           path={`${code.toLowerCase()}-how-it-works`}
           element={<HowItWorks module={code?.toUpperCase()} />}
         />
@@ -157,79 +157,79 @@ const Home = ({
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
-      <ErrorBoundary initData={initData}>
-        <Routes>
-          <Route path="/" element={<CitizenHome />} />
+        <ErrorBoundary initData={initData}>
+          <Routes>
+            <Route path="/" element={<CitizenHome />} />
 
-         <Route path="select-language" element={<LanguageSelection />} />
+            <Route path="select-language" element={<LanguageSelection />} />
 
-          <Route path="select-location" element={<LocationSelection />} />
-          <Route 
-            path="error" 
-            element={
-              <ErrorComponent
-                initData={initData}
-                goToHome={() => {
-                  navigate("/sv-ui/citizen");
-                }}
-              />
-            }
-          />
-          <Route 
-            path="all-services" 
-            element={
-              <AppHome
-                userType="citizen"
-                modules={modules}
-                getCitizenMenu={linkData}
-                fetchedCitizen={isLinkDataFetched}
-                isLoading={islinkDataLoading}
-              />
-            }
-          />
+            <Route path="select-location" element={<LocationSelection />} />
+            <Route
+              path="error"
+              element={
+                <ErrorComponent
+                  initData={initData}
+                  goToHome={() => {
+                    navigate("/sv-ui/citizen");
+                  }}
+                />
+              }
+            />
+            <Route
+              path="all-services"
+              element={
+                <AppHome
+                  userType="citizen"
+                  modules={modules}
+                  getCitizenMenu={linkData}
+                  fetchedCitizen={isLinkDataFetched}
+                  isLoading={islinkDataLoading}
+                />
+              }
+            />
 
-          <Route 
-            path="login/*" 
-            element={<Login stateCode={stateCode} />} 
-          />
+            <Route
+              path="login/*"
+              element={<Login stateCode={stateCode} />}
+            />
 
-          <Route 
-            path="register" 
-            element={<Login stateCode={stateCode} isUserRegistered={false} />} 
-          />
+            <Route
+              path="register"
+              element={<Login stateCode={stateCode} isUserRegistered={false} />}
+            />
 
-         <Route 
-            path="user/profile" 
-            element={
-              <PrivateRoute>
-                <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="user/profile"
+              element={
+                <PrivateRoute>
+                  <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
+                </PrivateRoute>
+              }
+            />
 
-          
+
             {appRoutes}
             {ModuleLevelLinkHomePages}
-          
-        </Routes>
-         </ErrorBoundary>
+
+          </Routes>
+        </ErrorBoundary>
       </div>
 
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
+      <div style={{ width: '100%', position: 'fixed', bottom: 0, backgroundColor: "white", textAlign: "center" }}>
+        <div style={{ display: 'flex', justifyContent: 'center', color: "black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
+          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "14px", fontWeight: "400" }} href="#" target='_blank'>UPYOG License</a>
 
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
+          <span className="upyog-copyright-footer" style={{ margin: "0 10px", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "14px" }} >|</span>
+          <span className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "14px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
+
           {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          </div>
+          <span className="" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "14px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
+        </div>
       </div>
     </div>
   );

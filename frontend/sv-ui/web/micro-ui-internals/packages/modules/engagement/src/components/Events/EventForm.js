@@ -1,4 +1,4 @@
-import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
@@ -16,7 +16,7 @@ const EventForm = ({ onSelect, config, formData, register, control, errors }) =>
     if (formData?.defaultTenantId) {
       return ulbs?.find(ulb => ulb?.code === formData?.defaultTenantId);
     }
-    if(tenantId){
+    if (tenantId) {
       return ulbs?.find(ulb => ulb?.code === tenantId)
     }
     return userUlbs?.length === 1 ? userUlbs?.[0] : null
@@ -24,17 +24,17 @@ const EventForm = ({ onSelect, config, formData, register, control, errors }) =>
   const { isLoading, data } = Digit.Hooks.useCommonMDMS(state, "mseva", ["EventCategories"]);
 
   const location = useLocation();
-  const isInEditFormMode = useMemo(()=>{
-    if(location.pathname.includes('/engagement/event/edit-event')) return true;
+  const isInEditFormMode = useMemo(() => {
+    if (location.pathname.includes('/engagement/event/edit-event')) return true;
     return false;
-  },[location.pathname])
+  }, [location.pathname])
 
   if (isLoading) {
     return (
       <Loader />
     );
   }
-  
+
   return (
     <Fragment>
       <LabelFieldPair>
@@ -46,7 +46,7 @@ const EventForm = ({ onSelect, config, formData, register, control, errors }) =>
             name="tenantId"
             rules={{ required: true }}
             render={({ field }) => <Dropdown option={userUlbs} selected={field.value} disable={isInEditFormMode ? true : userUlbs?.length === 1} optionKey="code" t={t} select={field.onChange} />}
-            />
+          />
           {errors && errors['tenantId'] && <CardLabelError>{t(`EVENTS_TENANT_ERROR_REQUIRED`)}</CardLabelError>}
         </div>
       </LabelFieldPair>
@@ -57,11 +57,11 @@ const EventForm = ({ onSelect, config, formData, register, control, errors }) =>
             defaultValue={formData?.name}
             render={({ field }) => <TextInput value={field.value} type="text" name="name" onChange={field.onChange} inputRef={field.ref} />}
             name="name"
-            rules={{ required: true , maxLength:66}}
+            rules={{ required: true, maxLength: 66 }}
             control={control}
           />
-           {errors && errors?.name && errors?.name?.type==="required" && <CardLabelError>{t(`EVENTS_COMMENTS_ERROR_REQUIRED`)}</CardLabelError>}
-          {errors && errors?.name && errors?.name?.type==="maxLength" && <CardLabelError>{t(`EVENTS_MAXLENGTH_66_CHARS_REACHED`)}</CardLabelError>}
+          {errors && errors?.name && errors?.name?.type === "required" && <CardLabelError>{t(`EVENTS_COMMENTS_ERROR_REQUIRED`)}</CardLabelError>}
+          {errors && errors?.name && errors?.name?.type === "maxLength" && <CardLabelError>{t(`EVENTS_MAXLENGTH_66_CHARS_REACHED`)}</CardLabelError>}
         </div>
       </LabelFieldPair>
       <LabelFieldPair>
@@ -73,7 +73,7 @@ const EventForm = ({ onSelect, config, formData, register, control, errors }) =>
             defaultValue={formData?.category ? data?.mseva?.EventCategories.filter(category => category.code === formData?.category)?.[0] : null}
             rules={{ required: true }}
             render={({ field }) => <Dropdown inputRef={field.ref} option={data?.mseva?.EventCategories} optionKey="code" t={t} select={field.onChange} selected={field.value} />}
-            />
+          />
           {errors && errors['eventCategory'] && <CardLabelError>{t(`EVENTS_CATEGORY_ERROR_REQUIRED`)}</CardLabelError>}
         </div>
       </LabelFieldPair>

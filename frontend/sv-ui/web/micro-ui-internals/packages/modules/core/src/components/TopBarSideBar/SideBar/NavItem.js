@@ -14,7 +14,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Tooltip } from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 
@@ -38,10 +38,10 @@ const NavItem = props => {
   };
   const leftIconArray = icon?.split?.(":")?.[1];
   let leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
-  const iconArr=icon?.leftIcon?.split?.(":")|| leftIcon?.split?.(":");
-  if(iconArr?.[0]=='dynamic'){
-    var IconComp = require("@nudmcdgnpm/upyog-ui-react-components-lts")?.[iconArr?.[1]];
-    leftIcon=IconComp?<IconComp/>:leftIcon;
+  const iconArr = icon?.leftIcon?.split?.(":") || leftIcon?.split?.(":");
+  if (iconArr?.[0] == 'dynamic') {
+    var IconComp = require("@nudmcdgnpm/digit-ui-react-components")?.[iconArr?.[1]];
+    leftIcon = IconComp ? <IconComp /> : leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();
   const appendTranslate = t(`ACTION_TEST_${getModuleName.toUpperCase()}`);
@@ -53,22 +53,22 @@ const NavItem = props => {
   }
 
   return (
-    <div className={`${"submenu-container"}`} style={{marginLeft:"19px", marginBottom:"15px",marginTop:"15px"}}>
-    <NavLink
-      to={to}
-      className={({ isActive }) => isActive ? "submenu-container active" : "submenu-container"}
-    >
-      <div className="sidebar-link">
-      <div className='actions' style={{padding:"0px"}}>
-      {leftIcon}
-      <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
-      <span style={{fontSize:"14px"}}>{trimModuleName}</span>
-      {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
-                </div>
-      </div>
-      </div>
-      
-    </NavLink>
+    <div className={`${"submenu-container"}`} style={{ marginLeft: "19px", marginBottom: "15px", marginTop: "15px" }}>
+      <NavLink
+        to={to}
+        className={({ isActive }) => isActive ? "submenu-container active" : "submenu-container"}
+      >
+        <div className="sidebar-link">
+          <div className='actions' style={{ padding: "0px" }}>
+            {leftIcon}
+            <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
+              <span style={{ fontSize: "14px" }}>{trimModuleName}</span>
+              {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
+            </div>
+          </div>
+        </div>
+
+      </NavLink>
     </div>
   );
 };

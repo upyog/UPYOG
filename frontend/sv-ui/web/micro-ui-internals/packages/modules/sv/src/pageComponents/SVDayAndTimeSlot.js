@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLabel, TextInput, CheckBox, Dropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardLabel, TextInput, CheckBox, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * Component for selecting day and time slots
@@ -46,7 +46,7 @@ const DayAndTimeSlot = ({ t, day, onDayToggle, onSameForAllChange, isSameForAll,
             />
 
             {day?.startTime && day?.endTime && <CheckBox
-              style={{ width: "100%"}}
+              style={{ width: "100%" }}
               checked={!isSameForAll}
               onChange={() => onSameForAllChange(day?.startTime, day?.endTime)}
               label="Same for All Fields"

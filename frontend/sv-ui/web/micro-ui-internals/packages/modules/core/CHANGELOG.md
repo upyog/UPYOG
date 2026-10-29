@@ -29,7 +29,7 @@ All notable changes to this module are documented here.
 ### Packages Renamed
 | Before | After |
 |---|---|
-| @upyog/digit-ui-react-components 3.10.0 | @nudmcdgnpm/upyog-ui-react-components-lts 1.0.0 |
+| @upyog/digit-ui-react-components 3.10.0 | @nudmcdgnpm/digit-ui-react-components 1.0.0 |
 
 ### Added
 - `react-tooltip ^5.26.0` — tooltip support for UI components

@@ -1,6 +1,6 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
 
 // custom component for the employee card
 const SVCard = () => {
@@ -17,7 +17,7 @@ const SVCard = () => {
 
     config: {
       select: (data) => {
-        return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
+        return { totalCount: data?.totalCount, nearingSlaCount: data?.nearingSlaCount } || "-";
       },
       enabled: Digit.Utils.svAccess(),
     },
@@ -56,7 +56,7 @@ const SVCard = () => {
       count: total?.totalCount,
       label: t("ES_TITLE_INBOX"),
       link: `/sv-ui/employee/sv/inbox`,
-  }],
+    }],
     links: links.filter(link => !link?.role || SV_CEMP),
   };
 

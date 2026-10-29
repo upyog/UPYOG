@@ -1,22 +1,22 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import BillDetails from "./bill-details/bill-details";
-import { BackButton } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 
 const BillRoutes = ({ paymentRules, businessService }) => {
 
   return (
     <React.Fragment>
       <BackButton />
-       <Routes>
+      <Routes>
         <Route
-          path=":consumerCode" 
+          path=":consumerCode"
           element={
             <BillDetails
               paymentRules={paymentRules}
               businessService={businessService}
             />
-          } 
+          }
         />
       </Routes>
     </React.Fragment>

@@ -1,4 +1,4 @@
-import { CloseSvg, FormComposer, Header, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CloseSvg, FormComposer, Header, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CreateNewSurvey from "../../../components/Surveys/SurveyForms";
@@ -15,35 +15,35 @@ export const answerTypeEnum = {
 
 
 /**TODO NRJ-egov handle this by setting correct state inside the surveyFormMaker */
-export const mapQuestions = (questions =[],initialData) =>{
+export const mapQuestions = (questions = [], initialData) => {
   //Added this condition to avoid a bug in which the question type is set as undefined when question type dropdown is not touched and create survey form is submitted. 
-  questions = questions.map(ques=>{
-    if(!ques?.formConfig?.type){
+  questions = questions.map(ques => {
+    if (!ques?.formConfig?.type) {
       return {
         ...ques,
-        formConfig: { ...ques?.formConfig, type:"Short Answer"}
+        formConfig: { ...ques?.formConfig, type: "Short Answer" }
       }
     }
     return ques
   })
-  if(!questions.length) return;
+  if (!questions.length) return;
   let newmappedQues = [];
-  newmappedQues =  questions.map(({formConfig},index)=>{
-      const {options:choices, questionStatement,required, type:stringType, uuid, qorder} = formConfig;
-      const finalQuestion = {questionStatement,uuid : uuid ? uuid : null, qorder, status : "ACTIVE", required, type: typeof stringType === "object" && stringType !== null ? stringType.value : (stringType.title ?  answerTypeEnum[stringType.title] : answerTypeEnum[stringType])};
-      if((stringType?.title === "Multiple Choice" || stringType?.value === "MULTIPLE_ANSWER_TYPE") || (stringType?.title ==="Check Boxes" || stringType?.value === "CHECKBOX_ANSWER_TYPE")) {
-        finalQuestion["options"] = choices;
-      }
-      return finalQuestion;
-    })
-  
+  newmappedQues = questions.map(({ formConfig }, index) => {
+    const { options: choices, questionStatement, required, type: stringType, uuid, qorder } = formConfig;
+    const finalQuestion = { questionStatement, uuid: uuid ? uuid : null, qorder, status: "ACTIVE", required, type: typeof stringType === "object" && stringType !== null ? stringType.value : (stringType.title ? answerTypeEnum[stringType.title] : answerTypeEnum[stringType]) };
+    if ((stringType?.title === "Multiple Choice" || stringType?.value === "MULTIPLE_ANSWER_TYPE") || (stringType?.title === "Check Boxes" || stringType?.value === "CHECKBOX_ANSWER_TYPE")) {
+      finalQuestion["options"] = choices;
+    }
+    return finalQuestion;
+  })
+
   initialData && initialData?.questions?.map((ques) => {
     let found = newmappedQues.length > 0 ? newmappedQues.some(el => el.uuid === ques?.uuid) : false;
-    if(!found) newmappedQues.push({...ques,status:"INACTIVE"});
+    if (!found) newmappedQues.push({ ...ques, status: "INACTIVE" });
   })
 
   return newmappedQues;
- 
+
 }
 
 const NewSurveys = () => {
@@ -57,14 +57,14 @@ const NewSurveys = () => {
   setTimeout(() => {
     closeToast();
   }, 10000);
-  
+
   const onSubmit = (data) => {
     const { collectCitizenInfo, title, description, tenantIds, fromDate, toDate, fromTime, toTime, questions } = data;
     const mappedQuestions = mapQuestions(questions);
     let serveyMappedQuestions = [];
     let userToken = window.localStorage.getItem("token");
     let userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-    questions && questions.length && questions.map((element,index)=>{
+    questions && questions.length && questions.map((element, index) => {
       serveyMappedQuestions.push({
         "tenantId": tenantIds?.[0]?.code,
         "code": element.formConfig.questionStatement,
@@ -91,47 +91,44 @@ const NewSurveys = () => {
       // },
 
       ServiceDefinition: {
-        tenantId:tenantIds?.[0]?.code,
-        module:"engagement",
+        tenantId: tenantIds?.[0]?.code,
+        module: "engagement",
         code: title,
         isActive: true,
-        additionalDetails:{
+        additionalDetails: {
           title: title,
           description: description,
-          startDate:  new Date(`${fromDate} ${fromTime}`).getTime(),
+          startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
           endDate: new Date(`${toDate} ${toTime}`).getTime(),
           postedBy: userInfo.name,
         },
-        clientId:userInfo.uuid,
-        attributes:serveyMappedQuestions
+        clientId: userInfo.uuid,
+        attributes: serveyMappedQuestions
       },
 
     };
 
-    try{
+    try {
       // let filters = {tenantIds : tenantIds?.[0]?.code, title : title}
       let searchDetails = {
-        ServiceDefinitionCriteria:{
+        ServiceDefinitionCriteria: {
           "tenantId": tenantId,
           "code": [title],
           "module": ["engagement"]
         }
-        
+
       }
 
       Digit.Surveys.cfdefinitionsearch(searchDetails).then((ob) => {
-        if(ob?.ServiceDefinition?.length>0)
-        {
+        if (ob?.ServiceDefinition?.length > 0) {
           setShowToast({ key: true, label: "SURVEY_SAME_NAME_SURVEY_ALREADY_PRESENT" });
         }
-        else
-        {
+        else {
           navigate("/sv-ui/employee/engagement/surveys/create-response", details)
         }
       })
     }
-    catch(error)
-    {}
+    catch (error) { }
   };
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -139,8 +136,8 @@ const NewSurveys = () => {
   const userInfo = Digit.UserService.getUser().info;
   const userUlbs = ulbs
     .filter((ulb) => userInfo?.roles?.some((role) => role?.tenantId === ulb?.code))
-    
- 
+
+
   const defaultValues = {
     fromDate: "",
     fromTime: "",
@@ -148,13 +145,13 @@ const NewSurveys = () => {
     toTime: "",
     questions: {},
     // tenantIds:[]
-    tenantIds:userUlbs,
+    tenantIds: userUlbs,
   };
 
   const stylesForForm = {
-    marginLeft:'-20px',
+    marginLeft: '-20px',
   }
-  
+
   return (
     <Fragment>
       {/* <Header>{t("CS_COMMON_SURVEYS")}</Header> */}

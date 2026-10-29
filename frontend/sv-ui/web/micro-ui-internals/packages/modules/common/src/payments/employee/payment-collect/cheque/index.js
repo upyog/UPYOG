@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, SearchIconSvg, DatePicker, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { TextInput, SearchIconSvg, DatePicker, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 export const useChequeDetails = (props, t) => {
   const config = [
@@ -75,8 +75,8 @@ export const ChequeDetailsComponent = (props) => {
               name="instrumentNumber"
               onChange={(e) => setChequeNo(e.target.value)}
               required
-              // minlength="6"
-              // maxLength="6"
+            // minlength="6"
+            // maxLength="6"
             />
           </div>
         </div>

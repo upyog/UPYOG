@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CloseSvg, Loader, SubmitBar, Dropdown, RefreshIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CloseSvg, Loader, SubmitBar, Dropdown, RefreshIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 

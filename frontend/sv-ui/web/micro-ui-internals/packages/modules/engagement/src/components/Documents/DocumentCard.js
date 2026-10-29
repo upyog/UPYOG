@@ -10,7 +10,7 @@ import {
   ExternalLinkIcon,
   GenericFileIcon,
   PDFSvg
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from 'date-fns';
 import { getFileSize } from '../../utils';
 import { downloadDocument, openDocumentLink, openUploadedDocument } from '../../utils';

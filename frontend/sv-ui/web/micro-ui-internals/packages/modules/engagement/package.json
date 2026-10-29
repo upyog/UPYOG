@@ -4,7 +4,6 @@
     "license": "MIT",
     "main": "src/Module.js",
     "source": "src/Module.js",
-
     "devDependencies": {
         "@vitejs/plugin-react": "^4.3.4",
         "vite": "^6.0.0"
@@ -14,10 +13,10 @@
         "react-router-dom": "6.28.0"
     },
     "dependencies": {
-        "@nudmcdgnpm/upyog-ui-react-components-lts": "1.0.0",
+        "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
         "react": "19.0.0",
         "react-dom": "19.0.0",
-       "react-hook-form": "^7.51.0",
+        "react-hook-form": "^7.51.0",
         "react-i18next": "^14.0.0",
         "@tanstack/react-query": "^5.0.0",
         "react-router-dom": "6.28.0",

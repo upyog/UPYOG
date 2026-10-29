@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, Dropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 
 const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPage, t }) => {
@@ -25,9 +25,9 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             case "ulb":
                 return (
                     <Controller
-                    rules={{ required: true }}
+                        rules={{ required: true }}
                         defaultValue={selectedTenat?.[0]}
-                        render={({field}) => (
+                        render={({ field }) => (
                             <Dropdown
                                 option={userUlbs}
                                 optionKey={"i18nKey"}
@@ -44,7 +44,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             default:
                 return (
                     <Controller
-                        render={({field}) => <TextInput onChange={field.onChange} value={field.value} />}
+                        render={({ field }) => <TextInput onChange={field.onChange} value={field.value} />}
                         name={input.name}
                         control={control}
                         defaultValue={null}
@@ -90,7 +90,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                             </span>
                         </div>
                     )}
-                    <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+                    <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display: "grid" }}>
                         {searchFields
                             ?.map((input, index) => (
                                 <div key={input.name} className="input-fields">

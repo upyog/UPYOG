@@ -1,4 +1,4 @@
-import { Header, Modal, Loader, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Header, Modal, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -18,7 +18,7 @@ const filterQuestion = (question) => {
   // if (question.type !== "Multiple Choice" || question.type !== "Check Boxes") {
   //   delete question.options;
   // }
-  return { ...question, type: question.type.includes("_") ? question.type : answerTypeEnum[question.type],options:question?.options, status:question.status ? question.status : "ACTIVE", qorder:question.qorder };
+  return { ...question, type: question.type.includes("_") ? question.type : answerTypeEnum[question.type], options: question?.options, status: question.status ? question.status : "ACTIVE", qorder: question.qorder };
 };
 
 /**TODO : Think of better to do this possibly in service layer */
@@ -39,16 +39,16 @@ const isActive = (startDate, endDate) => {
   return false;
 };
 
-const setSurveyQuestion = (surveyObj) =>{
+const setSurveyQuestion = (surveyObj) => {
   let questions = [];
-  surveyObj.attributes.map((element)=>{
+  surveyObj.attributes.map((element) => {
     questions.push({
-      questionStatement : element.code,
-      type : element.additionalDetails.type,
-      required : element.required,
-      options : element.additionalDetails.options,
-      uuid : element.code,
-      surveyId : surveyObj.code,
+      questionStatement: element.code,
+      type: element.additionalDetails.type,
+      required: element.required,
+      options: element.additionalDetails.options,
+      uuid: element.code,
+      surveyId: surveyObj.code,
       status: "ACTIVE"
     })
   })
@@ -77,17 +77,17 @@ const SurveyDetails = ({ location, match }) => {
   }, 10000);
 
   function convertTime12To24(time) {
-    var hours   = Number(time.match(/^(\d+)/)[1]);
+    var hours = Number(time.match(/^(\d+)/)[1]);
     var minutes = Number(time.match(/:(\d+)/)[1]);
-    var AMPM    = time.match(/\s(.*)$/)[1];
-    if (AMPM === "PM" || AMPM === "pm"  && hours < 12) hours = hours + 12;
+    var AMPM = time.match(/\s(.*)$/)[1];
+    if (AMPM === "PM" || AMPM === "pm" && hours < 12) hours = hours + 12;
     if (AMPM === "AM" || AMPM === "am" && hours === 12) hours = hours - 12;
-    var sHours   = hours.toString();
+    var sHours = hours.toString();
     var sMinutes = minutes.toString();
     if (hours < 10) sHours = "0" + sHours;
     if (minutes < 10) sMinutes = "0" + sMinutes;
     return (sHours + ":" + sMinutes);
-}
+  }
 
   let ServiceDefinitionCriteria = {
     tenantId: Digit.ULBService.getCurrentTenantId(),
@@ -96,7 +96,7 @@ const SurveyDetails = ({ location, match }) => {
     module: ["engagement"]
   }
 
-  const { isLoading, data: surveyData } = Digit.Hooks.survey.useCfdefinitionsearchresult({ServiceDefinitionCriteria},{
+  const { isLoading, data: surveyData } = Digit.Hooks.survey.useCfdefinitionsearchresult({ ServiceDefinitionCriteria }, {
     select: (data) => {
       const surveyObj = data?.ServiceDefinition?.[0];
       return {
@@ -105,10 +105,10 @@ const SurveyDetails = ({ location, match }) => {
         description: surveyObj.additionalDetails.description,
         fromDate: format(new Date(surveyObj.additionalDetails.startDate), "yyyy-MM-dd"),
         toDate: format(new Date(surveyObj.additionalDetails.endDate), "yyyy-MM-dd"),
-        fromTime: convertTime12To24(new Date(surveyObj.additionalDetails.startDate).toLocaleString("en-IN",{hour: "numeric", minute:"numeric",hour12:true})),
-        toTime: convertTime12To24(new Date(surveyObj.additionalDetails.endDate).toLocaleString("en-IN",{hour: "numeric", minute:"numeric",hour12:true})),
-        questions: setSurveyQuestion(surveyObj), 
-        status: isActive(surveyObj.additionalDetails.startDate,surveyObj.additionalDetails.endDate)?"ACTIVE":"INACTIVE",
+        fromTime: convertTime12To24(new Date(surveyObj.additionalDetails.startDate).toLocaleString("en-IN", { hour: "numeric", minute: "numeric", hour12: true })),
+        toTime: convertTime12To24(new Date(surveyObj.additionalDetails.endDate).toLocaleString("en-IN", { hour: "numeric", minute: "numeric", hour12: true })),
+        questions: setSurveyQuestion(surveyObj),
+        status: isActive(surveyObj.additionalDetails.startDate, surveyObj.additionalDetails.endDate) ? "ACTIVE" : "INACTIVE",
         tenantId: { code: surveyObj.tenantId },
         additionalDetails: surveyObj.additionalDetails,
         attributes: surveyObj.attributes,
@@ -186,10 +186,10 @@ const SurveyDetails = ({ location, match }) => {
 
   const onEdit = (data) => {
     const { collectCitizenInfo, title, description, tenantIds, fromDate, toDate, fromTime, toTime, questions } = data;
-    const mappedQuestions = mapQuestions(questions,surveyData);
+    const mappedQuestions = mapQuestions(questions, surveyData);
     let serveyMappedQuestions = [];
     let userToken = window.localStorage.getItem("token")
-    questions && questions.length && questions.map((element,index)=>{
+    questions && questions.length && questions.map((element, index) => {
       serveyMappedQuestions.push({
         "tenantId": tenantIds?.[0]?.code,
         "code": element.formConfig.questionStatement,
@@ -223,17 +223,17 @@ const SurveyDetails = ({ location, match }) => {
       //   //lastmodifiedtime:"1645074240234"
       //   //These are not required to update, only status was required that we were not sending..
       // },
-      
+
       ServiceDefinition: {
         tenantId: surveyData.tenantId.code,
         code: title,
         module: "engagement",
         isActive: true,
-        attributes:serveyMappedQuestions,
-        additionalDetails:{
+        attributes: serveyMappedQuestions,
+        additionalDetails: {
           title: title,
           description: description,
-          startDate:  new Date(`${fromDate} ${fromTime}`).getTime(),
+          startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
           endDate: new Date(`${toDate} ${toTime}`).getTime(),
           postedBy: surveyData.additionalDetails.postedBy
         },
@@ -242,21 +242,18 @@ const SurveyDetails = ({ location, match }) => {
       }
     };
 
-    try{
-      let filters = {tenantIds : tenantIds[0]?.code ? tenantIds[0]?.code : surveyData.tenantId.code, title : title}
+    try {
+      let filters = { tenantIds: tenantIds[0]?.code ? tenantIds[0]?.code : surveyData.tenantId.code, title: title }
       Digit.Surveys.search(filters).then((ob) => {
-        if(ob?.Surveys?.length>0 && data?.title !== surveyData?.title)
-        {
+        if (ob?.Surveys?.length > 0 && data?.title !== surveyData?.title) {
           setShowToast({ key: true, label: "SURVEY_SAME_NAME_SURVEY_ALREADY_PRESENT" });
         }
-        else
-        {
+        else {
           navigate("/sv-ui/employee/engagement/surveys/update-response", details);
         }
       })
     }
-    catch(error)
-    {}
+    catch (error) { }
   };
 
   const handleDelete = () => {
@@ -277,11 +274,11 @@ const SurveyDetails = ({ location, match }) => {
         isActive: false,
         attributes: surveyData.attributes,
         additionalDetails: {
-         ...surveyData.additionalDetails,
+          ...surveyData.additionalDetails,
         },
         clientId: surveyData.clientId,
         id: surveyData.id
-        
+
       }
     };
     navigate("/sv-ui/employee/engagement/surveys/delete-response", details);
@@ -306,14 +303,14 @@ const SurveyDetails = ({ location, match }) => {
         isActive: true,
         attributes: surveyData.attributes,
         additionalDetails: {
-         ...surveyData.additionalDetails,
+          ...surveyData.additionalDetails,
           endDate: new Date(`${toDate} ${toTime}`).getTime(),
-          startDate:  new Date(`${fromDate} ${fromTime}`).getTime(),
+          startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
         },
         clientId: surveyData.clientId,
         id: surveyData.id,
       }
-      
+
     };
     navigate("/sv-ui/employee/engagement/surveys/update-response", details);
   };
@@ -332,9 +329,9 @@ const SurveyDetails = ({ location, match }) => {
         isActive: true,
         attributes: surveyData.attributes,
         additionalDetails: {
-         ...surveyData.additionalDetails,
-         startDate:null,
-         endDate:null
+          ...surveyData.additionalDetails,
+          startDate: null,
+          endDate: null
 
         },
         clientId: surveyData.clientId,
@@ -369,7 +366,7 @@ const SurveyDetails = ({ location, match }) => {
         setDisplayMenu={setDisplayMenu}
         onActionSelect={onActionSelect}
         initialSurveysConfig={surveyData}
-        isSurveyActive = {isSurveyActive}
+        isSurveyActive={isSurveyActive}
         formDisabled={isFormDisabled}
       />
 

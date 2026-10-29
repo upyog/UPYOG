@@ -23,7 +23,7 @@ All notable changes to this module are documented here.
 ### Dependencies
 | Package | Version |
 |---|---|
-| @nudmcdgnpm/upyog-ui-react-components-lts | 1.0.0 |
+| @nudmcdgnpm/upyog-ui-react-components | 1.0.0 |
 | react | 19.0.0 |
 | react-dom | 19.0.0 |
 | react-hook-form | ^7.51.0 |

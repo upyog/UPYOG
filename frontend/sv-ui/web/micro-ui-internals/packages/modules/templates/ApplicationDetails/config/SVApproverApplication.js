@@ -3,7 +3,7 @@
  * Returning the Header ad lable of the card as well as the comment box
  * 
  */
-import { Dropdown, UploadFile } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 
 export const configSVApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, approvers, selectedApprover, setSelectedApprover, isUploading, geoLocationData, vending_Zone, vendingZones, setvendingZones, UserVendingZone, selectApprover }) => {

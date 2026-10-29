@@ -1,4 +1,4 @@
-import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -10,10 +10,10 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data, isLoading } = Digit.Hooks.useFetchPayment({ tenantId, businessService, consumerCode });
 
- 
+
   const [bill, setBill] = useState();
   const [showDetails, setShowDetails] = useState(true);
- 
+
   const yearWiseBills = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod);
   const billDetails = yearWiseBills?.[0] || [];
   const getTotal = () => (bill?.totalAmount ? bill?.totalAmount : 0);
@@ -158,7 +158,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
 
           {!showDetails && yearWiseBills?.length > 1 && (
             <Fragment>
-              { (
+              {(
                 <div className="row last">
                   <h2></h2>
                   <div style={{ textAlign: "right", maxWidth: "100px" }} onClick={() => setShowDetails(true)} className="filter-button value">
@@ -170,7 +170,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
           )}
         </StatusTable>
       )}
-      {showDetails && yearWiseBills?.length > 1  && (
+      {showDetails && yearWiseBills?.length > 1 && (
         <React.Fragment>
           <div style={{ maxWidth: "95%", display: "inline-block", textAlign: "right" }}>
             <div style={{ display: "flex", padding: "10px", paddingLeft: "unset", maxWidth: "95%" }}>

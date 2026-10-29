@@ -1,4 +1,4 @@
-import { AppContainer, Card, CardCaption, Header, Loader, PrevIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { AppContainer, Card, CardCaption, Header, Loader, PrevIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Searchbar from "../../../components/Documents/Searchbar";
@@ -52,10 +52,10 @@ const DocumentCategories = ({ t, parentRoute }) => {
     }
   );
 
- if (!Digit.UserService?.getUser()?.access_token) {
-  navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search },replace: true });
-  return null;
-}
+  if (!Digit.UserService?.getUser()?.access_token) {
+    navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search }, replace: true });
+    return null;
+  }
 
   const showDocuments = (category, count) => {
     navigate(`documents/list/${category}/${count}`);

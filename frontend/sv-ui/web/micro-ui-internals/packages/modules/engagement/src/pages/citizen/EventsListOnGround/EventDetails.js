@@ -1,4 +1,4 @@
-import { Clock, Header, Loader, MapMarker, OnGroundEventCard } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Clock, Header, Loader, MapMarker, OnGroundEventCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router-dom";
@@ -13,7 +13,7 @@ const EventDetails = () => {
 
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({ tenantId, variant: "events" });
 
-   if (!Digit.UserService?.getUser()?.access_token) {
+  if (!Digit.UserService?.getUser()?.access_token) {
     localStorage.clear();
     sessionStorage.clear();
     navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search }, replace: true });

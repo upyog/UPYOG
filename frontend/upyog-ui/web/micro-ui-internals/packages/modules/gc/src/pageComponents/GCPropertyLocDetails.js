@@ -195,25 +195,8 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
         t={t}
         isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || (!(pathname.includes("revised") || pathname.includes("renew")) && !locality) || !addressline1}
       >
-        <div>
-          <style>
-            {`
-        .select-wrap .options-card {
-        width: 100% !important;
-        -webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-        box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-        position: absolute;
-        z-index: 20;
-        margin-top: 4px;
-        --bg-opacity: 1;
-        background-color: #fff;
-        background-color: rgba(255, 255, 255, var(--bg-opacity));
-        overflow: scroll;
-        max-height: 250px; 
-        min-height:50px;
-         } `
-            }
-          </style>
+        <div className="gc-wrapper">
+
           <CardLabel>{`${t("GC_PROPERTY_NO")}`}</CardLabel>
           <div className="field-container">
             <TextInput

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowForward } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { ArrowForward } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const FaqComponent = props => {
@@ -10,26 +10,28 @@ const FaqComponent = props => {
 
   return (
     <div className="faqs border-none" onClick={() => toggleOpen(!isOpen)}>
-          <div className="faq-question" style={{justifyContent: t(question).length > 30 && isOpen ? "revert" : "space-between", 
-          display: Digit.Utils.browser.isMobile() && t(question).length > 30 && isOpen ? "block" : "flex"}}>
+      <div className="faq-question" style={{
+        justifyContent: t(question).length > 30 && isOpen ? "revert" : "space-between",
+        display: Digit.Utils.browser.isMobile() && t(question).length > 30 && isOpen ? "block" : "flex"
+      }}>
         <span>
-        {t(question)}
+          {t(question)}
         </span>
-        <span className={isOpen ? "faqicon rotate" : "faqicon"} style={isMobile ? {float: "right",/*marginRight:isOpen ?(t(question).length > 30 ? "12%" : "8%") : ""*/} : {float: "right"}}>
-            {isOpen ? <ArrowForward /> : <ArrowForward/>}
+        <span className={isOpen ? "faqicon rotate" : "faqicon"} style={isMobile ? { float: "right",/*marginRight:isOpen ?(t(question).length > 30 ? "12%" : "8%") : ""*/ } : { float: "right" }}>
+          {isOpen ? <ArrowForward /> : <ArrowForward />}
         </span>
       </div>
 
-      <div 
-        className="faq-answer" 
-        style={isOpen ? { display: "block"} : { display: "none" }}
+      <div
+        className="faq-answer"
+        style={isOpen ? { display: "block" } : { display: "none" }}
       >
         <span >
-        {t(answer) + t(subAnswer)}
+          {t(answer) + t(subAnswer)}
         </span>
       </div>
-      {!lastIndex ? <div className="cs-box-border"/> : null}
-        </div>
+      {!lastIndex ? <div className="cs-box-border" /> : null}
+    </div>
   );
 };
 

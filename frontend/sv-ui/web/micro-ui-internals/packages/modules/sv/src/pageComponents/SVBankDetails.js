@@ -20,16 +20,16 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
-const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previousData }) => {
+const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata, previousData }) => {
   const [bankDetails, setBankDetails] = useState({
-    accountNumber: formData?.bankdetails?.accountNumber || previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber|| "",
-    confirmAccountNumber: formData?.bankdetails?.confirmAccountNumber || previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber|| "",
-    ifscCode: formData?.bankdetails?.ifscCode || previousData?.bankDetail?.ifscCode||editdata?.bankDetail?.ifscCode|| "",
-    bankName: formData?.bankdetails?.bankName || previousData?.bankDetail?.bankName||editdata?.bankDetail?.bankName|| "",
-    bankBranchName: formData?.bankdetails?.bankBranchName || previousData?.bankDetail?.bankBranchName||editdata?.bankDetail?.bankBranchName|| "",
+    accountNumber: formData?.bankdetails?.accountNumber || previousData?.bankDetail?.accountNumber || editdata?.bankDetail?.accountNumber || "",
+    confirmAccountNumber: formData?.bankdetails?.confirmAccountNumber || previousData?.bankDetail?.accountNumber || editdata?.bankDetail?.accountNumber || "",
+    ifscCode: formData?.bankdetails?.ifscCode || previousData?.bankDetail?.ifscCode || editdata?.bankDetail?.ifscCode || "",
+    bankName: formData?.bankdetails?.bankName || previousData?.bankDetail?.bankName || editdata?.bankDetail?.bankName || "",
+    bankBranchName: formData?.bankdetails?.bankBranchName || previousData?.bankDetail?.bankBranchName || editdata?.bankDetail?.bankBranchName || "",
     accountHolderName: formData?.bankdetails?.accountHolderName || previousData?.bankDetail?.accountHolderName || editdata?.bankDetail?.accountHolderName || "",
   });
   const [showToast, setShowToast] = useState(null);
@@ -54,10 +54,10 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
   }, [bankDetails.ifscCode, t]);
 
   useEffect(() => {
-      if (bankDetails.accountNumber && bankDetails.confirmAccountNumber && bankDetails.accountNumber === bankDetails.confirmAccountNumber) {
-        setShowToast({ error: false, label: t("SV_ACCOUNT_NUMBER_MATCHES") });
-      }
-    }, [bankDetails.accountNumber, bankDetails.confirmAccountNumber, t]);
+    if (bankDetails.accountNumber && bankDetails.confirmAccountNumber && bankDetails.accountNumber === bankDetails.confirmAccountNumber) {
+      setShowToast({ error: false, label: t("SV_ACCOUNT_NUMBER_MATCHES") });
+    }
+  }, [bankDetails.accountNumber, bankDetails.confirmAccountNumber, t]);
 
   useEffect(() => {
     if (bankDetails.ifscCode.length === 11) {
@@ -76,7 +76,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
     if (userType === "citizen") {
       goNext();
     }
-  }, [bankDetails.accountNumber ||bankDetails.confirmAccountNumber || bankDetails.ifscCode || bankDetails.bankName || bankDetails.bankBranchName || bankDetails.accountHolderName]);
+  }, [bankDetails.accountNumber || bankDetails.confirmAccountNumber || bankDetails.ifscCode || bankDetails.bankName || bankDetails.bankBranchName || bankDetails.accountHolderName]);
 
   const handleInputChange = (field, value, maxLength = null, regex = null) => {
     if (regex) value = value.replace(regex, '');
@@ -86,9 +86,9 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
 
   //Custom function fo rthe payload whic we can use while goint to next
 
-  const handleSaveasDraft=()=>{
+  const handleSaveasDraft = () => {
     let vendordetails = [];
-    let tenantId=Digit.ULBService.getCitizenCurrentTenant(true);
+    let tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
     const createVendorObject = (formData) => ({
       applicationId: "",
       auditDetails: {
@@ -130,7 +130,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       vendorId: null
     });
 
-     const createDependentObject = (dependent) => ({
+    const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -149,7 +149,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-});
+    });
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
@@ -177,36 +177,36 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
           createDependentObject(dep)
         );
         vendordetails = [
-            createVendorObject(formData?.owner?.vendorDetails),
-            createSpouseObject(formData?.owner?.spouseDetails),
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails),
           ...dependentPayload
         ];
       }
 
     }
-  
 
-  const daysOfOperations = formData?.businessDetails?.daysOfOperation;
-  const vendingOperationTimeDetails = daysOfOperations
-  .filter(day => day.isSelected) // Filter only selected days
-  .map(day => ({
-    applicationId: "", // Add actual applicationId if available
-    auditDetails: {
-      createdBy: "", // Adjust these fields based on your data
-      createdTime: 0, 
-      lastModifiedBy: "",
-      lastModifiedTime: 0,
-    },
-    dayOfWeek: day.name.toUpperCase(),
-    fromTime: day.startTime,
-    toTime: day.endTime,
-    id: ""
-  }));
 
-  const api_response = sessionStorage.getItem("Response");
-  const response = JSON.parse(api_response);
+    const daysOfOperations = formData?.businessDetails?.daysOfOperation;
+    const vendingOperationTimeDetails = daysOfOperations
+      .filter(day => day.isSelected) // Filter only selected days
+      .map(day => ({
+        applicationId: "", // Add actual applicationId if available
+        auditDetails: {
+          createdBy: "", // Adjust these fields based on your data
+          createdTime: 0,
+          lastModifiedBy: "",
+          lastModifiedTime: 0,
+        },
+        dayOfWeek: day.name.toUpperCase(),
+        fromTime: day.startTime,
+        toTime: day.endTime,
+        id: ""
+      }));
 
-    let streetVendingDetail= {
+    const api_response = sessionStorage.getItem("Response");
+    const response = JSON.parse(api_response);
+
+    let streetVendingDetail = {
       addressDetails: [
         {
           addressId: "",
@@ -276,12 +276,12 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       localityValue: "",
       vendingZoneValue: "",
       vendorPaymentFrequency: formData?.businessDetails?.vendingPayment?.code,
-      enrollmentId:"",
+      enrollmentId: "",
       cartLatitude: 0,
       cartLongitude: 0,
       certificateNo: null,
       disabilityStatus: "",
-      draftId: previousData?.draftId||response?.SVDetail?.draftId,
+      draftId: previousData?.draftId || response?.SVDetail?.draftId,
       documentDetails: [
         {
           applicationId: "",
@@ -301,10 +301,10 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       termsAndCondition: "Y",
       tradeLicenseNo: formData?.owner?.units?.[0]?.tradeNumber,
       vendingActivity: formData?.businessDetails?.vendingType?.code,
-      vendingArea: formData?.businessDetails?.areaRequired||"0",
+      vendingArea: formData?.businessDetails?.areaRequired || "0",
       vendingLicenseCertificateId: "",
       vendingOperationTimeDetails,
-      vendingZone:  formData?.businessDetails?.vendingZones?.code,
+      vendingZone: formData?.businessDetails?.vendingZones?.code,
       vendorDetail: [
         ...vendordetails
       ],
@@ -331,23 +331,23 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       }
     };
 
-    Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
-    .then(response=>{
-      sessionStorage.setItem("Response",JSON.stringify(response));
-    })
-    .catch(error=>{
-      console.log("Something Went Wrong",error);
-    })
+    Digit.SVService.create({ streetVendingDetail, draftApplication: true }, tenantId)
+      .then(response => {
+        sessionStorage.setItem("Response", JSON.stringify(response));
+      })
+      .catch(error => {
+        console.log("Something Went Wrong", error);
+      })
 
   };
 
   const goNext = () => {
     if (bankDetails.accountNumber !== bankDetails.confirmAccountNumber) {
-        setShowToast({ error: true, label: t("SV_INVALID_ACCOUNTNUMBER") });
-        return;
-      }
+      setShowToast({ error: true, label: t("SV_INVALID_ACCOUNTNUMBER") });
+      return;
+    }
     onSelect(config.key, { ...formData.bankdetails, ...bankDetails }, false);
-    window.location.href.includes("edit")?null: handleSaveasDraft();
+    window.location.href.includes("edit") ? null : handleSaveasDraft();
   };
 
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : null };

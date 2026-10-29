@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { AppContainer } from "@nudmcdgnpm/digit-ui-react-components";
 import { Route, Routes } from "react-router-dom";
 import { loginConfig } from "./config";
 import LoginComponent from "./login";
 
 const EmployeeLogin = () => {
   const { t } = useTranslation();
-  
+
 
   const loginParams = useMemo(() =>
     loginConfig.map(

@@ -1,8 +1,8 @@
-import React,{ useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
 import CitizenSurveyForm from "../../../components/Surveys/CitizenSurveyForm";
 import { useQueryClient } from "@tanstack/react-query";
-import { ActionBar, Card, SubmitBar, Menu,Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { ActionBar, Card, SubmitBar, Menu, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from "date-fns";
 import SurveyResultsView from '../../../components/Surveys/ResultsView/SurveyResultsView';
 
@@ -14,16 +14,16 @@ const isActive = (startDate, endDate) => {
   return false;
 };
 
-const setSurveyQuestion = (surveyObj) =>{
+const setSurveyQuestion = (surveyObj) => {
   let questions = [];
-  surveyObj.attributes.map((element)=>{
+  surveyObj.attributes.map((element) => {
     questions.push({
-      questionStatement : element.code,
-      type : TypeAnswerEnum[element.additionalDetails.type],
-      required : element.required,
-      options : element?.additionalDetails?.options || ["NA"],
-      uuid : element.code,
-      surveyId : surveyObj.code
+      questionStatement: element.code,
+      type: TypeAnswerEnum[element.additionalDetails.type],
+      required: element.required,
+      options: element?.additionalDetails?.options || ["NA"],
+      uuid: element.code,
+      surveyId: surveyObj.code
     })
   })
   return questions;
@@ -39,75 +39,75 @@ const TypeAnswerEnum = {
 };
 
 const SurveyResults = () => {
-    const tenantId = Digit.ULBService.getCurrentTenantId();
-    const params = useParams();
-    // const mutation = Digit.Hooks.survey.useShowResults();
-    const queryClient = useQueryClient();
-    const user = Digit.UserService.getUser();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const params = useParams();
+  // const mutation = Digit.Hooks.survey.useShowResults();
+  const queryClient = useQueryClient();
+  const user = Digit.UserService.getUser();
 
-    let ServiceDefinitionCriteria = {
-      tenantId: Digit.ULBService.getCurrentTenantId(),
-      code: [params.id],
-      module: ["engagement"]
-    }
+  let ServiceDefinitionCriteria = {
+    tenantId: Digit.ULBService.getCurrentTenantId(),
+    code: [params.id],
+    module: ["engagement"]
+  }
 
-    let ServiceCriteria = {
-      tenantId: Digit.ULBService.getCurrentTenantId(),
-      ids: [],
-      serviceDefIds: [],
-      referenceIds: [params.id],
-    }
-  
-    const { data: selecedSurveyresults } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
-    if (selecedSurveyresults?.Service?.length){
-      let questions = []
-      selecedSurveyresults?.Service.map((element)=>{
-        element.attributes.map((ele)=>{
-          questions.push({
-            answer: typeof(JSON.parse(ele.value)) === "string" ? [JSON.parse(ele.value)] : JSON.parse(ele.value),
-            citizenId: element.accountId,
-            questionId: ele.attributeCode,
-            uuid: ele.id,
-            auditDetails: element.auditDetails
-          })
+  let ServiceCriteria = {
+    tenantId: Digit.ULBService.getCurrentTenantId(),
+    ids: [],
+    serviceDefIds: [],
+    referenceIds: [params.id],
+  }
+
+  const { data: selecedSurveyresults } = Digit.Hooks.survey.useSelectedSurveySearch({ ServiceCriteria }, {})
+  if (selecedSurveyresults?.Service?.length) {
+    let questions = []
+    selecedSurveyresults?.Service.map((element) => {
+      element.attributes.map((ele) => {
+        questions.push({
+          answer: typeof (JSON.parse(ele.value)) === "string" ? [JSON.parse(ele.value)] : JSON.parse(ele.value),
+          citizenId: element.accountId,
+          questionId: ele.attributeCode,
+          uuid: ele.id,
+          auditDetails: element.auditDetails
         })
-        
       })
-      selecedSurveyresults.answers = questions;
+
+    })
+    selecedSurveyresults.answers = questions;
+
+  }
+
+  const { data: selecedSurveyData, isLoading } = Digit.Hooks.survey.useCfdefinitionsearchresult({ ServiceDefinitionCriteria }, {
+    select: (data) => {
+      const surveyObj = data?.ServiceDefinition?.[0];
+      return {
+        // uuid: surveyObj.code,
+        title: surveyObj.code,
+        description: surveyObj.additionalDetails.description,
+        fromDate: format(new Date(surveyObj.additionalDetails.startDate), "yyyy-MM-dd"),
+        toDate: format(new Date(surveyObj.additionalDetails.endDate), "yyyy-MM-dd"),
+        fromTime: format(new Date(surveyObj.additionalDetails.startDate), "hh:mm"),
+        toTime: format(new Date(surveyObj.additionalDetails.endDate), "hh:mm"),
+        questions: setSurveyQuestion(surveyObj),
+        status: isActive(surveyObj.additionalDetails.startDate, surveyObj.additionalDetails.endDate) ? "ACTIVE" : "INACTIVE",
+        answersCount: 1,
+      }
 
     }
-  
-    const { data: selecedSurveyData, isLoading } = Digit.Hooks.survey.useCfdefinitionsearchresult({ServiceDefinitionCriteria},{
-      select: (data) => {
-        const surveyObj = data?.ServiceDefinition?.[0];
-        return{
-          // uuid: surveyObj.code,
-          title: surveyObj.code,
-          description: surveyObj.additionalDetails.description,
-          fromDate: format(new Date(surveyObj.additionalDetails.startDate), "yyyy-MM-dd"),
-          toDate: format(new Date(surveyObj.additionalDetails.endDate), "yyyy-MM-dd"),
-          fromTime: format(new Date(surveyObj.additionalDetails.startDate), "hh:mm"),
-          toTime: format(new Date(surveyObj.additionalDetails.endDate), "hh:mm"),
-          questions:setSurveyQuestion(surveyObj), 
-          status: isActive(surveyObj.additionalDetails.startDate,surveyObj.additionalDetails.endDate)?"ACTIVE":"INACTIVE",
-          answersCount:1,
-        }
-        
-      }
-    })
-    
+  })
 
-    useEffect(() => {
-        // const onSuccess = () => {
-        // queryClient.clear();
-        // };
-        // mutation.mutate({
-        // surveyId:params.id
-        // }, {
-        // onSuccess,
-        // });
-    }, []);
-    
+
+  useEffect(() => {
+    // const onSuccess = () => {
+    // queryClient.clear();
+    // };
+    // mutation.mutate({
+    // surveyId:params.id
+    // }, {
+    // onSuccess,
+    // });
+  }, []);
+
   //   const { data: surveyData } = Digit.Hooks.survey.useSearch(
   //   { tenantIds: tenantId, uuid: params.id },
   //   {
@@ -138,12 +138,12 @@ const SurveyResults = () => {
   // );
 
 
-    if(isLoading) return <Loader />
-    
-    // else if(mutation.isLoading) return <Loader />
-    // //if(mutation.isError) return <div>An error occured...</div>
-    return <SurveyResultsView surveyInfo={selecedSurveyData} selecedSurveyresults={selecedSurveyresults} />
-    
+  if (isLoading) return <Loader />
+
+  // else if(mutation.isLoading) return <Loader />
+  // //if(mutation.isError) return <div>An error occured...</div>
+  return <SurveyResultsView surveyInfo={selecedSurveyData} selecedSurveyresults={selecedSurveyresults} />
+
 }
 
 export default SurveyResults

@@ -1,4 +1,4 @@
-import { CardText, CloseSvg, Modal } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardText, CloseSvg, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,11 +13,11 @@ const Close = () => (
 );
 const CloseBtn = (props) => {
   return (
-    <div onClick={props?.onClick} style={ props?.isMobileView ? { padding: 5} : null}>
+    <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
       {
         props?.isMobileView
           ? (<CloseSvg />)
-          : (<div className={"icon-bg-secondary"} style={{ backgroundColor: '#505A5F'}}> <Close /> </div>)
+          : (<div className={"icon-bg-secondary"} style={{ backgroundColor: '#505A5F' }}> <Close /> </div>)
       }
     </div>
   )

@@ -16,7 +16,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Tooltip } from "react-tooltip";
 
@@ -55,23 +55,23 @@ const SubMenu = ({ item }) => {
         <div className={`sidebar-link  ${pathname === item?.navigationURL ? "active" : ""}`}>
           <div className="actions">
             {leftIcon}
-            {item.navigationURL?.indexOf("/sv-ui") === -1? (
+            {item.navigationURL?.indexOf("/sv-ui") === -1 ? (
               <a
                 data-tooltip-id={tooltipId}
                 data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}
                 className="custom-link"
-                href={getOrigin + `${item.navigationURL.includes("/workbench-ui")?"":"/employee/"}`+ item.navigationURL}
+                href={getOrigin + `${item.navigationURL.includes("/workbench-ui") ? "" : "/employee/"}` + item.navigationURL}
               >
                 <span> {trimModuleName} </span>
 
-               {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
+                {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
               </a>
             ) : (
               <Link className="custom-link" to={item.navigationURL}>
                 <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
                   <span> {trimModuleName} </span>
 
-                 {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
+                  {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
                 </div>
               </Link>
             )}
@@ -89,7 +89,7 @@ const SubMenu = ({ item }) => {
               <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
                 <span> {trimModuleName} </span>
 
-                {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
+                {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
               </div>
             </div>
             <div> {item.links && subnav ? <ArrowVectorDown /> : item.links ? <ArrowForward /> : null} </div>
@@ -98,7 +98,7 @@ const SubMenu = ({ item }) => {
 
         {subnav &&
           item.links
-          .sort((a, b) => a.orderNumber - b.orderNumber)
+            .sort((a, b) => a.orderNumber - b.orderNumber)
             .filter((item) => item.url === "url" || item.url !== "")
             .map((item, index) => {
               const getChildName = item?.displayName?.toUpperCase()?.replace(/[ -]/g, "_");
@@ -116,7 +116,7 @@ const SubMenu = ({ item }) => {
                   >
                     <div className="actions" data-tooltip-id={childTooltipId} data-tooltip-content={t(`ACTION_TEST_${getChildName}`)}>
                       <span> {trimModuleName} </span>
-                    {trimModuleName?.includes("...") && <Tooltip id={childTooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
+                      {trimModuleName?.includes("...") && <Tooltip id={childTooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
                     </div>
                   </a>
                 );
@@ -129,7 +129,7 @@ const SubMenu = ({ item }) => {
                 >
                   <div className="actions" data-tooltip-id={childTooltipId} data-tooltip-content={t(`ACTION_TEST_${getChildName}`)}>
                     <span> {trimModuleName} </span>
-                   {trimModuleName?.includes("...") && <Tooltip id={childTooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
+                    {trimModuleName?.includes("...") && <Tooltip id={childTooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
                   </div>
                 </Link>
               );

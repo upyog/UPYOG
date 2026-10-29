@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { FormComposer, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from 'date-fns';
 import React, { Fragment, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";

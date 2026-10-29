@@ -1,6 +1,6 @@
 import {
   Loader, NavBar
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -33,27 +33,27 @@ const defaultImage =
 const Profile = ({ info, stateName, t }) => {
   const [profilePic, setProfilePic] = React.useState(null);
   React.useEffect(() => {
-  async function fetchUserProfile() {
-    const tenant = Digit.ULBService.getCurrentTenantId();
-    const uuid = info?.uuid;
+    async function fetchUserProfile() {
+      const tenant = Digit.ULBService.getCurrentTenantId();
+      const uuid = info?.uuid;
 
-    if (uuid) {
-      const usersResponse = await Digit.UserService.userSearch(
-        tenant,
-        { uuid: [uuid] },
-        {}
-      );
+      if (uuid) {
+        const usersResponse = await Digit.UserService.userSearch(
+          tenant,
+          { uuid: [uuid] },
+          {}
+        );
 
-      if (usersResponse?.user?.length) {
-        const userDetails = usersResponse.user[0];
-        const thumbs = userDetails?.photo?.split(",");
-        setProfilePic(thumbs?.at(0));
+        if (usersResponse?.user?.length) {
+          const userDetails = usersResponse.user[0];
+          const thumbs = userDetails?.photo?.split(",");
+          setProfilePic(thumbs?.at(0));
+        }
       }
     }
-  }
 
-  fetchUserProfile();
-}, [info?.uuid]);
+    fetchUserProfile();
+  }, [info?.uuid]);
 
   return (
     <div className="profile-section">
@@ -98,7 +98,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
 
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   const closeSidebar = () => {
     Digit.clikOusideFired = true;
     toggleSidebar(false);
@@ -174,9 +174,9 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   let configEmployeeSideBar = {};
 
   if (!isEmployee) {
-    if(linkData && linkData.FSM){
+    if (linkData && linkData.FSM) {
       let FSM = [];
-      linkData.FSM.map((ele)=>{
+      linkData.FSM.map((ele) => {
         ele.id && ele.link && FSM.push(ele)
       })
       linkData.FSM = FSM;
@@ -237,22 +237,22 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
         menuItems.splice(1, 0, {
           type: "dynamic",
           moduleName: t(`ACTION_TEST_${getParentDisplayName}`),
-          links: configEmployeeSideBar[keys[i]]?.map((ob) => {return {...ob, displayName: t(`ACTION_TEST_${ob?.displayName?.toUpperCase()?.replace(/[ -]/g, "_")}`)}}),
+          links: configEmployeeSideBar[keys[i]]?.map((ob) => { return { ...ob, displayName: t(`ACTION_TEST_${ob?.displayName?.toUpperCase()?.replace(/[ -]/g, "_")}`) } }),
           icon: configEmployeeSideBar[keys[i]][1]?.leftIcon,
         });
       }
     }
-     const indx = menuItems.findIndex(a => a.element === "HOME");
-     const home = menuItems.splice(indx,1);
-     const comp = menuItems.findIndex(a => a.element === "LANGUAGE");
-     const part = menuItems.splice(comp,menuItems?.length-comp);
-     menuItems.sort((a,b) => {
+    const indx = menuItems.findIndex(a => a.element === "HOME");
+    const home = menuItems.splice(indx, 1);
+    const comp = menuItems.findIndex(a => a.element === "LANGUAGE");
+    const part = menuItems.splice(comp, menuItems?.length - comp);
+    menuItems.sort((a, b) => {
       let c1 = a?.type === "dynamic" ? a?.moduleName : a?.text;
       let c2 = b?.type === "dynamic" ? b?.moduleName : b?.text;
       return c1.localeCompare(c2)
-     } );
-     home?.[0] && menuItems.splice(0,0,home[0]);
-     menuItems =  part?.length > 0 ? menuItems.concat(part) : menuItems;
+    });
+    home?.[0] && menuItems.splice(0, 0, home[0]);
+    menuItems = part?.length > 0 ? menuItems.concat(part) : menuItems;
   }
 
   /*  URL with openlink wont have sidebar and actions    */

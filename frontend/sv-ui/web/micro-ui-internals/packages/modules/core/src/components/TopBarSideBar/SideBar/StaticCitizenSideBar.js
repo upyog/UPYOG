@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
- HomeIcon,
+  HomeIcon,
   EditPencilIcon,
   LogoutIcon,
   Loader,
@@ -20,7 +20,7 @@ import {
   FirenocIcon,
   LoginIcon,
   CHBIcon
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import { useTranslation } from "react-i18next";
@@ -55,7 +55,7 @@ Feature :: Citizen Webview sidebar
 const Profile = ({ info, stateName, t }) => (
   <div className="profile-section">
     <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
+      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?.photo : defaultImage} />
     </div>
     <div id="profile-name" className="label-container name-Profile">
       <div className="label-text"> {info?.name} </div>
@@ -83,7 +83,7 @@ const IconsObject = {
   FSMIcon: <FSMIcon className="icon" />,
   WSIcon: <WSICon className="icon" />,
   MCollectIcon: <MCollectIcon className="icon" />,
-  CHBIcon:<CHBIcon className="icon" />,
+  CHBIcon: <CHBIcon className="icon" />,
   BillsIcon: <CollectionIcon className="icon" />,
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
@@ -141,7 +141,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
   const MenuItem = ({ item }) => {
-    
+
     const leftIconArray = item?.icon || item.icon?.type?.name;
     const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
     let itemComponent;
@@ -245,7 +245,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
           }}
         >
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
+          <div className="drawer-desktop" style={{ "backgroundColor": "white" }}>
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />

@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer, CloseSvg } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Loader, Modal, FormComposer, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { configSVApproverApplication } from "../config";
 import EXIF from "exif-js";
@@ -47,7 +47,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     { enabled: action?.isTerminateState }
   );
 
-  
+
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, CloseSvg, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Dropdown, CloseSvg, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 

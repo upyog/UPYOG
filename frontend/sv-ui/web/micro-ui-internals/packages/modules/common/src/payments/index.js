@@ -1,4 +1,4 @@
-import { Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useResolvedPath, useLocation } from "react-router-dom";
 import CitizenPayment from "./citizen";
@@ -9,7 +9,7 @@ export const PaymentModule = ({ deltaConfig = {}, stateCode, cityCode, moduleCod
   const resolved = useResolvedPath(".");
   const path = resolved.pathname;
   const url = useLocation().pathname;
-  
+
   const store = { data: {} };
 
   if (Object.keys(store).length === 0) {

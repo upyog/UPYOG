@@ -1,4 +1,4 @@
-import { Card, CardHeader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { subFormRegistry } from "@nudmcdgnpm/digit-ui-libraries";

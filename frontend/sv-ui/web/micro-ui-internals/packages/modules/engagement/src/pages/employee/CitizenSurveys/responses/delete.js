@@ -1,4 +1,4 @@
-import { Banner, Card, Loader, ActionBar, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Banner, Card, Loader, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,7 +43,7 @@ const Response = (props) => {
       queryClient.clear();
       window.history.replaceState(null, 'DELETE_SURVEY_STATE')
     };
-    if(!!state){
+    if (!!state) {
       mutation.mutate(state, {
         onSuccess,
       });

@@ -1,11 +1,11 @@
-import { Toast, Card, KeyNote, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
-import React,{ useEffect, useState } from "react";
+import { Toast, Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import RenewPopup from "../../../components/RenewPopup";
 import { RENEWAL_CONSTANTS } from "../../../utils";
 
-const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onDiscard }) => {
+const StreetVendingApplication = ({ application, buttonLabel, previousDraftId, onDiscard }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
@@ -13,13 +13,13 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
   //TODO: Need to remove all session storage from here and get the data from Search API call
   const handleEditClick = () => {
     sessionStorage.setItem("vendingApplicationID", application?.applicationNo);
-    sessionStorage.setItem("ApplicationId",application?.applicationId);
-    sessionStorage.setItem("applicationStatus",application?.applicationStatus);
-    sessionStorage.setItem("addressIdOne",application?.addressDetails?.[0]?.addressId);
-    sessionStorage.setItem("addressIdTwo",application?.addressDetails?.[1]?.addressId);
-    sessionStorage.setItem("vendorIds",application?.addressDetails?.[0]?.vendorId);
-    sessionStorage.setItem("bankIds",application?.bankDetail?.id);
-    sessionStorage.setItem("venId",application?.vendorDetail?.[0]?.id);
+    sessionStorage.setItem("ApplicationId", application?.applicationId);
+    sessionStorage.setItem("applicationStatus", application?.applicationStatus);
+    sessionStorage.setItem("addressIdOne", application?.addressDetails?.[0]?.addressId);
+    sessionStorage.setItem("addressIdTwo", application?.addressDetails?.[1]?.addressId);
+    sessionStorage.setItem("vendorIds", application?.addressDetails?.[0]?.vendorId);
+    sessionStorage.setItem("bankIds", application?.bankDetail?.id);
+    sessionStorage.setItem("venId", application?.vendorDetail?.[0]?.id);
     navigate(`/sv-ui/citizen/sv/edit`);
   };
 
@@ -36,7 +36,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
   const handleDiscard = async () => {
     try {
       await Digit.SVService.deleteDraft({
-        filters: {  
+        filters: {
           draftId: previousDraftId
         }
       });
@@ -51,7 +51,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
   };
   const isDraft = !application?.applicationNo?.length;
 
-  const handleRenewPopup = () =>{
+  const handleRenewPopup = () => {
     sessionStorage.setItem("vendingApplicationID", application?.applicationNo);
     setRnewButton(true);
   }
@@ -65,42 +65,42 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
       <KeyNote keyValue={t("SV_VENDING_ZONES")} note={t(application?.vendingZoneValue)} />
       <KeyNote keyValue={t("SV_VALIDITY_DATE")} note={application?.validityDate || application?.validTo} />
       <KeyNote keyValue={t("SV_APPLICATION_STATUS")} note={application?.applicationStatus} />
-      {application?.vendingActivity==="STATIONARY"&&(
-      <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}
-      {(application?.applicationStatus == "CITIZENACTIONREQUIRED") && 
-      <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_EDIT")} onSubmit={handleEditClick} />}
-      {(application?.renewalStatus===RENEWAL_CONSTANTS.ELIGIBLE_TO_RENEW)&&
-      <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_RENEW")} onSubmit={handleRenewPopup} />
+      {application?.vendingActivity === "STATIONARY" && (
+        <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}
+      {(application?.applicationStatus == "CITIZENACTIONREQUIRED") &&
+        <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_EDIT")} onSubmit={handleEditClick} />}
+      {(application?.renewalStatus === RENEWAL_CONSTANTS.ELIGIBLE_TO_RENEW) &&
+        <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_RENEW")} onSubmit={handleRenewPopup} />
       }
       <div style={{ display: "flex", gap: "5px" }}>
         <Link to={isDraft ? `/sv-ui/citizen/sv/apply/info` : `/sv-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
-          <SubmitBar label={isDraft ?t("SV_CONTINUE"):buttonLabel} />
+          <SubmitBar label={isDraft ? t("SV_CONTINUE") : buttonLabel} />
         </Link>
         {isDraft && <SubmitBar label={t("SV_DISCARD")} onSubmit={handleDiscard} />}
       </div>
       <div>
-      {showToast && (
-        <Toast
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-        />
-      )}
+        {showToast && (
+          <Toast
+            error={showToast.error}
+            warning={showToast.warning}
+            label={t(showToast.label)}
+            onClose={() => {
+              setShowToast(null);
+            }}
+          />
+        )}
       </div>
       <div>
-      {
-        renewButton&&(
-          <RenewPopup 
-          t={t}
-          closeModal={() => setRnewButton(false)}  // Close modal when "BACK" is clicked
-          actionCancelOnSubmit={() => setRnewButton(false)}  // Close modal when "BACK" is clicked
-          application={application}
-          />
-        )
-      }
+        {
+          renewButton && (
+            <RenewPopup
+              t={t}
+              closeModal={() => setRnewButton(false)}  // Close modal when "BACK" is clicked
+              actionCancelOnSubmit={() => setRnewButton(false)}  // Close modal when "BACK" is clicked
+              application={application}
+            />
+          )
+        }
       </div>
     </Card>
   );

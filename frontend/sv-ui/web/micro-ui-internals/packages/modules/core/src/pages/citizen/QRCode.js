@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 const QRCode = ({ path }) => {
     const { t } = useTranslation();

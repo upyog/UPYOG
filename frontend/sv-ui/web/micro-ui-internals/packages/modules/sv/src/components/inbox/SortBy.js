@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { RadioButtons } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { CloseSvg } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * This SortBy component creates a filtering interface that allows users to sort by date (ascending or descending). 
@@ -20,7 +20,7 @@ const SortBy = (props) => {
       : { code: "ASC", name: t("ES_INBOX_DATE_LATEST_LAST") };
   });
 
-  function clearAll() {}
+  function clearAll() { }
 
   function onSort(option) {
     props.onSort([{ id: "createdTime", desc: option.code === "DESC" ? true : false }]);
