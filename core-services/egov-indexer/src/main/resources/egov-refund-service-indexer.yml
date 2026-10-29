@@ -1,0 +1,198 @@
+ServiceMaps:
+  serviceName: Refund Services - rainmaker
+  version: 1.0.0
+  mappings:
+    - topic: save-refund
+      configKey: INDEX
+      indexes:
+        - name: refundindex-v1
+          type: refund
+          id: $.id, $.tenantId
+          isBulk: false
+          timeStampField: $.auditDetails.lastModifiedTime
+          jsonPath: $.refund
+          customJsonMapping:
+            indexMapping: '{"Data":{"id":"","refundNo":"","tenantId":"","moduleName":"","businessService":"","consumerCode":"","paymentId":"","applicantName":"","mobileNumber":"","refundCategory":"","refundReason":"","paymentModeOriginal":"","amountPaid":0,"refundAmount":0,"refundMode":"","status":"","sanctionRef":"","financeApprovalDate":0,"gatewayRefundId":"","fileStoreId":"","beneficiaryDetails":{},"additionalDetails":{},"auditDetails":{},"tenantData":{},"@timestamp":"timestamp"}}'
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.id
+              - inJsonPath: $.refundNo
+                outJsonPath: $.Data.refundNo
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.tenantId
+              - inJsonPath: $.moduleName
+                outJsonPath: $.Data.moduleName
+              - inJsonPath: $.businessService
+                outJsonPath: $.Data.businessService
+              - inJsonPath: $.consumerCode
+                outJsonPath: $.Data.consumerCode
+              - inJsonPath: $.paymentId
+                outJsonPath: $.Data.paymentId
+              - inJsonPath: $.applicantName
+                outJsonPath: $.Data.applicantName
+              - inJsonPath: $.mobileNumber
+                outJsonPath: $.Data.mobileNumber
+              - inJsonPath: $.refundCategory
+                outJsonPath: $.Data.refundCategory
+              - inJsonPath: $.refundReason
+                outJsonPath: $.Data.refundReason
+              - inJsonPath: $.paymentModeOriginal
+                outJsonPath: $.Data.paymentModeOriginal
+              - inJsonPath: $.amountPaid
+                outJsonPath: $.Data.amountPaid
+              - inJsonPath: $.refundAmount
+                outJsonPath: $.Data.refundAmount
+              - inJsonPath: $.refundMode
+                outJsonPath: $.Data.refundMode
+              - inJsonPath: $.status
+                outJsonPath: $.Data.status
+              - inJsonPath: $.sanctionRef
+                outJsonPath: $.Data.sanctionRef
+              - inJsonPath: $.financeApprovalDate
+                outJsonPath: $.Data.financeApprovalDate
+              - inJsonPath: $.gatewayRefundId
+                outJsonPath: $.Data.gatewayRefundId
+              - inJsonPath: $.fileStoreId
+                outJsonPath: $.Data.fileStoreId
+              - inJsonPath: $.beneficiaryDetails
+                outJsonPath: $.Data.beneficiaryDetails
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.additionalDetails
+              - inJsonPath: $.auditDetails
+                outJsonPath: $.Data.auditDetails
+              - inJsonPath: $.@timestamp
+                outJsonPath: $.Data.@timestamp
+            mdmsMapping:
+              - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+                moduleName: tenant
+                masterName: tenants
+                tenantId: pg
+                filter: "[?(@.code == $tenant)]"
+                filterMapping:
+                  - variable: $tenant
+                    valueJsonpath: $.tenantId
+                uriResponseMapping:
+                  - inJsonPath: $.MdmsRes.tenant.tenants
+                    outJsonPath: $.Data.tenantData
+
+    - topic: update-refund
+      configKey: INDEX
+      indexes:
+        - name: refundindex-v1
+          type: refund
+          id: $.id, $.tenantId
+          isBulk: false
+          timeStampField: $.auditDetails.lastModifiedTime
+          jsonPath: $.refund
+          customJsonMapping:
+            indexMapping: '{"Data":{"id":"","refundNo":"","tenantId":"","moduleName":"","businessService":"","consumerCode":"","paymentId":"","applicantName":"","mobileNumber":"","refundCategory":"","refundReason":"","paymentModeOriginal":"","amountPaid":0,"refundAmount":0,"refundMode":"","status":"","sanctionRef":"","financeApprovalDate":0,"gatewayRefundId":"","fileStoreId":"","beneficiaryDetails":{},"additionalDetails":{},"auditDetails":{},"tenantData":{},"@timestamp":"timestamp"}}'
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.id
+              - inJsonPath: $.refundNo
+                outJsonPath: $.Data.refundNo
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.tenantId
+              - inJsonPath: $.moduleName
+                outJsonPath: $.Data.moduleName
+              - inJsonPath: $.businessService
+                outJsonPath: $.Data.businessService
+              - inJsonPath: $.consumerCode
+                outJsonPath: $.Data.consumerCode
+              - inJsonPath: $.paymentId
+                outJsonPath: $.Data.paymentId
+              - inJsonPath: $.applicantName
+                outJsonPath: $.Data.applicantName
+              - inJsonPath: $.mobileNumber
+                outJsonPath: $.Data.mobileNumber
+              - inJsonPath: $.refundCategory
+                outJsonPath: $.Data.refundCategory
+              - inJsonPath: $.refundReason
+                outJsonPath: $.Data.refundReason
+              - inJsonPath: $.paymentModeOriginal
+                outJsonPath: $.Data.paymentModeOriginal
+              - inJsonPath: $.amountPaid
+                outJsonPath: $.Data.amountPaid
+              - inJsonPath: $.refundAmount
+                outJsonPath: $.Data.refundAmount
+              - inJsonPath: $.refundMode
+                outJsonPath: $.Data.refundMode
+              - inJsonPath: $.status
+                outJsonPath: $.Data.status
+              - inJsonPath: $.sanctionRef
+                outJsonPath: $.Data.sanctionRef
+              - inJsonPath: $.financeApprovalDate
+                outJsonPath: $.Data.financeApprovalDate
+              - inJsonPath: $.gatewayRefundId
+                outJsonPath: $.Data.gatewayRefundId
+              - inJsonPath: $.fileStoreId
+                outJsonPath: $.Data.fileStoreId
+              - inJsonPath: $.beneficiaryDetails
+                outJsonPath: $.Data.beneficiaryDetails
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.additionalDetails
+              - inJsonPath: $.auditDetails
+                outJsonPath: $.Data.auditDetails
+              - inJsonPath: $.@timestamp
+                outJsonPath: $.Data.@timestamp
+            mdmsMapping:
+              - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+                moduleName: tenant
+                masterName: tenants
+                tenantId: pg
+                filter: "[?(@.code == $tenant)]"
+                filterMapping:
+                  - variable: $tenant
+                    valueJsonpath: $.tenantId
+                uriResponseMapping:
+                  - inJsonPath: $.MdmsRes.tenant.tenants
+                    outJsonPath: $.Data.tenantData
+
+    - topic: refund-reindex
+      configKey: REINDEX
+      indexes:
+        - name: refundreindex-v1
+          type: refund
+          id: $.id, $.tenantId
+          isBulk: true
+          timeStampField: $.auditDetails.lastModifiedTime
+          jsonPath: $.hits.*
+
+    - topic: refund-legacyindex
+      configKey: LEGACYINDEX
+      indexes:
+        - name: refundindex-v1
+          type: refund
+          id: $.id, $.tenantId
+          isBulk: true
+          timeStampField: $.auditDetails.lastModifiedTime
+          jsonPath: $.Refunds.*
+          customJsonMapping:
+            indexMapping: '{"Data":{"id":"","refundNo":"","tenantId":"","moduleName":"","businessService":"","consumerCode":"","paymentId":"","applicantName":"","mobileNumber":"","refundCategory":"","refundReason":"","paymentModeOriginal":"","amountPaid":0,"refundAmount":0,"refundMode":"","status":"","sanctionRef":"","financeApprovalDate":0,"gatewayRefundId":"","fileStoreId":"","beneficiaryDetails":{},"additionalDetails":{},"auditDetails":{},"tenantData":{},"@timestamp":"timestamp"}}'
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.id
+              - inJsonPath: $.refundNo
+                outJsonPath: $.Data.refundNo
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.tenantId
+              - inJsonPath: $.status
+                outJsonPath: $.Data.status
+              - inJsonPath: $.refundAmount
+                outJsonPath: $.Data.refundAmount
+              - inJsonPath: $.auditDetails
+                outJsonPath: $.Data.auditDetails
+              - inJsonPath: $.@timestamp
+                outJsonPath: $.Data.@timestamp
+            mdmsMapping:
+              - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
+                moduleName: tenant
+                masterName: tenants
+                tenantId: pg
+                filter: "[?(@.code == $tenant)]"
+                filterMapping:
+                  - variable: $tenant
+                    valueJsonpath: $.tenantId
+                uriResponseMapping:
+                  - inJsonPath: $.MdmsRes.tenant.tenants
+                    outJsonPath: $.Data.tenantData
