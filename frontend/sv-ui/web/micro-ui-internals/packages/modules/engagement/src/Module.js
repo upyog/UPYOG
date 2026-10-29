@@ -1,5 +1,5 @@
-import { Loader, BreadCrumb } from "@nudmcdgnpm/upyog-ui-react-components-lts";
-import React, {Fragment} from "react";
+import { Loader, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -38,7 +38,7 @@ import Surveys from "./pages/employee/CitizenSurveys";
 import FillSurvey from './pages/citizen/CitizenSurvey/FillSurvey'
 import CitizenSurveyForm from './components/Surveys/CitizenSurveyForm';
 import ShowSurvey from './pages/citizen/CitizenSurvey/ShowSurvey'
- 
+
 import SurveyResults from "./pages/employee/CitizenSurveys/SurveyResults";
 const EventsBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -190,7 +190,7 @@ const EmployeeApp = ({ path, url, userType, tenants }) => {
     // <div className="ground-container">
     <Fragment>
       <EventsBreadCrumb location={location} />
-       {/* <Route> must be a direct child of <Routes></Routes> Normal components (like <div>, <Layout>) not allowed directly */}
+      {/* <Route> must be a direct child of <Routes></Routes> Normal components (like <div>, <Layout>) not allowed directly */}
       <Routes>
         <Route path="event/inbox" element={<Inbox tenants={tenants} parentRoute={path} />} />
         <Route path="event/response" element={<Response />} />
@@ -209,14 +209,14 @@ const EmployeeApp = ({ path, url, userType, tenants }) => {
         <Route path="messages/*" element={<Messages tenants={tenants} parentRoute={path} />} />
         <Route path="surveys/*" element={<Surveys tenants={tenants} parentRoute={path} />} />
       </Routes>
-      </Fragment>
+    </Fragment>
     // </div>
   );
 };
 
 const EngagementModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "Engagement";
- const location = useLocation();
+  const location = useLocation();
   const path = location.pathname;
   const url = location.pathname;
   const language = Digit.StoreData.getCurrentLanguage();

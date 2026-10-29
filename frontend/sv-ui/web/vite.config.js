@@ -175,7 +175,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const isProd = mode === "production";
 
-  const proxyTarget = env.REACT_APP_PROXY_API || "https://niuatt.niua.in";
+  const proxyTarget = env.REACT_APP_PROXY_API || "https://upyog-sandbox.niua.org";
   const assetsTarget = env.REACT_APP_PROXY_ASSETS || proxyTarget;
 
   const apiPaths = [
@@ -202,49 +202,49 @@ export default defineConfig(({ mode }) => {
 
   const packagesRoot = path.resolve(__dirname, "micro-ui-internals/packages");
 
- function getAliases() {
-     const aliases = {};
-     
-     // Read workspace configuration from package.json
-     const rootPackageJsonPath = path.join(__dirname, "package.json");
-     const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, "utf-8"));
-     const workspaces = rootPackageJson.workspaces || [];
-     
-     // Extract module names that are actually in workspaces
-     const workspaceModules = new Set();
-     workspaces.forEach(workspace => {
-       const name = workspace.split("/").pop();
-       workspaceModules.add(name);
-     });
- 
-       function register(pkgDir) {
-         const pkgJsonPath = path.join(pkgDir, "package.json");
-         if (!fs.existsSync(pkgJsonPath)) return;
-         const { name, main } = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
-         if (!name) return;
- 
-         const moduleName = pkgDir.split("/").pop();
-         if (!workspaceModules.has(moduleName)) return;
- 
-         const entry = main
-           ? path.join(pkgDir, main)
-           : path.join(pkgDir, "src", "index.js");
-         if (fs.existsSync(entry)) {
-           aliases[name] = entry;
-         }
-       }
- 
-     const modulesDir = path.join(packagesRoot, "modules");
-     if (fs.existsSync(modulesDir)) {
-       fs.readdirSync(modulesDir).forEach((pkg) => {
-         const pkgDir = path.join(modulesDir, pkg);
-         if (fs.statSync(pkgDir).isDirectory()) register(pkgDir);
-       });
-     }
-     
-     return aliases;
-   }
- 
+  function getAliases() {
+    const aliases = {};
+
+    // Read workspace configuration from package.json
+    const rootPackageJsonPath = path.join(__dirname, "package.json");
+    const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, "utf-8"));
+    const workspaces = rootPackageJson.workspaces || [];
+
+    // Extract module names that are actually in workspaces
+    const workspaceModules = new Set();
+    workspaces.forEach(workspace => {
+      const name = workspace.split("/").pop();
+      workspaceModules.add(name);
+    });
+
+    function register(pkgDir) {
+      const pkgJsonPath = path.join(pkgDir, "package.json");
+      if (!fs.existsSync(pkgJsonPath)) return;
+      const { name, main } = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
+      if (!name) return;
+
+      const moduleName = pkgDir.split("/").pop();
+      if (!workspaceModules.has(moduleName)) return;
+
+      const entry = main
+        ? path.join(pkgDir, main)
+        : path.join(pkgDir, "src", "index.js");
+      if (fs.existsSync(entry)) {
+        aliases[name] = entry;
+      }
+    }
+
+    const modulesDir = path.join(packagesRoot, "modules");
+    if (fs.existsSync(modulesDir)) {
+      fs.readdirSync(modulesDir).forEach((pkg) => {
+        const pkgDir = path.join(modulesDir, pkg);
+        if (fs.statSync(pkgDir).isDirectory()) register(pkgDir);
+      });
+    }
+
+    return aliases;
+  }
+
 
   const moduleAliases = getAliases();
 

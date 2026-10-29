@@ -33,7 +33,7 @@ All notable changes to this module are documented here.
 | Before | After |
 |---|---|
 | @upyog/digit-ui-libraries 3.10.0 | @nudmcdgnpm/digit-ui-libraries 1.2.1 |
-| @upyog/digit-ui-react-components 3.10.0 | @nudmcdgnpm/upyog-ui-react-components-lts 1.0.0 |
+| @upyog/digit-ui-react-components 3.10.0 | @nudmcdgnpm/digit-ui-react-components 1.0.0 |
 
 ### Added
 - `exif-js ^2.3.0` — reads EXIF data from uploaded images

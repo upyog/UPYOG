@@ -1,7 +1,7 @@
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
 */
-import { Card, CardHeader, CardSubHeader, CheckBox, LinkButton, Row, StatusTable, SubmitBar, EditIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, CardHeader, CardSubHeader, CheckBox, LinkButton, Row, StatusTable, SubmitBar, EditIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useMemo, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";

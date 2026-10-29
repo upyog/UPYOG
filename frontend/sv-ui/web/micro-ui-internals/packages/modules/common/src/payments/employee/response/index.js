@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Banner, Card, CardText, SubmitBar, ActionBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Banner, Card, CardText, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,7 +24,7 @@ export const SuccessfulPayment = (props) => {
   let { consumerCode, receiptNumber, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   receiptNumber = receiptNumber.replace(/%2F/g, "/");
-  
+
   useEffect(() => {
     return () => {
       const fetchData = async () => {
@@ -45,43 +45,43 @@ export const SuccessfulPayment = (props) => {
 
   const getMessage = () => t("ES_PAYMENT_COLLECTED");
   const getCardText = () => {
-      return t("ES_PAYMENT_SUCCESSFUL_DESCRIPTION");
+    return t("ES_PAYMENT_SUCCESSFUL_DESCRIPTION");
   };
   const { data: generatePdfKey } = Digit.Hooks.useCommonMDMS(tenantId, "common-masters", "ReceiptKey", {
     select: (data) =>
       data["common-masters"]?.uiCommonPay?.filter(({ code }) => businessService?.includes(code))[0]?.receiptKey || "consolidatedreceipt",
   });
 
-const printReciept = async () => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const state = Digit.ULBService.getStateId();
-  const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
-  let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
+  const printReciept = async () => {
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const state = Digit.ULBService.getStateId();
+    const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+    let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
 
-  if (!payments.Payments[0]?.fileStoreId) {
+    if (!payments.Payments[0]?.fileStoreId) {
       response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
-  }
-  const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-  window.open(fileStore[response.filestoreIds[0]], "_blank");
-};
-
-
-const svCertificate = async () => {
-  const state = tenantId;
-  const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
-  const generatePdfKeyForTL = "svcertificate";
-
-  if (applicationDetails) {
-    let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+    }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response.filestoreIds[0]], "_blank");
-  }
-};
+  };
 
 
-const svIdCard= async () => {
+  const svCertificate = async () => {
     const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
+    const applicationDetails = await Digit.SVService.search({ tenantId, filters: { applicationNumber: consumerCode, isDraftApplication: false } });
+    const generatePdfKeyForTL = "svcertificate";
+
+    if (applicationDetails) {
+      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+  };
+
+
+  const svIdCard = async () => {
+    const state = tenantId;
+    const applicationDetails = await Digit.SVService.search({ tenantId, filters: { applicationNumber: consumerCode, isDraftApplication: false } });
     const generatePdfKeyForTL = "svidentitycard";
 
     if (applicationDetails) {
@@ -100,7 +100,7 @@ const svIdCard= async () => {
         {generatePdfKey ? (
           <div style={{ display: "flex" }}>
             {businessService == "sv-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={printReciept}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
                   <path d="M0 0h24v24H0V0z" fill="none" />
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
@@ -109,7 +109,7 @@ const svIdCard= async () => {
               </div>
             ) : null}
             {businessService == "sv-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svCertificate}>
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={svCertificate}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
                   <path d="M0 0h24v24H0V0z" fill="none" />
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
@@ -118,7 +118,7 @@ const svIdCard= async () => {
               </div>
             ) : null}
             {businessService == "sv-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svIdCard}>
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={svIdCard}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
                   <path d="M0 0h24v24H0V0z" fill="none" />
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
@@ -126,7 +126,7 @@ const svIdCard= async () => {
                 {t("SV_ID_CARD")}
               </div>
             ) : null}
-           
+
           </div>
         ) : null}
       </Card>

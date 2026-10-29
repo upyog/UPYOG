@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormComposer, Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { FormComposer, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { documentsFormConfig } from "../../../config/doc-create";
 
@@ -21,7 +21,7 @@ const Documents = () => {
     }
   };
 
-  const onSubmit = (data) => {  
+  const onSubmit = (data) => {
     const DocumentEntity = {
       name: data.documentName,
       description: data?.description.length ? data.description : "",
@@ -38,16 +38,16 @@ const Documents = () => {
 
   return (
     <div>
-     <Header>{t("ES_ENGAGEMENT_DOCUMENTS")}</Header>
-    <FormComposer
-     // heading={t("ES_ENGAGEMENT_DOCUMENTS")}
-     label={t("ES_COMMON_APPLICATION_SUBMIT")}
-     config={documentsFormConfig}
-     onSubmit={onSubmit}
-     fieldStyle={{}}
-     onFormValueChange={onFormValueChange}
-     isDisabled={!canSubmit}
-     />
+      <Header>{t("ES_ENGAGEMENT_DOCUMENTS")}</Header>
+      <FormComposer
+        // heading={t("ES_ENGAGEMENT_DOCUMENTS")}
+        label={t("ES_COMMON_APPLICATION_SUBMIT")}
+        config={documentsFormConfig}
+        onSubmit={onSubmit}
+        fieldStyle={{}}
+        onFormValueChange={onFormValueChange}
+        isDisabled={!canSubmit}
+      />
     </div>
   );
 };

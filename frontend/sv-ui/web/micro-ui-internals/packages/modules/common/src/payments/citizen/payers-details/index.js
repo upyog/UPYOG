@@ -10,7 +10,7 @@ import {
   MobileNumber,
   CheckBox,
   CitizenConsentForm
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useParams, useLocation } from "react-router-dom";
@@ -48,14 +48,14 @@ const SelectPaymentType = (props) => {
   let requestCriteria = [
     "/user/_search",
     {},
-    {data : {uuid:[Useruuid]}},
+    { data: { uuid: [Useruuid] } },
     { recordId: Useruuid, plainRequestFields: ["mobileNumber"] },
     {
-        enabled: Useruuid ? true : false,
-        cacheTime: 100,
-      }
+      enabled: Useruuid ? true : false,
+      cacheTime: 100,
+    }
   ]
-  const { isLoading : isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
+  const { isLoading: isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
 
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
   const Arrears =
@@ -72,8 +72,8 @@ const SelectPaymentType = (props) => {
   const [isCheckBox, setIsCheckBox] = useState(false);
   const [isCCFEnabled, setisCCFEnabled] = useState(false);
   const [mdmsConfig, setMdmsConfig] = useState("");
-  
-  const { isLoading: citizenConcentFormLoading, data:ccfData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "CitizenConsentForm" }]);
+
+  const { isLoading: citizenConcentFormLoading, data: ccfData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "CitizenConsentForm" }]);
 
   function setTermsAndPolicyDetails(e) {
     setIsCheckBox(e.target.checked)
@@ -91,7 +91,7 @@ const SelectPaymentType = (props) => {
     }
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     if (ccfData?.["common-masters"]?.CitizenConsentForm?.[0]?.isCitizenConsentFormEnabled) {
       setisCCFEnabled(ccfData?.["common-masters"]?.CitizenConsentForm?.[0])
     }
@@ -99,7 +99,7 @@ const SelectPaymentType = (props) => {
 
   const onLinkClick = (e) => {
     setMdmsConfig(e.target.id)
-}
+  }
 
   const checkLabels = () => {
     return <span>
@@ -114,16 +114,16 @@ const SelectPaymentType = (props) => {
       })}
     </span>
   }
-  
 
-    useEffect(() => {
+
+  useEffect(() => {
     if (!bill && data) {
       const requiredBill = data?.Bill?.find(
         (e) => e.consumerCode === consumerCode
       );
       setBill(requiredBill);
     }
-    }, [data, bill, consumerCode]);
+  }, [data, bill, consumerCode]);
 
 
   const onChangePayersMobileNumber = (e) => {
@@ -152,23 +152,23 @@ const SelectPaymentType = (props) => {
           paymentType?.code !== optionSecound?.code
             ? bill?.payerName
             : userInfo
-            ? payersActiveName
-            : payersName,
+              ? payersActiveName
+              : payersName,
         mobileNumber:
           paymentType?.code !== optionSecound?.code
             ? bill?.mobileNumber?.includes("*")
               ? userData?.user?.[0]?.mobileNumber
               : bill?.mobileNumber
             : userInfo
-            ? payersActiveMobileNumber
-            : payersMobileNumber,
+              ? payersActiveMobileNumber
+              : payersMobileNumber,
       },
     });
   };
 
-   if (isLoading || isUserLoading || citizenConcentFormLoading) {
+  if (isLoading || isUserLoading || citizenConcentFormLoading) {
     return <Loader />;
-  } 
+  }
 
   return (
     <React.Fragment>
@@ -217,7 +217,7 @@ const SelectPaymentType = (props) => {
               value={isCheckBox}
               checked={isCheckBox}
               style={{ marginTop: "5px", marginLeft: "55px" }}
-              styles={{marginBottom: "30px"}}
+              styles={{ marginBottom: "30px" }}
               onChange={setTermsAndPolicyDetails}
             />
 

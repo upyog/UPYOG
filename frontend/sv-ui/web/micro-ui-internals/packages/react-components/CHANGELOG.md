@@ -1,4 +1,4 @@
-# Changelog — @nudmcdgnpm/upyog-ui-react-components-lts
+# Changelog — @nudmcdgnpm/digit-ui-react-components
 
 All notable changes to this package are documented here.
 
@@ -7,7 +7,7 @@ All notable changes to this package are documented here.
 ## [1.0.0] — LTS Fork, Vite Migration & Dependency Upgrades
 
 ### Version
-- Initial release of `@nudmcdgnpm/upyog-ui-react-components-lts` at version `1.0.0`
+- Initial release of `@nudmcdgnpm/digit-ui-react-components` at version `1.0.0`
 
 ### Build Tool
 - Replaced `microbundle-crl` with `vite ^6.0.0` and `@vitejs/plugin-react ^4.3.4`

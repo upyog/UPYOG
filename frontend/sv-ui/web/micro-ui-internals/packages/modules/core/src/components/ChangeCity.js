@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CustomButton, Menu, Dropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CustomButton, Menu, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
@@ -28,11 +28,11 @@ const ChangeCity = (prop) => {
     Digit.SessionStorage.set("Employee.tenantId", city?.value);
     Digit.UserService.setUser(loggedInData);
     setDropDownData(city);
-     if (window.location.href.includes("/sv-ui/employee/")) {
+    if (window.location.href.includes("/sv-ui/employee/")) {
       const redirectPath = location.state?.from || "/sv-ui/employee";
       navigate(redirectPath, { replace: true }); // ✅ v6
     }
-    
+
     window.location.reload();
   };
 
@@ -53,7 +53,7 @@ const ChangeCity = (prop) => {
 
   // if (isDropdown) {
   return (
-    <div style={prop?.mobileView ? {color: "#767676"} : {}}>
+    <div style={prop?.mobileView ? { color: "#767676" } : {}}>
       <Dropdown
         option={selectCityData}
         selected={selectCityData.find((cityValue) => cityValue.value === dropDownData?.value)}

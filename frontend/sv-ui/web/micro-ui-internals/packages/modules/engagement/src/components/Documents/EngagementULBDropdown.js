@@ -1,5 +1,5 @@
 import React from "react";
-import { LabelFieldPair, CardLabel, Dropdown, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { LabelFieldPair, CardLabel, Dropdown, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 

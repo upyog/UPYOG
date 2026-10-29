@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 import DesktopInbox from "../../../../components/Documents/DesktopInbox";
 import MobileInbox from "../../../../components/Documents/MobileInbox";
 
@@ -33,16 +33,16 @@ const Inbox = ({ tenants }) => {
     }
 
     const fetchNextPage = useCallback(() => {
-        setSearchParams((prevSearchParams) => ({...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) + parseInt(prevSearchParams?.limit))}));
-        
+        setSearchParams((prevSearchParams) => ({ ...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) + parseInt(prevSearchParams?.limit)) }));
+
     }, [])
 
     const fetchPrevPage = () => {
-        setSearchParams((prevSearchParams) => ({...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) - parseInt(prevSearchParams?.limit))}));
+        setSearchParams((prevSearchParams) => ({ ...prevSearchParams, offset: (parseInt(prevSearchParams?.offset) - parseInt(prevSearchParams?.limit)) }));
     };
 
     const handlePageSizeChange = (e) => {
-        setSearchParams((prevSearchParams) => ({...prevSearchParams, limit:e.target.value}));
+        setSearchParams((prevSearchParams) => ({ ...prevSearchParams, limit: e.target.value }));
     };
 
     useEffect(() => {

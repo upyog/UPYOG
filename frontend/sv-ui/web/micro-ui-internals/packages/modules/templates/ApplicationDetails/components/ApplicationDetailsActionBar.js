@@ -1,8 +1,8 @@
-import React, {useEffect, useRef} from "react";
+import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { SubmitBar, ActionBar, Menu, CardLabel } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { SubmitBar, ActionBar, Menu, CardLabel } from "@nudmcdgnpm/digit-ui-react-components";
 
-function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={},isAction,applicationDetails }) {
+function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, isAction, applicationDetails }) {
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
   const menuRef = useRef();
@@ -15,13 +15,13 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
     return userRoles?.some((role) => e.roles?.includes(role)) || !e.roles;
   });
 
-    const closeMenu = () => {
-          setDisplayMenu(false);
-      }
-    Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
+  const closeMenu = () => {
+    setDisplayMenu(false);
+  }
+  Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu);
 
   if (actions?.length > 0) {
-    isMenuBotton = true; 
+    isMenuBotton = true;
     isSingleButton = false;
   }
   const Session = Digit.SessionStorage.get("User");
@@ -31,7 +31,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
   return (
     <React.Fragment>
       {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && !isAction && (
-        <ActionBar style={{...ActionBarStyle}}>
+        <ActionBar style={{ ...ActionBarStyle }}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
               localeKeyPrefix={forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}
@@ -46,15 +46,15 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
         </ActionBar>
       )}
       {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && !isAction && (
-        <ActionBar style={{...ActionBarStyle}}>
+        <ActionBar style={{ ...ActionBarStyle }}>
           <button
-              style={{ color: "#FFFFFF", fontSize: "18px" }}
-              className={"submit-bar"}
-              name={actions?.[0]?.action}
-              value={actions?.[0]?.action}
-              onClick={(e) => { onActionSelect(actions?.[0] || {})}}>
-              {t(`${forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}_${actions?.[0]?.action}`)}
-            </button>
+            style={{ color: "#FFFFFF", fontSize: "18px" }}
+            className={"submit-bar"}
+            name={actions?.[0]?.action}
+            value={actions?.[0]?.action}
+            onClick={(e) => { onActionSelect(actions?.[0] || {}) }}>
+            {t(`${forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}_${actions?.[0]?.action}`)}
+          </button>
         </ActionBar>
       )}
     </React.Fragment>

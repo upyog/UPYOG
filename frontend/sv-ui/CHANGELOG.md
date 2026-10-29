@@ -47,7 +47,7 @@ Changes are based on commits in [PR #1370](https://github.com/niua-org/UPYOG-NIU
 - Removed console.log statements from SV page components (`SVAdrressDetails`, `SVApplicantDetails`, `SVBankDetails`, `SVBusinessDetails`, `SVDocumentsDetail`, `SVSpecialCategory`)
 - Removed obsolete Babel resolutions from all package.json files
 - Updated `sv/src/utils/index.js` to remove CRA-specific utility references
-- Renamed package `@upyog/digit-ui-react-components` → `@nudmcdgnpm/upyog-ui-react-components-lts`
+- Renamed package `@upyog/digit-ui-react-components` → `@nudmcdgnpm/digit-ui-react-components`
 
 #### Refactor package.json scripts and CSS build
 - Replaced gulp-based CSS build with Vite in `packages/css/vite.config.js`

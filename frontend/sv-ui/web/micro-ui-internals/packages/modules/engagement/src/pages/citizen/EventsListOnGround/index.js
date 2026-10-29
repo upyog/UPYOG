@@ -1,4 +1,4 @@
-import { Card, CardCaption, Header, Loader, OnGroundEventCard } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, CardCaption, Header, Loader, OnGroundEventCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -18,12 +18,12 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
 
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({ tenantId, variant });
 
-   if (!Digit.UserService?.getUser()?.access_token) {
-      localStorage.clear();
-      sessionStorage.clear();
-      navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search }, replace: true });
-      return null;
-    }
+  if (!Digit.UserService?.getUser()?.access_token) {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search }, replace: true });
+    return null;
+  }
 
 
   if (EventsDataLoading || !preVisitUnseenEventsCountLoaded) return <Loader />;
@@ -38,10 +38,10 @@ const EventsListOnGround = ({ variant, parentRoute }) => {
       {/* The key prop was missing; it was optional in React 17 (warning only), but is required for proper list rendering in React 19 */}
       {EventsData.length ? (
         EventsData.map((DataParamsInEvent, index) => (
-          <OnGroundEventCard 
-            key={DataParamsInEvent.uuid || DataParamsInEvent.id || index} 
-            onClick={onEventCardClick} 
-            {...DataParamsInEvent} 
+          <OnGroundEventCard
+            key={DataParamsInEvent.uuid || DataParamsInEvent.id || index}
+            onClick={onEventCardClick}
+            {...DataParamsInEvent}
           />
         ))
       ) : (

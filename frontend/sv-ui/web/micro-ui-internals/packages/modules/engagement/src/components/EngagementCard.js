@@ -8,7 +8,7 @@ import {
   PMBIconSolid,
   SurveyIconSolid,
   PropertyHouse,
-} from "@nudmcdgnpm/upyog-ui-react-components-lts";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 const EngagementCard = () => {
   const userRoles = Digit.SessionStorage.get("User")?.info?.roles;
@@ -20,7 +20,7 @@ const EngagementCard = () => {
 
   if (!isEmployee) return null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement?.useDocSearch ? 
+  const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement?.useDocSearch ?
     Digit.Hooks.engagement.useDocSearch(
       { tenantIds: tenantId },
       {
@@ -49,14 +49,14 @@ const EngagementCard = () => {
       }
     ) : { data: 0, isLoading: false };
 
-  const ServiceDefinitionCriteria =  {
+  const ServiceDefinitionCriteria = {
     "tenantId": tenantId,
     "code": [],
     "module": ["engagement"],
   }
 
   const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey?.useCfdefinitionsearch ?
-    Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria}) : { data: { TotalCount: 0 }, isLoading: false };
+    Digit.Hooks.survey.useCfdefinitionsearch({ ServiceDefinitionCriteria }) : { data: { TotalCount: 0 }, isLoading: false };
 
   const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
   const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);

@@ -1,4 +1,4 @@
-import { Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import CitizenSurveyForm from "../../../components/Surveys/CitizenSurveyForm";
@@ -18,7 +18,7 @@ const ShowSurvey = ({ location }) => {
     referenceIds: [surveyData.code],
     accountId: user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
   }
-  const { data: selecedSurveyData, isLoading } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
+  const { data: selecedSurveyData, isLoading } = Digit.Hooks.survey.useSelectedSurveySearch({ ServiceCriteria }, {})
 
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -43,7 +43,7 @@ const ShowSurvey = ({ location }) => {
 
   //questionid in answers uuid in surveys needs to be matched
   const answers = selecedSurveyData.Service[0].attributes;
-  answers?.map((element)=>{
+  answers?.map((element) => {
     element.uuid = element.id;
     element.questionId = element.attributeCode;
     element.answer = [JSON.parse(element.value)];

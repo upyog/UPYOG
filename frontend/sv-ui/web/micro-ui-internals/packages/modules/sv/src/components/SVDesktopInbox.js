@@ -1,4 +1,4 @@
-import { Card, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./inbox/ApplicationTable";
@@ -16,7 +16,7 @@ import SearchApplication from "./inbox/search";
  * Supports pagination and sorting
  */
 const SVDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
-  
+
   const { data, useNewInboxAPI } = props;
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));

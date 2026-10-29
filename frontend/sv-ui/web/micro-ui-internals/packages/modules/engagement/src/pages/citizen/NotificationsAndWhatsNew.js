@@ -1,4 +1,4 @@
-import { Card, CardCaption, Header, Loader, OnGroundEventCard, WhatsNewCard } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, CardCaption, Header, Loader, OnGroundEventCard, WhatsNewCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router-dom";
@@ -24,18 +24,18 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
   const { mutate, isSuccess } = Digit.Hooks.useClearNotifications();
 
   // CORRECT Way to refetch on isSuccess change
-    useEffect(() => {
-      if (isSuccess) {
-        refetch();
-      }
-    }, [isSuccess]);
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
 
-// In useEffect, only return a cleanup function or nothing. Returning null or other values will cause errors in React 19.
-useEffect(() => {
-  if (preVisitUnseenNotificationCount && tenantId) {
-    mutate({ tenantId });
-  }
-}, [tenantId, preVisitUnseenNotificationCount]);
+  // In useEffect, only return a cleanup function or nothing. Returning null or other values will cause errors in React 19.
+  useEffect(() => {
+    if (preVisitUnseenNotificationCount && tenantId) {
+      mutate({ tenantId });
+    }
+  }, [tenantId, preVisitUnseenNotificationCount]);
 
 
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({ tenantId, variant });
@@ -64,8 +64,8 @@ useEffect(() => {
         return <Header>{t("CS_HEADER_WHATSNEW")}</Header>;
 
       default:
-     //old:   return <Redirect to={{ pathname: `/sv-ui/citizen`, state: { from: location.pathname + location.search } }} />;
-     return <Navigate to="/sv-ui/citizen" state={{ from: location.pathname + location.search }} replace />;
+        //old:   return <Redirect to={{ pathname: `/sv-ui/citizen`, state: { from: location.pathname + location.search } }} />;
+        return <Navigate to="/sv-ui/citizen" state={{ from: location.pathname + location.search }} replace />;
 
     }
   };
@@ -83,10 +83,10 @@ useEffect(() => {
           const key = DataParamsInEvent.uuid || DataParamsInEvent.id || index;
           if (DataParamsInEvent?.eventType === "EVENTSONGROUND") {
             return (
-              <OnGroundEventCard 
-                key={key} 
-                onClick={onEventCardClick} 
-                {...DataParamsInEvent} 
+              <OnGroundEventCard
+                key={key}
+                onClick={onEventCardClick}
+                {...DataParamsInEvent}
               />
             );
           } else if (DataParamsInEvent?.eventType === "BROADCAST") {

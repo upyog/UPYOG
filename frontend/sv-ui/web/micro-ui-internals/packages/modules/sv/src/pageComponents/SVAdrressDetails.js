@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, CardHeader, Dropdown, TextArea, CheckBox } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { FormStep, TextInput, CardLabel, CardHeader, Dropdown, TextArea, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
@@ -183,7 +183,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
       vendorId: null
     });
 
-     const createDependentObject = (dependent) => ({
+    const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -202,7 +202,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
       name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-});
+    });
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
@@ -230,8 +230,8 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
           createDependentObject(dep)
         );
         vendordetails = [
-            createVendorObject(formData?.owner?.vendorDetails),
-            createSpouseObject(formData?.owner?.spouseDetails),
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails),
           ...dependentPayload
         ];
       }
@@ -521,7 +521,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"city"}
               defaultValue={city}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={({field}) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={city}
@@ -539,7 +539,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"locality"}
               defaultValue={locality}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={({field}) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={locality}
@@ -681,7 +681,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"ccity"}
               defaultValue={ccity}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={({field}) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={ccity}
@@ -699,7 +699,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"clocality"}
               defaultValue={clocality}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={({field}) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={clocality}

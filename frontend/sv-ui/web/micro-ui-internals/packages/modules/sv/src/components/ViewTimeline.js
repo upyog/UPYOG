@@ -1,4 +1,4 @@
-import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -34,23 +34,22 @@ import Caption from "./Caption";
 const ViewTimeline = (props) => {
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
-  
+
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
     id: props.id,
     moduleCode: businessService,
   });
-  
+
 
   function OpenImage(thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
   const getTimelineCaptions = (checkpoint) => {
-    
-    if (checkpoint.state === "OPEN")
-    {
+
+    if (checkpoint.state === "OPEN") {
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
@@ -67,9 +66,9 @@ const ViewTimeline = (props) => {
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       return <Caption data={caption} OpenImage={OpenImage} />;
-    } 
-    
-   
+    }
+
+
     else {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
@@ -92,15 +91,15 @@ const ViewTimeline = (props) => {
       case "PAY":
         return (
           props?.userType === 'citizen'
-          ? (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-            <Link
-              to={{ pathname: `/sv-ui/citizen/payment/my-bills/sv-services/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
-            >
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-            </Link>
-          </div>
-          ) : null
+            ? (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+                <Link
+                  to={{ pathname: `/sv-ui/citizen/payment/my-bills/sv-services/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber: props?.application?.applicationNo } }}
+                >
+                  <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+                </Link>
+              </div>
+            ) : null
         );
       default:
         return null;
@@ -130,18 +129,18 @@ const ViewTimeline = (props) => {
             <ConnectingCheckPoints>
               {data?.timeline &&
                 data?.timeline.map((checkpoint, index, arr) => {
-                  
+
                   let timelineStatusPostfix = "";
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                       //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
-                       label={t(
-                        `SV_${data?.processInstances[index].state?.["state"]
-                        }${timelineStatusPostfix}`
-                      )}
+                        //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
+                        label={t(
+                          `SV_${data?.processInstances[index].state?.["state"]
+                          }${timelineStatusPostfix}`
+                        )}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
                     </React.Fragment>

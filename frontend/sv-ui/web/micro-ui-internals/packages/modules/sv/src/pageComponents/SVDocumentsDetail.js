@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 
@@ -87,7 +87,7 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
       vendorId: null
     });
 
-     const createDependentObject = (dependent) => ({
+    const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -106,7 +106,7 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
       name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-});
+    });
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
@@ -134,8 +134,8 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
           createDependentObject(dep)
         );
         vendordetails = [
-            createVendorObject(formData?.owner?.vendorDetails),
-            createSpouseObject(formData?.owner?.spouseDetails),
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails),
           ...dependentPayload
         ];
       }
@@ -314,10 +314,10 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
 
   // effect for toast, each toast will render for 2 seconds only
   useEffect(() => {
-  if (!error) return;
-  const timer = setTimeout(() => setError(null), 2000);
-  return () => clearTimeout(timer);
-}, [error]);
+    if (!error) return;
+    const timer = setTimeout(() => setError(null), 2000);
+    return () => clearTimeout(timer);
+  }, [error]);
 
   return (
     <div>

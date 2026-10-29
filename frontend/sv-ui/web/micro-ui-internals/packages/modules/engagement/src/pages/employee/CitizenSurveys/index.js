@@ -1,6 +1,6 @@
 import React from "react"
 import { Routes, Route } from "react-router-dom"
-import { PrivateRoute } from "@nudmcdgnpm/upyog-ui-react-components-lts"
+import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components"
 import Inbox from "./Inbox"
 import NewSurvey from "./NewSurvey"
 import CreateResponse from "./responses/create"
@@ -11,83 +11,83 @@ import SurveyDetails from "./SurveyDetails"
 import SurveyResults from "./SurveyResults"
 
 const Surveys = ({ match, tenants, parentRoute }) => {
-// REMOVED: match.path destructuring (not needed in v6)
+    // REMOVED: match.path destructuring (not needed in v6)
 
     return (
         <Routes>
-            <Route 
+            <Route
                 path="inbox/create"
                 element={
                     <PrivateRoute>
                         <NewSurvey />
                     </PrivateRoute>
-                    }
+                }
             />
-            <Route 
-                path="create" 
+            <Route
+                path="create"
                 element={
                     <PrivateRoute>
                         <NewSurvey />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="inbox/details/:id" 
+            <Route
+                path="inbox/details/:id"
                 element={
                     <PrivateRoute>
                         <SurveyDetails />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="inbox/results/:id" 
+            <Route
+                path="inbox/results/:id"
                 element={
                     <PrivateRoute>
                         <SurveyResults />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="inbox" 
+            <Route
+                path="inbox"
                 element={
                     <PrivateRoute>
                         <Inbox tenants={tenants} parentRoute={parentRoute} />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="create-response" 
+            <Route
+                path="create-response"
                 element={
                     <PrivateRoute>
                         <CreateResponse />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="update-response" 
+            <Route
+                path="update-response"
                 element={
                     <PrivateRoute>
                         <UpdateResponse />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="update-response" 
+            <Route
+                path="update-response"
                 element={
                     <PrivateRoute>
                         <UpdateResponse />
                     </PrivateRoute>
-                } 
+                }
             />
-            <Route 
-                path="delete-response" 
+            <Route
+                path="delete-response"
                 element={
                     <PrivateRoute>
                         <DeleteResponse />
                     </PrivateRoute>
-                } 
+                }
             />
-        
+
         </Routes>
     )
 }

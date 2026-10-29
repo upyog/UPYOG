@@ -1,4 +1,4 @@
-import { Modal } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
 const Heading = ({ t, heading }) => {
@@ -25,7 +25,7 @@ const ConfirmationQuestion = ({ t, title }) => (
 
     <div className="confirmation_box">
         <span> {`${t('CONFIRM_DELETE_MSG')} `} <b>{` ${title}`}</b> </span>
-        
+
     </div>
 
 );

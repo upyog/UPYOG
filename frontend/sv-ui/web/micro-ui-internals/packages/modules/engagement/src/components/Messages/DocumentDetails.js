@@ -1,5 +1,5 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
-import React, { useState ,useEffect} from 'react'
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
 import { useParams } from "react-router-dom";
 import Confirmation from '../Modal/Confirmation';
@@ -11,7 +11,7 @@ const renderMultipleDocuments = (documents) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   if (!documents && !documents.length) return null;
   return (
-    <div style={{ display: 'flex', flexDirection: isMobile ? 'column':'row', gap: isMobile ? '40px' : '100px'}}>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '40px' : '100px' }}>
       {documents.map(({ fileStoreId, fileName }) => (
         <div className="documentDetails_pdf" key={fileStoreId}>
           <div style={{ width: '100px' }} onClick={() => openUploadedDocument(fileStoreId, fileName)}>
@@ -41,7 +41,7 @@ const DocumentDetails = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { isLoading, data } = Digit.Hooks.events.useEventDetails(tenantId, { ids: id }, {
   });
-    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_ERROR_DATA", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_SUCCESS_DATA", false);
 

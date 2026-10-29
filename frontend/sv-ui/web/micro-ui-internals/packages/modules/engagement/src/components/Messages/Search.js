@@ -1,6 +1,6 @@
-import React, {useCallback} from "react";
+import React, { useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, DateRange } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, DateRange } from "@nudmcdgnpm/digit-ui-react-components";
 import DropdownUlb from "./DropdownUlb";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 
@@ -19,7 +19,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
         return (
           <Controller
             rules={{ required: true }}
-            render={({field}) => (
+            render={({ field }) => (
               <DropdownUlb
                 onAssignmentChange={field.onChange}
                 value={field.value}
@@ -36,8 +36,8 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       case "range":
         return (
           <Controller
-            render={({field}) =>{             
-              return <DateRange t={t} values={field.value} onFilterChange={(value)=> field.onChange(value.range)} labelClass="filter-label" />
+            render={({ field }) => {
+              return <DateRange t={t} values={field.value} onFilterChange={(value) => field.onChange(value.range)} labelClass="filter-label" />
             }}
             name={input.name}
             control={control}
@@ -49,7 +49,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       default:
         return (
           <Controller
-            render={({field}) => <TextInput onChange={field.onChange} value={field.value} />}
+            render={({ field }) => <TextInput onChange={field.onChange} value={field.value} />}
             name={input.name}
             control={control}
             defaultValue={null}
@@ -95,7 +95,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
               </span>
             </div>
           )}
-          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display: "grid" }}>
             {searchFields
               ?.map((input, index) => (
                 <div key={input.name} className="input-fields">
@@ -122,17 +122,17 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             {/* )} */}
 
             {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset", marginTop: "55px"}} className="search-submit-wrapper">
-                  <SubmitBar
-                    className="submit-bar-search"
-                    label={t("ES_COMMON_SEARCH")}
-                    // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
-                    submit
-                  />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
-                  <div>{clearAll()}</div>
-                </div>
-              )}
+              <div style={{ maxWidth: "unset", marginLeft: "unset", marginTop: "55px" }} className="search-submit-wrapper">
+                <SubmitBar
+                  className="submit-bar-search"
+                  label={t("ES_COMMON_SEARCH")}
+                  // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                  submit
+                />
+                {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
+                <div>{clearAll()}</div>
+              </div>
+            )}
           </div>
         </div>
       </div>

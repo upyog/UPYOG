@@ -1,6 +1,6 @@
-import { Banner, Card, Loader, CardText, ActionBar, SubmitBar,Menu } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Banner, Card, Loader, CardText, ActionBar, SubmitBar, Menu } from "@nudmcdgnpm/digit-ui-react-components";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 const getMessage = (mutation) => {
@@ -27,13 +27,13 @@ const Acknowledgement = (props) => {
   const mutation = Digit.Hooks.survey.useServeyCreateDef();
   const { state } = props.location;
   const navigate = Digit.Hooks.useCustomNavigate();
-  const [isActionClicked,setIsActionClicked] = useState(false) 
+  const [isActionClicked, setIsActionClicked] = useState(false)
   useEffect(() => {
     const onSuccess = () => {
       queryClient.clear();
       window.history.replaceState(null, 'CREATE_SURVEY_STATE')
     };
-    if(!!state){
+    if (!!state) {
       mutation.mutate(state, {
         onSuccess,
       })
@@ -46,7 +46,7 @@ const Acknowledgement = (props) => {
 
 
   const survey = mutation.data?.Surveys?.[0];
- 
+
   const handleActionClick = () => {
     setIsActionClicked((prevState => {
       return !prevState
@@ -57,9 +57,9 @@ const Acknowledgement = (props) => {
   //   else if(option === "Create another survey") navigate("/sv-ui/employee/engagement/surveys/create")
   // }
 
-   const actionClickHandler = (option) => {
-    if(option === t("GO_BACK_TO_HOME")) navigate("/sv-ui/employee")
-    else if(option === t("CREATE_ANOTHER_SURVEY")) navigate("/sv-ui/employee/engagement/surveys/create")
+  const actionClickHandler = (option) => {
+    if (option === t("GO_BACK_TO_HOME")) navigate("/sv-ui/employee")
+    else if (option === t("CREATE_ANOTHER_SURVEY")) navigate("/sv-ui/employee/engagement/surveys/create")
   }
   return (
     <Card>
@@ -68,16 +68,16 @@ const Acknowledgement = (props) => {
         mutation={mutation}
       />
       <CardText>
-        {mutation.isSuccess 
+        {mutation.isSuccess
           ? t(`SURVEY_FORM_CREATION_MESSAGE`, {
-              surveyName: survey?.title,
-              fromDate: Digit.DateUtils.ConvertTimestampToDate(survey?.startDate),
-              toDate: Digit.DateUtils.ConvertTimestampToDate(survey?.endDate),
-            })
+            surveyName: survey?.title,
+            fromDate: Digit.DateUtils.ConvertTimestampToDate(survey?.startDate),
+            toDate: Digit.DateUtils.ConvertTimestampToDate(survey?.endDate),
+          })
           : null}
       </CardText>
-      
-       {/* <ActionBar>
+
+      {/* <ActionBar>
         <Link to={"/sv-ui/employee"}>
           <SubmitBar label="Action" />
         </Link>
@@ -87,10 +87,10 @@ const Acknowledgement = (props) => {
         <button onClick={handleActionClick}>
           <SubmitBar label="Action" />
           {/* {isActionClicked && <Menu options={["Go Back to home","Create another survey"]} onSelect={actionClickHandler}></Menu>} */}
-          {isActionClicked && <Menu options={[t("GO_BACK_TO_HOME"),t("CREATE_ANOTHER_SURVEY")]} onSelect={actionClickHandler}></Menu>}
+          {isActionClicked && <Menu options={[t("GO_BACK_TO_HOME"), t("CREATE_ANOTHER_SURVEY")]} onSelect={actionClickHandler}></Menu>}
         </button>
       </ActionBar>
-      
+
 
     </Card>
   );

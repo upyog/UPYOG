@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 // Updated: BrowserRouter imported as Router with future prop support for React Router v6.
 import { BrowserRouter as Router } from "react-router-dom";
 import { getI18n } from "react-i18next";
-import { Body, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Body, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { SVApp } from "./App";
 import SelectOtp from "./pages/citizen/Login/SelectOtp";
 import AcknowledgementCF from "./components/AcknowledgementCF";
@@ -35,13 +35,13 @@ const createQueryClient = () => new QueryClient({
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   // FIXED: This now has access to QueryClientProvider
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
-  
+
   if (isLoading) {
     return <Loader page={true} />;
   }
 
   const i18n = getI18n();
-  
+
   return (
     <Provider store={getStore(initData, moduleReducers(initData))}>
       {/* Updated: future prop added for React Router v7 forward compatibility and to suppress console warnings. */}
@@ -100,10 +100,10 @@ export const StreetVendingUI = ({ stateCode, registry, enabledModules, moduleRed
               }}
             >
               {/* Updated: DigitUIWrapper placed inside QueryClientProvider so all hooks have access to QueryClient. */}
-              <DigitUIWrapper 
-                stateCode={stateCode} 
-                enabledModules={enabledModules} 
-                moduleReducers={moduleReducers} 
+              <DigitUIWrapper
+                stateCode={stateCode}
+                enabledModules={enabledModules}
+                moduleReducers={moduleReducers}
               />
             </PrivacyProvider.Provider>
           </ComponentProvider.Provider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import StatusCount from "./StatusCount";
 /**
@@ -21,7 +21,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap,
 
   const { userRoleStates } = statusData || {};
 
- 
+
 
   const translateState = (state, t) => {
     return `${t(map[state.stateBusinessService])}` + " - " + t(`ES_SV_COMMON_STATUS_${state.state || "CREATED"}`);

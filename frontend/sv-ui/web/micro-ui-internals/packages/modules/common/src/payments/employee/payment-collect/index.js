@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -134,12 +134,10 @@ export const CollectPayment = (props) => {
       const resposne = await Digit.PaymentService.createReciept(tenantId, recieptRequest);
       queryClient.invalidateQueries();
       navigate(
-        IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}` : 
-        `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}`
+        IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
+          }?IsDisconnectionFlow=${IsDisconnectionFlow}` :
+          `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
+          }?IsDisconnectionFlow=${IsDisconnectionFlow}`
       );
     } catch (error) {
       setToast({ key: "error", action: error?.response?.data?.Errors?.map((e) => t(e.code)) })?.join(" , ");
@@ -154,8 +152,8 @@ export const CollectPayment = (props) => {
   }, [selectedPaymentMode]);
 
   let config = [
-        {
-      head:  t("COMMON_PAYMENT_HEAD"),
+    {
+      head: t("COMMON_PAYMENT_HEAD"),
       body: [
         {
           label: t("PAY_TOTAL_AMOUNT"),
@@ -262,7 +260,7 @@ export const CollectPayment = (props) => {
     let conf = config.concat(formConfigMap[formState?.paymentMode?.code] || []);
     conf = conf?.concat(cashConfig);
     return conf;
-};
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -270,8 +268,8 @@ export const CollectPayment = (props) => {
 
   return (
     <React.Fragment>
-       <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <Header styles={{ marginLeft: "15px" }}>{t("PAYMENT_COLLECT")}</Header>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Header styles={{ marginLeft: "15px" }}>{t("PAYMENT_COLLECT")}</Header>
       </div>
       <FormComposer
         cardStyle={{ paddingBottom: "100px" }}

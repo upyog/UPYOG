@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, RemoveableTag } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, RemoveableTag } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
@@ -17,11 +17,11 @@ const SelectULB = ({ userType, t, setValue, onSelect, config, data, formData, re
     }
     return userUlbs?.length === 1 ? userUlbs?.[0] : null
   }, [tenantId, ulbs])
-  
-    const userInfo = Digit.SessionStorage.get("citizen.userRequestObject")
-    const userUlbs = ulbs.filter(ulb => userInfo?.info?.roles?.some(role => role?.tenantId === ulb?.code)).sort(alphabeticalSortFunctionForTenantsBasedOnName)
-    
-    const dropDownData = Digit.ULBService.getUserUlbs("SUPERUSER").sort(alphabeticalSortFunctionForTenantsBasedOnName);
+
+  const userInfo = Digit.SessionStorage.get("citizen.userRequestObject")
+  const userUlbs = ulbs.filter(ulb => userInfo?.info?.roles?.some(role => role?.tenantId === ulb?.code)).sort(alphabeticalSortFunctionForTenantsBasedOnName)
+
+  const dropDownData = Digit.ULBService.getUserUlbs("SUPERUSER").sort(alphabeticalSortFunctionForTenantsBasedOnName);
   return (
     <React.Fragment>
       <LabelFieldPair
@@ -34,7 +34,7 @@ const SelectULB = ({ userType, t, setValue, onSelect, config, data, formData, re
             control={control}
             defaultValue={selectedTenat?.[0]}
             rules={{ required: true }}
-            render={({field}) => (
+            render={({ field }) => (
               <Dropdown
                 allowMultiselect={true}
                 optionKey={"i18nKey"}

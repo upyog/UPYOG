@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { PageBasedInput, Loader, RadioButtons, CardHeader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { PageBasedInput, Loader, RadioButtons, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const LanguageSelection = () => {

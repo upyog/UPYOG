@@ -1,4 +1,4 @@
-import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError, TextArea, MultiUploadWrapper } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError, TextArea, MultiUploadWrapper } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
@@ -67,7 +67,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
         <div className="field">
           <Controller
             defaultValue={formData?.name}
-            render={({field}) => <TextInput value={field.value} type="text" name="name" onChange={field.onChange} inputRef={field.ref} />}
+            render={({ field }) => <TextInput value={field.value} type="text" name="name" onChange={field.onChange} inputRef={field.ref} />}
             name="name"
             rules={{ required: true, maxLength: 66 }}
             control={control}

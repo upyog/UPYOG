@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EditPencilIcon, LogoutIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { EditPencilIcon, LogoutIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import TopBar from "./TopBar";
 import SideBar from "./SideBar";
 import LogoutDialog from "../Dialog/LogoutDialog";

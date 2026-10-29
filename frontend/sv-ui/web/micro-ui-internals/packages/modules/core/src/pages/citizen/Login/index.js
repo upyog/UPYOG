@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { AppContainer, BackButton, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 // Updated: Imported Route, Routes, useLocation from react-router-dom v6.
 // Updated: <Switch> replaced with <Routes>, component/render props replaced with element prop.
 
@@ -78,8 +78,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
-  // Updated: history.push() replaced with navigate() — react-router-dom v6.
-  // Updated: replace option passed as second argument object instead of separate call.
+    // Updated: history.push() replaced with navigate() — react-router-dom v6.
+    // Updated: replace option passed as second argument object instead of separate call.
 
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       navigate("/sv-ui/citizen/select-location", {
@@ -131,17 +131,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         // Updated: history.push() replaced with navigate() — react-router-dom v6.
         // Updated: state passed as second argument object — same as v5 but cleaner syntax.
 
-        navigate("otp", { 
-          replace: true, 
-          state: { from: getFromLocation(location.state, searchParams), role: location.state?.role } 
+        navigate("otp", {
+          replace: true,
+          state: { from: getFromLocation(location.state, searchParams), role: location.state?.role }
         });
         return;
       } else {
         setCanSubmitNo(true);
         if (!(location.state && location.state.role === ("FSM_DSO" || "WT_VENDOR"))) {
           // Updated: history.push() replaced with navigate() — react-router-dom v6.
-          navigate("/sv-ui/citizen/register/name", { 
-            state: { from: getFromLocation(location.state, searchParams), data: data } 
+          navigate("/sv-ui/citizen/register/name", {
+            state: { from: getFromLocation(location.state, searchParams), data: data }
           });
         }
       }
@@ -159,9 +159,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setCanSubmitNo(true);
         // Updated: history.push() replaced with navigate() — react-router-dom v6.
 
-        navigate("otp", { 
-          replace: true, 
-          state: { from: getFromLocation(location.state, searchParams) } 
+        navigate("otp", {
+          replace: true,
+          state: { from: getFromLocation(location.state, searchParams) }
         });
 
         return;
@@ -170,16 +170,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   };
   function selectCommencementDate(value) {
-    const appDate= new Date();
+    const appDate = new Date();
     // Updated: date-fns v3 — subYears and format named imports work same as v2.
-    const proposedDate= format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
+    const proposedDate = format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
 
-    if( convertDateToEpoch(proposedDate)  <= convertDateToEpoch(value)){
-      return true     
+    if (convertDateToEpoch(proposedDate) <= convertDateToEpoch(value)) {
+      return true
     }
     else {
-      return false;     
-    }    
+      return false;
+    }
   }
   const selectName = async (name) => {
     const data = {
@@ -188,8 +188,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       userType: getUserType(),
       ...name,
     };
-    if (selectCommencementDate(name.dob))
-    {
+    if (selectCommencementDate(name.dob)) {
       setError("Minimum age should be 18 years");
       setTimeout(() => {
         setError(false);
@@ -202,17 +201,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       if (res) {
         setCanSubmitName(false);
         // Updated: history.push() replaced with navigate() — react-router-dom v6.
-        navigate("otp", { 
-          replace: true, 
-          state: { from: getFromLocation(location.state, searchParams) } 
+        navigate("otp", {
+          replace: true,
+          state: { from: getFromLocation(location.state, searchParams) }
         });
 
       } else {
         setCanSubmitName(false);
       }
     }
-    
-  
+
+
   };
 
   const selectOtp = async () => {
@@ -222,7 +221,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const { mobileNumber, otp, name } = params;
       if (isUserRegistered) {
         const requestData = {
-          username: mobileNumber ? mobileNumber:sessionStorage.getItem("userName"),
+          username: mobileNumber ? mobileNumber : sessionStorage.getItem("userName"),
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
@@ -296,46 +295,46 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         {/* Updated: AppContainer moved outside <Routes> — custom components cannot be direct children of <Routes> in v6. */}
 
         <Routes>
-            <Route 
-              path="/" 
-              element={
-                <SelectMobileNumber
-                  onSelect={selectMobileNumber}
-                  config={stepItems[0]}
-                  mobileNumber={params.mobileNumber || ""}
-                  onMobileChange={handleMobileChange}
-                  canSubmit={canSubmitNo}
-                  showRegisterLink={isUserRegistered && !location.state?.role}
-                  t={t}
-                />
-              } 
-            />
+          <Route
+            path="/"
+            element={
+              <SelectMobileNumber
+                onSelect={selectMobileNumber}
+                config={stepItems[0]}
+                mobileNumber={params.mobileNumber || ""}
+                onMobileChange={handleMobileChange}
+                canSubmit={canSubmitNo}
+                showRegisterLink={isUserRegistered && !location.state?.role}
+                t={t}
+              />
+            }
+          />
           {/* Updated: component={SelectOtp} replaced with element={<SelectOtp />} — react-router-dom v6. */}
 
-            <Route 
-              path="otp" 
-              element={
-                <SelectOtp
-                  config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
-                  onOtpChange={handleOtpChange}
-                  onResend={resendOtp}
-                  onSelect={selectOtp}
-                  otp={params.otp}
-                  error={isOtpValid}
-                  canSubmit={canSubmitOtp}
-                  t={t}
-                />
-              } 
-            />
-          <Route 
-            path="name" 
+          <Route
+            path="otp"
+            element={
+              <SelectOtp
+                config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+                onOtpChange={handleOtpChange}
+                onResend={resendOtp}
+                onSelect={selectOtp}
+                otp={params.otp}
+                error={isOtpValid}
+                canSubmit={canSubmitOtp}
+                t={t}
+              />
+            }
+          />
+          <Route
+            path="name"
             element={
               <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
-            } 
+            }
           />
         </Routes>
-            {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
-        </AppContainer>
+        {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
+      </AppContainer>
     </div>
   );
 };

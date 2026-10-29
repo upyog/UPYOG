@@ -5,7 +5,7 @@ This package contains shared UI components used across all SV-UI modules — for
 ## Install
 
 ```bash
-npm install --save @nudmcdgnpm/upyog-ui-react-components-lts
+npm install --save @nudmcdgnpm/digit-ui-react-components
 ```
 
 ## Add as a dependency
@@ -13,7 +13,7 @@ npm install --save @nudmcdgnpm/upyog-ui-react-components-lts
 In your `frontend/sv-ui/web/package.json`, add:
 
 ```json
-"@nudmcdgnpm/upyog-ui-react-components-lts": "^1.0.0"
+"@nudmcdgnpm/digit-ui-react-components": "^1.0.0"
 ```
 
 ## Requirements

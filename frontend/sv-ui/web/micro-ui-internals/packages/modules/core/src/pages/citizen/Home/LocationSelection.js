@@ -1,4 +1,4 @@
-import { BackButton, CardHeader, CardLabelError, Loader, PageBasedInput, SearchOnRadioButtons, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { BackButton, CardHeader, CardLabelError, Loader, PageBasedInput, SearchOnRadioButtons, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";

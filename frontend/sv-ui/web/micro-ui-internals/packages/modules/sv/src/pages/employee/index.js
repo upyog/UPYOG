@@ -1,4 +1,4 @@
-import { AppContainer, BackButton, PrivateRoute, BreadCrumb } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { AppContainer, BackButton, PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import SearchApp from "./SearchApp";
  * Contains breadcrumbs for each page
  */
 const EmployeeApp = () => {
- 
+
   const { t } = useTranslation();
   const location = useLocation();
   const isMobile = false
@@ -26,26 +26,26 @@ const EmployeeApp = () => {
     },
   };
 
- 
+
   const SVEmpCreate = Digit?.ComponentRegistryService?.getComponent("SVEmpCreate");
   const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
   const SVApplicationDetails = Digit?.ComponentRegistryService?.getComponent("SVApplicationDetails")
-  
+
   return (
-    <span className={"sv-citizen"}style={{width:"100%"}}>
+    <span className={"sv-citizen"} style={{ width: "100%" }}>
       <AppContainer>
-        <BackButton style={{marginTop:"15px"}}>Back</BackButton>
+        <BackButton style={{ marginTop: "15px" }}>Back</BackButton>
         <Routes>
-          <Route 
-            path="apply/*" 
+          <Route
+            path="apply/*"
             element={
               <PrivateRoute>
                 <SVEmpCreate />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="inbox" 
+          <Route
+            path="inbox"
             element={
               <PrivateRoute>
                 <Inbox
@@ -57,33 +57,33 @@ const EmployeeApp = () => {
                   isInbox={true}
                 />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="application-details/:id" 
+          <Route
+            path="application-details/:id"
             element={
               <PrivateRoute>
                 <SVApplicationDetails />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="applicationsearch/application-details/:id" 
+          <Route
+            path="applicationsearch/application-details/:id"
             element={
               <PrivateRoute>
                 <SVApplicationDetails />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="my-applications" 
+          <Route
+            path="my-applications"
             element={
               <PrivateRoute>
                 <SearchApp />
               </PrivateRoute>
-            } 
+            }
           />
-        <Route path="StreetVendingReport/*" element={<PrivateRoute><EnhancedReport parentRoute="/sv-ui/employee/sv" moduleName="sv-report" reportName="StreetVendingReport" /></PrivateRoute>} />
+          <Route path="StreetVendingReport/*" element={<PrivateRoute><EnhancedReport parentRoute="/sv-ui/employee/sv" moduleName="sv-report" reportName="StreetVendingReport" /></PrivateRoute>} />
         </Routes>
       </AppContainer>
     </span>

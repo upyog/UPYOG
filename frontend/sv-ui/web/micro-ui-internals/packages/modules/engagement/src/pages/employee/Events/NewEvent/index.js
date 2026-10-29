@@ -1,4 +1,4 @@
-import { FormComposer, Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { FormComposer, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { config } from "../../../../config/NewEventConfig";

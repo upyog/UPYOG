@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
 import { Link } from "react-router-dom";

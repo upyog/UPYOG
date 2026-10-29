@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
 import { areEqual } from "../../utils";
@@ -36,7 +36,8 @@ const ApplicationCard = ({
 
     const details = responseData?.find((item) => (areEqual(item?.user?.name, data["Posted By"]) && areEqual(item.name, data["Title"])));
     if (details) {
-      navigate(`/sv-ui/employee/engagement/messages/inbox/details/${details?.id  }`,)}
+      navigate(`/sv-ui/employee/engagement/messages/inbox/details/${details?.id}`,)
+    }
   }
 
   let result;
@@ -54,7 +55,7 @@ const ApplicationCard = ({
     );
   }
   else if (data && data?.length > 0) {
-    result = <DetailsCard data={data} handleSelect={() => { }} handleDetailCardClick={redirectToDetailsPage}/>
+    result = <DetailsCard data={data} handleSelect={() => { }} handleDetailCardClick={redirectToDetailsPage} />
   }
   return (
     <React.Fragment>
