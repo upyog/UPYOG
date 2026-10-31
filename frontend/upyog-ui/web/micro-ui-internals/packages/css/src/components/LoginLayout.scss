@@ -1338,6 +1338,168 @@
 		.login-mobile-step {
 			width: 100% !important;
 		}
+
+		&:has(.popup-wrap) {
+			backdrop-filter: none !important;
+			-webkit-backdrop-filter: none !important;
+			transform: none !important;
+			filter: none !important;
+			z-index: 10001 !important;
+		}
+	}
+}
+
+.login-app-container:has(.popup-wrap) {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+	transform: none !important;
+	filter: none !important;
+	z-index: 10001 !important;
+}
+
+.login-mobile-step {
+	.popup-wrap {
+		position: fixed !important;
+		inset: 0 !important;
+		top: 0 !important;
+		left: 0 !important;
+		right: 0 !important;
+		bottom: 0 !important;
+		width: 100vw !important;
+		height: 100vh !important;
+		z-index: 99999 !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		background: rgba(15, 23, 42, 0.65) !important;
+		backdrop-filter: blur(6px) !important;
+		-webkit-backdrop-filter: blur(6px) !important;
+		padding: 20px !important;
+		box-sizing: border-box !important;
+
+		.popup-module {
+			width: 100% !important;
+			max-width: 460px !important;
+			background: #ffffff !important;
+			border-radius: 16px !important;
+			border: 1px solid #e2e8f0 !important;
+			box-shadow: 0 24px 48px rgba(15, 23, 42, 0.24) !important;
+			overflow: hidden !important;
+			margin: auto !important;
+
+			.header-wrap {
+				display: flex !important;
+				align-items: center !important;
+				justify-content: space-between !important;
+				padding: 18px 22px !important;
+				border-bottom: 1px solid #f1f5f9 !important;
+				background: #ffffff !important;
+				margin: 0 !important;
+
+				.heading-m {
+					font-size: 18px !important;
+					font-weight: 700 !important;
+					color: #0f172a !important;
+					margin: 0 !important;
+				}
+
+				.icon-bg-secondary {
+					width: 32px !important;
+					height: 32px !important;
+					border-radius: 50% !important;
+					background: #f1f5f9 !important;
+					display: flex !important;
+					align-items: center !important;
+					justify-content: center !important;
+					cursor: pointer !important;
+
+					svg {
+						width: 16px !important;
+						height: 16px !important;
+						fill: #475569 !important;
+					}
+
+					&:hover {
+						background: #e2e8f0 !important;
+					}
+				}
+			}
+
+			.popup-module-main {
+				padding: 20px 22px 22px !important;
+				background: #ffffff !important;
+
+				.card {
+					background: transparent !important;
+					box-shadow: none !important;
+					border: none !important;
+					padding: 0 !important;
+					margin: 0 0 8px 0 !important;
+
+					p {
+						font-size: 14.5px !important;
+						line-height: 1.6 !important;
+						color: #334155 !important;
+						margin: 0 !important;
+						text-align: left !important;
+					}
+				}
+
+				.popup-module-action-bar {
+					display: flex !important;
+					align-items: center !important;
+					justify-content: flex-end !important;
+					gap: 12px !important;
+					padding-top: 16px !important;
+					margin-top: 12px !important;
+					border-top: 1px solid #f1f5f9 !important;
+
+					button.selector-button-border,
+					button.selector-button-primary {
+						height: 40px !important;
+						min-height: 40px !important;
+						padding: 0 20px !important;
+						border-radius: 8px !important;
+						display: inline-flex !important;
+						align-items: center !important;
+						justify-content: center !important;
+						cursor: pointer !important;
+						margin: 0 !important;
+
+						h2 {
+							font-size: 14px !important;
+							font-weight: 600 !important;
+							margin: 0 !important;
+							line-height: 1 !important;
+						}
+					}
+
+					button.selector-button-border {
+						background: #ffffff !important;
+						border: 1.5px solid #cbd5e1 !important;
+
+						h2 {
+							color: #475569 !important;
+						}
+
+						&:hover {
+							background: #f8fafc !important;
+							border-color: #94a3b8 !important;
+						}
+					}
+
+					button.selector-button-primary {
+						background: var(--app-btn-primary-gradient, linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)) !important;
+						border: none !important;
+						box-shadow: 0 4px 12px rgba(106, 74, 145, 0.25) !important;
+
+						h2 {
+							color: #ffffff !important;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

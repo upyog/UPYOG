@@ -19,7 +19,9 @@ const SelectRating = ({ parentRoute }) => {
   function log(data) {
     if (complaintDetails && data.rating > 0 ) {
       complaintDetails.service.rating = data.rating;
-      complaintDetails.service.additionalDetail = data.CS_FEEDBACK_WHAT_WAS_GOOD.join(",");
+      complaintDetails.service.additionalDetail = Array.isArray(data.CS_FEEDBACK_WHAT_WAS_GOOD)
+        ? data.CS_FEEDBACK_WHAT_WAS_GOOD.join(",")
+        : data.CS_FEEDBACK_WHAT_WAS_GOOD || "";
       complaintDetails.workflow = {
         action: "RATE",
         comments: data.comments,

@@ -84,30 +84,37 @@ const Search = ({ path }) => {
       config,
     });
 
+    const auditRecords = data?.ElasticSearchData?.filter((e) => !e.total) || [];
+    const totalCount = data?.ElasticSearchData?.filter((e) => e.total)?.[0]?.total;
+
     return (
-      <React.Fragment>
+      <div className="citizen-audit-page">
         <AuditSearchApplication
           t={t}
           tenantId={tenantId}
           onSubmit={onSubmit}
           data={
             !isLoading
-              ? data?.ElasticSearchData?.filter((e)=> !e.total)?.length > 0
-                ? data?.ElasticSearchData?.filter((e)=> !e.total)
+              ? auditRecords.length > 0
+                ? auditRecords
                 : { display: "ES_COMMON_NO_DATA" }
               : ""
           }
-          count={data?.ElasticSearchData?.filter((e)=> e.total)?.[0]?.total}
+          count={totalCount}
           isLoading={isLoading}
         />
-        {isMobile && data?.ElasticSearchData?.filter((e)=> !e.total)?.length && data?.ElasticSearchData?.filter((e)=> !e.total)?.length !== 0 && (
-          <div>
+        {isMobile && auditRecords.length > 0 && (
+          <div className="citizen-audit-load-more-wrap">
             <p className="core-search-app-bottom-spacing">
-              <span className="link">{<Link to={`/upyog-ui/citizen/Audit/${previousoffset}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">
+                <Link className="citizen-audit-load-more-btn" to={`/upyog-ui/citizen/Audit/${previousoffset}`}>
+                  {t("PT_LOAD_MORE_MSG")}
+                </Link>
+              </span>
             </p>
           </div>
         )}
-        </React.Fragment>
-      );
-    };
-    export default Search;
+      </div>
+    );
+  };
+  export default Search;

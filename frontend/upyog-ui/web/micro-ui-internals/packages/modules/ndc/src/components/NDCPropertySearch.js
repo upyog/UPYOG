@@ -767,7 +767,10 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             ================================================ */}
 
             {getPayDuesButton && (
-              <Link className="ndc-property-pay-link" to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}>
+              <Link
+                className="ndc-property-pay-link"
+                to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}${tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : ""}`}
+              >
                 <button
                   type="button"
                   className="ndc-property-action-button ndc-secondary-button"

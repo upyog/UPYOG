@@ -21,6 +21,9 @@ const RatingCard = ({ config, onSelect, t }) => {
 
   const onSubmit = (data) => {
     data.rating = rating;
+    if (comments !== undefined && !data.comments) {
+      data.comments = comments;
+    }
     onSelect(data);
   };
 
@@ -45,7 +48,20 @@ const RatingCard = ({ config, onSelect, t }) => {
           <CardLabel>{t(input.label)}</CardLabel>
           {input?.error}
           {input.checkLabels &&
-            input.checkLabels.map((label, index) => <CheckBox className="rc-rating-card-bottom-spacing" key={index} name={input.label} label={t(label)} value={label} {...register(input.label)} />)}
+            input.checkLabels.map((label, idx) => {
+              const registered = register(input.label);
+              return (
+                <CheckBox
+                  className="rc-rating-card-bottom-spacing"
+                  key={idx}
+                  name={input.label}
+                  label={t(label)}
+                  value={label}
+                  {...registered}
+                  inputRef={registered.ref}
+                />
+              );
+            })}
         </React.Fragment>
       );
     }
@@ -60,10 +76,20 @@ const RatingCard = ({ config, onSelect, t }) => {
     }
 
     if (input.type === "textarea") {
+      const registered = register(input.name);
       return (
         <React.Fragment key={index}>
           <CardLabel>{t(input.label)}</CardLabel>
-          <TextArea name={input.name} value={comments} onChange={(e) => setComments(e.target.value)} {...register(input.name)}></TextArea>
+          <TextArea
+            name={input.name}
+            value={comments}
+            {...registered}
+            inputRef={registered.ref}
+            onChange={(e) => {
+              setComments(e.target.value);
+              registered?.onChange?.(e);
+            }}
+          ></TextArea>
         </React.Fragment>
       );
     }

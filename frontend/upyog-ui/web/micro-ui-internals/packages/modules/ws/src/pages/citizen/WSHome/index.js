@@ -185,21 +185,6 @@ const WSCitizenHomeScreen = () => {
       ),
     },
     {
-      id: "how-it-works",
-      title: getTranslated("WS_HOW_IT_WORKS", "How Water Services Work"),
-      desc: "Understand water connection procedures, required documents, tariff slabs, and road cutting fees.",
-      link: "/upyog-ui/citizen/ws-how-it-works",
-      tag: "Guide",
-      tagType: "indigo",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2" />
-          <polyline points="2 17 12 22 22 17" />
-          <polyline points="2 12 12 17 22 12" />
-        </svg>
-      ),
-    },
-    {
       id: "faqs",
       title: getTranslated("WS_FAQ_S", "Frequently Asked Questions"),
       desc: "Quick answers to common queries regarding connection sanctions, billing cycles, meter checks, and transfers.",

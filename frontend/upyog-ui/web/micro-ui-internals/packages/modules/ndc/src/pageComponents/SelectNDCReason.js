@@ -164,24 +164,34 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
     return <Loader />;
   }
 
+  const isCitizen = window.location.href.includes("/citizen");
+
   return (
-    <div className="ndc-reason-container" style={styles.container}>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
+    <div className="ndc-reason-container" style={isCitizen ? undefined : styles.container}>
+      {isCitizen ? (
+        <div className="citizen-ndc-section-banner">
+          <div className="citizen-ndc-section-banner__icon">1</div>
+          <div className="citizen-ndc-section-banner__text">
+            <h3>{t("NDC_STEP1_REASON_AND_PROPERTY") !== "NDC_STEP1_REASON_AND_PROPERTY" ? t("NDC_STEP1_REASON_AND_PROPERTY") : "Reason & Property Verification"}</h3>
+            <p>{t("NDC_STEP1_REASON_DESC") !== "NDC_STEP1_REASON_DESC" ? t("NDC_STEP1_REASON_DESC") : "Select your purpose for requesting the No Due Certificate and search your Property ID."}</p>
+          </div>
+        </div>
+      ) : null}
 
       {/* =====================================================
           REASON
       ===================================================== */}
 
-      <div className="ndc-reason-field" style={styles.field}>
-        <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={styles.label}>
+      <div className="ndc-reason-field" style={isCitizen ? undefined : styles.field}>
+        <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={isCitizen ? undefined : styles.label}>
           {t("NDC_NEW_NDC_APPLICATION_NDC_REASON")}
 
-          <span className="ndc-required" style={styles.required}>
+          <span className="ndc-required" style={isCitizen ? undefined : styles.required}>
             *
           </span>
         </CardLabel>
 
-        <div className="ndc-reason-control" style={styles.control}>
+        <div className="ndc-reason-control" style={isCitizen ? undefined : styles.control}>
           <Controller
             name="NDCReason"
             rules={{
@@ -192,7 +202,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
             render={({ field }) => (
               <Dropdown
                 className="ndc-reason-dropdown"
-                style={styles.dropdown}
+                style={isCitizen ? undefined : styles.dropdown}
                 selected={field.value}
                 option={ndcReasonOptions}
                 select={(e) => {
@@ -208,7 +218,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
           />
         </div>
 
-        <CardLabelError className="ndc-card-label-error ndc-error-message" style={styles.errorMessage}>
+        <CardLabelError className="ndc-card-label-error ndc-error-message" style={isCitizen ? undefined : styles.errorMessage}>
           {localFormState.touched?.NDCReason ? localFormState.errors?.NDCReason?.message : ""}
         </CardLabelError>
       </div>
@@ -218,12 +228,12 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
       ===================================================== */}
 
       {watch("NDCReason")?.code === "OTHERS" && (
-        <div className="ndc-reason-field" style={styles.field}>
-          <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={styles.label}>
+        <div className="ndc-reason-field" style={isCitizen ? undefined : styles.field}>
+          <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={isCitizen ? undefined : styles.label}>
             {t("Reason")}
           </CardLabel>
 
-          <div className="ndc-reason-control" style={styles.control}>
+          <div className="ndc-reason-control" style={isCitizen ? undefined : styles.control}>
             <Controller
               control={control}
               name="reason"
@@ -231,7 +241,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
               render={({ field }) => (
                 <TextInput
                   className="ndc-reason-input"
-                  style={styles.input}
+                  style={isCitizen ? undefined : styles.input}
                   value={field.value || ""}
                   onChange={(e) => {
                     const updatedReason = {

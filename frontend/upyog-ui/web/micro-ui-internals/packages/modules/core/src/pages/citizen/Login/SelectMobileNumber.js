@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, FormStep, CitizenConsentForm, Loader, CheckBox,Modal,Card ,CardHeader} from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, FormStep, CitizenConsentForm, Loader, CheckBox, Modal, Card, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
   const [isCheckBox, setIsCheckBox] = useState(false);
   const [isCCFEnabled, setisCCFEnabled] = useState(false);
   const [mdmsConfig, setMdmsConfig] = useState("");
-  const [error, setError]=useState("");
+  const [error, setError] = useState("");
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "CitizenConsentForm" }]);
   const { data: cities } = Digit.Hooks.useTenants();
   const { data: { languages, stateInfo } = {} } = Digit.Hooks.useStore.getInitData();
@@ -19,7 +19,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
 
   const checkDisbaled = () => !(mobileNumber.length === 10 && canSubmit)
 
-  useEffect(()=> {
+  useEffect(() => {
     if (data?.["common-masters"]?.CitizenConsentForm?.[0]?.isCitizenConsentFormEnabled) {
       setisCCFEnabled(data?.["common-masters"]?.CitizenConsentForm?.[0])
     }
@@ -27,42 +27,42 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
 
   const onLinkClick = (e) => {
     setMdmsConfig(e.target.id)
-}
+  }
 
   const checkLabels = () => {
     return (
-    <span>
-      {isCCFEnabled?.checkBoxLabels?.map((data, index) => {
-        return <span key={data?.linkId || index}>
-          {/* {index == 0 && "CCF"} */}
-          {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} className="login-link-highlight">{t(`${data?.link}_`)}</span>}
-          {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
-          {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
-        </span>
-      })}
-    </span>
+      <span>
+        {isCCFEnabled?.checkBoxLabels?.map((data, index) => {
+          return <span key={data?.linkId || index}>
+            {/* {index == 0 && "CCF"} */}
+            {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
+            {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} className="login-link-highlight">{t(`${data?.link}_`)}</span>}
+            {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
+            {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
+          </span>
+        })}
+      </span>
     );
   };
-  const validateMobileNumber=()=>{
-      if(/^\d{0,10}$/.test(mobileNumber)){
-        setError("")
-      }
+  const validateMobileNumber = () => {
+    if (/^\d{0,10}$/.test(mobileNumber)) {
+      setError("")
+    }
   };
-  const handleMobileChange=(e)=>{
-      const value=e.target.value;
-      if(/^\d{0,10}$/.test(value)|| value===""){
-        onMobileChange(e);
-        validateMobileNumber();
-      }
-      else{
-        setError(t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID"));
-      }
+  const handleMobileChange = (e) => {
+    const value = e.target.value;
+    if (/^\d{0,10}$/.test(value) || value === "") {
+      onMobileChange(e);
+      validateMobileNumber();
+    }
+    else {
+      setError(t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID"));
+    }
   };
   if (isLoading) return <Loader />
   const register = async (e) => {
+    e?.preventDefault?.();
     const data = await Digit.DigiLockerService.register({ module: "SSO" });
-    e.preventDefault()
     const redirectUrl = data.redirectURL
     console.log("data", data)
     localStorage.setItem("code_verfier_register", data?.dlReqRef)
@@ -85,15 +85,15 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
       </div>
     );
   };
-  const set=(e)=>{
-    setShowToast(true)   
+  const set = (e) => {
+    setShowToast(true)
     register()
   }
-  const closeModal =() =>{
+  const closeModal = () => {
     setShowToast(false)
   }
-  const setModal=(e)=>{
-    setShowToast(false)   
+  const setModal = (e) => {
+    setShowToast(false)
     register(e)
   }
 
@@ -110,15 +110,15 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
   return (
     <div className="login-mobile-step">
       <div className="login-form-header">
-        <h2>{"Login to UPYOG"}</h2>
+        <h2>{t("Login to UPYOG")}</h2>
         <p>
-          {"All the communications regarding the application will be sent to this mobile number."}
+          {t("All the communications regarding the application will be sent to this mobile number.")}
         </p>
       </div>
 
       <div className="login-form-body">
         <div className="login-field-group">
-          <label className="login-label">{"Select Language"}</label>
+          <label className="login-label">{t("Select Language")}</label>
           <div className="login-language">
             <ul className="login-language-list">
               {languages?.map((language) => (
@@ -127,21 +127,21 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                   className={selectedLanguage === language.value ? "is-selected" : ""}
                   onClick={() => handleLanguageSelection(language)}
                 >
-                 {selectedLanguage === language.value ? (
-                    <img src={"/upyog-ui/images/check.svg"} alt="check icon"/>
-                 ) : null}&nbsp;{language.label}
+                  {selectedLanguage === language.value ? (
+                    <img src={"/upyog-ui/images/check.svg"} alt="check icon" />
+                  ) : null}&nbsp;{language.label}
                 </li>
               ))}
-                <li><img src={"/upyog-ui/images/search.svg"} alt="search icon"/></li>
+              <li><img src={"/upyog-ui/images/search.svg"} alt="search icon" /></li>
             </ul>
           </div>
         </div>
 
         <div className="login-field-group">
-            <label className="login-label">{"Select City"}</label>
+          <label className="login-label">{t("Select City")}</label>
           <div className="city-selection">
             <span className="login-input-icon" aria-hidden="true">
-                <img src={"/upyog-ui/images/search.svg"} alt="search icon"/>
+              <img src={"/upyog-ui/images/search.svg"} alt="search icon" />
             </span>
             <Dropdown
               className="city-selection-dropdown"
@@ -150,13 +150,13 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
               option={cities}
               optionKey="i18nKey"
               t={t}
-              placeholder={"Search your city"}
+              placeholder={t("Search your city")}
             />
           </div>
         </div>
 
         <div className="login-field-group">
-          <label className="login-label">{"Mobile Number"}</label>
+          <label className="login-label">{t("Mobile Number")}</label>
           <div className="login-input-wrap">
             <span className="login-prefix">+91</span>
             <input
@@ -165,7 +165,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
               pattern="[0-9]*"
               maxLength={10}
               value={mobileNumber || ""}
-              placeholder={"Enter 10 digit mobile number"}
+              placeholder={t("Enter 10 digit mobile number")}
               onChange={handleMobileChange}
             />
           </div>
@@ -173,9 +173,9 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           <p className="login-helper">
 
             <span className="login-helper-icon" aria-hidden="true">
-              <img src={"/upyog-ui/images/secure.svg"} alt="secure"/>
+              <img src={"/upyog-ui/images/secure.svg"} alt="secure" />
             </span>
-            {"We will send an OTP for verification"}
+            {t("We will send an OTP for verification")}
           </p>
           {error && <p className="login-error">{error}</p>}
         </div>
@@ -191,7 +191,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           {t("CORE_COMMON_CONTINUE")}
         </button>
 
-        <div className="login-divider">OR</div>
+        <div className="login-divider">{t("OR")}</div>
 
         <button
           className="login-secondary-button"
@@ -207,23 +207,23 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
 
       <p className="login-security">
         <span className="login-security-icon" aria-hidden="true">
-          <img src={"/upyog-ui/images/secure.svg"} alt="secure"/>
+          <img src={"/upyog-ui/images/secure.svg"} alt="secure" />
         </span>
-        {"Your information is safe and secure with us."}
+        {t("Your information is safe and secure with us.")}
       </p>
 
       {showToast && <Modal
-        headerBarMain={<Heading label={"Consent"} />}
+        headerBarMain={<Heading label={t("Consent")} />}
         headerBarEnd={<CloseBtn onClick={closeModal} />}
-        actionCancelLabel={"Cancel"}
+        actionCancelLabel={t("Cancel")}
         actionCancelOnSubmit={closeModal}
-        actionSaveLabel={"Ok"}
-        actionSaveOnSubmit={(e)=>setModal(e)}
+        actionSaveLabel={t("Ok")}
+        actionSaveOnSubmit={(e) => setModal(e)}
         formId="modal-action"
       >
         <div className="w-full">
           <Card>
-            <p>{"By selecting this option, I am providing my consent to associate my Upyog account with my DigiLocker ID"}</p>
+            <p>{t("By selecting this option, I am providing my consent to associate my Upyog account with my DigiLocker ID")}</p>
           </Card>
         </div>
       </Modal>}

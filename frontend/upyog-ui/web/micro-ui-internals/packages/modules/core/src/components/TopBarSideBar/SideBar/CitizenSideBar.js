@@ -177,18 +177,25 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       })
       linkData.FSM = FSM;
     }
-    Object.keys(linkData || {})
-      ?.sort((x, y) => y.localeCompare(x))
-      ?.map((key) => {
-        if (linkData[key][0]?.sidebar === "digit-ui-links" || linkData[key][0]?.sidebar === "upyog-ui-links")
-          menuItems.splice(1, 0, {
-            type: linkData[key][0]?.sidebarURL?.includes("upyog-ui") || linkData[key][0]?.sidebarURL?.includes("digit-ui") ? "link" : "external-link",
-            text: t(`ACTION_TEST_${Digit.Utils.locale.getTransformedLocale(key)}`),
-            links: linkData[key],
-            icon: linkData[key][0]?.leftIcon,
-            link: linkData[key][0]?.sidebarURL,
-          });
-      });
+    const dynamicModuleItems = [];
+    Object.keys(linkData || {}).forEach((key) => {
+      if (linkData[key]?.[0]?.sidebar === "digit-ui-links" || linkData[key]?.[0]?.sidebar === "upyog-ui-links") {
+        dynamicModuleItems.push({
+          type: linkData[key][0]?.sidebarURL?.includes("upyog-ui") || linkData[key][0]?.sidebarURL?.includes("digit-ui") ? "link" : "external-link",
+          text: t(`ACTION_TEST_${Digit.Utils.locale.getTransformedLocale(key)}`),
+          links: linkData[key],
+          icon: linkData[key][0]?.leftIcon,
+          link: linkData[key][0]?.sidebarURL,
+          moduleKey: key,
+        });
+      }
+    });
+    dynamicModuleItems.sort((a, b) =>
+      String(a?.text || "").localeCompare(String(b?.text || ""), undefined, { sensitivity: "base" })
+    );
+    if (dynamicModuleItems.length > 0) {
+      menuItems.splice(1, 0, ...dynamicModuleItems);
+    }
   } else {
     data?.actions
       .filter((e) => e.url === "url" && e.displayName !== "Home")
