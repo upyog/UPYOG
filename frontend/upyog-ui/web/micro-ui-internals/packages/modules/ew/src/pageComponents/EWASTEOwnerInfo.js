@@ -72,7 +72,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   const setOwnerEmail = e => {
     setEmail(e.target.value)
     validateEmail(e.target.value)
- };
+  };
 
   /**
    * Processes form submission by combining state values
@@ -85,7 +85,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     }
     let owner = formData.ownerKey && formData.ownerKey[index];
     let ownerStep = { ...owner, applicantName, mobileNumber, altMobileNumber, emailId };
-    
+
     if (userType === "citizen") {
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
@@ -115,7 +115,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         isDisabled={!applicantName || !mobileNumber || !emailId}
       >
         <div>
-          <CardLabel>{`${t("EWASTE_APPLICANT_NAME")}`}</CardLabel>
+          <CardLabel>{`${t("EWASTE_APPLICANT_NAME")}`} *</CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -149,7 +149,7 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
           />
 
-          <CardLabel>{`${t("EWASTE_EMAIL_ID")}`}</CardLabel>
+          <CardLabel>{`${t("EWASTE_EMAIL_ID")}`} *</CardLabel>
           <TextInput
             t={t}
             type={"email"}

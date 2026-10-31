@@ -220,9 +220,7 @@ function SelectDocument({ t, document: doc, setDocuments, setError, documents, s
       </div>
 
       {/* Upload */}
-      <div className="ndc-documents-page"
-        
-      >
+      <div className="ndc-documents-page ndc-document-upload-wrapper">
         <UploadFile
           id={`ndc-doc-${doc?.code}`}
           onUpload={selectfile}
@@ -231,7 +229,13 @@ function SelectDocument({ t, document: doc, setDocuments, setError, documents, s
           }}
           message={uploadedFile ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
           textStyles={{
-            width: "100%",
+            width: "auto",
+            minWidth: 0,
+            maxWidth: "none",
+            margin: 0,
+            padding: 0,
+            lineHeight: "1.2",
+            whiteSpace: "nowrap",
           }}
           accept="image/*,.pdf"
         />
