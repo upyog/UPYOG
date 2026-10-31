@@ -242,7 +242,7 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
         ================================================== */}
 
         <div className="ndc-summary-section">
-          {renderSectionHeader(t("Documents"), () => {})}
+          {renderSectionHeader(t("Documents"), handleEdit)}
 
           {docs?.length > 0 ? (
             <div className="ndc-document-list">
@@ -261,13 +261,20 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
             DECLARATION
         ================================================== */}
 
-        <CheckBox label={t("NDC_FINAL_DECLARATION_MESSAGE")} styles={{ height: "auto" }} />
+        <div className="citizen-ndc-declaration-wrap">
+          <CheckBox label={t("NDC_FINAL_DECLARATION_MESSAGE")} styles={{ height: "auto" }} />
+        </div>
 
         {/* =================================================
             SUBMIT BUTTON
         ================================================== */}
 
         <div className="ndc-summary-actions">
+          {typeof onGoBack === "function" && (
+            <button type="button" className="citizen-ndc-back-action-btn" onClick={handleEdit}>
+              {t("CS_COMMON_BACK") !== "CS_COMMON_BACK" ? t("CS_COMMON_BACK") : "Back"}
+            </button>
+          )}
           <SubmitBar label={t("Submit")} onSubmit={handleSubmit} />
         </div>
       </div>

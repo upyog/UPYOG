@@ -31,7 +31,14 @@ const ErrorComponent = (props) => {
     if (props.goToHome && typeof props.goToHome === 'function') {
       props.goToHome();
     } else {
-      navigate("/upyog-ui/employee");
+      const url = window.location.href;
+      if (url.includes("citizen")) {
+        navigate("/upyog-ui/citizen");
+      } else if (url.includes("employee")) {
+        navigate("/upyog-ui/employee");
+      } else {
+        navigate("/upyog-ui/employee");
+      }
     }
   };
 

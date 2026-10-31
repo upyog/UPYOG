@@ -49,10 +49,17 @@ export const DueRenewalsModal = ({ isOpen, onClose, bills = [], tenantId, naviga
 
   const handlePay = (bill) => {
     onClose();
+    const resolvedTenant = bill?.tenantId || tenantId || Digit?.ULBService?.getCitizenCurrentTenant(true);
     if (bill?.redirectUrl) {
-      navigate(bill.redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
+      const baseUrl = bill.redirectUrl.replace("/digit-ui/", "/upyog-ui/");
+      if (!resolvedTenant || /[?&]tenantId=/.test(baseUrl)) {
+        navigate(baseUrl);
+      } else {
+        const separator = baseUrl.includes("?") ? "&" : "?";
+        navigate(`${baseUrl}${separator}tenantId=${encodeURIComponent(resolvedTenant)}`);
+      }
     } else if (bill?.consumerCode && bill?.businessService) {
-      navigate(`/upyog-ui/citizen/payment/pay?consumerCode=${bill.consumerCode}&tenantId=${bill.tenantId || tenantId}&businessService=${bill.businessService}`);
+      navigate(`/upyog-ui/citizen/payment/pay?consumerCode=${bill.consumerCode}&tenantId=${resolvedTenant}&businessService=${bill.businessService}`);
     }
   };
 

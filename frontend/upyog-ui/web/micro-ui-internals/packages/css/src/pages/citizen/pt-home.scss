@@ -77,6 +77,10 @@
             height: 14px;
           }
 
+          p {
+            color: #FFFFFF !important;
+          }
+
           &:hover {
             background: rgba(15, 23, 42, 0.7);
             transform: translateX(-2px);
@@ -174,6 +178,7 @@
         &.icon--properties {
           background: #EEF2FF;
           color: #4F46E5;
+
           svg {
             width: 19px;
             height: 19px;
@@ -183,6 +188,7 @@
         &.icon--bills {
           background: #FFFBEB;
           color: #D97706;
+
           svg {
             width: 19px;
             height: 19px;
@@ -192,6 +198,7 @@
         &.icon--applications {
           background: #ECFDF5;
           color: #059669;
+
           svg {
             width: 19px;
             height: 19px;
@@ -201,6 +208,7 @@
         &.icon--receipts {
           background: #F5F3FF;
           color: #7C3AED;
+
           svg {
             width: 19px;
             height: 19px;

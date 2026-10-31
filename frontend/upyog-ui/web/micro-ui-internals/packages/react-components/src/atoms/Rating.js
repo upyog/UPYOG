@@ -7,7 +7,7 @@ const Rating = (props) => {
   var stars = [];
   const star = useRef(null);
 
- /* const calculatingPercentage = (percentage) => {
+  const calculatingPercentage = (percentage) => {
     if (percentage >= 85 && percentage < 90) {
       return percentage - 8
     } else if (percentage >= 90 && percentage < 95) {
@@ -17,12 +17,12 @@ const Rating = (props) => {
     } else {
       return percentage
     }
-  } */
+  }
   for (var i = 1; i <= props.maxRating; i++) {
     if (i - props.currentRating <= 0) {
       const index = i;
       // stars.push(<img key={i} src={starfilled} className="rating-star" alt="star filled" ref={star} onClick={(e,ref)=>props.onFeedback(e,ref)}/>)
-      stars.push(<StarFilled key={i} id={`${props.id}gradient${i}`} className="rating-star" styles={props.starStyles} onClick={(e) => props.onFeedback(e, star, index)} percentage={Math.round(((props.currentRating - parseInt(props.currentRating)) * 100))} />)
+      stars.push(<StarFilled key={i} id={`${props.id}gradient${i}`} className="rating-star" styles={props.starStyles} onClick={(e) => props.onFeedback(e, star, index)} percentage={100} />)
     } else if (i - props.currentRating > 0 && i - props.currentRating < 1) {
       const index = i;
       stars.push(<StarFilled key={i} id={`${props.id}gradient${i}`} className="rating-star" styles={props.starStyles} onClick={(e) => props.onFeedback(e, star, index)} percentage={calculatingPercentage(Math.round(((props.currentRating - parseInt(props.currentRating)) * 100)))} />)
