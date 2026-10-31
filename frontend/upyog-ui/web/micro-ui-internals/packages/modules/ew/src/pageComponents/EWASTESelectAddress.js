@@ -214,6 +214,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>
           <span className={"form-ptr-dropdown-only"}>
             <RadioOrSelect
+              name="ewaste-city"
               options={cities?.sort((a, b) => a.name.localeCompare(b.name))}
               selectedOption={selectedCity}
               optionKey="i18nKey"
@@ -227,6 +228,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
           {selectedCity && localities && (
             <span className={"form-ptr-dropdown-only"}>
               <RadioOrSelect
+                name="ewaste-locality"
                 dropdownStyle={{ paddingBottom: "20px" }}
                 isMandatory={config.isMandatory}
                 options={localities.sort((a, b) => a.name.localeCompare(b.name))}

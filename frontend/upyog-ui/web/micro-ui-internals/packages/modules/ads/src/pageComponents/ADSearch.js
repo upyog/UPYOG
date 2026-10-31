@@ -144,6 +144,86 @@ const ADSSearch = ({
       value: `${slot.name}`
     });
   });
+  const normalizeKey = (val = "") =>
+    String(val || "")
+      .trim()
+      .toUpperCase()
+      .replace(/[\s-]+/g, "_");
+
+  const resolveUnitPrice = (calcData, locationInput, faceInput, adTypeInput) => {
+    if (!Array.isArray(calcData) || calcData.length === 0) return undefined;
+
+    const locationCandidates = [
+      typeof locationInput === "string" ? locationInput : "",
+      locationInput?.value,
+      locationInput?.i18nKey,
+      locationInput?.name,
+      locationInput?.code,
+    ]
+      .filter(Boolean)
+      .map((v) => String(v).trim());
+
+    const normalizedLocations = locationCandidates.map(normalizeKey);
+
+    const matchedItem =
+      calcData.find((entry) => {
+        const entryLoc = String(entry?.location || "").trim();
+        const entryLocNorm = normalizeKey(entryLoc);
+        return (
+          locationCandidates.some((loc) => loc.toLowerCase() === entryLoc.toLowerCase()) ||
+          normalizedLocations.includes(entryLocNorm)
+        );
+      }) || calcData[0];
+
+    if (!matchedItem) return undefined;
+
+    const faceCandidates = [
+      typeof faceInput === "string" ? faceInput : "",
+      faceInput?.code,
+      faceInput?.value,
+      faceInput?.i18nKey,
+      faceInput?.name,
+    ]
+      .filter(Boolean)
+      .map(normalizeKey);
+
+    const adTypeCandidates = [
+      typeof adTypeInput === "string" ? adTypeInput : "",
+      adTypeInput?.code,
+      adTypeInput?.value,
+      adTypeInput?.i18nKey,
+      adTypeInput?.name,
+    ]
+      .filter(Boolean)
+      .map(normalizeKey);
+
+    const itemKeys = Object.keys(matchedItem).filter((k) => k.startsWith("CalculationType_"));
+
+    for (const faceNorm of faceCandidates) {
+      const directKey = `CalculationType_${faceNorm}`;
+      if (matchedItem[directKey]?.[0]?.amount !== undefined) {
+        return matchedItem[directKey][0].amount;
+      }
+
+      for (const adNorm of adTypeCandidates) {
+        const combinedKey = `CalculationType_${adNorm}_${faceNorm}`;
+        if (matchedItem[combinedKey]?.[0]?.amount !== undefined) {
+          return matchedItem[combinedKey][0].amount;
+        }
+      }
+
+      const partialMatchKey = itemKeys.find(
+        (k) => normalizeKey(k).endsWith(`_${faceNorm}`) || normalizeKey(k).includes(faceNorm)
+      );
+      if (partialMatchKey && matchedItem[partialMatchKey]?.[0]?.amount !== undefined) {
+        return matchedItem[partialMatchKey][0].amount;
+      }
+    }
+
+    const fallbackKey = itemKeys.find((k) => matchedItem[k]?.[0]?.amount !== undefined);
+    return fallbackKey ? matchedItem[fallbackKey][0].amount : undefined;
+  };
+
   const mutation = Digit.Hooks.ads.useADSSlotSearch();
   let formdata = {
     advertisementSlotSearchCriteria: [{
@@ -160,6 +240,15 @@ const ADSSearch = ({
   };
   useEffect(() => {
     if (mutation.data && mutation.data?.advertisementSlotAvailabiltityDetails) {
+      const fallbackPrice =
+        Searchdata?.unitPrice ??
+        resolveUnitPrice(
+          CalculationTypeData,
+          selectedLocation || Searchdata?.location,
+          selectedFace || Searchdata?.faceArea,
+          adsType || Searchdata?.addType
+        );
+
       const newData = mutation.data?.advertisementSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
         addType: `${t(slot.addType)}`,
@@ -170,7 +259,9 @@ const ADSSearch = ({
         location: `${t(slot.location)}`,
         nightLight: slot.nightLight === false ? "No" : "Yes",
         bookingDate: slot.bookingDate,
-        price: Searchdata.unitPrice,
+        price:
+          fallbackPrice ??
+          resolveUnitPrice(CalculationTypeData, slot.location, slot.faceArea, slot.addType),
         status: slot.slotStaus === "AVAILABLE" ? <div className="sla-cell-success">Available</div> : <div className="sla-cell-error">Booked</div>
       }));
       // Only update state if newData is different from current state
@@ -187,7 +278,7 @@ const ADSSearch = ({
         return prevShowTable;
       });
     }
-  }, [mutation.data, Searchdata]);
+  }, [mutation.data, Searchdata, CalculationTypeData]);
   const [data, setData] = useState("");
   const [showTable, setShowTable] = useState(false); // State to control table visibility
   const columns = [{
@@ -400,15 +491,39 @@ const ADSSearch = ({
   };
   const enhancedColumns = [checkboxColumn, ...columns];
   useEffect(() => {
+    if (Array.isArray(CalculationTypeData) && CalculationTypeData.length > 0 && cartDetails?.length > 0) {
+      const needsPriceUpdate = cartDetails.some((item) => item?.price === undefined || item?.price === null || Number.isNaN(Number(item?.price)));
+      if (needsPriceUpdate) {
+        setCartDetails((prevCart) =>
+          prevCart.map((item) => {
+            if (item?.price !== undefined && item?.price !== null && !Number.isNaN(Number(item?.price))) {
+              return item;
+            }
+            const resolvedPrice = resolveUnitPrice(
+              CalculationTypeData,
+              item?.location || item?.locationCode || selectedLocation,
+              item?.faceAreaCode || item?.faceArea || selectedFace,
+              item?.addTypeCode || item?.addType || adsType
+            );
+            return {
+              ...item,
+              price: resolvedPrice,
+            };
+          })
+        );
+      }
+    }
+  }, [CalculationTypeData, cartDetails, selectedLocation, selectedFace, adsType]);
+
+  useEffect(() => {
     // Check if all required fields are filled
     if (formData?.adType && formData?.faceArea && formData?.fromDate && formData?.toDate && formData?.nightLight && formData?.location && CalculationTypeData) {
-      let unitPrice;
-      let location = formData?.location?.code;
-      const item = CalculationTypeData?.find(item => item?.location === location);
-      if (item) {
-        const calculationTypeKey = `CalculationType_${formData?.faceArea?.code}`;
-        unitPrice = item?.[calculationTypeKey]?.[0]?.amount;
-      }
+      const unitPrice = resolveUnitPrice(
+        CalculationTypeData,
+        formData?.location,
+        formData?.faceArea,
+        formData?.adType
+      );
       const filters = {
         addType: formData?.adType?.code,
         faceArea: formData?.faceArea?.code,
@@ -432,12 +547,12 @@ const ADSSearch = ({
     const faceArea = selectedFace?.code;
     const location = selectedLocation?.code;
     const nightLight = selectNight?.value;
-    let unitPrice;
-    const item = CalculationTypeData?.find(item => item?.location === location);
-    if (item) {
-      const calculationTypeKey = `CalculationType_${faceArea}`;
-      unitPrice = item?.[calculationTypeKey]?.[0]?.amount;
-    }
+    const unitPrice = resolveUnitPrice(
+      CalculationTypeData,
+      selectedLocation,
+      selectedFace,
+      adsType
+    );
     if (adsType && startDate && endDate && faceArea && location && nightLight) {
       // Check if startDate is less than endDate
       if (new Date(startDate) > new Date(endDate)) {
@@ -521,7 +636,8 @@ const ADSSearch = ({
             className="form-field"
             selected={adsType}
             select={(selected) => {
-              setAdsType(selected);}}
+              setAdsType(selected);
+            }}
             placeholder={"Select Advertisement Type"}
             option={ADSTypeData}
             optionKey="i18nKey"
@@ -654,7 +770,7 @@ const ADSSearch = ({
       actionCancelOnSubmit={() => setShowModal(false)} /* Close modal when "BACK" is clicked */
       onSubmit={(sessionData) => {
         /* Pass sessionData synchronously to avoid React state batching race condition in writing to session storage */
-        goNext(sessionData); 
+        goNext(sessionData);
         setShowModal(false); /* Close modal after action */
       }} setExistingDataSet={setExistingDataSet} Searchdata={cartDetails} selectedLocation={selectedLocation} /* Pass selectedLocation to map raw location codes */ />}
   </React.Fragment>;

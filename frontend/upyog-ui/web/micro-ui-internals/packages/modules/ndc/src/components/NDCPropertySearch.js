@@ -52,6 +52,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    */
 
   const apiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.responseData);
+  const cptFromRedux = useSelector((state) => state.ndc.NDCForm?.formData?.cpt);
 
   /*
    * =========================================================
@@ -309,10 +310,17 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    */
 
   useEffect(() => {
-    const updated = {
-      ...formData[config.key],
+    const latestDetails =
+      propertyDetails?.Properties?.[0] ||
+      cptFromRedux?.details ||
+      formData?.[config.key]?.details;
 
-      details: propertyDetails?.Properties?.[0],
+    const updated = {
+      ...(cptFromRedux || {}),
+      ...(formData?.[config.key] || {}),
+      id: propertyId,
+      details: latestDetails,
+      dues: propertyDues?.dues ?? cptFromRedux?.dues ?? formData?.[config.key]?.dues,
     };
 
     onSelect(config.key, updated);
@@ -327,9 +335,16 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    */
 
   useEffect(() => {
-    const updated = {
-      ...formData[config.key],
+    const latestDetails =
+      propertyDetails?.Properties?.[0] ||
+      cptFromRedux?.details ||
+      formData?.[config.key]?.details;
 
+    const updated = {
+      ...(cptFromRedux || {}),
+      ...(formData?.[config.key] || {}),
+      id: propertyId,
+      details: latestDetails,
       dues: propertyDues?.dues,
     };
 
@@ -355,7 +370,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
       return;
     }
 
-    if (propertyId !== searchPropertyId) {
+    if (propertyId !== searchPropertyId || !propertyDetails?.Properties?.length) {
       setPropertyDetails({
         Properties: [],
       });
@@ -454,9 +469,16 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    */
 
   function setValue(value, input) {
-    const updated = {
-      ...formData[config.key],
+    const latestDetails =
+      propertyDetails?.Properties?.[0] ||
+      cptFromRedux?.details ||
+      formData?.[config.key]?.details;
 
+    const updated = {
+      ...(cptFromRedux || {}),
+      ...(formData?.[config.key] || {}),
+      details: latestDetails,
+      dues: propertyDues?.dues ?? cptFromRedux?.dues ?? formData?.[config.key]?.dues,
       [input]: value,
     };
 
@@ -691,7 +713,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               DO NOT PUT BUTTONS INSIDE THIS DIV.
           ================================================= */}
 
-          <div ref={myElementRef} id="search-property-field" className="ndc-property-input ndc-property-input-wrapper" >
+          <div ref={myElementRef} id="search-property-field" className="ndc-property-input-wrapper" >
             <TextInput className="ndc-property-input"
               key={propertyIdInput.name}
               value={propertyId || ""}

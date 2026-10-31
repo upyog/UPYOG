@@ -14,7 +14,7 @@ const Footer = ({ isEmployee = false, className = "", style = {} }) => {
       <div className="upyog-footer-content">
         <div className="upyog-footer-links">
           <a
-            href={licenseUrl}
+            href={"https://upyog.niua.in/homepage/"}
             target="_blank"
             rel="noopener noreferrer"
             className="upyog-footer-link"
