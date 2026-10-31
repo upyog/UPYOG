@@ -15,7 +15,7 @@ const FAQsSection = ({module}) => {
 
   const { isLoading, data } = Digit.Hooks.useGetFAQsJSON(Digit.ULBService.getStateId());
 
-  const moduleFaqs = data?.MdmsRes["common-masters"]?.faqs[0]?.[`${module}`].faqs;
+  const moduleFaqs = data?.MdmsRes?.["common-masters"]?.faqs?.[0]?.[`${module}`]?.faqs || [];
 
   if(isLoading){
     return <Loader/>

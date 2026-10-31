@@ -1,0 +1,910 @@
+/* ==========================================================================
+   CITIZEN NDC NEW APPLICATION - MODERN UX STYLES
+   Strictly scoped to .citizen-ndc-page so common & employee styles are untouched
+   ========================================================================== */
+
+.citizen-ndc-page {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto !important;
+  padding: 12px 16px 56px !important;
+  box-sizing: border-box;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+
+  /* Hide legacy duplicate CardHeader & duplicate inner Timeline */
+  .ndc-step-form,
+  .timeline-container {
+    display: none !important;
+  }
+
+  /* Top Back Navigation */
+  .citizen-ndc-top-nav {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+
+    .back-btn2,
+    .back-btn {
+      margin: 0 !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-weight: 600;
+      font-size: 13.5px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+      }
+    }
+  }
+
+  /* Hero Header Card */
+  .citizen-ndc-hero-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.05);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #a82227 0%, #ea580c 50%, #10b981 100%);
+    }
+
+    .citizen-ndc-hero-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+      min-width: 240px;
+
+      .citizen-ndc-hero-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #059669;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .citizen-ndc-hero-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .citizen-ndc-title {
+          margin: 0;
+          font-size: 22px;
+          font-weight: 700;
+          color: #0f172a;
+          line-height: 1.25;
+          letter-spacing: -0.01em;
+        }
+
+        .citizen-ndc-subtitle {
+          margin: 0;
+          font-size: 13.5px;
+          color: #64748b;
+          line-height: 1.45;
+        }
+      }
+    }
+
+    .citizen-ndc-step-badge {
+      background: #fff1f2;
+      color: #a82227;
+      border: 1px solid #fecdd3;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+  }
+
+  /* Unified 3-Step Progress Bar */
+  .citizen-ndc-stepper-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.04);
+
+    .citizen-ndc-step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+
+      &.is-completed {
+        cursor: pointer;
+
+        &:hover {
+          background: #f8fafc;
+        }
+      }
+
+      .citizen-ndc-step-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        background: #f1f5f9;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .citizen-ndc-step-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .citizen-ndc-step-title {
+          font-size: 13.5px;
+          font-weight: 700;
+          color: #475569;
+          line-height: 1.2;
+        }
+
+        .citizen-ndc-step-desc {
+          font-size: 11.5px;
+          color: #94a3b8;
+          line-height: 1.2;
+        }
+      }
+
+      &.is-active {
+        .citizen-ndc-step-circle {
+          background: #a82227;
+          color: #ffffff;
+          border-color: #a82227;
+          box-shadow: 0 0 0 4px rgba(168, 34, 39, 0.14);
+        }
+
+        .citizen-ndc-step-title {
+          color: #0f172a;
+        }
+
+        .citizen-ndc-step-desc {
+          color: #64748b;
+        }
+      }
+
+      &.is-completed {
+        .citizen-ndc-step-circle {
+          background: #10b981;
+          color: #ffffff;
+          border-color: #10b981;
+        }
+
+        .citizen-ndc-step-title {
+          color: #059669;
+        }
+      }
+    }
+
+    .citizen-ndc-step-connector {
+      flex: 1;
+      height: 2px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      min-width: 24px;
+
+      &.is-completed {
+        background: #10b981;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 12px 14px;
+      gap: 8px;
+
+      .citizen-ndc-step-item {
+        padding: 4px;
+        gap: 8px;
+
+        .citizen-ndc-step-desc {
+          display: none;
+        }
+
+        .citizen-ndc-step-title {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  /* Main Form Shell */
+  .citizen-ndc-form-shell {
+    width: 100%;
+
+    .stepper,
+    .stepper-body {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    form > .card,
+    .ndc-documents-card,
+    .ndc-summary-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 16px !important;
+      padding: 28px 32px !important;
+      margin: 0 !important;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+      box-sizing: border-box !important;
+
+      @media (max-width: 640px) {
+        padding: 18px 16px !important;
+      }
+    }
+  }
+
+  /* Section Banner inside Step 1 */
+  .citizen-ndc-section-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #a82227;
+    border-radius: 10px;
+    margin-bottom: 24px;
+
+    .citizen-ndc-section-banner__icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #fff1f2;
+      color: #a82227;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .citizen-ndc-section-banner__text {
+      h3 {
+        margin: 0 0 2px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      p {
+        margin: 0;
+        font-size: 12.5px;
+        color: #64748b;
+      }
+    }
+  }
+
+  /* Step 1: Reason & Property Search Fields */
+  .ndc-reason-field,
+  .ndc-property-field {
+    width: 100% !important;
+    max-width: 460px !important;
+    margin-bottom: 22px !important;
+  }
+
+  .ndc-reason-label,
+  .ndc-property-label,
+  .ndc-field-label-wrapper .ndc_card_labels,
+  .ndc-owner-field > .ndc_card_labels {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin-bottom: 8px !important;
+    line-height: 1.4 !important;
+    display: block !important;
+  }
+
+  .ndc-reason-dropdown,
+  .ndc-reason-input,
+  .ndc-property-input-wrapper,
+  .ndc-property-input {
+    width: 100% !important;
+    max-width: 460px !important;
+    min-width: 0 !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    border-radius: 10px !important;
+  }
+
+  .ndc-property-input-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+
+    .text-input,
+    .employee-card-input,
+    input {
+      width: 100% !important;
+      height: 44px !important;
+      min-height: 44px !important;
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      padding: 0 48px 0 14px !important;
+      font-size: 14px !important;
+      color: #0f172a !important;
+      background: #ffffff !important;
+      margin: 0 !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+      &:focus {
+        border-color: #a82227 !important;
+        box-shadow: 0 0 0 3px rgba(168, 34, 39, 0.12) !important;
+        outline: none !important;
+      }
+    }
+
+    .ndc-property-search-icon {
+      right: 6px !important;
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 8px !important;
+      background: #fff1f2 !important;
+      border: 1px solid #fecdd3 !important;
+      transition: all 0.2s ease !important;
+
+      svg circle,
+      svg path {
+        stroke: #a82227 !important;
+      }
+
+      &:hover {
+        background: #a82227 !important;
+
+        svg circle,
+        svg path {
+          stroke: #ffffff !important;
+        }
+      }
+    }
+  }
+
+  /* Dropdowns & Inputs standardization */
+  .select-wrap,
+  .employee-select-wrap {
+    width: 100% !important;
+    max-width: 460px !important;
+    margin-bottom: 0 !important;
+
+    .select {
+      height: 44px !important;
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      background: #ffffff !important;
+    }
+  }
+
+  /* Property & Connection Action Buttons & Status Badges */
+  .ndc-property-actions {
+    width: 100% !important;
+    max-width: 460px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .ndc-action-button,
+  .ndc-primary-button,
+  .ndc-secondary-button {
+    height: 40px !important;
+    min-height: 40px !important;
+    width: auto !important;
+    min-width: 145px !important;
+    padding: 0 18px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    background: linear-gradient(135deg, #a82227 0%, #8f1b20 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(168, 34, 39, 0.2) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    margin: 0 !important;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(168, 34, 39, 0.28) !important;
+    }
+  }
+
+  /* Make "Add Water" and "Add Sewerage" buttons clean secondary outline buttons */
+  .ndc-add-connection .ndc-action-button,
+  .ndc-add-sewerage .ndc-action-button {
+    background: #ffffff !important;
+    color: #a82227 !important;
+    border: 1.5px dashed #f43f5e !important;
+    box-shadow: none !important;
+    font-weight: 700 !important;
+
+    &:hover {
+      background: #fff1f2 !important;
+      border-style: solid !important;
+    }
+  }
+
+  /* Make "No Dues" boxes & badges emerald green instead of red! */
+  .ndc-no-dues-button,
+  .ndc-no-dues-box {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 150px !important;
+    max-width: 100% !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 0 16px !important;
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    span,
+    p,
+    div,
+    * {
+      color: #047857 !important;
+    }
+
+    &::before {
+      content: "✓";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Water & Sewerage Connection Sections */
+  .ndc-connection-section,
+  .ndc-sewerage-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 20px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .ndc-add-connection {
+    margin-top: 14px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .ndc-add-sewerage {
+    margin-top: -4px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .ndc-connection-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 12px !important;
+  }
+
+  .ndc-connection-row {
+    width: 100% !important;
+    max-width: 680px !important;
+    gap: 12px !important;
+
+    .ndc-input,
+    input {
+      width: 280px !important;
+      max-width: 100% !important;
+      height: 42px !important;
+      min-height: 42px !important;
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      padding: 0 14px !important;
+      font-size: 14px !important;
+      margin: 0 !important;
+    }
+  }
+
+  /* Owner Selection Table */
+  .ndc-owner-selection {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 24px 0 !important;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+
+    .ndc-owner-help {
+      background: #f0fdf4;
+      color: #15803d !important;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px 14px !important;
+      font-size: 13px !important;
+      font-weight: 600;
+      margin: 0 0 14px 0 !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &::before {
+        content: "ℹ️";
+        font-size: 14px;
+      }
+    }
+
+    .ndc-owner-table {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        background: #ffffff !important;
+
+        th {
+          background: #f1f5f9 !important;
+          color: #334155 !important;
+          font-size: 12.5px !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.03em !important;
+          padding: 12px 16px !important;
+        }
+
+        td {
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          color: #1e293b !important;
+          border-top: 1px solid #f1f5f9 !important;
+
+          input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #a82227;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  /* 2-Column Responsive Grid for Owner Fields & Extra Fields */
+  .citizen-ndc-owner-grid,
+  .citizen-ndc-extra-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+
+    @media (max-width: 720px) {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .ndc-owner-field,
+    .ndc-owner-field-first,
+    .ndc-owner-field-remarks {
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+
+      .form-field,
+      .ndc-field-container,
+      .text-input,
+      .ndc-input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+      }
+
+      input {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        padding: 0 14px !important;
+        font-size: 14px !important;
+        color: #0f172a !important;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 10px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+        &:disabled {
+          background: #f8fafc !important;
+          color: #475569 !important;
+          border-color: #e2e8f0 !important;
+          cursor: not-allowed;
+        }
+
+        &:focus:not(:disabled) {
+          border-color: #a82227 !important;
+          box-shadow: 0 0 0 3px rgba(168, 34, 39, 0.12) !important;
+          outline: none !important;
+        }
+      }
+    }
+  }
+
+  .citizen-ndc-extra-grid {
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+    margin-bottom: 24px;
+  }
+
+  /* Step 2: Documents Upload Cards */
+  .ndc-documents-header {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #a82227;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px !important;
+
+    .ndc-documents-title {
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      margin: 0 0 6px 0 !important;
+    }
+
+    .ndc-documents-description {
+      font-size: 13.5px !important;
+      color: #475569 !important;
+      margin-bottom: 4px !important;
+    }
+
+    .ndc-documents-instruction {
+      font-size: 12.5px !important;
+      font-weight: 600 !important;
+      color: #a82227 !important;
+    }
+  }
+
+  .ndc-documents-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 18px;
+  }
+
+  .ndc-document-field {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 0 !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .ndc-document-label {
+      white-space: normal !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+    }
+  }
+
+  /* Step 3: Summary & Review Card */
+  .ndc-summary-title {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  .ndc-summary-subtitle {
+    font-size: 13.5px !important;
+    color: #64748b !important;
+    margin-bottom: 24px !important;
+  }
+
+  .ndc-summary-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 20px !important;
+
+    .ndc-summary-section-header {
+      border-bottom: 1px solid #e2e8f0 !important;
+      padding-bottom: 10px !important;
+      margin-bottom: 12px !important;
+
+      .ndc-summary-section-title {
+        font-size: 15.5px !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+      }
+
+      .ndc-summary-edit-button {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
+        color: #a82227;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #a82227;
+          color: #ffffff;
+        }
+      }
+    }
+
+    .ndc-summary-row {
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e8f0 !important;
+
+      &:last-child {
+        border-bottom: none !important;
+      }
+
+      .ndc-summary-label {
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+      }
+
+      .ndc-summary-value {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #0f172a !important;
+      }
+    }
+  }
+
+  .citizen-ndc-declaration-wrap {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 20px 0;
+
+    .checkbox-wrap {
+      margin: 0 !important;
+      align-items: flex-start !important;
+
+      label {
+        font-size: 13.5px !important;
+        line-height: 1.5 !important;
+        color: #1e293b !important;
+        font-weight: 500 !important;
+      }
+    }
+  }
+
+  .ndc-summary-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 14px !important;
+    margin-top: 24px !important;
+    padding-top: 18px !important;
+    border-top: 1px solid #e2e8f0 !important;
+
+    .citizen-ndc-back-action-btn {
+      height: 44px;
+      padding: 0 24px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #0f172a;
+      }
+    }
+
+    .submit-bar {
+      width: auto !important;
+      min-width: 180px !important;
+      height: 44px !important;
+      border-radius: 10px !important;
+      background: linear-gradient(135deg, #a82227 0%, #8f1b20 100%) !important;
+      box-shadow: 0 4px 12px rgba(168, 34, 39, 0.25) !important;
+    }
+  }
+}
+

@@ -17,7 +17,7 @@ import {
 import SearchFormFields from "./SearchFields";
 // import { convertEpochToDateDMY } from "../../utils";
 
-const MobileSearchApplication = ({ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, isLoading }) => {
+const MobileSearchApplication = ({ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, isLoading, onClear }) => {
 
   function activateModal(state, action) {
     switch (action.type) {
@@ -32,7 +32,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
   const [tabledata, settabledata] = useState([]);
   const DownloadBtn = (props) => {
     return (
-      <div onClick={props.onClick}>
+      <div className={props.className || "citizen-audit-download-btn"} onClick={props.onClick}>
         <DownloadBtnCommon />
       </div>
     );
@@ -96,7 +96,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
       <CloseSvg />
     </div>
   );
-  const searchFormFieldsComponentProps = { Controller, register, control, t, reset, previousPage };
+  const searchFormFieldsComponentProps = { Controller, register, control, t, reset, previousPage, onClear };
 
   const MobileComponentDirectory = ({ currentlyActiveMobileModal, searchFormFieldsComponentProps, tenantId, ...props }) => {
     const { closeMobilePopupModal } = props;
@@ -109,10 +109,6 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
               <h2>{t("PRIVACY_AUDIT_REPORT")}:</h2>
             </div>
             <SearchFormFields {...searchFormFieldsComponentProps} {...{ closeMobilePopupModal, tenantId, t }} />
-            {/* <SearchField className="submit">
-                        <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form"/>
-                        <p onClick={onResetSearchForm}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
-                    </SearchField> */}
           </SearchForm>
         );
       default:
@@ -149,17 +145,34 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
 
   return (
     <React.Fragment>
-      <BackButton />
-      <div className="sideContent core-mobile-search-application-top-spacing">
-        <DownloadBtn className="mrlg cursorPointer" onClick={() => handleExcelDownload(tabledata)} />
+      <div className="citizen-audit-top-nav">
+        <BackButton />
       </div>
-      <Header>{t("PRIVACY_AUDIT_REPORT")}:</Header>
-      <div className="searchBox">
-        <SearchAction
-          text={t("ES_COMMON_SEARCH")}
-          handleActionClick={() => setActiveMobileModal({ type: "set", payload: "SearchFormComponent" })}
-          {...{ tenantId, t }}
-        />
+      <div className="citizen-audit-header-wrap">
+        <div className="citizen-audit-title-block">
+          <div className="citizen-audit-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <div className="citizen-audit-title-text">
+            <div className="citizen-audit-title-row">
+              <Header className="citizen-audit-title">{t("PRIVACY_AUDIT_REPORT")}</Header>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="citizen-audit-mobile-bar">
+        <div className="searchBox">
+          <SearchAction
+            text={t("ES_COMMON_SEARCH")}
+            handleActionClick={() => setActiveMobileModal({ type: "set", payload: "SearchFormComponent" })}
+            {...{ tenantId, t }}
+          />
+        </div>
+        {Array.isArray(data) && data.length > 0 && (
+          <DownloadBtn className="citizen-audit-download-btn" onClick={() => handleExcelDownload(tabledata)} />
+        )}
       </div>
       {currentlyActiveMobileModal ? (
         <PopUp>
@@ -175,12 +188,34 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
           />
         </PopUp>
       ) : null}
-      {isLoading && <Loader />}
-      <DetailsCard
-        {...{
-          data: propsMobileInboxCards,
-        }}
-      />
+      {isLoading && (
+        <div className="citizen-audit-loader-card">
+          <Loader />
+        </div>
+      )}
+      {!isLoading && data?.display ? (
+        <div className="citizen-audit-empty-card">
+          <div className="citizen-audit-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          {t(data.display)
+            .split("\\n")
+            .map((text, index) => (
+              <p key={index} className="citizen-audit-empty-text">
+                {text}
+              </p>
+            ))}
+        </div>
+      ) : (
+        <DetailsCard
+          {...{
+            data: propsMobileInboxCards,
+          }}
+        />
+      )}
     </React.Fragment>
   )
 }

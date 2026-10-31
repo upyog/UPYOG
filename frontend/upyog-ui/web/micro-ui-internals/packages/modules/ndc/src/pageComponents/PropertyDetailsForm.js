@@ -623,8 +623,12 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
       if (primaryOwner) {
         setSelectedRow(primaryOwner);
       }
+    } else if (!selectedRow && cpt?.details?.owners?.length > 0) {
+      setSelectedRow(cpt.details.owners[0]);
     }
-  }, [checkApiDataCheck, selectedRow]);
+  }, [checkApiDataCheck, cpt?.details?.owners, selectedRow]);
+
+  const isCitizen = window.location.href.includes("/citizen");
 
   const renderConnectionRows = (connectionType, connections, loading, labelKey, checkStatusKey, addHandler) => {
     return (
@@ -846,7 +850,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
             <div className="ndc-owner-selection">
               <p className="ndc-owner-help">{t("NDC_OWNER_ACCESS_MESSAGE")}</p>
 
-              <div className="ndc-owner-table" style={ownerTableStyle}>
+              <div className="ndc-owner-table" style={isCitizen ? undefined : ownerTableStyle}>
                 <Table
                   className="customTable table-border-style"
                   t={t}
@@ -861,15 +865,15 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
             </div>
 
             {selectedRow && (
-              <div>
+              <div className="citizen-ndc-owner-grid">
                 {/* FULL NAME */}
-                <LabelFieldPair className="ndc-owner-field ndc-owner-field-first" style={ownerFieldStyle}>
-                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
+                <LabelFieldPair className="ndc-owner-field ndc-owner-field-first" style={isCitizen ? undefined : ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={isCitizen ? undefined : ownerLabelStyle}>
                     {t("NDC_FULL_NAME")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
+                  <div className="form-field ndc-field-container" style={isCitizen ? undefined : ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="firstName"
@@ -902,7 +906,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.name}
                           className="ndc-input"
-                          style={ownerInputStyle}
+                          style={isCitizen ? undefined : ownerInputStyle}
                         />
                       )}
                     />
@@ -910,13 +914,13 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                 </LabelFieldPair>
 
                 {/* EMAIL */}
-                <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
-                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
+                <LabelFieldPair className="ndc-owner-field" style={isCitizen ? undefined : ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={isCitizen ? undefined : ownerLabelStyle}>
                     {t("NDC_EMAIL")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
+                  <div className="form-field ndc-field-container" style={isCitizen ? undefined : ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="email"
@@ -949,7 +953,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.emailId}
                           className="ndc-input"
-                          style={ownerInputStyle}
+                          style={isCitizen ? undefined : ownerInputStyle}
                         />
                       )}
                     />
@@ -957,13 +961,13 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                 </LabelFieldPair>
 
                 {/* MOBILE NUMBER */}
-                <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
-                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
+                <LabelFieldPair className="ndc-owner-field" style={isCitizen ? undefined : ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={isCitizen ? undefined : ownerLabelStyle}>
                     {t("NDC_MOBILE_NUMBER")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
+                  <div className="form-field ndc-field-container" style={isCitizen ? undefined : ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="mobileNumber"
@@ -998,7 +1002,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.mobileNumber}
                           className="ndc-input"
-                          style={ownerInputStyle}
+                          style={isCitizen ? undefined : ownerInputStyle}
                         />
                       )}
                     />
@@ -1006,13 +1010,13 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                 </LabelFieldPair>
 
                 {/* ADDRESS */}
-                <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
-                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
+                <LabelFieldPair className="ndc-owner-field" style={isCitizen ? undefined : ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={isCitizen ? undefined : ownerLabelStyle}>
                     {t("NDC_ADDRESS")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
+                  <div className="form-field ndc-field-container" style={isCitizen ? undefined : ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="address"
@@ -1039,7 +1043,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.permanentAddress}
                           className="ndc-input"
-                          style={ownerInputStyle}
+                          style={isCitizen ? undefined : ownerInputStyle}
                         />
                       )}
                     />
@@ -1050,74 +1054,76 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
           </div>
         )}
 
-        {/* REMARKS */}
-        <LabelFieldPair className="ndc-owner-field ndc-owner-field-remarks" style={ownerFieldStyle}>
-          <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
-            {t("Remarks")}
-          </CardLabel>
+        <div className="citizen-ndc-extra-grid">
+          {/* REMARKS */}
+          <LabelFieldPair className="ndc-owner-field ndc-owner-field-remarks" style={isCitizen ? undefined : ownerFieldStyle}>
+            <CardLabel className="card-label-smaller ndc_card_labels" style={isCitizen ? undefined : ownerLabelStyle}>
+              {t("Remarks")}
+            </CardLabel>
 
-          <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
-            <Controller
-              control={control}
-              name="remarks"
-              defaultValue={propertyDetails?.remarks || ""}
-              rules={{
-                required: t("REQUIRED_FIELD"),
-              }}
-              render={({ field }) => (
-                <TextInput
-                  value={propertyDetails?.remarks || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
+            <div className="form-field ndc-field-container" style={isCitizen ? undefined : ownerFieldContainerStyle}>
+              <Controller
+                control={control}
+                name="remarks"
+                defaultValue={propertyDetails?.remarks || ""}
+                rules={{
+                  required: t("REQUIRED_FIELD"),
+                }}
+                render={({ field }) => (
+                  <TextInput
+                    value={propertyDetails?.remarks || ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
 
-                    setPropertyDetails((prev) => ({
-                      ...prev,
-                      remarks: value,
-                    }));
+                      setPropertyDetails((prev) => ({
+                        ...prev,
+                        remarks: value,
+                      }));
 
-                    field.onChange(value);
-                  }}
-                  onBlur={field.onBlur}
-                  className="ndc-input"
-                  style={ownerInputStyle}
-                />
-              )}
-            />
-          </div>
-        </LabelFieldPair>
+                      field.onChange(value);
+                    }}
+                    onBlur={field.onBlur}
+                    className="ndc-input"
+                    style={isCitizen ? undefined : ownerInputStyle}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
 
-        {/* TRADE LICENSE NUMBER */}
-        <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
-          <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
-            {t("NDC_TL_NUMBER")}
-          </CardLabel>
+          {/* TRADE LICENSE NUMBER */}
+          <LabelFieldPair className="ndc-owner-field" style={isCitizen ? undefined : ownerFieldStyle}>
+            <CardLabel className="card-label-smaller ndc_card_labels" style={isCitizen ? undefined : ownerLabelStyle}>
+              {t("NDC_TL_NUMBER")}
+            </CardLabel>
 
-          <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
-            <Controller
-              control={control}
-              name="tlNumber"
-              defaultValue={propertyDetails?.tlNumber || ""}
-              render={({ field }) => (
-                <TextInput
-                  value={propertyDetails?.tlNumber || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
+            <div className="form-field ndc-field-container" style={isCitizen ? undefined : ownerFieldContainerStyle}>
+              <Controller
+                control={control}
+                name="tlNumber"
+                defaultValue={propertyDetails?.tlNumber || ""}
+                render={({ field }) => (
+                  <TextInput
+                    value={propertyDetails?.tlNumber || ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
 
-                    setPropertyDetails((prev) => ({
-                      ...prev,
-                      tlNumber: value,
-                    }));
+                      setPropertyDetails((prev) => ({
+                        ...prev,
+                        tlNumber: value,
+                      }));
 
-                    field.onChange(value);
-                  }}
-                  onBlur={field.onBlur}
-                  className="ndc-input"
-                  style={ownerInputStyle}
-                />
-              )}
-            />
-          </div>
-        </LabelFieldPair>
+                      field.onChange(value);
+                    }}
+                    onBlur={field.onBlur}
+                    className="ndc-input"
+                    style={isCitizen ? undefined : ownerInputStyle}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
+        </div>
 
         {showToast && (
           <div className="ndc-details-form-message" role="alert">

@@ -9,12 +9,12 @@ const HowItWorks = ({module}) => {
   const tenantId = user?.info?.tenantId || Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const storeData = Digit.SessionStorage.get("initData");
-  const stateInfo = storeData.stateInfo;
+  const stateInfo = storeData?.stateInfo;
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
   const [selected, setselected] = useState(selectedLanguage);
   const handleChangeLanguage = (language) => {
     setselected(language.value);
-    Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
+    Digit.LocalizationService.changeLanguage(language.value, stateInfo?.code);
   };
   const [videoPlay, setVideoPlay] = useState(false);
   const [vidSrc, setVidSrc] = useState("");
@@ -48,7 +48,8 @@ const HowItWorks = ({module}) => {
   const { isLoading, data } = Digit.Hooks.useGetHowItWorksJSON(Digit.ULBService.getStateId());
 
 
-  const mdmsConfigResult = data?.MdmsRes["common-masters"]?.howItWorks[0]?.[`${module}`];
+  const mdmsConfigResult = data?.MdmsRes?.["common-masters"]?.howItWorks?.[0]?.[`${module}`];
+  const videosJson = mdmsConfigResult?.videosJson || [];
   const languages = 
   [
     {
@@ -82,8 +83,8 @@ const HowItWorks = ({module}) => {
             </div>
           ))}
         </div>
-        {mdmsConfigResult.videosJson.map((videos, index) => (
-        <div >
+        {videosJson.map((videos, index) => (
+        <div key={index}>
             <div className="WhatsNewCard core-how-it-works-fullwidth">
             <div className="video-icon" onClick={() => onClickVideo(videos)}>
                 <div className="vid-svg">
@@ -98,6 +99,7 @@ const HowItWorks = ({module}) => {
         </div>
 
     ))}
+    {mdmsConfigResult?.pdfHeader && (
     <div className="WhatsNewCard core-how-it-works-fullwidth-2">
       <div className="how-it-works-pdf-section">
         <div className="pdf-icon-header-desc">
@@ -105,8 +107,8 @@ const HowItWorks = ({module}) => {
            <PDFSvg></PDFSvg>
         </div>
         <div className="pdf-header-desc">
-                <h2>{t(mdmsConfigResult.pdfHeader)}</h2>
-                <p>{t(mdmsConfigResult.pdfDesc)}</p>
+                <h2>{t(mdmsConfigResult?.pdfHeader)}</h2>
+                <p>{t(mdmsConfigResult?.pdfDesc)}</p>
           </div>
         </div>
         <div className="download-icon">
@@ -114,6 +116,7 @@ const HowItWorks = ({module}) => {
         </div>
       </div>
         </div>
+    )}
         { videoPlay && (
                 <div className="how-it-works-video-play">
                   <div className="close-button core-how-it-works-wrapper">

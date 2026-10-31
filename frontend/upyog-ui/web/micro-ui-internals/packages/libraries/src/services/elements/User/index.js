@@ -19,15 +19,19 @@ export const UserService = {
     });
   },
   logoutUser: () => {
+    const currentUrl = (window.location.pathname || window.location.href || "").toLowerCase();
+    const isCitizenUrl = currentUrl.includes("citizen");
+    const isEmployeeUrl = currentUrl.includes("employee");
     let user = UserService.getUser();
     if (!user || !user.info || !user.access_token) return false;
     const { type } = user.info;
+    const isCitizen = isCitizenUrl ? true : isEmployeeUrl ? false : type === "CITIZEN";
     return ServiceRequest({
       serviceName: "logoutUser",
       url: Urls.UserLogout,
       data: { access_token: user?.access_token },
       auth: true,
-      params: { tenantId: type === "CITIZEN" ? Digit.ULBService.getStateId() : Digit.ULBService.getCurrentTenantId() },
+      params: { tenantId: isCitizen ? Digit.ULBService.getStateId() : Digit.ULBService.getCurrentTenantId() },
     });
   },
   getType: () => {
@@ -41,15 +45,21 @@ export const UserService = {
     return Digit.SessionStorage.get("User");
   },
   logout: async () => {
+    const currentUrl = (window.location.pathname || window.location.href || "").toLowerCase();
+    const isCitizenUrl = currentUrl.includes("citizen");
+    const isEmployeeUrl = currentUrl.includes("employee");
     const userType = UserService.getType();
     try {
       await UserService.logoutUser();
     } catch (e) {
-    }
-    finally{
+    } finally {
       window.localStorage.clear();
       window.sessionStorage.clear();
-      if (userType === "citizen") {
+      if (isCitizenUrl) {
+        window.location.replace("/upyog-ui/citizen");
+      } else if (isEmployeeUrl) {
+        window.location.replace("/upyog-ui/employee/user/login");
+      } else if (userType === "citizen") {
         window.location.replace("/upyog-ui/citizen");
       } else {
         window.location.replace("/upyog-ui/employee/user/login");

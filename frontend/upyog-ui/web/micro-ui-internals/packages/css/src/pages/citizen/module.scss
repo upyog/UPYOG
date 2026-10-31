@@ -5777,31 +5777,30 @@
 }
 
 .core-mobile-search-application-top-spacing {
-  margin-left: 65%;
-  margin-top: -12%;
+  margin: 0;
 }
 
 .core-index-spacing {
-  margin-right: -70px;
+  margin: 0;
 }
 
 .core-index-top-spacing {
-  margin-top: 30px;
-  margin-left: 30px;
+  margin-top: 16px;
+  margin-left: 0;
 }
 
 .core-index-top-spacing-2 {
-  margin-top: 240px;
-  margin-left: -55%;
-  width: 80%;
+  margin-top: 24px;
+  margin-left: 0;
+  width: 100%;
 }
 
 .core-index-top-spacing-3 {
-  margin-top: 20x;
-  max-width: 680%;
-  margin-left: 60px;
+  margin-top: 20px;
+  max-width: 100%;
+  margin-left: 0;
   background-color: white;
-  height: 60px;
+  min-height: 60px;
 }
 
 .core-index-centered {
@@ -5811,8 +5810,7 @@
 
 .core-index-fullwidth {
   background-color: white;
-  margin-right: 200px;
-  margin-left: 2.5%;
+  margin: 0;
   width: 100%;
 }
 

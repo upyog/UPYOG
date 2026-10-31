@@ -392,3 +392,48 @@
   justify-content: center;
   color: #5f5c62 !important;
 }
+
+/* ==========================================================================
+   COLORFUL CITIZEN SIDEBAR ICON BADGES
+   ========================================================================== */
+.SideBarStatic .drawer-desktop .sidebar-list .menu-item .icon.citizen-sidebar-icon-badge,
+.static-citizen-sidebar-inner .drawer-desktop .sidebar-list .menu-item .icon.citizen-sidebar-icon-badge {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  background-color: var(--cs-icon-bg, #eef2ff) !important;
+  color: var(--cs-icon-color, #4f46e5) !important;
+  fill: var(--cs-icon-color, #4f46e5) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+
+  svg {
+    width: 16px !important;
+    height: 16px !important;
+    fill: none !important;
+    stroke: var(--cs-icon-color, currentColor) !important;
+    color: var(--cs-icon-color, currentColor) !important;
+    flex-shrink: 0 !important;
+
+    circle[fill="currentColor"] {
+      fill: var(--cs-icon-color, currentColor) !important;
+    }
+  }
+}
+
+.SideBarStatic .drawer-desktop .sidebar-list:hover .menu-item .icon.citizen-sidebar-icon-badge,
+.SideBarStatic .drawer-desktop .sidebar-list.active .menu-item .icon.citizen-sidebar-icon-badge {
+  transform: scale(1.06);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.SideBarStatic .drawer-desktop .sidebar-list.sidebar-list-helpline .menu-item .icon.citizen-sidebar-icon-badge,
+.static-citizen-sidebar-inner .drawer-desktop .sidebar-list.sidebar-list-helpline .menu-item .icon.citizen-sidebar-icon-badge {
+  margin: 0 12px 0 0 !important;
+}
