@@ -1,6 +1,6 @@
 import { FormComposer, Header, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, } from "react-router-dom";
 import { newConfig as newConfigLocal } from "../../../config/wsActivationConfig";
@@ -38,56 +38,60 @@ const ActivateConnection = () => {
         mutate,
     } = Digit.Hooks.ws.useWSApplicationActions(filters?.service);
 
-    const waterSourceSubDataWithClone = state?.data?.waterSource ? cloneDeep(state?.data?.waterSource) : "";
-    const waterSourceSubDataWithUS = waterSourceSubDataWithClone ? stringReplaceAll(waterSourceSubDataWithClone?.toUpperCase(), " ", "_") : "";
-    const waterSourceSubDataWithCma = waterSourceSubDataWithUS ? stringReplaceAll(waterSourceSubDataWithUS?.toUpperCase(), ".", "_") : "";
-    const connectionDetails = filters?.service === "WATER" ? {
-        connectionType: state?.data?.connectionType ? {
-            code: state?.data?.connectionType, i18nKey: `WS_CONNECTIONTYPE_${stringReplaceAll(state?.data?.connectionType?.toUpperCase(), " ", "_")}`
-        } : "",
-        waterSource: state?.data?.waterSource ? {
-            code: state?.data?.waterSource, i18nKey: `WS_SERVICES_MASTERS_WATERSOURCE_${stringReplaceAll(state?.data?.waterSource?.split('.')[0]?.toUpperCase(), " ", "_")}`
-        } : "",
-        sourceSubData: state?.data?.waterSource ? {
-            code: state?.data?.waterSource, i18nKey: `WS_SERVICES_MASTERS_WATERSOURCE_${waterSourceSubDataWithCma}`
-        } : "",
-        pipeSize: state?.data?.pipeSize ? {
-            code: state?.data?.pipeSize, i18nKey: state?.data?.pipeSize
-        } : "",
-        noOfTaps: state?.data?.noOfTaps || "",
-        formDetails: details
-    } : {
-        noOfWaterClosets: state?.data?.noOfWaterClosets || "",
-        noOfToilets: state?.data?.noOfToilets || "",
-        formDetails: details
-    };
+    const defaultValues = useMemo(() => {
+        const waterSourceSubDataWithClone = state?.data?.waterSource ? cloneDeep(state?.data?.waterSource) : "";
+        const waterSourceSubDataWithUS = waterSourceSubDataWithClone ? stringReplaceAll(waterSourceSubDataWithClone?.toUpperCase(), " ", "_") : "";
+        const waterSourceSubDataWithCma = waterSourceSubDataWithUS ? stringReplaceAll(waterSourceSubDataWithUS?.toUpperCase(), ".", "_") : "";
+        const connectionDetails = filters?.service === "WATER" ? {
+            connectionType: state?.data?.connectionType ? {
+                code: state?.data?.connectionType, i18nKey: `WS_CONNECTIONTYPE_${stringReplaceAll(state?.data?.connectionType?.toUpperCase(), " ", "_")}`
+            } : "",
+            waterSource: state?.data?.waterSource ? {
+                code: state?.data?.waterSource, i18nKey: `WS_SERVICES_MASTERS_WATERSOURCE_${stringReplaceAll(state?.data?.waterSource?.split('.')[0]?.toUpperCase(), " ", "_")}`
+            } : "",
+            sourceSubData: state?.data?.waterSource ? {
+                code: state?.data?.waterSource, i18nKey: `WS_SERVICES_MASTERS_WATERSOURCE_${waterSourceSubDataWithCma}`
+            } : "",
+            pipeSize: state?.data?.pipeSize ? {
+                code: state?.data?.pipeSize, i18nKey: state?.data?.pipeSize
+            } : "",
+            noOfTaps: state?.data?.noOfTaps || "",
+            formDetails: details
+        } : {
+            noOfWaterClosets: state?.data?.noOfWaterClosets || "",
+            noOfToilets: state?.data?.noOfToilets || "",
+            formDetails: details
+        };
 
-    const plumberDetails = [{
-        plumberName: state?.data?.plumberInfo?.[0]?.name || "",
-        plumberMobileNo: state?.data?.plumberInfo?.[0]?.mobileNumber || "",
-        plumberLicenseNo: state?.data?.plumberInfo?.[0]?.licenseNo || "",
-        detailsProvidedBy: state?.data?.additionalDetails?.detailsProvidedBy ? {
-            i18nKey: `WS_PLUMBER_${state?.data?.additionalDetails?.detailsProvidedBy?.toUpperCase()}`, code: state?.data?.additionalDetails?.detailsProvidedBy
-        } : "",
-        applicationNo: state?.data?.applicationNo,
-        key: Date.now(),
-    }];
+        const plumberDetails = [{
+            plumberName: state?.data?.plumberInfo?.[0]?.name || "",
+            plumberMobileNo: state?.data?.plumberInfo?.[0]?.mobileNumber || "",
+            plumberLicenseNo: state?.data?.plumberInfo?.[0]?.licenseNo || "",
+            detailsProvidedBy: state?.data?.additionalDetails?.detailsProvidedBy ? {
+                i18nKey: `WS_PLUMBER_${state?.data?.additionalDetails?.detailsProvidedBy?.toUpperCase()}`, code: state?.data?.additionalDetails?.detailsProvidedBy
+            } : "",
+            applicationNo: state?.data?.applicationNo,
+            key: Date.now(),
+        }];
 
-    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" && state?.data?.applicationType !== "WATER_RECONNECTION" ? [{
-        meterId: state?.data?.meterId || "",
-        meterInstallationDate: state?.data?.meterInstallationDate ? convertEpochToDates(state?.data?.meterInstallationDate) : null,
-        meterInitialReading: state?.data?.additionalDetails?.initialMeterReading || "",
-        connectionExecutionDate: state?.data?.connectionExecutionDate ? convertEpochToDates(state?.data?.connectionExecutionDate) : null,
-    }] : [{
-        connectionExecutionDate: state?.data?.connectionExecutionDate ? convertEpochToDates(state?.data?.connectionExecutionDate) : null
-    }];
+        const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" && state?.data?.applicationType !== "WATER_RECONNECTION" ? [{
+            meterId: state?.data?.meterId || "",
+            meterInstallationDate: state?.data?.meterInstallationDate ? convertEpochToDates(state?.data?.meterInstallationDate) : null,
+            meterInitialReading: state?.data?.additionalDetails?.initialMeterReading || "",
+            connectionExecutionDate: state?.data?.connectionExecutionDate ? convertEpochToDates(state?.data?.connectionExecutionDate) : null,
+            key: Date.now(),
+        }] : [{
+            connectionExecutionDate: state?.data?.connectionExecutionDate ? convertEpochToDates(state?.data?.connectionExecutionDate) : null,
+            key: Date.now(),
+        }];
 
-    const defaultValues = {
-        formDetails: details,
-        connectionDetails: [connectionDetails],
-        plumberDetails: plumberDetails,
-        activationDetails: activationDetails
-    };
+        return {
+            formDetails: details,
+            connectionDetails: [connectionDetails],
+            plumberDetails: plumberDetails,
+            activationDetails: activationDetails
+        };
+    }, [applicationDetails, filters?.service]);
     useEffect(() => {
         if (!isappdetailsLoading) {
             setAppDetails(details);

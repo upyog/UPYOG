@@ -89,7 +89,12 @@ const ConnectionDetails = () => {
     privacy: Digit.Utils.getPrivacyObject(),
     enabled: filter2?.connectionNumber ? true : false
   }, true);
-  state = Object.keys(state)?.length > 0 ? state : applicationNobyData?.includes("WS") ? connectionData?.WaterConnection?.[0] : connectionData?.SewerageConnections?.[0];
+  state =
+    Object.keys(state || {})?.length > 0
+      ? state
+      : applicationNobyData?.includes("WS")
+      ? connectionData?.WaterConnection?.[0] || data?.WaterConnection?.[0]
+      : connectionData?.SewerageConnections?.[0] || data?.SewerageConnections?.[0];
   //this code hampering all Sewerage functionality thatswhy removed
   // if(data && data["SewerageConnections"]){
   //   isSewerageConnections = true;
@@ -240,7 +245,7 @@ const ConnectionDetails = () => {
     retry: false
   });
   const getDisconnectionButton = () => {
-    if (!data?.checkWorkFlow) {
+    if (data?.checkWorkFlow === false && state?.applicationStatus !== "CONNECTION_ACTIVATED" && state?.status !== "Active") {
       setshowActionToast({
         key: "error",
         label: "CONNECTION_INPROGRESS_LABEL"
@@ -248,26 +253,21 @@ const ConnectionDetails = () => {
       setTimeout(() => {
         closeBillToast();
       }, 5000);
+      return;
     }
-    else {
-      if (paymentDetails?.data?.Bill?.length === 0) {
-        let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
-        Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
-        navigate(`${pathname}`);
-      }
-      else if (paymentDetails?.data?.Bill?.[0]?.totalAmount < 0) {
-        let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
-        Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
-        navigate(`${pathname}`);
-      }
-      else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
-        setshowModal(true);
-      }
 
+    const totalAmount = paymentDetails?.data?.Bill?.[0]?.totalAmount;
+
+    if (totalAmount > 0) {
+      setshowModal(true);
+    } else {
+      let pathname = `/upyog-ui/citizen/ws/disconnect-application`;
+      Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
+      navigate(`${pathname}`);
     }
   };
   const getRestorationButton = () => {
-    if (!data?.checkWorkFlow) {
+    if (data?.checkWorkFlow === false && state?.applicationStatus !== "DISCONNECTION_EXECUTED") {
       setshowActionToast({
         key: "error",
         label: "CONNECTION_INPROGRESS_LABEL"
@@ -275,27 +275,17 @@ const ConnectionDetails = () => {
       setTimeout(() => {
         closeBillToast();
       }, 5000);
+      return;
     }
-    else {
-      if (paymentDetails?.data?.Bill?.length === 0) {
-        let pathname = `/upyog-ui/citizen/ws/restoration-application`;
-        Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
-        navigate(`${pathname}`);
-      } else if (paymentDetails?.data?.Bill?.[0]?.totalAmount < 0) {
-        let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
-        Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
-        navigate(`${pathname}`);
-      }
-      else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
-        setshowModal(true);
-      }
-      else if (paymentDetails?.data?.Bill?.[0]?.totalAmount == 0) {
-        let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
-        Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
-        navigate(`${pathname}`);
 
-      }
+    const totalAmount = paymentDetails?.data?.Bill?.[0]?.totalAmount;
 
+    if (totalAmount > 0) {
+      setshowModal(true);
+    } else {
+      let pathname = `/upyog-ui/citizen/ws/restore-application/restoration-application`;
+      Digit.SessionStorage.set("WS_DISCONNECTION", { ...state, serviceType: isSW ? "SEWERAGE" : "WATER" });
+      navigate(`${pathname}`);
     }
   };
   function onActionSelect() {
