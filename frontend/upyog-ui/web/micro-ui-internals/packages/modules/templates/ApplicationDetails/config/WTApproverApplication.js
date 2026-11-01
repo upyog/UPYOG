@@ -35,13 +35,26 @@ export const configWTApproverApplication = ({
     form: [
       {
         body: [
-          action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" ? (
+          ...(action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" ? [
           {
             label: t("RS_ASSIGN"),
             type: "dropdown",
             isMandatory: true,
             populators:( 
             <Dropdown 
+            className="wt-action-dropdown"
+            style={{ position: "relative", zIndex: 100 }}
+            optionCardStyles={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              width: "100%",
+              zIndex: 1000,
+              maxHeight: "200px",
+              overflowY: "auto",
+              background: "#ffffff",
+              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            }}
             option={vendorDescription} // Pass the array of objects
             t={t}
             optionKey="i18nKey"
@@ -50,15 +63,28 @@ export const configWTApproverApplication = ({
             />
           ),
           }
-        ) : "null",
+        ] : []),
 
-          action?.state === "DELIVERY_PENDING" ? (
+          ...(action?.state === "DELIVERY_PENDING" ? [
           {
             label: t("RS_REGISTRATION_NUMBER"),
             isMandatory: true,
             type: "dropdown",
             populators:( 
             <Dropdown 
+            className="wt-action-dropdown"
+            style={{ position: "relative", zIndex: 100 }}
+            optionCardStyles={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              width: "100%",
+              zIndex: 1000,
+              maxHeight: "200px",
+              overflowY: "auto",
+              background: "#ffffff",
+              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            }}
             option={vehicleDescription} // Pass the array of objects
             t={t}
             optionKey="i18nKey"
@@ -66,7 +92,7 @@ export const configWTApproverApplication = ({
             selected={selectVehicle}
             />
           ),
-          }  ) : "null",
+          }  ] : []),
           
           {
             label: t("ES_RS_ACTION_COMMENTS") + " *",
@@ -92,7 +118,7 @@ export const configWTApproverApplication = ({
               />
             ),
           },
-        ],
+        ].filter(Boolean),
       },
     ],
   };

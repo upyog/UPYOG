@@ -7,6 +7,7 @@ import _ from "lodash";
 import { useTranslation } from "react-i18next";
 
 const createActivationDetails = () => ({
+  key: Date.now(),
   meterId: "",
   meterInstallationDate: null,
   meterInitialReading: "",
@@ -25,7 +26,16 @@ const WSActivationPageDetails = ({
     t
   } = useTranslation();
   const filters = func.getQueryStringParams(location.search);
-  const [activationDetails, setActivationDetails] = window.location.href.includes("modify") ? useState(formData?.activationDetails ? [formData?.activationDetails?.[0]] : [createActivationDetails()]) : useState(formData?.activationDetails || [createActivationDetails()]);
+  const [activationDetails, setActivationDetails] = useState(() => {
+    let initialData = window.location.href.includes("modify")
+      ? (formData?.activationDetails ? [formData?.activationDetails?.[0]] : [createActivationDetails()])
+      : (formData?.activationDetails?.length ? formData.activationDetails : [createActivationDetails()]);
+    return initialData.map((item, index) => ({
+      ...createActivationDetails(),
+      ...item,
+      key: item?.key || (Date.now() + index)
+    }));
+  });
   const [focusIndex, setFocusIndex] = useState({
     index: -1,
     type: ""
@@ -37,14 +47,6 @@ const WSActivationPageDetails = ({
       return e;
     });
     onSelect(config?.key, data);
-  }, [activationDetails]);
-  useEffect(() => {
-    if (userType === "employee") {
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...activationDetails
-      });
-    }
   }, [activationDetails]);
   let formData2 = formData;
   const commonProps = {
@@ -98,7 +100,9 @@ const ConnectionDetails = _props => {
     setValue,
     trigger,
     getValues
-  } = useForm();
+  } = useForm({
+    defaultValues: activationDetail
+  });
   const formValue = watch();
   const {
     errors
@@ -123,6 +127,7 @@ const ConnectionDetails = _props => {
         });
         if (isErrorsFound) setIsErrors(true);
         let ob = [{
+          ...activationDetail,
           ...formValue
         }];
         setActivationDetails(ob);
@@ -141,7 +146,7 @@ const ConnectionDetails = _props => {
       setError(config.key, {
         type: errors
       });
-    } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+    } else if (!Object.keys(errors).length && formState.errors[config.key]) {
       clearErrors(config.key);
     }
   }, [errors]);

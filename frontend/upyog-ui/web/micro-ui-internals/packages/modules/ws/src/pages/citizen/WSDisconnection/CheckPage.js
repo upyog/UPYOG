@@ -13,8 +13,8 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
     const { t } = useTranslation();
     const navigate = Digit.Hooks.useCustomNavigate();
     const match = Digit.Hooks.useModuleBasePath();
-    const value = Digit.SessionStorage.get("WS_DISCONNECTION");
-    const [documents, setDocuments] = useState( value.WSDisconnectionForm.documents || []);
+    const value = Digit.SessionStorage.get("WS_DISCONNECTION") || {};
+    const [documents, setDocuments] = useState(value?.WSDisconnectionForm?.documents || []);
     let routeLink = `/upyog-ui/citizen/ws/disconnect-application`;
     if(window.location.href.includes("/edit-application/"))
     routeLink=`/upyog-ui/citizen/ws/edit-disconnect-application`

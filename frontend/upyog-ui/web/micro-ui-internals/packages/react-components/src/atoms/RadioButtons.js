@@ -1,17 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 
+let radioGroupCounter = 0;
+
 const RadioButtons = (props) => {
   const { t } = useTranslation();
+  const defaultGroupNameRef = useRef(null);
+  if (!defaultGroupNameRef.current) {
+    radioGroupCounter += 1;
+    defaultGroupNameRef.current = `radio-buttons-group-${radioGroupCounter}`;
+  }
   var selected = props.selectedOption;
   function selectOption(value) {
     //selected = value;
     props.onSelect(value);
   }
 
-  const groupName = props.name || "radio-buttons-group";
+  const groupName = props.name || defaultGroupNameRef.current;
 
   const isOptionChecked = (option) => {
     if (selected === undefined || selected === null) return false;

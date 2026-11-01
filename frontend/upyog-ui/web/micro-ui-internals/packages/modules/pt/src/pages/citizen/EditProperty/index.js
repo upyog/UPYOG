@@ -45,30 +45,56 @@ const getPropertyEditDetails = (inputData = {}) => {
     data.owners[0].permanentAddress = data?.owners[0]?.correspondenceAddress;
     data.owners[0].isCorrespondenceAddress = data?.owners[0]?.isCorrespondenceAddress;
   } else {
-    data.owners.map((owner) => {
-      let document = [];
-      owner.documents &&
-        owner.documents.map((doc) => {
-          if (doc?.documentType && typeof doc?.documentType == "string" && doc?.documentType?.includes("SPECIALCATEGORYPROOF")) {
-            doc.documentType = { code: doc?.documentType, i18nKey: stringReplaceAll(doc?.documentType, ".", "_") };
-            document["specialProofIdentity"] = doc;
-          }
-          if (doc?.documentType && typeof doc?.documentType == "string" && doc?.documentType?.includes("IDENTITYPROOF")) {
-            doc.documentType = { code: doc?.documentType, i18nKey: stringReplaceAll(doc?.documentType, ".", "_") };
-            document["proofIdentity"] = doc;
-          }
-        });
-      owner.emailId = owner?.emailId;
-      owner.fatherOrHusbandName = owner?.fatherOrHusbandName;
-      owner.isCorrespondenceAddress = owner?.isCorrespondenceAddress;
-      owner.mobileNumber = owner?.mobileNumber;
-      owner.name = owner?.name;
-      owner.permanentAddress = owner?.permanentAddress;
-      owner.gender = { code: owner?.gender };
-      owner.ownerType = { code: owner?.ownerType };
-      owner.relationship = { code: owner?.relationship };
-      owner.documents = document;
-    });
+    const fallbackOwners = (() => {
+      try {
+        const storedPt = JSON.parse(sessionStorage.getItem("pt-property") || "{}");
+        return Array.isArray(storedPt?.owners) ? storedPt.owners.filter((o) => o?.status === "ACTIVE").concat(storedPt.owners.filter((o) => o?.status !== "ACTIVE")) : [];
+      } catch (e) {
+        return [];
+      }
+    })();
+    if ((!Array.isArray(data.owners) || data.owners.length === 0) && fallbackOwners.length > 0) {
+      data.owners = JSON.parse(JSON.stringify(fallbackOwners));
+    }
+    data.owners &&
+      data.owners.map((owner, idx) => {
+        const fallbackOwner = fallbackOwners[idx] || fallbackOwners[0] || {};
+        let document = [];
+        const rawDocs = owner?.documents || fallbackOwner?.documents;
+        Array.isArray(rawDocs) &&
+          rawDocs.map((doc) => {
+            const docTypeCode = typeof doc?.documentType === "object" ? doc?.documentType?.code : doc?.documentType;
+            if (docTypeCode && typeof docTypeCode == "string" && docTypeCode.includes("SPECIALCATEGORYPROOF")) {
+              doc.documentType = { code: docTypeCode, i18nKey: stringReplaceAll(docTypeCode, ".", "_") };
+              document["specialProofIdentity"] = doc;
+            }
+            if (docTypeCode && typeof docTypeCode == "string" && docTypeCode.includes("IDENTITYPROOF")) {
+              doc.documentType = { code: docTypeCode, i18nKey: stringReplaceAll(docTypeCode, ".", "_") };
+              document["proofIdentity"] = doc;
+            }
+          });
+        const genderCode =
+          (typeof owner?.gender === "object" ? owner?.gender?.code || owner?.gender?.value : owner?.gender) ||
+          (typeof fallbackOwner?.gender === "object" ? fallbackOwner?.gender?.code || fallbackOwner?.gender?.value : fallbackOwner?.gender);
+        const ownerTypeCode =
+          (typeof owner?.ownerType === "object" ? owner?.ownerType?.code : owner?.ownerType) ||
+          (typeof fallbackOwner?.ownerType === "object" ? fallbackOwner?.ownerType?.code : fallbackOwner?.ownerType) ||
+          "NONE";
+        const relationshipCode =
+          (typeof owner?.relationship === "object" ? owner?.relationship?.code : owner?.relationship) ||
+          (typeof fallbackOwner?.relationship === "object" ? fallbackOwner?.relationship?.code : fallbackOwner?.relationship);
+
+        owner.emailId = owner?.emailId || owner?.email || fallbackOwner?.emailId || "";
+        owner.fatherOrHusbandName = owner?.fatherOrHusbandName || fallbackOwner?.fatherOrHusbandName || "";
+        owner.isCorrespondenceAddress = owner?.isCorrespondenceAddress ?? fallbackOwner?.isCorrespondenceAddress;
+        owner.mobileNumber = owner?.mobileNumber || fallbackOwner?.mobileNumber || "";
+        owner.name = owner?.name || fallbackOwner?.name || "";
+        owner.permanentAddress = owner?.permanentAddress || owner?.correspondenceAddress || fallbackOwner?.permanentAddress || fallbackOwner?.correspondenceAddress || "";
+        owner.gender = genderCode ? { code: genderCode, value: genderCode, i18nKey: `PT_COMMON_GENDER_${genderCode}` } : "";
+        owner.ownerType = { code: ownerTypeCode, value: ownerTypeCode, i18nKey: `PROPERTYTAX_OWNERTYPE_${ownerTypeCode}` };
+        owner.relationship = relationshipCode ? { code: relationshipCode, value: relationshipCode, i18nKey: `PT_RELATION_${relationshipCode}` } : {};
+        owner.documents = document;
+      });
   }
   //converting ownershipCategory
   data.ownershipCategory = { code: data?.ownershipCategory, value: data?.ownershipCategory };
@@ -434,22 +460,27 @@ const EditProperty = ({ parentRoute }) => {
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
-  const acknowledgementIds = window.location.href.split("/").pop();
-  const propertyIds = window.location.href.split("/").pop();
-  let application = {};
-  const updateProperty = window.location.href.includes("action=UPDATE");
-  const typeOfProperty = window.location.href.includes("UPDATE") ? true : false;
   const ptProperty = JSON.parse(sessionStorage.getItem("pt-property")) || {};
+  const initialStoredProperty = JSON.parse(sessionStorage.getItem("propertyInitialObject")) || {};
+  const urlLastPart = window.location.href.split("/").pop();
+  const hasActionInUrl = window.location.href.includes("action=");
+  const acknowledgementIds = hasActionInUrl ? urlLastPart : ptProperty?.acknowldgementNumber || initialStoredProperty?.acknowldgementNumber || params?.acknowldgementNumber;
+  const propertyIds = hasActionInUrl ? urlLastPart : ptProperty?.propertyId || initialStoredProperty?.propertyId || params?.propertyId;
+  let application = {};
+  const updateProperty = hasActionInUrl
+    ? window.location.href.includes("action=UPDATE")
+    : Boolean(params?.isUpdateProperty ?? initialStoredProperty?.isUpdateProperty ?? true);
+  const typeOfProperty = updateProperty ? true : false;
   //const data = { Properties: [ptProperty] };
   const { isLoading: isPTloading, isError, error, data } =
     Digit.Hooks.pt.usePropertySearch(
       {
         tenantId,
-        filters: { propertyIds, isSearchInternal: true },
+        filters: { propertyIds },
         searchedFrom: "myPropertyCitizen",
       },
       {
-        enabled: true,
+        enabled: Boolean(propertyIds),
       }
     );
   sessionStorage.setItem("isEditApplication", false);
