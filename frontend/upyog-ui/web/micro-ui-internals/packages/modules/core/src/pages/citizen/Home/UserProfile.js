@@ -103,9 +103,12 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     const uuid = userInfo?.uuid;
     if (uuid) {
       const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+      console.log("usersResponseusersResponse", usersResponse)
+      setAltMobileNo(usersResponse?.user?.[0]?.altContactNumber)
       if (usersResponse?.user?.[0]?.photo) {
         try {
           const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
+
           if (file?.data?.fileStoreIds?.[0]?.url) {
             setProfilePhoto(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
           }

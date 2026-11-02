@@ -37,18 +37,18 @@ const WSDisconnectionForm = ({
   const stateCode = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const applicationData = Digit.SessionStorage.get("WS_DISCONNECTION");
+  const applicationData = Digit.SessionStorage.get("WS_DISCONNECTION") || {};
   const navigate = Digit.Hooks.useCustomNavigate();
   const { pathname } = useLocation();
   
   const [disconnectionData, setDisconnectionData] = useState({
-    type: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.type : "",
-    date: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.date : "",
-    endDate: applicationData.WSDisconnectionForm ? applicationData?.WSDisconnectionForm?.endDate || "" : "",
-    reason: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.reason : "",
-    documents: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []
+    type: applicationData?.WSDisconnectionForm ? applicationData.WSDisconnectionForm.type : "",
+    date: applicationData?.WSDisconnectionForm ? applicationData.WSDisconnectionForm.date : "",
+    endDate: applicationData?.WSDisconnectionForm ? applicationData?.WSDisconnectionForm?.endDate || "" : "",
+    reason: applicationData?.WSDisconnectionForm ? applicationData.WSDisconnectionForm.reason : "",
+    documents: applicationData?.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []
   });
-  const [documents, setDocuments] = useState(applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []);
+  const [documents, setDocuments] = useState(applicationData?.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []);
   const [error, setError] = useState(null);
   const [disconnectionTypeList, setDisconnectionTypeList] = useState([]);
   const [disconnectionReasonList, setDisconnectionReasonList] = useState([]);

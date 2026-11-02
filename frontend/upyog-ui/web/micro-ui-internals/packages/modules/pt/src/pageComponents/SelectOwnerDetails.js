@@ -17,15 +17,61 @@ const SelectOwnerDetails = ({
   } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const mutationScreen = url.includes("/property-mutation/");
+  const editApplicationScreen = url.includes("/edit-application/");
   let index = mutationScreen ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
   const [name, setName] = useState(formData.owners && formData.owners[index] && formData.owners[index].name || formData?.owners?.name || "");
-  const [email, setEmail] = useState(formData.owners && formData.owners[index] && formData.owners[index].email || formData?.owners?.emailId || "");
+  const [email, setEmail] = useState(
+    (formData.owners && formData.owners[index] && (formData.owners[index].email || formData.owners[index].emailId)) ||
+      formData?.owners?.emailId ||
+      ""
+  );
   const [gender, setGender] = useState(formData.owners && formData.owners[index] && formData.owners[index].gender || formData?.owners?.gender);
   const [mobileNumber, setMobileNumber] = useState(formData.owners && formData.owners[index] && formData.owners[index].mobileNumber || formData?.owners?.mobileNumber || "");
   const [error, setError] = useState(null);
   const [fatherOrHusbandName, setFatherOrHusbandName] = useState(formData.owners && formData.owners[index] && formData.owners[index].fatherOrHusbandName || formData?.owners?.fatherOrHusbandName || "");
   const [relationship, setRelationship] = useState(formData.owners && formData.owners[index] && formData.owners[index].relationship || formData?.owners?.relationship || {});
+
+  useEffect(() => {
+    if (!editApplicationScreen) return;
+    let ownerData = formData?.owners?.[index];
+    if (!ownerData || (!ownerData?.name && !ownerData?.mobileNumber)) {
+      try {
+        const storedInit = JSON.parse(sessionStorage.getItem("propertyInitialObject") || "{}");
+        const storedPt = JSON.parse(sessionStorage.getItem("pt-property") || "{}");
+        const fallbackList =
+          (Array.isArray(storedInit?.owners) && storedInit.owners.length > 0 && storedInit.owners) ||
+          (Array.isArray(storedPt?.owners) && storedPt.owners.length > 0 && storedPt.owners) ||
+          [];
+        const activeOwners = fallbackList.filter((o) => o?.status === "ACTIVE");
+        ownerData = activeOwners[index] || fallbackList[index] || ownerData;
+      } catch (e) {}
+    }
+    if (!ownerData) return;
+
+    if (!name && ownerData?.name) setName(ownerData.name);
+    if (!email && (ownerData?.email || ownerData?.emailId)) setEmail(ownerData.email || ownerData.emailId);
+    if (!mobileNumber && ownerData?.mobileNumber) setMobileNumber(ownerData.mobileNumber);
+    if (!fatherOrHusbandName && ownerData?.fatherOrHusbandName) setFatherOrHusbandName(ownerData.fatherOrHusbandName);
+
+    const genderCode = typeof ownerData?.gender === "object" ? ownerData?.gender?.code || ownerData?.gender?.value : ownerData?.gender;
+    if (genderCode && (!gender || !gender?.code || !gender?.value)) {
+      setGender({
+        code: genderCode,
+        value: genderCode,
+        i18nKey: `PT_COMMON_GENDER_${genderCode}`,
+      });
+    }
+
+    const relCode = typeof ownerData?.relationship === "object" ? ownerData?.relationship?.code : ownerData?.relationship;
+    if (relCode && (!relationship || !relationship?.i18nKey)) {
+      setRelationship({
+        name: relCode,
+        code: relCode,
+        i18nKey: `PT_RELATION_${relCode}`,
+      });
+    }
+  }, [editApplicationScreen, formData?.owners, index]);
   const isUpdateProperty = formData?.isUpdateProperty || false;
   let isEditProperty = formData?.isEditProperty || false;
   const tenantId = Digit.ULBService.getCurrentTenantId();

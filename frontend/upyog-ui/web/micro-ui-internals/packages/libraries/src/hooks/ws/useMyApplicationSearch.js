@@ -10,7 +10,14 @@ const useMyApplicationSearch = ({tenantId, filters = {}, BusinessService="WS", t
   const { isLoading, error, data, isSuccess } =  queryTemplate({ queryKey: ['WS_SEARCH', tenantId, filters, BusinessService, config], queryFn: async () => await WSService.search({tenantId, filters: { ...filters }, businessService:BusinessService}), config: { ...config, refetchOnMount: "always" } });
 
   const user = Digit.UserService.getUser();
-  const tenant = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
+  const tenant =
+    tenantId ||
+    filters?.tenantId ||
+    data?.WaterConnection?.[0]?.tenantId ||
+    data?.SewerageConnections?.[0]?.tenantId ||
+    Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code ||
+    user?.info?.permanentCity ||
+    Digit.ULBService.getCurrentTenantId();
 
   const { isLoading : isWSLoading , error : isWSError, data : wsData, isSuccess: wsSuccess } =  queryTemplate({ queryKey: ['WS_SEARCH_CONNECTION', tenant, BusinessService, data, config], queryFn: async () => await WSService.search({tenantId : tenant, filters: 
     isSuccess && data?.WaterConnection ? 

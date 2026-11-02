@@ -796,6 +796,10 @@
       fill: #ffffff;
     }
 
+    p {
+      color: #ffffff !important;
+    }
+
     @apply absolute text-white text-heading-s ml-md;
   }
 }
@@ -977,8 +981,9 @@
 
       @apply ml-md;
 
+      p,
       .back-btn2 p {
-        color: #fff;
+        color: #ffffff !important;
       }
     }
   }

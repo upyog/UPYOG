@@ -183,10 +183,12 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
       ===================================================== */}
 
       <div className="ndc-reason-field" style={isCitizen ? undefined : styles.field}>
-        <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={isCitizen ? undefined : styles.label}>
-          {t("NDC_NEW_NDC_APPLICATION_NDC_REASON")}
+        <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={styles.label}>
+          {t("NDC_NEW_NDC_APPLICATION_NDC_REASON") !== "NDC_NEW_NDC_APPLICATION_NDC_REASON"
+            ? t("NDC_NEW_NDC_APPLICATION_NDC_REASON")
+            : "Reason for Applying for NDC"}
 
-          <span className="ndc-required" style={isCitizen ? undefined : styles.required}>
+          <span className="ndc-required" style={styles.required}>
             *
           </span>
         </CardLabel>
@@ -229,7 +231,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
 
       {watch("NDCReason")?.code === "OTHERS" && (
         <div className="ndc-reason-field" style={isCitizen ? undefined : styles.field}>
-          <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={isCitizen ? undefined : styles.label}>
+          <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" style={styles.label}>
             {t("Reason")}
           </CardLabel>
 
