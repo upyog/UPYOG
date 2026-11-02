@@ -15,8 +15,8 @@ import {  useLocation } from "react-router-dom";
 
 function WSDisconnectionDocumentsForm({ t, config, onSelect, userType, formData  }) { 
   const tenantId = Digit.ULBService.getStateId();
-  const storedData = Digit.SessionStorage.get("WS_DISCONNECTION");
-  const [documents, setDocuments] = useState(storedData.WSDisconnectionForm.documents ? storedData.WSDisconnectionForm.documents : []);
+  const storedData = Digit.SessionStorage.get("WS_DISCONNECTION") || {};
+  const [documents, setDocuments] = useState(storedData?.WSDisconnectionForm?.documents ? storedData.WSDisconnectionForm.documents : []);
   const [error, setError] = useState(null);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
   const navigate = Digit.Hooks.useCustomNavigate();
