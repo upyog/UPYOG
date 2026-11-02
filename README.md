@@ -37,7 +37,7 @@ To provide a scalable, secure, and interoperable digital public infrastructure t
 
 | Resource | Link |
 |-----------|------|
-| Documentation | https://upyog-docs.gitbook.io/upyog-v-2.0 |
+| Documentation | https://upyog-docs.gitbook.io/upyog-v-2.0/upyog-v-5.0 |
 | Community Discussions | https://github.com/orgs/upyog/discussions |
 | Issue Reporting | https://github.com/upyog/UPYOG/issues |
 | NIUA | https://niua.in |
