@@ -57,7 +57,7 @@ UPYOG offers a wide range of municipal, departmental, and governance services.
 
 - Property Tax
 - Trade License
-- Grievances
+- Grievances Redressal
 - Building Plan Approval
 - Water & Sewerage
 - Birth & Death Registration
@@ -69,6 +69,8 @@ UPYOG offers a wide range of municipal, departmental, and governance services.
 - Desludging Services
 - Challans
 - Service Requests
+- Garbage Collection
+- No Due Certificate
 
 ### Department Services
 
@@ -76,6 +78,8 @@ UPYOG offers a wide range of municipal, departmental, and governance services.
 - Asset Management
 - Miscellaneous Collections
 - Department Specific Services
+- Estate Management
+- Challan Generation
 
 ### Governance Services
 
