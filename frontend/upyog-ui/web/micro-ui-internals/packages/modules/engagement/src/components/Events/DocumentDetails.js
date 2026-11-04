@@ -1,7 +1,7 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Confirmation from '../Modal/Confirmation';
 import { format } from "date-fns";
 import { openUploadedDocument } from '../../utils';
@@ -16,7 +16,7 @@ const DocumentDetails = () => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -26,7 +26,7 @@ const DocumentDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/upyog-ui/employee/engagement/event/edit-event/${id}`)
+      navigate(`/upyog-ui/employee/engagement/event/edit-event/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -43,7 +43,7 @@ const DocumentDetails = () => {
           },
         ],
       };
-      history.push("/upyog-ui/employee/engagement/event/response?delete=true", details);
+      navigate("/upyog-ui/employee/engagement/event/response?delete=true", details);
   };
 
   function onModalCancel() {
@@ -89,7 +89,7 @@ const DocumentDetails = () => {
 
           {data?.applicationData?.eventDetails?.documents?.length ? <div className="documentDetails_pdf">
             <span className="documentDetails_subheader">{`${t('CS_COMMON_DOCUMENTS')}`}</span>
-            <div style={{ width: '100px' }} onClick={() => openUploadedDocument(data?.applicationData?.eventDetails?.documents[0]?.filestoreId, data?.applicationData?.name)}>
+            <div className="eng-document-details-wrapper" onClick={() => openUploadedDocument(data?.applicationData?.eventDetails?.documents[0]?.filestoreId, data?.applicationData?.name)}>
               <GenericFileIcon />
             </div>
 
@@ -101,7 +101,7 @@ const DocumentDetails = () => {
       <ActionBar>
         {displayMenu ? (
           <Menu
-            style={{ width: isMobile ? 'full' : '240px' }}
+            className={isMobile ? "width-full" : "width-240"}
             localeKeyPrefix={"ES_CE"}
             options={Actions}
             t={t}

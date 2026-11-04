@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { GalleryIcon, RemoveIcon, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,showToast}) {
+function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic, showToast }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [file, setFile] = useState("");
   const [error, setError] = useState(null);
   const { t } = useTranslation();
   const selectfile = (e) => setFile(e.target.files[0]);
-  const removeimg = () => {removeProfilePic(); closeDrawer()};
+  const removeimg = () => { removeProfilePic(); closeDrawer() };
   const onOverlayBodyClick = () => closeDrawer();
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,
               setError(t("CORE_COMMON_PROFILE_FILE_UPLOAD_ERROR"));
             }
           } catch (err) {
-            showToast("error",t("CORE_COMMON_PROFILE_INVALID_FILE_INPUT"))
+            showToast("error", t("CORE_COMMON_PROFILE_INVALID_FILE_INPUT"))
             // setError(t("PT_FILE_UPLOAD_ERROR"));
           }
         }

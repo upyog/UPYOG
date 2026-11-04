@@ -74,7 +74,7 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -282,9 +282,9 @@ public abstract class BaseBillController extends BaseVoucherController {
     private List<Object[]> getAccountDetails(Integer accountDetailKeyId, Integer accountDetailTypeId) {
         StringBuilder queryString = new StringBuilder(); 
         queryString.append("select adk.detailname as detailkeyname,adt.name as detailtypename from accountdetailkey adk inner join accountdetailtype adt on adk.detailtypeid=adt.id where adk.detailtypeid=:detailtypeid and adk.detailkey=:detailkey");
-        SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(queryString.toString());
-        sqlQuery.setInteger("detailtypeid", accountDetailTypeId);
-        sqlQuery.setInteger("detailkey", accountDetailKeyId);
+        NativeQuery sqlQuery = persistenceService.getSession().createNativeQuery(queryString.toString());
+        sqlQuery.setParameter("detailtypeid", accountDetailTypeId);
+        sqlQuery.setParameter("detailkey", accountDetailKeyId);
         return sqlQuery.list();
     }
 

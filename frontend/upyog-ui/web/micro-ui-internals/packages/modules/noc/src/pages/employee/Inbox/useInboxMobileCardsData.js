@@ -1,6 +1,10 @@
+/**
+ * Custom hook to format raw NOC Inbox table data into mobile card data structures
+ * and manage mobile sorting form controls.
+ */
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SearchField, RadioButtons } from "@upyog/digit-ui-react-components";
+import { SearchField, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { format } from "date-fns";
 
@@ -31,11 +35,11 @@ const useInboxMobileCardsData = ({parentRoute, table }) => {
             <Controller
                 name="sortOrder"
                 control={controlSortForm}
-                render={({onChange, value}) => <RadioButtons
+                render={({ field }) => <RadioButtons
                     onSelect={(e) => {
-                        onChange(e.code)
+                        field.onChange(e.code)
                     }}
-                    selectedOption={sortOrderOptions.filter((option) => option.code === value)[0]}
+                    selectedOption={sortOrderOptions.filter((option) => option.code === field.value)[0]}
                     optionsKey="i18nKey"
                     name="sortOrder"
                     options={sortOrderOptions}

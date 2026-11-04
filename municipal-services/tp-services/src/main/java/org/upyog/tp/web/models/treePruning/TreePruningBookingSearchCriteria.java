@@ -1,4 +1,4 @@
-package org.upyog.tp.web.models.treePruning;
+package org.upyog.tp.web.models.treePruning; // NOSONAR java:S120
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,6 +8,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("java:S120")
 @Getter
 @Setter
 @Builder
@@ -51,14 +52,12 @@ public class TreePruningBookingSearchCriteria {
     public boolean isEmpty() {
         return (this.tenantId == null && this.status == null && this.bookingNo == null
                 && this.mobileNumber == null
-                // && this.offset == null && this.limit == null
                 && this.fromDate == null && this.toDate == null && this.createdBy==null && localityCode==null);
     }
 
     public boolean tenantIdOnly() {
         return (this.tenantId != null && this.status == null && this.bookingNo == null
                 && this.mobileNumber == null
-                // && this.offset == null && this.limit == null
                 && this.fromDate == null && this.toDate == null && this.createdBy==null && this.localityCode==null);
     }
 }

@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { FormComposer, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { documentsFormConfig } from "../../../config/doc-create";
-import { useHistory } from "react-router-dom";
 
 const Documents = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [canSubmit, setSubmitValve] = useState(false);
 
   const onFormValueChange = (setValue, formData, formState) => {
@@ -22,7 +21,7 @@ const Documents = () => {
     }
   };
 
-  const onSubmit = (data) => {  
+  const onSubmit = (data) => {
     const DocumentEntity = {
       name: data.documentName,
       description: data?.description.length ? data.description : "",
@@ -34,21 +33,21 @@ const Documents = () => {
       tenantIds: data.ULB.map((e) => e.code),
     };
 
-    history.push("/sv-ui/employee/engagement/documents/response", { DocumentEntity });
+    navigate("/sv-ui/employee/engagement/documents/response", { DocumentEntity });
   };
 
   return (
     <div>
-     <Header>{t("ES_ENGAGEMENT_DOCUMENTS")}</Header>
-    <FormComposer
-     // heading={t("ES_ENGAGEMENT_DOCUMENTS")}
-     label={t("ES_COMMON_APPLICATION_SUBMIT")}
-     config={documentsFormConfig}
-     onSubmit={onSubmit}
-     fieldStyle={{}}
-     onFormValueChange={onFormValueChange}
-     isDisabled={!canSubmit}
-     />
+      <Header>{t("ES_ENGAGEMENT_DOCUMENTS")}</Header>
+      <FormComposer
+        // heading={t("ES_ENGAGEMENT_DOCUMENTS")}
+        label={t("ES_COMMON_APPLICATION_SUBMIT")}
+        config={documentsFormConfig}
+        onSubmit={onSubmit}
+        fieldStyle={{}}
+        onFormValueChange={onFormValueChange}
+        isDisabled={!canSubmit}
+      />
     </div>
   );
 };

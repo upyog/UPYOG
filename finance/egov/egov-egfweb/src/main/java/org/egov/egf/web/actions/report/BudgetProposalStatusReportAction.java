@@ -47,6 +47,7 @@
  */
 package org.egov.egf.web.actions.report;
 
+import jakarta.persistence.FlushModeType;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -62,7 +63,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.utils.BudgetDetailHelper;
-import org.hibernate.FlushMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -126,7 +127,7 @@ public class BudgetProposalStatusReportAction extends BaseFormAction {
     public void prepare() {
         // persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         super.prepare();
     }
 

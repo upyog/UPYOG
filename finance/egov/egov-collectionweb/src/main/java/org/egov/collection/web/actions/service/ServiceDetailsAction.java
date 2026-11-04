@@ -88,8 +88,7 @@ import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.models.ServiceSubledgerInfo;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -277,21 +276,23 @@ public class ServiceDetailsAction extends BaseFormAction {
     @ValidationErrorPage(value = BEFOREMODIFY)
     @Action(value = "/service/serviceDetails-modify")
     public String modify() {
+        // Replaced legacy session.createCriteria with typed HQL query for Hibernate 6 compatibility
         final List<ServiceAccountDetails> accountList = getPersistenceService().getSession()
-                .createCriteria(ServiceAccountDetails.class)
-                .add(Restrictions.eq("serviceDetails.id", serviceDetails.getId())).list();
+                .createQuery("from ServiceAccountDetails where serviceDetails.id = :serviceId", ServiceAccountDetails.class)
+                .setParameter("serviceId", serviceDetails.getId())
+                .list();
 
         for (final ServiceAccountDetails serviceAccountDetails : accountList) {
 
             final Query qry = getPersistenceService().getSession().createQuery(
                     "delete from ServiceSubledgerInfo where serviceAccountDetail.id=:accountId");
-            qry.setLong("accountId", serviceAccountDetails.getId());
+            qry.setParameter("accountId", serviceAccountDetails.getId());
             qry.executeUpdate();
         }
 
         final Query qry = getPersistenceService().getSession().createQuery(
                 "delete from ServiceAccountDetails where serviceDetails.id=:serviceId");
-        qry.setLong("serviceId", serviceDetails.getId());
+        qry.setParameter("serviceId", serviceDetails.getId());
         qry.executeUpdate();
         insertOrUpdateService();
         if (hasActionErrors())

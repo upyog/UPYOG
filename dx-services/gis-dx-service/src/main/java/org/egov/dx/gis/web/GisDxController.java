@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.dx.gis.models.GeoJsonRequest;
 import org.egov.dx.gis.models.GeoJsonResponse;
 import org.egov.dx.gis.service.GisDxService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * GIS DX Controller that works with any municipal service
@@ -20,13 +19,12 @@ import javax.validation.Valid;
 @Slf4j
 public class GisDxController {
 
-    @Autowired
-    private GisDxService gisDxService;
+    private final GisDxService gisDxService;
 
     /**
      * Generate GeoJSON data for any municipal service
      */
-    @PostMapping("/_search")
+    @PostMapping("/_search/{businessService}")
     public ResponseEntity<GeoJsonResponse> search(
             @Valid @RequestBody GeoJsonRequest request) {
         

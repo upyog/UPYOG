@@ -2,6 +2,9 @@ package org.upyog.cdwm.constants;
 
 public class CNDConstants {
 
+	private CNDConstants() {
+	}
+
 	public static final String BOOKING_CREATED = "Your Construction and Demolition application created successfully";
 
 	public static final String BOOKING_DETAIL_FOUND = "Your Construction and Demolition application searched successfully";

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@upyog/digit-ui-react-components";
+import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ChbApplication from "./chb-application";
+import { getStatusOptions } from "../../../utils";
+
 
 /**
  * CHBMyApplications Component
@@ -75,7 +77,7 @@ export const CHBMyApplications = () => {
       bookingNo: trimmedSearchTerm || undefined,
       status: status?.code || undefined,
     };
-    
+
     // Update the filters state to trigger refetch
     setFilters(searchFilters);
   };
@@ -84,13 +86,7 @@ export const CHBMyApplications = () => {
     return <Loader />;
   }
 
-  const statusOptions = [
-    { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-    { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
-    { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
-    { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
-    { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
-  ];
+  const statusOptions = getStatusOptions(t);
 
   const filteredApplications = data?.hallsBookingApplication || [];
 
@@ -98,21 +94,21 @@ export const CHBMyApplications = () => {
     <React.Fragment>
       <Header>{`${t("CHB_MY_APPLICATION_HEADER")} (${filteredApplications.length})`}</Header>
       <Card>
-        <div style={{ marginLeft: "16px" }}>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+        <div className="chb-myapps-container">
+          <div className="chb-myapps-search-row">
+            <div className="chb-myapps-field-col">
+              <div className="chb-myapps-field-inner">
                 <CardLabel>{t("CHB_BOOKING_NO")}</CardLabel>
                 <TextInput
                   placeholder={t("Enter Booking No.")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ width: "100%", padding: "8px", height: '150%' }}
+                  className="chb-myapps-text-input"
                 />
               </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+            <div className="chb-myapps-field-col">
+              <div className="chb-myapps-field-inner">
                 <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
                 <Dropdown
                   className="form-field"
@@ -121,23 +117,22 @@ export const CHBMyApplications = () => {
                   option={statusOptions}
                   placeholder={t("Select Status")}
                   optionKey="value"
-                  style={{ width: "100%" }}
                   t={t}
                 />
               </div>
             </div>
             <div>
-              <div style={{marginTop:"17%"}}>
-              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-              <p className="link" style={{marginLeft:"30%",marginTop:"10px",display: "block"}}
-                      onClick={() => {setSearchTerm(""),setStatus("") }}>{t(`ES_COMMON_CLEAR_ALL`)}
+              <div className="chb-myapps-search-btn-wrap">
+                <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+                <p className="link chb-myapps-clear-link"
+                  onClick={() => { setSearchTerm(""), setStatus("") }}>{t(`ES_COMMON_CLEAR_ALL`)}
                 </p>
               </div>
             </div>
           </div>
-            <Link to="/upyog-ui/citizen/chb/bookHall/searchhall">
-              <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("CHB_NEW_BOOKING")+" +"} />
-            </Link>
+          <Link to="/upyog-ui/citizen/chb/bookHall/searchhall">
+            <SubmitBar className="chb-new-booking-btn" label={t("CHB_NEW_BOOKING") + " +"} />
+          </Link>
         </div>
       </Card>
       <div>
@@ -152,14 +147,14 @@ export const CHBMyApplications = () => {
             </div>
           ))}
         {filteredApplications.length === 0 && !isLoading && (
-          <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+          <p className="chb-myapps-msg">
             {t("CHB_NO_APPLICATION_FOUND_MSG")}
           </p>
         )}
 
-        {filteredApplications.length !== 0 && data?.count>t1 && (
+        {filteredApplications.length !== 0 && data?.count > t1 && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className="chb-myapps-msg">
               <span className="link">
                 <Link to={`/upyog-ui/citizen/chb/myBookings/${t1}`}>
                   {t("CHB_LOAD_MORE_MSG")}

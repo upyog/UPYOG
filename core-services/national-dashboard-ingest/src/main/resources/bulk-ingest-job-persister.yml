@@ -1,0 +1,35 @@
+serviceMaps:
+  serviceName: National Dashboard Bulk Ingest Job Persistence
+  mappings:
+    - version: 1.0
+      name: save-bulk-ingest-job
+      description: Persists new bulk ingestion job records into ug_bulk_ingest_job table
+      fromTopic: save-bulk-ingest-job
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO ug_bulk_ingest_job(id, file_name, state_code, status, total_rows_processed, failed_rows_count, created_time, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: bulkIngestJob
+          jsonMaps:
+            - jsonPath: $.bulkIngestJob.id
+            - jsonPath: $.bulkIngestJob.fileName
+            - jsonPath: $.bulkIngestJob.stateCode
+            - jsonPath: $.bulkIngestJob.status
+            - jsonPath: $.bulkIngestJob.totalRowsProcessed
+            - jsonPath: $.bulkIngestJob.failedRowsCount
+            - jsonPath: $.bulkIngestJob.createdTime
+            - jsonPath: $.bulkIngestJob.lastModifiedTime
+
+    - version: 1.0
+      name: update-bulk-ingest-job
+      description: Updates bulk ingestion job status and row processing counts in ug_bulk_ingest_job table
+      fromTopic: update-bulk-ingest-job
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE ug_bulk_ingest_job SET status = ?, total_rows_processed = ?, failed_rows_count = ?, last_modified_time = ? WHERE id = ?;
+          basePath: bulkIngestJob
+          jsonMaps:
+            - jsonPath: $.bulkIngestJob.status
+            - jsonPath: $.bulkIngestJob.totalRowsProcessed
+            - jsonPath: $.bulkIngestJob.failedRowsCount
+            - jsonPath: $.bulkIngestJob.lastModifiedTime
+            - jsonPath: $.bulkIngestJob.id

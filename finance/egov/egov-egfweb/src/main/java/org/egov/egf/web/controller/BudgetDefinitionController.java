@@ -52,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.service.CFinancialYearService;
@@ -62,7 +62,8 @@ import org.egov.model.budget.BudgetDefinitionSearchRequest;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.service.BudgetDefinitionService;
 import org.egov.utils.BeReType;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.persistence.utils.PersistenceUtils;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -79,8 +80,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 
 @Controller
 @RequestMapping("/budgetdefinition")
@@ -172,7 +172,7 @@ public class BudgetDefinitionController {
 	}
 
 	@RequestMapping(value = "/search/{mode}", method = { RequestMethod.GET, RequestMethod.POST })
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final BudgetDefinitionSearchRequest budgetDefinitionSearchRequest = new BudgetDefinitionSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(BUDGET_DEFINITION_SEARCH_REQUEST, budgetDefinitionSearchRequest);
@@ -181,35 +181,50 @@ public class BudgetDefinitionController {
 	}
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final BudgetDefinitionSearchRequest budgetDefinitionSearchRequest) {
 		final List<Budget> searchResultList = budgetDefinitionService.search(budgetDefinitionSearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
 	}
 
+	/*
+	 * LTS Migration Fix (Hibernate 6 / Gson): do not let Gson reflect on Budget
+	 * entities. Hibernate 6 ByteBuddy proxies expose Class/HibernateProxy and
+	 * throw UnsupportedOperationException, which leaves DataTables on "Loading...".
+	 * Build the array with BudgetJsonAdaptor after unproxying.
+	 */
 	public Object toSearchResultJson(final Object object) {
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(Budget.class, new BudgetJsonAdaptor()).create();
-		return gson.toJson(object);
+		final BudgetJsonAdaptor adaptor = new BudgetJsonAdaptor();
+		if (object instanceof Iterable) {
+			final JsonArray array = new JsonArray();
+			for (final Object item : (Iterable<?>) object) {
+				array.add(adaptor.serialize(PersistenceUtils.unproxy((Budget) item), Budget.class, null));
+			}
+			return array.toString();
+		}
+		if (object instanceof Budget) {
+			return adaptor.serialize(PersistenceUtils.unproxy((Budget) object), Budget.class, null).toString();
+		}
+		return "[]";
 	}
 
 	@GetMapping(value = "/parents", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String getParents(@RequestParam("financialYearId") @SafeHtml final String financialYearId,
-			@RequestParam("isBeRe") @SafeHtml final String isBere) {
+	public @ResponseBody String getParents(@RequestParam("financialYearId") @SanitizeHtml final String financialYearId,
+			@RequestParam("isBeRe") @SanitizeHtml final String isBere) {
 		final List<Budget> budgetList = budgetDefinitionService.parentList(isBere, Long.parseLong(financialYearId));
 		return toSearchResultJson(budgetList).toString();
 	}
 
 	@GetMapping(value = "/referencebudget", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String getRefencebudget(
-			@RequestParam("financialYearId") @SafeHtml final String financialYearId) {
+			@RequestParam("financialYearId") @SanitizeHtml final String financialYearId) {
 		final List<Budget> referenceBudgetList = budgetDefinitionService
 				.referenceBudgetList(Long.parseLong(financialYearId));
 		return toSearchResultJson(referenceBudgetList).toString();
 	}
 
 	@GetMapping(value = "/ajaxgetdropdownsformodify", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String getReferenceBudgetForModify(@RequestParam("budgetId") @SafeHtml final String budgetId) {
+	public @ResponseBody String getReferenceBudgetForModify(@RequestParam("budgetId") @SanitizeHtml final String budgetId) {
 		final Budget budget = budgetDefinitionService.findOne(Long.parseLong(budgetId));
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(budget)).append("}").toString();
 	}

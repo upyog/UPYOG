@@ -50,6 +50,7 @@ package org.egov.egf.commons;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,11 +66,22 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Struts 7 ModelDriven Stubs & Sentinels] Added defensive nested null and sentinel checks
+ *    (getId() != null && != -1 && != 0) in buildVoucherQuery() to prevent unselected dropdown stubs
+ *    from appending invalid filters (e.g., fundId = -1) to search queries.
+ * 2. [Inclusive Date Filtering] Added endOfDay() to set toDate to 23:59:59.999 so all vouchers on
+ *    the selected end date are included.
+ * 3. [Hibernate 6 Query API] Migrated to org.hibernate.query.Query.
+ */
+@Service
 @Transactional(readOnly = true)
 public class VoucherSearchUtil {
 	@Autowired
@@ -115,7 +127,7 @@ public class VoucherSearchUtil {
 			jvmModifyParams.put("vhStatus", FinancialConstants.CREATEDVOUCHERSTATUS);
 			// editModeQuery1 :Get all vouchers created from JV screen and
 			// payments are not done
-			editModeQuery1 = " from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail) "
+			editModeQuery1 = " from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail where billVoucherHeader is not null) "
 					+ jvModifyCondition;
 
 			// editModeQuery2 :-check for voucher for which payments are in
@@ -167,11 +179,11 @@ public class VoucherSearchUtil {
 
 			final List<CVoucherHeader> vchList = voucherList;
 			final StringBuilder uncancelledRemittances = new StringBuilder(
-					" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, Generalledgerdetail gld,")
+					" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, CGeneralLedgerDetail gld,")
 							.append(" CGeneralLedger gl, EgRemittance rd,")
 							.append(" CVoucherHeader vh ,Vouchermis billmis, CVoucherHeader remittedvh ")
 							.append(" WHERE r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld")
-							.append(" AND gld.generalledger=gl AND r.egRemittance=rd AND rd.voucherheader=remittedvh")
+							.append(" AND gld.generalLedgerId=gl AND r.egRemittance=rd AND rd.voucherheader=remittedvh")
 							.append(" AND gl.voucherHeaderId =vh")
 							.append(" AND remittedvh =billmis.voucherheaderid and remittedvh.status!=:remittedvhStatus");
 			final Query ucrQuery = persistenceService.getSession()
@@ -324,18 +336,25 @@ public class VoucherSearchUtil {
 		}
 		if (toDate != null) {
 			sql.append(" and vh.voucherDate<=:voucherToDate");
-			params.put("voucherToDate", toDate);
+			params.put("voucherToDate", endOfDay(toDate));
 		}
-		if (voucherHeader.getFundId() != null) {
+		// LTS Migration Note [Struts 7 ModelDriven Stubs & Sentinels]:
+		// In Struts 7, unselected dropdowns instantiate stubs with null/sentinel IDs (-1, 0).
+		// Explicitly check for valid positive IDs before appending query criteria.
+		if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != null
+				&& voucherHeader.getFundId().getId() != -1 && voucherHeader.getFundId().getId() != 0) {
 			sql.append(" and vh.fundId.id=:fundId");
 			params.put("fundId", voucherHeader.getFundId().getId());
 		}
-		if (voucherHeader.getVouchermis().getFundsource() != null) {
+		if (voucherHeader.getVouchermis().getFundsource() != null
+				&& voucherHeader.getVouchermis().getFundsource().getId() != null
+				&& voucherHeader.getVouchermis().getFundsource().getId() != -1) {
 			sql.append(" and vh.fundsourceId=:fundsourceId");
 			params.put("fundsourceId", voucherHeader.getVouchermis().getFundsource().getId());
 		}
-		if (voucherHeader.getVouchermis().getDepartmentcode() != null
-				&& !voucherHeader.getVouchermis().getDepartmentcode().equals("-1")) {
+		if (StringUtils.isNotBlank(voucherHeader.getVouchermis().getDepartmentcode())
+				&& !"-1".equals(voucherHeader.getVouchermis().getDepartmentcode())
+				&& !"0".equals(voucherHeader.getVouchermis().getDepartmentcode())) {
 			sql.append(" and vh.vouchermis.departmentcode=:departmentcode");
 			params.put("departmentcode", voucherHeader.getVouchermis().getDepartmentcode());
 		}
@@ -365,6 +384,16 @@ public class VoucherSearchUtil {
 				params.put("moduleId", voucherHeader.getModuleId());
 			}
 		return sql.toString();
+	}
+
+	private Date endOfDay(final Date date) {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return calendar.getTime();
 	}
 
 	public String excludeVoucherStatus() {

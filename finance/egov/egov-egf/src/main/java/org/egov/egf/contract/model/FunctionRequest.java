@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.egov.infra.microservice.models.RequestInfo;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,17 +14,17 @@ public class FunctionRequest implements Serializable {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
     private List<Integer> ids;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
     private Boolean active;
     private Integer pageSize;
     private Integer Offset;
-    @SafeHtml
+    @SanitizeHtml
     private String sortBy;
 
     public RequestInfo getRequestInfo() {

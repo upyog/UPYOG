@@ -1,7 +1,7 @@
-import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
-import { useHistory } from "react-router-dom";
+
 import { configASSETApproverApplication } from "../config";
 
 
@@ -36,7 +36,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     { enabled: !action?.isTerminateState }
   );
 
-  const history = useHistory(); // Initialize useHistory
+  const navigate = Digit.Hooks.useCustomNavigate(); // Initialize useHistory
 
 
 
@@ -77,7 +77,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   useEffect(() => {
     if(action?.state==="INITIATED"){
-      history.push(`/upyog-ui/employee/asset/assetservice/edit/`+ `${applicationData?.applicationNo}`);
+      navigate(`/upyog-ui/employee/asset/assetservice/edit/`+ `${applicationData?.applicationNo}`);
     }
     else {
       setConfig(

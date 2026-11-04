@@ -6,8 +6,8 @@ info:
     APIs available for Fire NOC
       - Calculate Fire NOC Fee.
   contact:
-    name: eGovernments Foundation
-    email: contacts@egovernments.org
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
 schemes:
   - https
 basePath: /firenoc-calculator/

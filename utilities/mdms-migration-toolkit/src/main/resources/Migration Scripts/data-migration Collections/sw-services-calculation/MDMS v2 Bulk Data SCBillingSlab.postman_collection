@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-sw-services-calculation.SCBillingSlab",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"id\": \"1\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"No. of water closets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 15}]}, {\"id\": \"2\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"No. of toilets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 15}]}, {\"id\": \"3\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"No. of water closets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"4\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"No. of toilets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"5\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"No. of water closets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"6\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"No. of toilets\", \"connectionType\": \"Non Metered\", \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"7\", \"buildingType\": \"Government\", \"calculationAttribute\": \"No. of water closets\", \"connectionType\": \"Non Metered\", \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"8\", \"buildingType\": \"Government\", \"calculationAttribute\": \"No. of toilets\", \"connectionType\": \"Non Metered\", \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"9\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"No. of water closets\", \"connectionType\": \"Non Metered\", \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 25}]}, {\"id\": \"10\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"No. of toilets\", \"connectionType\": \"Non Metered\", \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 25}]}, {\"id\": \"11\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 100, \"slabs\": []}, {\"id\": \"12\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 250, \"slabs\": []}, {\"id\": \"13\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 250, \"slabs\": []}, {\"id\": \"14\", \"buildingType\": \"Government\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 350, \"slabs\": []}, {\"id\": \"15\", \"buildingType\": \"Partly commercial\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 200, \"slabs\": []}, {\"id\": \"16\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"No. of water closets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"17\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"No. of toilets\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 30}]}, {\"id\": \"18\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 250, \"slabs\": []}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"sw-services-calculation.SCBillingSlab\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/sw-services-calculation.SCBillingSlab",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"sw-services-calculation.SCBillingSlab"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

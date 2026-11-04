@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, Toast } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/EWASTETimeline";
 import { Controller, useForm } from "react-hook-form";
-import { SubmitBar } from "@upyog/digit-ui-react-components";
+import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import ProductList from "../components/EWASTEProductList";
 
 /**
@@ -134,7 +134,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             name={"productName"}
             defaultValue={productName}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={productName}
@@ -157,7 +157,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             name="productQuantity"
             value={productQuantity}
             onChange={setproductQuantity}
-            style={{ width: "86%" }}
+            className="ew-ewasteproduct-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -176,11 +176,11 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             name="productPrice"
             value={productName && productName.price}
             disable={true}
-            style={{ width: "86%" }}
+            className="ew-ewasteproduct-details-wrapper"
             ValidationRequired={false}
           />
         </div>
-        <SubmitBar label="Add Product" style={{ marginBottom: "10px" }} onSubmit={handleAddProduct} />
+        <SubmitBar label="Add Product" className="ew-ewastedocuments-bottom-spacing-2" onSubmit={handleAddProduct} />
       </FormStep>
 
       {/* Component to display the list of added products */}

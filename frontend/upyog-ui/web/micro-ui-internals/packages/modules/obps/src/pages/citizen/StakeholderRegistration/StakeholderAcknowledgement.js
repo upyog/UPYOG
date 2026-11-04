@@ -1,8 +1,8 @@
-import { BackButton, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { BackButton, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Link, useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { convertToStakeholderObject } from "../../../utils/index";
 import getAcknowledgementData from "../../../../getAcknowlegment";
 const GetActionMessage = ( props) => {
@@ -30,7 +30,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.Licenses[0].applicationNumber}
       info={props.isSuccess ? `${props.t(`TRADELICENSE_TRADETYPE_${LicenseType}`)} ${props.t("BPA_NEW_STAKEHOLDER_REGISTRATION_APP_LABEL")}` : ""}
       successful={props.isSuccess}
-      style={{ padding: "10px" }}
+      className="obps-acknowledgement-container-padding"
       headerStyles={{ fontSize: "32px" }}
     />
   );
@@ -77,30 +77,28 @@ const StakeholderAcknowledgement = ({ data, onSuccess }) => {
     
   };
 
-  return mutation.isLoading || mutation.isIdle ? (
+  return mutation.isPending || mutation.isIdle ? (
     <Loader />
   ) : (
     <div>
       <div className={isOpenLinkFlow ? "OpenlinkContainer" : ""}>
         {/* {isOpenLinkFlow &&<OpenLinkContainer />}
     <div style={isOpenLinkFlow?{marginTop:"60px", width:isCitizenUrl?"100%":"70%", marginLeft:"auto",marginRight:"auto"}:{}}> */}
-        {isOpenLinkFlow && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isOpenLinkFlow && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Card>
           <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
           {mutation.isSuccess && <CardText>{`${t(`TRADELICENSE_TRADETYPE_${licenseType}`)}${t(`CS_FILE_STAKEHOLDER_RESPONSE`)}`}</CardText>}
           {!mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>}
-          {mutation.isSuccess && !isOpenLinkFlow && (
+{mutation.isSuccess && !isOpenLinkFlow && (
             <Link
-              to={{
-                pathname: `/upyog-ui/citizen/payment/collect/${mutation.data.Licenses[0].businessService}/${mutation.data.Licenses[0].applicationNumber}/${mutation.data.Licenses[0].tenantId}?tenantId=${mutation.data.Licenses[0].tenantId}`,
-                state: { tenantId: mutation.data.Licenses[0].tenantId },
-              }}
+              to={`/upyog-ui/citizen/payment/collect/${mutation.data.Licenses[0].businessService}/${mutation.data.Licenses[0].applicationNumber}?tenantId=${mutation.data.Licenses[0].tenantId}`}
+              state={{ tenantId: mutation.data.Licenses[0].tenantId }}
             >
               <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
             </Link>
           )}
           {mutation.isSuccess &&(
-              <div style={{marginTop:"10px"}}>
+              <div className="obps-building-plan-scrutiny-top-spacing">
               <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
               </div>
           )}

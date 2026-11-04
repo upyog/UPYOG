@@ -54,14 +54,38 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
+	<!-- 
+		LTS Migration Fix (Spring Security 6 Upgrade):
+		Defined explicit AntPathRequestMatcher beans and used request-matcher-ref in security:filter-chain tags.
+		In Spring Security 6, using inline pattern="..." attributes in filter chains defaults to MvcRequestMatcher, 
+		which throws NoSuchBeanDefinitionException (No bean named 'mvcHandlerMappingIntrospector' available) 
+		in non-Spring-MVC (Struts 7) web applications. Defining AntPathRequestMatcher beans directly bypasses 
+		mvcHandlerMappingIntrospector and satisfies XML schema validation.
+	-->
+	<bean id="resourcesMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/resources/**" />
+	</bean>
+	<bean id="indexMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/index.jsp" />
+	</bean>
+	<bean id="anonymousComplaintsMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/complaints/citizen/anonymous/**" />
+	</bean>
+	<bean id="eisDashboardMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/eisdashboard/*" />
+	</bean>
+	<bean id="allMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/**" />
+	</bean>
+
 	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/complaints/citizen/anonymous/**" filters="none" />
-				<security:filter-chain pattern="/eisdashboard/*" filters="none" />
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+				<security:filter-chain request-matcher-ref="resourcesMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="indexMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="anonymousComplaintsMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="eisDashboardMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="allMatcher"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>
 	</bean>	

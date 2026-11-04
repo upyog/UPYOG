@@ -1,7 +1,7 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@nudmcdgnpm/digit-ui-react-components';
-import React, { useState ,useEffect} from 'react'
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Confirmation from '../Modal/Confirmation';
 import { format } from "date-fns";
 import { openUploadedDocument } from '../../utils';
@@ -11,9 +11,9 @@ const renderMultipleDocuments = (documents) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   if (!documents && !documents.length) return null;
   return (
-    <div style={{ display: 'flex', flexDirection: isMobile ? 'column':'row', gap: isMobile ? '40px' : '100px'}}>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '40px' : '100px' }}>
       {documents.map(({ fileStoreId, fileName }) => (
-        <div className="documentDetails_pdf">
+        <div className="documentDetails_pdf" key={fileStoreId}>
           <div style={{ width: '100px' }} onClick={() => openUploadedDocument(fileStoreId, fileName)}>
             <GenericFileIcon />
             <span className="cell-text">{fileName?.split(10)}</span>
@@ -35,13 +35,13 @@ const DocumentDetails = () => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { isLoading, data } = Digit.Hooks.events.useEventDetails(tenantId, { ids: id }, {
   });
-    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_ERROR_DATA", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_SUCCESS_DATA", false);
 
@@ -54,7 +54,7 @@ const DocumentDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/sv-ui/employee/engagement/messages/inbox/edit/${id}`)
+      navigate(`/sv-ui/employee/engagement/messages/inbox/edit/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -72,7 +72,7 @@ const DocumentDetails = () => {
         },
       ],
     };
-    history.push("/sv-ui/employee/engagement/messages/response?delete=true", details);
+    navigate("/sv-ui/employee/engagement/messages/response?delete=true", details);
   };
 
   function onModalCancel() {

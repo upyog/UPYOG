@@ -1,20 +1,25 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
-const useAssetdetail = (tenantId, moduleCode, type, config = {}) => {
-  const useAssetfour = () => {
-    return useQuery("ASSET_COMMON", () => MdmsService.Assetcommondetail(tenantId, moduleCode ,type), config);
-  };
-  
+const useAssetdetail = (
+  tenantId,
+  moduleCode,
+  type,
+  config = {}
+) => {
+  if (type !== "assetCommonDetail") return null;
 
-  switch (type) {
-    case "assetCommonDetail":
-      return useAssetfour();
-    default:
-      return null;
-  }
+  const queryKey = [
+    "ASSET_COMMON_DETAIL",
+    tenantId,
+    moduleCode,
+    type,
+  ];
+
+  const queryFn = () =>
+    MdmsService.Assetcommondetail(tenantId, moduleCode, type);
+
+  return queryTemplate({ queryKey, queryFn, config });
 };
-
-
 
 export default useAssetdetail;

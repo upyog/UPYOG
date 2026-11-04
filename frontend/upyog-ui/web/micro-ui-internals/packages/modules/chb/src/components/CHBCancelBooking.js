@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { Modal, Card,CheckBox} from "@upyog/digit-ui-react-components";
+import { Modal, Card,CheckBox} from "@nudmcdgnpm/digit-ui-react-components";
 import {useForm } from "react-hook-form";
 
 const Heading = (props) => {
@@ -57,13 +57,14 @@ const CloseBtn = (props) => {
  * Returns:
  * - A modal component with a heading, agreement checkbox, and action buttons for canceling or confirming the booking cancellation.
  */
-const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmit, actionSaveLabel, actionSaveOnSubmit,onSubmit }) => {
+const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmit, actionSaveLabel, actionSaveOnSubmit, onSubmit, paymentMode }) => {
     const [agree, setAgree] = useState(false);
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
 
-    const {handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm();
+    const isOnline = paymentMode === "ONLINE";
 
     return (
         <Modal
@@ -76,12 +77,30 @@ const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubm
             isDisabled={!agree}
             formId="modal-action"
         >
-            <Card style={{ boxShadow: "none" }}>
+            <Card className="chb-booking-popup-card">
                 <form onSubmit={handleSubmit(onSubmit)}>
+                {isOnline && (
+                    <div className="chb-chbcancel-booking-bottom-spacing">
+                        <p className="chb-chbcancel-booking-bottom-spacing-2">
+                            {t("CHB_ONLINE_PAYMENT_CANCEL_MSG", "Refund will be initiated to your account since the payment was done online. Cancellation charges may apply as per policy.")}
+                        </p>
+                        <div className="chb-chbcancel-booking-bottom-spacing-3">
+                            <label className="chb-chbcancel-booking-bottom-spacing-4">
+                                {t("CHB_CANCEL_REASON_LABEL", "Why do you want to cancel?")} <span className="check-page-link-button">*</span>
+                            </label>
+                            <TextArea
+                                name="cancelReason"
+                                inputRef={register({ required: true })}
+                                placeholder={t("CHB_CANCEL_REASON_PLACEHOLDER", "Enter reason for cancellation")}
+                                className="chb-chbcancel-booking-fullwidth"
+                            />
+                        </div>
+                    </div>
+                )}
                 <CheckBox
                     label={t("CHB_CONFIRM_CANCEL_BOOKING")}
                     onChange={setdeclarationhandler}
-                    style={{ height: "auto" }}
+                    className="chb-chbcancel-booking-wrapper"
                     />
                 </form>
             </Card>

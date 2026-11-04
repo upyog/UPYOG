@@ -19,7 +19,6 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -43,15 +42,18 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class NotificationUtil {
 
-    private ServiceRequestRepository serviceRequestRepository;
+    private static final String REQUEST_INFO = "RequestInfo";
+    private static final String TENANT_ID = "tenantId";
+    private static final String USER_TYPE = "userType";
+    private static final String USER_NAME = "userName";
+    private static final String EXCEPTION_FETCHING_USER = "Exception while fetching user for username - ";
+    private static final String EXCEPTION_TRACE = "Exception trace: ";
 
-    private TreePruningConfiguration config;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final TreePruningConfiguration config;
+    private final Producer producer;
+    private final RestTemplate restTemplate;
 
-    private Producer producer;
-
-    private RestTemplate restTemplate;
-
-    @Autowired
     public NotificationUtil(ServiceRequestRepository serviceRequestRepository, TreePruningConfiguration config,
                             Producer producer, RestTemplate restTemplate) {
         this.serviceRequestRepository = serviceRequestRepository;
@@ -75,8 +77,6 @@ public class NotificationUtil {
     public static final String ACTION_LINK = "ACTION_LINK";
 
     public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
-
-    private final String URL = "url";
 
     /**
      * Extracts message for the specific code
@@ -109,23 +109,23 @@ public class NotificationUtil {
     public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
 
         String locale = TreePruningConstants.NOTIFICATION_LOCALE;
-        Boolean isRetryNeeded = false;
-        String jsonString = null;
-        LinkedHashMap responseMap = null;
+        boolean isRetryNeeded = false;
+        String jsonString;
+        LinkedHashMap<String, Object> responseMap;
 
         if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
             locale = requestInfo.getMsgId().split("\\|")[1];
             isRetryNeeded = true;
         }
 
-        responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale),
+        responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(getUri(tenantId, locale),
                 requestInfo);
         jsonString = new JSONObject(responseMap).toString();
 
         if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
-            responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(
-                    getUri(tenantId, requestInfo, TreePruningConstants.NOTIFICATION_LOCALE), requestInfo);
+            responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(
+                    getUri(tenantId, TreePruningConstants.NOTIFICATION_LOCALE), requestInfo);
             jsonString = new JSONObject(responseMap).toString();
             if (StringUtils.isEmpty(jsonString))
                 throw new CustomException("UG_RS_LOCALE_ERROR",
@@ -139,10 +139,11 @@ public class NotificationUtil {
      *
      * @return The uri for localization search call
      */
-    public StringBuilder getUri(String tenantId, RequestInfo requestInfo, String locale) {
+    public StringBuilder getUri(String tenantId, String locale) {
 
-        if (config.getIsLocalizationStateLevel())
+        if (Boolean.TRUE.equals(config.getIsLocalizationStateLevel())) {
             tenantId = tenantId.split("\\.")[0];
+        }
 
         StringBuilder uri = new StringBuilder();
         uri.append(config.getLocalizationHost()).append(config.getLocalizationContextPath())
@@ -176,7 +177,7 @@ public class NotificationUtil {
      */
     public void sendSMS(List<SMSRequest> smsRequestList) {
 
-        if (config.getIsSMSNotificationEnabled()) {
+        if (Boolean.TRUE.equals(config.getIsSMSNotificationEnabled())) {
             if (CollectionUtils.isEmpty(smsRequestList))
                 log.info("Messages from localization couldn't be fetched!");
             for (SMSRequest smsRequest : smsRequestList) {
@@ -201,10 +202,10 @@ public class NotificationUtil {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
-        userSearchRequest.put("RequestInfo", requestInfo);
-        userSearchRequest.put("tenantId", tenantId);
-        userSearchRequest.put("userType", "CITIZEN");
-        userSearchRequest.put("userName", mobileNumber);
+        userSearchRequest.put(REQUEST_INFO, requestInfo);
+        userSearchRequest.put(TENANT_ID, tenantId);
+        userSearchRequest.put(USER_TYPE, TreePruningConstants.CITIZEN);
+        userSearchRequest.put(USER_NAME, mobileNumber);
         try {
 
             Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
@@ -215,8 +216,8 @@ public class NotificationUtil {
                 log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
             }
         } catch (Exception e) {
-            log.error("Exception while fetching user for username - " + mobileNumber);
-            log.error("Exception trace: ", e);
+            log.error(EXCEPTION_FETCHING_USER + mobileNumber);
+            log.error(EXCEPTION_TRACE, e);
         }
 
         return mapOfPhoneNoAndUUIDs;
@@ -237,11 +238,11 @@ public class NotificationUtil {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
-        userSearchRequest.put("RequestInfo", requestInfo);
-        userSearchRequest.put("tenantId", tenantId);
-        userSearchRequest.put("userType", "CITIZEN");
+        userSearchRequest.put(REQUEST_INFO, requestInfo);
+        userSearchRequest.put(TENANT_ID, tenantId);
+        userSearchRequest.put(USER_TYPE, TreePruningConstants.CITIZEN);
         for (String mobileNo : mobileNumbers) {
-            userSearchRequest.put("userName", mobileNo);
+            userSearchRequest.put(USER_NAME, mobileNo);
             try {
                 Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
                 if (null != user) {
@@ -251,9 +252,8 @@ public class NotificationUtil {
                     log.error("Service returned null while fetching user for username - " + mobileNo);
                 }
             } catch (Exception e) {
-                log.error("Exception while fetching user for username - " + mobileNo);
-                log.error("Exception trace: ", e);
-                continue;
+                log.error(EXCEPTION_FETCHING_USER + mobileNo);
+                log.error(EXCEPTION_TRACE, e);
             }
         }
         return mapOfPhnoAndUUIDs;
@@ -302,7 +302,7 @@ public class NotificationUtil {
      */
     public void sendEmail(List<EmailRequest> emailRequestList) {
 
-        if (config.getIsEmailNotificationEnabled()) {
+        if (Boolean.TRUE.equals(config.getIsEmailNotificationEnabled())) {
             if (CollectionUtils.isEmpty(emailRequestList))
                 log.info("Messages from localization couldn't be fetched!");
             for (EmailRequest emailRequest : emailRequestList) {
@@ -335,8 +335,7 @@ public class NotificationUtil {
         String mobileNumber;
         RequestInfo requestInfo;
 
-        if (request instanceof TreePruningBookingRequest) {
-            TreePruningBookingRequest waterRequest = (TreePruningBookingRequest) request;
+        if (request instanceof TreePruningBookingRequest waterRequest) {
             tenantId = waterRequest.getTreePruningBookingDetail().getTenantId();
             requestInfo = waterRequest.getRequestInfo();
             localizationMessages = getLocalizationMessages(tenantId, requestInfo);
@@ -353,8 +352,6 @@ public class NotificationUtil {
 
     /**
      * Method to fetch the list of channels for a particular action from mdms config
-     * from mdms configs returns the message minus some lines to match In App
-     * Templates
      *
      * @param requestInfo
      * @param tenantId
@@ -367,8 +364,7 @@ public class NotificationUtil {
         uri.append(config.getMdmsHost()).append(config.getMdmsPath());
         if (StringUtils.isEmpty(tenantId))
             return masterData;
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId, moduleName, action);
-        //Can create filter as string using this
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId);
         Filter masterDataFilter = filter(where(TreePruningConstants.MODULE).is(moduleName)
                 .and(TreePruningConstants.ACTION).is(action));
 
@@ -384,28 +380,17 @@ public class NotificationUtil {
     }
 
     /**
-     * Constructs an MDMS (Master Data Management System) criteria request for retrieving
-     * the channel list based on the specified module and action.
+     * Constructs an MDMS criteria request for retrieving the channel list.
      *
      * @param requestInfo The request information containing metadata about the request.
      * @param tenantId    The tenant ID for which the channel list is to be retrieved.
-     * @param moduleName  The module name for filtering the data.
-     * @param action      The specific action used to filter the channel list.
      * @return An {@link MdmsCriteriaReq} object containing the criteria for fetching
      *         the channel list from MDMS.
-     *
-     * This method:
-     * - Creates a {@link MasterDetail} object specifying the required master data.
-     * - Builds a {@link ModuleDetail} object containing the master details.
-     * - Constructs an {@link MdmsCriteria} with the provided tenant ID and module details.
-     * - Wraps the criteria in an {@link MdmsCriteriaReq} and returns it.
      */
-
-    private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+    private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
 
         MasterDetail masterDetail = new MasterDetail();
         masterDetail.setName(TreePruningConstants.CHANNEL_LIST);
-        //	masterDetail.setFilter("[?(@['module'] == 'CND' && @['action'] == '"+ action +"')]");
         List<MasterDetail> masterDetailList = new ArrayList<>();
         masterDetailList.add(masterDetail);
 
@@ -440,11 +425,11 @@ public class NotificationUtil {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
         Map<String, Object> userSearchRequest = new HashMap<>();
-        userSearchRequest.put("RequestInfo", requestInfo);
-        userSearchRequest.put("tenantId", tenantId);
-        userSearchRequest.put("userType", "CITIZEN");
+        userSearchRequest.put(REQUEST_INFO, requestInfo);
+        userSearchRequest.put(TENANT_ID, tenantId);
+        userSearchRequest.put(USER_TYPE, TreePruningConstants.CITIZEN);
         for (String mobileNo : mobileNumbers) {
-            userSearchRequest.put("userName", mobileNo);
+            userSearchRequest.put(USER_NAME, mobileNo);
             try {
                 Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
                 if (null != user) {
@@ -456,30 +441,28 @@ public class NotificationUtil {
                     log.error("Service returned null while fetching user for username - " + mobileNo);
                 }
             } catch (Exception e) {
-                log.error("Exception while fetching user for username - " + mobileNo);
-                log.error("Exception trace: ", e);
-                continue;
+                log.error(EXCEPTION_FETCHING_USER + mobileNo);
+                log.error(EXCEPTION_TRACE, e);
             }
         }
         return mapOfPhnoAndEmailIds;
     }
 
     /**
-     * Generates a customized message based on the action status of the mobile toilet booking request.
-     * This method retrieves localized message templates, formats them with booking details,
-     * and optionally includes a payment link.
+     * Generates a customized message based on the action status of the tree pruning booking request.
      *
      * @param requestInfo       The request information containing user details.
-     * @param treePruningDetail The details of the mobile toilet booking.
+     * @param treePruningDetail The details of the tree pruning booking.
      * @param localizationMessage The localization message string for fetching message templates.
      * @return A map containing the customized message and an optional action link.
      */
     public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, TreePruningBookingDetail treePruningDetail,
                                                 String localizationMessage) {
-        String message = null, messageTemplate;
+        String message = null;
+        String messageTemplate;
         String link = null;
-        String ACTION_STATUS = treePruningDetail.getWorkflow().getAction();
-        switch (ACTION_STATUS) {
+        String actionStatus = treePruningDetail.getWorkflow().getAction();
+        switch (actionStatus) {
 
             case ACTION_STATUS_APPLY:
                 messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_APPLY, localizationMessage);
@@ -489,7 +472,6 @@ public class NotificationUtil {
             case ACTION_STATUS_APPROVE:
                 messageTemplate = getMessageTemplate(TreePruningConstants.NOTIFICATION_APPROVED, localizationMessage);
                 message = getMessageWithNumberAndFinalDetails(treePruningDetail, messageTemplate);
-                //	link = getPayUrl(treePruningDetail, message);
                 break;
 
             case ACTION_STATUS_VERIFY:
@@ -512,23 +494,25 @@ public class NotificationUtil {
                         localizationMessage);
                 message = getMessageWithNumberAndFinalDetails(treePruningDetail, messageTemplate);
                 break;
+
+            default:
+                log.warn("Unsupported action status for notification: {}", actionStatus);
+                break;
         }
 
 
-        if (message.contains("{PAY_LINK}")) {
+        if (message != null && message.contains("{PAY_LINK}")) {
             link = null;
             message = getPayUrl(treePruningDetail, message);
 
         }
 
-        Map<String, String> messageMap = new HashMap<String, String>();
+        Map<String, String> messageMap = new HashMap<>();
         messageMap.put(ACTION_LINK, link);
         messageMap.put(MESSAGE_TEXT, message);
 
         log.info("getCustomizedMsg messageTemplate : " + message);
         return messageMap;
-
-        //return message;
     }
 
     private String getMessageWithNumberAndFinalDetails(TreePruningBookingDetail treePruningDetail, String message) {
@@ -575,9 +559,8 @@ public class NotificationUtil {
         if (StringUtils.isEmpty(res)) {
             log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
             return url;
-        } else {
-            return res;
         }
+        return res;
     }
 
 }

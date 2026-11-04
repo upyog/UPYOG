@@ -102,4 +102,47 @@ public class PaymentWorkflowValidator {
     }
 
 
+    public void validateForRefund(List<PaymentWorkflow> paymentWorkflows, Payment payment) {
+
+        Map<String, String> errorMap = new HashMap<>();
+
+        // Check if payment exists
+        if (payment == null) {
+            throw new CustomException("PAYMENT_NOT_FOUND", "No payment found for the given criteria");
+        }
+
+        // Check payment workflow exists for this payment
+        boolean workflowExists = paymentWorkflows.stream()
+                .anyMatch(workflow -> workflow.getPaymentId().equalsIgnoreCase(payment.getId()));
+
+        if (!workflowExists) {
+            throw new CustomException("PAYMENT_NOT_FOUND", 
+                    "No workflow request found for paymentId: " + payment.getId());
+        }
+
+        // Check payment mode is ONLINE
+        if (!"ONLINE".equalsIgnoreCase(payment.getPaymentMode().toString())) {
+            errorMap.put("INVALID_PAYMENT_MODE", 
+                    "Refund feature is available only for ONLINE payments");
+        }
+
+        // Check totalAmountPaid from request does not exceed totalAmountPaid
+        if (payment.getTotalAmountPaid() == null) {
+            errorMap.put("INVALID_AMOUNT", "Total amount paid cannot be null");
+        } else {
+            boolean anyDetailExceedsAmount = payment.getPaymentDetails().stream()
+                    .anyMatch(detail -> detail.getTotalAmountPaid() != null &&
+                            detail.getTotalAmountPaid().compareTo(payment.getTotalAmountPaid()) > 0);
+
+            if (anyDetailExceedsAmount) {
+                errorMap.put("INVALID_AMOUNT",
+                        "Refund amount cannot be greater than the total amount paid for paymentId: " + payment.getId());
+            }
+        }
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
+
+
 }

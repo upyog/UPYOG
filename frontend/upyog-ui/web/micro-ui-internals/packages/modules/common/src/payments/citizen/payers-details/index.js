@@ -10,10 +10,10 @@ import {
   MobileNumber,
   CheckBox,
   CitizenConsentForm
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import { useParams, useLocation,  } from "react-router-dom";
 import { stringReplaceAll } from "../bills/routes/bill-details/utils";
 
 const SelectPaymentType = (props) => {
@@ -34,7 +34,7 @@ const SelectPaymentType = (props) => {
   const payersActiveMobileNumber = userInfo?.mobileNumber;
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state, ...location } = useLocation();
   const { consumerCode, businessService, paymentAmt } = useParams();
   const { workflow: wrkflow, tenantId: _tenantId, ConsumerName } = Digit.Hooks.useQueryParams();
@@ -108,7 +108,7 @@ const SelectPaymentType = (props) => {
         return <span>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} className="cmn-index-clickable">{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -145,7 +145,7 @@ const SelectPaymentType = (props) => {
     if(wrkflow === "WNS")
     {
         let billPayerName=sessionStorage.getItem("payerName")
-        history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
+        navigate(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=WNS&consumerCode=${stringReplaceAll(consumerCode, "+", "/")}`, {
         paymentAmount: paymentAmt,
         tenantId: billDetails.tenantId,
         name: paymentType?.code !== optionSecound?.code && ConsumerName !== "undefined" ? billPayerName : userInfo ? payersActiveName : payersName,
@@ -153,7 +153,7 @@ const SelectPaymentType = (props) => {
       });
     }
     else{
-    history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+    navigate(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
       paymentAmount: paymentAmt,
       tenantId: billDetails.tenantId,
       name: paymentType?.code !== optionSecound?.code ? bill?.payerName : userInfo ? payersActiveName : payersName,
@@ -182,9 +182,9 @@ const SelectPaymentType = (props) => {
             inputStyle={{ marginTop: "11px" }}
             innerStyles={{ display: "flex" }}
           />
-          <div style={{ position: "relative" }}>
+          <div className="cmn-bill-details-wrapper">
             {paymentType?.code !== optionFirst?.code && !userInfo ? (
-              <div style={{ position: "relative" }}>
+              <div className="cmn-bill-details-wrapper">
                 <span>
                   <span>{t("PT_PAYERS_MOBILE_NO")}</span>
                   <MobileNumber
@@ -196,7 +196,7 @@ const SelectPaymentType = (props) => {
                 <span>
                   <span>{t("PT_PAYERS_NAME")}</span>
                   <TextInput
-                    //style={{ width: "40%" }}
+                    //className="custom-style"
 
                     onChange={(e) => onChangePayersName(e.target.value)}
                     value={payersName}
@@ -208,11 +208,10 @@ const SelectPaymentType = (props) => {
 
           {isCCFEnabled?.isCitizenConsentFormEnabled && !isLoggedIn?.access_token && <div>
             <CheckBox
-              className="form-field"
+              className="form-field cmn-index-top-spacing"
               label={checkLabels()}
               value={isCheckBox}
               checked={isCheckBox}
-              style={{ marginTop: "5px", marginLeft: "55px" }}
               styles={{marginBottom: "30px"}}
               onChange={setTermsAndPolicyDetails}
             />

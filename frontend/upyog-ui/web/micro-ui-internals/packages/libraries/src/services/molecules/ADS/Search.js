@@ -19,6 +19,7 @@ export const ADSSearch = {
     const adslistRows =
     response?.cartDetails?.map((slot) => (
       [`${t(slot.addType)}`,
+      `${t(slot.location)}`,
       `${t(slot.faceArea)}`,
       `${t(slot.nightLight===true?"Yes":"No")}`,
       `${t(slot.bookingDate)}`,
@@ -59,7 +60,7 @@ export const ADSSearch = {
         title:"ADS_CART_DETAILS",
         asSectionHeader: true,
         isTable: true,
-        headers: ["ADS_TYPE", "ADS_FACE_AREA","ADS_NIGHT_LIGHT" ,"ADS_BOOKING_DATE","PT_COMMON_TABLE_COL_STATUS_LABEL"],
+        headers: ["ADS_TYPE", "ADS_LOCATION", "ADS_FACE_AREA","ADS_NIGHT_LIGHT" ,"ADS_BOOKING_DATE","PT_COMMON_TABLE_COL_STATUS_LABEL"],
         tableRows: adslistRows,
       },
 

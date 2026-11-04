@@ -87,10 +87,10 @@ const EngagementDocUploadDocument = ({ userType, t, onSelect, setValue, config, 
           <Controller
             name={config.key + ".filestoreId"}
             control={control}
-            render={(props) => (
+            render={({ field }) => (
               <UploadFile
                 id={"city-engagement-doc"}
-                onUpload={(d) => selectFile(d, props)}
+                onUpload={(d) => selectFile(d, field)}
                 onDelete={() => {
                   setFileStoreId(null);
                   setFileSize(100);

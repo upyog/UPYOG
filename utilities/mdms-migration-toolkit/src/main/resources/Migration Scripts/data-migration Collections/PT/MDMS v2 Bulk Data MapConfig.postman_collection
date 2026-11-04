@@ -14,32 +14,16 @@
 					"script": {
 						"exec": [
 							"var data=[",
-							"   {",
-							"        \"defaultConfig\": {",
-							"            \"lat\": 31.6160638,",
-							"            \"lng\": 74.8978579",
-							"        }",
-							"    }",
-							"]",
 							"",
 							"pm.collectionVariables.set(\"raw\", data);",
 							"",
 							"var obj = pm.collectionVariables.get(\"raw\");",
 							"",
-							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
 							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							""
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
 						],
 						"type": "text/javascript"
 					}

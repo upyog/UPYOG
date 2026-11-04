@@ -21,7 +21,7 @@ export const SVMyApplications = () => {
   const [mobileTerm, setMobileTerm] = useState("")
   const [filters, setFilters] = useState(null);
   const [applicationsList, setApplicationsList] = useState([]);
-  
+
 
 
   let filter = window.location.href.split("/").pop();
@@ -34,21 +34,21 @@ export const SVMyApplications = () => {
     t1 = 4;
   }
 
-  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, isDraftApplication:false,mobileNumber:user?.mobileNumber };
+  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, isDraftApplication: false, mobileNumber: user?.mobileNumber };
 
   useEffect(() => {
     setFilters(initialFilters);
   }, [filter]);
 
   const { isLoading: isNonDraftLoading, data: nonDraftData } = Digit.Hooks.sv.useSvSearchApplication({
-  filters: { ...filters, isDraftApplication: false },
-});
+    filters: { ...filters, isDraftApplication: false },
+  });
 
-const { isLoading: isDraftLoading, data: draftData } = Digit.Hooks.sv.useSvSearchApplication({
-  filters: { ...filters, isDraftApplication: true, sortOrder: "DESC"  },
-});
+  const { isLoading: isDraftLoading, data: draftData } = Digit.Hooks.sv.useSvSearchApplication({
+    filters: { ...filters, isDraftApplication: true, sortOrder: "DESC" },
+  });
 
-const previousDraftId = draftData?.SVDetail?.[0]?.draftId;
+  const previousDraftId = draftData?.SVDetail?.[0]?.draftId;
 
 
   useEffect(() => {
@@ -63,14 +63,14 @@ const previousDraftId = draftData?.SVDetail?.[0]?.draftId;
   // Handle discarding a draft application
   const handleDiscardApplication = (applicationToRemove) => {
     // Update the applications list by filtering out the discarded application
-    setApplicationsList(prevApplications => 
+    setApplicationsList(prevApplications =>
       prevApplications.filter(app => app !== applicationToRemove)
     );
   };
 
-if (isNonDraftLoading || isDraftLoading) {
-  return <Loader />;
-}
+  if (isNonDraftLoading || isDraftLoading) {
+    return <Loader />;
+  }
 
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
@@ -84,7 +84,7 @@ if (isNonDraftLoading || isDraftLoading) {
     setFilters(searchFilters);
   };
 
- 
+
   return (
     <React.Fragment>
       <Header>{`${t("SV_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>

@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-Challan.Rates",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"offenceTypeId\": \"OT1\", \"amount\": 250}, {\"offenceTypeId\": \"OT2\", \"amount\": 5000}, {\"offenceTypeId\": \"OT3\", \"amount\": 5000}, {\"offenceTypeId\": \"OT4\", \"amount\": 1000}, {\"offenceTypeId\": \"OT5\", \"amount\": 1000}, {\"offenceTypeId\": \"OT6\", \"amount\": 1000}, {\"offenceTypeId\": \"OT7\", \"amount\": 1000}, {\"offenceTypeId\": \"OT8\", \"amount\": 2000}, {\"offenceTypeId\": \"OT9\", \"amount\": 5000}, {\"offenceTypeId\": \"OT10\", \"amount\": 2000}, {\"offenceTypeId\": \"OT11\", \"amount\": 5000}, {\"offenceTypeId\": \"OT12\", \"amount\": 1000}, {\"offenceTypeId\": \"OT13\", \"amount\": 2000}, {\"offenceTypeId\": \"OT14\", \"amount\": 1000}, {\"offenceTypeId\": \"OT15\", \"amount\": 500}, {\"offenceTypeId\": \"OT16\", \"amount\": 250}, {\"offenceTypeId\": \"OT17\", \"amount\": 5000}, {\"offenceTypeId\": \"OT18\", \"amount\": 2000}, {\"offenceTypeId\": \"OT19\", \"amount\": 5000}, {\"offenceTypeId\": \"OT20\", \"amount\": 2000}, {\"offenceTypeId\": \"OT21\", \"amount\": 1000}, {\"offenceTypeId\": \"OT22\", \"amount\": 750}, {\"offenceTypeId\": \"OT23\", \"amount\": 1500}, {\"offenceTypeId\": \"OT24\", \"amount\": 1000}, {\"offenceTypeId\": \"OT25\", \"amount\": 2000}, {\"offenceTypeId\": \"OT26\", \"amount\": 500}, {\"offenceTypeId\": \"OT27\", \"amount\": 2000}, {\"offenceTypeId\": \"OT28\", \"amount\": 3000}, {\"offenceTypeId\": \"OT29\", \"amount\": 5000}, {\"offenceTypeId\": \"OT30\", \"amount\": 10000}, {\"offenceTypeId\": \"OT31\", \"amount\": 20000}, {\"offenceTypeId\": \"OT32\", \"amount\": 5000}, {\"offenceTypeId\": \"OT33\", \"amount\": 25000}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"Challan.Rates\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/Challan.Rates",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"Challan.Rates"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

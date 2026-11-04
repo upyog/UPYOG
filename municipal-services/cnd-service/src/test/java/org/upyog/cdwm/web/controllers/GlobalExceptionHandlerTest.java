@@ -5,6 +5,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 //@SpringBootTest
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;
 
@@ -59,7 +60,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of IllegalArgumentException for /v1/_create endpoint.
      */
-    //      @Test
+    @Test
     void testHandleIllegalArgumentExceptionCreate() throws Exception {
         when(cndService.createConstructionAndDemolitionRequest(null))
                 .thenThrow(new IllegalArgumentException("Invalid input data"));

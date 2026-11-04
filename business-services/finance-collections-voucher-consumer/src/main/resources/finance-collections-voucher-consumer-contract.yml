@@ -1,0 +1,87 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Finance Collections Voucher Consumer
+  description: |
+    Kafka consumer that bridges collection payments and receipts to finance vouchers.
+
+    This service is event-driven and does not expose domain REST APIs. It consumes
+    collection receipt, payment, and instrument completion events from Kafka,
+    integrates with MDMS, user, collection, and EGF services, and creates or cancels
+    finance vouchers while logging integration outcomes to PostgreSQL.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /finance-collections-voucher-consumer
+x-api-id: org.egov.finance.collections.voucher.consumer
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Spring Actuator health endpoint exposed at management base path `/`.
+      responses:
+        '200':
+          description: Service is healthy
+          schema:
+            $ref: '#/definitions/HealthResponse'
+      tags:
+        - Health
+  /info:
+    get:
+      summary: Service info
+      description: Returns build and application metadata from Spring Actuator.
+      responses:
+        '200':
+          description: Service metadata retrieved successfully
+          schema:
+            type: object
+      tags:
+        - Health
+definitions:
+  HealthResponse:
+    type: object
+    description: Standard Spring Actuator health response
+    properties:
+      status:
+        type: string
+        example: UP
+  ReceiptVoucherEvent:
+    type: object
+    description: |
+      Collection receipt event consumed from topics configured by
+      `egov.collection.receipt.voucher.save.topic` and
+      `egov.collection.receipt.voucher.cancel.topic`.
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      Receipt:
+        type: array
+        description: Collection receipt records used to create or cancel vouchers
+        items:
+          type: object
+  PaymentEvent:
+    type: object
+    description: |
+      Collection payment event consumed from topics configured by
+      `kafka.topics.payment.create.name`, `kafka.topics.payment.cancel.name`, and
+      `kafka.topics.payment.update.name`.
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      Payment:
+        type: object
+        description: Collection payment payload
+  InstrumentCompletedEvent:
+    type: object
+    description: |
+      Instrument completion event consumed from topic configured by
+      `kafka.topics.egf.instrument.completed.topic`.
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      instrument:
+        type: object
+        description: Completed instrument payload used to finalize voucher integration

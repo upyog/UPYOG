@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
@@ -17,16 +16,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Repository
 public class DemandRepository {
 
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final CalculatorConfig config;
 
-    @Autowired
-    private CalculatorConfig config;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private ObjectMapper mapper;
-
+    public DemandRepository(ServiceRequestRepository serviceRequestRepository, CalculatorConfig config,
+            ObjectMapper mapper) {
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
+        this.mapper = mapper;
+    }
 
     /**
      * Creates demand

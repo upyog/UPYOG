@@ -1,0 +1,275 @@
+{
+  "moduleName":"property_tax_employee_module",
+  "description": "Property Tax employee full workflow",
+
+  "baseUrl": "${selected.url}",
+
+
+  "instructions":[
+
+    {
+      "stepName":"Employee Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${selected.username}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Employee Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${selected.password}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Continue Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Continue')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Open Property Tax Inbox",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href,'/employee/pt/application-search')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Enter Property ID",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//label[normalize-space()='Application No.']/following::input[1]",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep":1000
+    },
+
+    {
+      "stepName":"Search Application",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS"
+    },
+
+    {
+      "stepName": "Open Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//table//a[1]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Take Action Verify",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Click VERIFY",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='VERIFY']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Verify Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.verify}",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Verify Popup Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[.//h2[normalize-space()='Verify']]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Take Action Forward",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click FORWARD",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='FORWARD']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Forward Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.forward}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Forward Popup Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[.//h2[normalize-space()='Forward']]",
+      "action":"CLICK_JS",
+      "dynamicSleep":1000
+    },
+
+
+
+    {
+      "stepName":"Take Action Approve",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click APPROVE",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='APPROVE']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Approve Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.approve}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Approve Popup Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[.//h2[normalize-space()='Approve']]",
+      "action":"CLICK_JS",
+      "dynamicSleep":1000
+    },
+
+
+
+    {
+      "stepName":"View Details",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='VIEW DETAILS']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Take Action Assess Property",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click Assess Property",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='ASSESS PROPERTY']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select Financial Year",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//label[normalize-space()='2024-25']/preceding-sibling::span/input[@type='radio']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Assess Property Popup",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[.//h2[normalize-space()='Assess Property']]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Assess Property Final Button",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'ASSESS PROPERTY')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Payer Mobile",
+      "locatorStrategy":"NAME",
+      "locatorValue":"payerMobile",
+      "action":"TYPE",
+      "inputValue":"${mobile.number}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Receipt Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"instrumentNumber",
+      "action":"TYPE",
+      "inputValue":"${receipt.number}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Receipt Date",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@type='date']",
+      "action":"SET_DATE_TODAY",
+      "inputValue": "0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Collect Payment",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Collect Payment')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    }
+
+  ]
+}

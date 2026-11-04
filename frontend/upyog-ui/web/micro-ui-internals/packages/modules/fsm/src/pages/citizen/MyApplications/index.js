@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Loader, Card } from "@upyog/digit-ui-react-components";
+import { Header, Loader, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import MyApplication from "./MyApplication";
 import { useTranslation } from "react-i18next";
 
@@ -29,7 +29,7 @@ export const MyApplications = () => {
           ))}
           {applicationsList.length === 0 && (
           <Card>
-            <p style={{ textAlign: "center" }}>{`${t("FSM_NO_APPLICATION")} ${userInfo.mobileNumber}`}</p>
+            <p className="fsm-desktop-inbox-centered">{`${t("FSM_NO_APPLICATION")} ${userInfo.mobileNumber}`}</p>
           </Card>
         )}
       </div>

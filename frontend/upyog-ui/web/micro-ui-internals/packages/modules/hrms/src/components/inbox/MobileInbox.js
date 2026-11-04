@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./ApplicationCard";
-// import { ApplicationLinks } from "@upyog/digit-ui-react-components";
+// import { ApplicationLinks } from "@nudmcdgnpm/digit-ui-react-components";
 
 const MobileInbox = ({
   data,
@@ -48,7 +48,7 @@ const GetSlaCell = (value) => {
   const serviceRequestIdKey = (original) => {return `${searchParams?.tenantId}/${original?.[t("HR_EMP_ID_LABEL")]}`};
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="hrms-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {/* {!isSearch && <ApplicationLinks linkPrefix={parentRoute} allLinks={allLinks} isMobile={true} />} */}

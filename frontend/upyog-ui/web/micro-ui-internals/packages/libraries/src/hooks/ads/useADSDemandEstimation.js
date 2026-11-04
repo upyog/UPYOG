@@ -1,14 +1,11 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
+import { ADSServices } from "../../services/elements/ADS";
 
-import { ADSServices } from "../../services/elements/ADS"
+const useADSDemandEstimation = (tenantId) => {
+  const mutationFn = (data) =>
+    ADSServices.estimateCreate(data, tenantId);
 
-/*Custom hook  for managing demand estimation actions
- * (either creation or updating) through ADS services*/
-
-const useADSDemandEstimation =  (tenantId) => {
-   
-    return useMutation((data) => 
-      ADSServices.estimateCreate(data, tenantId));
-    
+  return mutationTemplate({ mutationFn });
 };
+
 export default useADSDemandEstimation;

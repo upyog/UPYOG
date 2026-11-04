@@ -25,7 +25,7 @@ const CreateNewSurvey = ({ t, initialFormValues, onSubmit, isFormDisabled = fals
     registerRef("questions");
   }, []);
   return (
-    <div style={{margin:"8px"}}>
+    <div style={{ margin: "8px" }}>
       <FormProvider {...{
         register: registerRef,
         control: controlSurveyForm,

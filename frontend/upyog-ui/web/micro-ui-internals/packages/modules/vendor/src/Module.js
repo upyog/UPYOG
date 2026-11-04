@@ -1,7 +1,6 @@
-import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
+import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
 // import EmployeeApp from "./pages/employee";
 import EmployeeApp, { VendorBreadCrumb } from "./pages/employee";
 import VENDORCard from "./components/VENDORCard";
@@ -27,12 +26,9 @@ import NewResponse from "./pages/employee/Create/NewResponse";
 import DriverDetails from "./pages/employee/RegisterDriver/DriverDetails";
 import VehicleDetails from "./pages/employee/RegisterVehicle/VehicleDetails";
 import SelectVehicleType from "./pageComponents/SelectVehicleType";
-
-
-
-
-
-
+import EditVendor from "./pages/employee/RegisterVendor/EditVendor";
+import EditVehicle from "./pages/employee/RegisterVehicle/EditVehicle";
+import EditDriver from "./pages/employee/RegisterDriver/EditDriver";
 
 const componentsToRegister = {
   VendorDetails,
@@ -50,11 +46,14 @@ const componentsToRegister = {
   SelectVehicleType,
   AddDriver,
   EditVendorDetails,
+  EditVendor,
   AddVehicle,
+  EditVehicle,
   VENDORCreate,
   VENDORCheckPage : CheckPage,
   NewResponse,
   DriverDetails,
+  EditDriver,
   VehicleDetails,
   VendorBreadCrumb
 };
@@ -69,7 +68,7 @@ const addComponentsToRegistry = () => {
 };
 
 export const VENDORModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
 
   const moduleCode = "VENDOR";
   const language = Digit.StoreData.getCurrentLanguage();
@@ -79,16 +78,19 @@ export const VENDORModule = ({ stateCode, userType, tenants }) => {
 
   Digit.SessionStorage.set("VENDOR_TENANTS", tenants);
 
-  useEffect(
-    () =>
-      userType === "employee" &&
-      Digit.LocalizationService.getLocale({
-        modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
-        locale: Digit.StoreData.getCurrentLanguage(),
-        tenantId: Digit.ULBService.getCurrentTenantId(),
-      }),
-    []
-  );
+  useEffect(() => {
+    if (userType === "employee") {
+      const loadLocale = async () => {
+        await Digit.LocalizationService.getLocale({
+          modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
+          locale: Digit.StoreData.getCurrentLanguage(),
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+        });
+      };
+  
+      loadLocale();
+    }
+  }, []);
 
   return <EmployeeApp path={path} url={url} userType={userType} />;
 };

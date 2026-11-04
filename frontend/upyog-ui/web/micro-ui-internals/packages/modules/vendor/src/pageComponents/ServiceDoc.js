@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
-import { cardBodyStyle, stringReplaceAll } from "../utils";
+import { stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
 
 const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
@@ -28,7 +28,7 @@ const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
         <div>
           <CardSubHeader>{t("AST_REQ_SCREEN_LABEL")}</CardSubHeader>
 
-          <CardText style={{ color: "red" }}>{t("AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG")}</CardText>
+          <CardText className="vnd-service-doc-required-asterisk">{t("AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG")}</CardText>
 
           <div>
             {isLoading && <Loader />}

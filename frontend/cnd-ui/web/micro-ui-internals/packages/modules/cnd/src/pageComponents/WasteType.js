@@ -171,29 +171,16 @@ const WasteType = ({ t, config, onSelect, formData }) => {
     setwasteQuantity(e.target.value);
   }
 
-  const handleWasteTypeChange = (selectedTypes) => {
-    setwasteMaterialType(selectedTypes);
-     // Initialize details for newly selected waste types
-     const updatedDetails = { ...wasteDetails };
-     selectedTypes.forEach(type => {
-       if (!updatedDetails[type.code]) {
-         updatedDetails[type.code] = {
-           quantity: 0,
-           unit: "Kilogram"
-         };
-       }
-     });
-     
-     // Remove details for deselected waste types
-     Object.keys(updatedDetails).forEach(key => {
-       if (!selectedTypes.some(type => type.code === key)) {
-         delete updatedDetails[key];
-       }
-     });
-     
-     setWasteDetails(updatedDetails);
-   };
- 
+
+   // to remove a waste type from the list and also remove its details
+    const handleRemoveWasteType = (wasteTypeCode) => {
+      setwasteMaterialType(prev => prev.filter(type => type.code !== wasteTypeCode));
+      setWasteDetails(prev => {
+        const updated = { ...prev };
+        delete updated[wasteTypeCode];
+        return updated;
+      });
+    };
    // Handle quantity change for a specific waste type
    const handleQuantityChange = (wasteType, value) => {
      setWasteDetails(prev => ({
@@ -286,6 +273,8 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               unitOptions={unitOptions}
               availableWasteTypes={common}
               onAddWasteType={handleAddWasteType}
+              onRemoveWasteType={handleRemoveWasteType}
+              lockedWasteCodes={applicationDetails?.wasteTypeDetails?.map((d) => d.wasteType) || []}
             />)
           :
          (<div style={{ width: userType === "EMPLOYEE" ? "86%" : "100%" }}> 
@@ -304,7 +293,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             {`${t("CND_WASTE_QUANTITY")}`}<span className="astericColor">*</span>
           </CardLabel>
          { isEmployee? 
-         <span style={cndStyles.employeeSideWasteTypeFont}>{wasteQuantity}</span>
+         <span className="cnd-waste-type-employee-font">{wasteQuantity}</span>
          :
           <TextInput
             t={t}
@@ -357,7 +346,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               id={"CND"}
               message={
                 isUploadingMedia ? (
-                  <div style={cndStyles.loaderAlignment}>
+                  <div className="cnd-waste-type-loader-container">
                     <LoadingSpinner />
                     <span>Uploading...</span>
                   </div>
@@ -387,7 +376,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             id={"CND"}
             message={
               isUploadingStack ? (
-                <div style={cndStyles.loaderAlignment}>
+                <div className="cnd-waste-type-loader-container">
                   <LoadingSpinner />
                   <span>Uploading...</span>
                 </div>

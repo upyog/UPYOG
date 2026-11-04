@@ -1,11 +1,8 @@
 package org.upyog.tp.service;
-import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.tp.config.TreePruningConfiguration;
-import org.upyog.tp.repository.TreePruningRepository;
-import org.upyog.tp.repository.ServiceRequestRepository;
 import org.upyog.tp.service.impl.TreePruningServiceImpl;
 import org.upyog.tp.web.models.workflow.State;
 
@@ -19,34 +16,29 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final TreePruningConfiguration configs;
+    private final WorkflowService workflowService;
+    private final TreePruningServiceImpl treePruningService;
 
-    @Autowired
-    private TreePruningConfiguration configs;
-
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private TreePruningRepository repo;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private TreePruningServiceImpl treePruningService;
+    public PaymentService(ObjectMapper mapper, TreePruningConfiguration configs,
+                          WorkflowService workflowService, TreePruningServiceImpl treePruningService) {
+        this.mapper = mapper;
+        this.configs = configs;
+        this.workflowService = workflowService;
+        this.treePruningService = treePruningService;
+    }
 
     /**
      *
-     * @param record
+     * @param paymentRecord
      * @param topic
      */
 
-    public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
-        log.info(" Receipt consumer class entry " + record.toString());
+    public void process(Map<String, Object> paymentRecord, String topic) throws JsonProcessingException {
+        log.info(" Receipt consumer class entry on topic {} : {}", topic, paymentRecord);
         try {
-            PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+            PaymentRequest paymentRequest = mapper.convertValue(paymentRecord, PaymentRequest.class);
             String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode().split("-")[0];
             log.info("paymentRequest : " + paymentRequest);
             String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();

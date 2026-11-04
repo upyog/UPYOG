@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.rs.enums.AddressType;
-import org.upyog.rs.validator.CreateApplicationGroup;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

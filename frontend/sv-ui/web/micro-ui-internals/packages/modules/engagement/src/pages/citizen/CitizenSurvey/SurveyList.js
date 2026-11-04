@@ -1,7 +1,6 @@
 import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import SurveyListCard from "../../../components/Surveys/SurveyListCard";
 const isActive = (startDate, endDate) => {
   const currentDate = new Date().getTime();
@@ -13,11 +12,11 @@ const isActive = (startDate, endDate) => {
 
 const SurveyList = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const tenantIds = Digit.ULBService.getCitizenCurrentTenant();
   const user = Digit.UserService.getUser();
-  
-  let ServiceDefinitionCriteria =  {
+
+  let ServiceDefinitionCriteria = {
     "tenantId": tenantIds,
     "code": [],
     "module": ["engagement"],
@@ -37,7 +36,7 @@ const SurveyList = () => {
     referenceIds: [],
     accountId: user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
   }
-  const { data: selecedSurveyData } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
+  const { data: selecedSurveyData } = Digit.Hooks.survey.useSelectedSurveySearch({ ServiceCriteria }, {})
   const { data, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch(
     { ServiceDefinitionCriteria, Pagination },
     {
@@ -69,7 +68,7 @@ const SurveyList = () => {
 
         activeSurveysList.reverse();
         inactiveSurveysList.reverse();
-        
+
         return {
           activeSurveysList,
           inactiveSurveysList,
@@ -79,11 +78,11 @@ const SurveyList = () => {
     }
   );
 
-  ( async() => {
-    if (data?.surveyListId && selecedSurveyData){
-      data?.activeSurveysList.map((element,index)=>{
-        selecedSurveyData.Service.map((ele)=>{
-          if (element.code === ele.referenceId ){
+  (async () => {
+    if (data?.surveyListId && selecedSurveyData) {
+      data?.activeSurveysList.map((element, index) => {
+        selecedSurveyData.Service.map((ele) => {
+          if (element.code === ele.referenceId) {
             data.activeSurveysList[index].hasResponded = true;
             data.activeSurveysList[index].responseStatus = "CS_SURVEY_RESPONDED";
           }
@@ -109,13 +108,13 @@ const SurveyList = () => {
   //           data.activeSurveysList[index].hasResponded = true;
   //           data.activeSurveysList[index].responseStatus = "CS_SURVEY_RESPONDED";
   //         }
-  
+
   //       })
-  
+
   //     })
   //   }
   // },[data,selecedSurveyData])
-  
+
 
 
   // const { data, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useSearch(
@@ -153,16 +152,16 @@ const SurveyList = () => {
 
 
   // const handleCardClick = (details) => {
-  //     history.push("/sv-ui/citizen/engagement/surveys/fill-survey", details);
+  //     navigate("/sv-ui/citizen/engagement/surveys/fill-survey", details);
   // };
 
   //trying to implement like this-> If user already responded then open ShowSurvey
   const handleCardClick = (details) => {
-    
+
     if (!details.hasResponded) {
-      history.push(`/sv-ui/citizen/engagement/surveys/fill-survey?applicationNumber=${details?.code}&tenantId=${details?.tenantId}`, details);
+      navigate(`/sv-ui/citizen/engagement/surveys/fill-survey?applicationNumber=${details?.code}&tenantId=${details?.tenantId}`, details);
     } else {
-      history.push("/sv-ui/citizen/engagement/surveys/show-survey", details);
+      navigate("/sv-ui/citizen/engagement/surveys/show-survey", details);
     }
   };
 

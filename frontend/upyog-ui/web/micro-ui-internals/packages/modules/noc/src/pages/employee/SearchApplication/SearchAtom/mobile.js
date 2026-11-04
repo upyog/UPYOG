@@ -1,3 +1,7 @@
+/**
+ * Renders the mobile view for employee NOC application search.
+ * Displays search trigger button, popup modal form, and mobile details card list.
+ */
 import React, { Fragment, useCallback, useMemo, useEffect, useState, useReducer } from "react";
 import { useFormContext } from "react-hook-form";
 import {
@@ -10,7 +14,7 @@ import {
   DetailsCard,
   Loader,
   Toast,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const SearchApplicationMobileView = ({ SearchFormFieldsComponent, propsMobileInboxCards, isLoading, data, getRedirectionLink, onSubmit }) => {
@@ -98,11 +102,11 @@ const SearchApplicationMobileView = ({ SearchFormFieldsComponent, propsMobileInb
             </PopUp>
         ) : null}
         {data?.[0]?.display ? (
-            <Card style={{ marginTop: 20 }}>
+            <Card className="noc-fire-noc-desktop-inbox-card">
             {t(data?.[0]?.display)
                 .split("\\n")
                 .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
+                <p key={index} className="noc-fire-noc-desktop-inbox-centered">
                     {text}
                 </p>
                 ))}

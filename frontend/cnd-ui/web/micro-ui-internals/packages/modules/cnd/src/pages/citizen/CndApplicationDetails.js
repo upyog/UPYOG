@@ -7,6 +7,7 @@ import CNDApplicationTimeLine from "../../components/CNDApplicationTimeLine";
 import ApplicationTable from "../../components/inbox/ApplicationTable";
 import cndAcknowledgementData from "../../utils/cndAcknowledgementData";
 import { cndStyles } from "../../utils/cndStyles";
+import "../../css/cnd-inline-auto.scss";
 import { CNDDocumnetPreview, getOrderDocuments } from "../../utils";
 
 
@@ -139,8 +140,8 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
   return (
     <React.Fragment>
       <div>
-        <div className="cardHeaderWithOptions" style={cndStyles.cardHeaderWithOptions}>
-          <Header styles={cndStyles.cardHeader}>{t("CND_REQUEST_DETAILS")}</Header>
+        <div className="cardHeaderWithOptions cnd-citizen-app-details-header-options">
+          <Header styles={{ fontSize: "32px" }}>{t("CND_REQUEST_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -205,7 +206,7 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
 
           {cndData?.applicationStatus==="COMPLETED" &&(
           <React.Fragment>
-          <CardSubHeader style={cndStyles.citizenApplicantDetailCard}>{t("CND_FACILITY_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="cnd-citizen-app-details-sub-header">{t("CND_FACILITY_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CND_DISPOSE_DATE")} text={cndData?.facilityCenterDetail?.disposalDate?.split(" ")[0] || t("CS_NA")} />
             <Row className="border-none" label={t("CND_DISPOSE_TYPE")} text={cndData?.facilityCenterDetail?.disposalType || t("CS_NA")} />
@@ -215,14 +216,14 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
             <Row className="border-none" label={t("CND_NET_WEIGHT"+ " Ton")} text={cndData?.facilityCenterDetail?.netWeight|| t("CS_NA")} />
           </StatusTable>
           </React.Fragment>)}
-          <CardSubHeader style={cndStyles.citizenApplicantDetailCard}>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="cnd-citizen-app-details-sub-header">{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("COMMON_APPLICANT_NAME")} text={cndData?.applicantDetail?.nameOfApplicant || t("CS_NA")} />
             <Row className="border-none" label={t("COMMON_MOBILE_NUMBER")} text={cndData?.applicantDetail?.mobileNumber || t("CS_NA")} />
             <Row className="border-none" label={t("COMMON_EMAIL_ID")} text={cndData?.applicantDetail?.emailId || t("CS_NA")} />
             <Row className="border-none" label={t("COMMON_ALT_MOBILE_NUMBER")} text={cndData?.applicantDetail?.alternateMobileNumber|| t("CS_NA")} />
           </StatusTable>
-          <CardSubHeader style={cndStyles.citizenApplicantDetailCard}>{t("CND_WASTE_PICKUP_ADDRESS")}</CardSubHeader>
+          <CardSubHeader className="cnd-citizen-app-details-sub-header">{t("CND_WASTE_PICKUP_ADDRESS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("HOUSE_NO")} text={cndData?.addressDetail?.houseNumber || t("CS_NA")} />
             <Row className="border-none" label={t("ADDRESS_LINE1")} text={cndData?.addressDetail?.addressLine1 || t("CS_NA")} />
@@ -233,7 +234,7 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
             <Row className="border-none" label={t("PINCODE")} text={cndData?.addressDetail?.pinCode|| t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={cndStyles.citizenApplicantDetailCard}>{t("CND_WASTE_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="cnd-citizen-app-details-sub-header">{t("CND_WASTE_DETAILS")}</CardSubHeader>
           <StatusTable>
           <ApplicationTable
               t={t}

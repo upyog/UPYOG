@@ -64,7 +64,7 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
           {
             label: `${t("SV_ATTATCH_FILE")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
-              <>
+              <Fragment>
                 <UploadFile
                   id={"workflow-doc-sv"}
                   onUpload={selectFile}
@@ -81,7 +81,7 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
                 {(selectApprover || []).some((item) => item.code === "INSPECTIONOFFICER") && geoLocationData && (
                   <div><strong> Location: {geoLocationData} </strong></div>
                 )}
-              </>
+              </Fragment>
             ),
           }
         ],

@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -60,7 +60,7 @@ const BannerPicker = (props) => {
 
 const OBPSAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
-  //const isPropertyMutation = window.location.href.includes("property-mutation");
+  const [mutationHappened, setMutationHappened] = React.useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.obps.useObpsAPI(
     data?.tenantId ? data?.tenantId : tenantId,
@@ -74,35 +74,38 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
   const { tenants } = storeData || {};
 
   useEffect(() => {
-    try {
-      let tenantId = data?.tenantId ? data?.tenantId : tenantId;
-      data.tenantId = data?.tenantId;
-      let formdata ={};
-      data?.nocDocuments?.NocDetails.map((noc) => {
-        formdata = convertToNocObject(noc,data);
-        mutation.mutate(formdata, {
+    const timer = setTimeout(() => {
+      if (!mutation1.isPending && !mutation1.isSuccess && !mutationHappened) {
+        try {
+          setMutationHappened(true);
+          let tenantId = data?.tenantId ? data?.tenantId : tenantId;
+          data.tenantId = data?.tenantId;
+          let formdata ={};
+          data?.nocDocuments?.NocDetails.map((noc) => {
+            formdata = convertToNocObject(noc,data);
+            mutation.mutate(formdata, {
+                onSuccess,
+              });
+          })
+          formdata = convertToBPAObject(data, true);
+          mutation1.mutate(formdata, {
             onSuccess,
           });
-      })
-      formdata = convertToBPAObject(data, true);
-      mutation1.mutate(formdata, {
-        onSuccess,
-      });
-      
-    } catch (err) {
-    }
+        } catch (err) {
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
-  return mutation1.isLoading || mutation1.isIdle ? (
+  return mutation1.isPending || mutation1.isIdle ? (
     <Loader />
   ) : (
     <Card>
-      <BannerPicker t={t} data={mutation1.data} isSuccess={mutation1.isSuccess} isLoading={mutation1.isIdle || mutation1.isLoading} />
+      <BannerPicker t={t} data={mutation1.data} isSuccess={mutation1.isSuccess} isLoading={mutation1.isIdle || mutation1.isPending} />
       {mutation1.isSuccess && <CardText>{getCardText(t,mutation1.data)}</CardText>}
       {!mutation1.isSuccess && <CardText>{t(Digit.Utils.locale.getTransformedLocale(mutation1.error.message))}</CardText>}
-      <Link to={{
-        pathname: `/upyog-ui/citizen`,
-      }}>
+      <Link to="/upyog-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
     </Card>

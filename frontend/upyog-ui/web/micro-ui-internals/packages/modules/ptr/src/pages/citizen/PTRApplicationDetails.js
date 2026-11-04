@@ -8,10 +8,10 @@ PTRApplicationDetails Component:
 - Uses MultiLink for download options and PTRWFApplicationTimeline for workflow details.
 - Implements loading states and handles errors with toasts.
 */
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import getPetAcknowledgementData from "../../getPetAcknowledgementData";
 import PTRWFApplicationTimeline from "../../pageComponents/PTRWFApplicationTimeline";
 import { convertEpochToDate } from "../../utils";
@@ -163,7 +163,7 @@ fetchBillData();
   return (
     <React.Fragment>
       <div>
-        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <div className="cardHeaderWithOptions ptr-ptrapplication-details-spacing">
           <Header styles={{ fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
@@ -198,7 +198,7 @@ fetchBillData();
             />
           </StatusTable>)}
            
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_ADDRESS_HEADER")}</CardSubHeader>
+          <CardSubHeader className="ptr-ptrapplication-details-header">{t("PTR_ADDRESS_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PTR_PINCODE")} text={pet_details?.address?.pincode || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_CITY")} text={pet_details?.address?.city || t("CS_NA")} />
@@ -206,7 +206,7 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_HOUSE_NO")} text={pet_details?.address?.doorNo || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_APPLICANT_DETAILS_HEADER")}</CardSubHeader>
+          <CardSubHeader className="ptr-ptrapplication-details-header">{t("PTR_APPLICANT_DETAILS_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PTR_APPLICANT_NAME")} text={pet_details?.applicantName || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_FATHER/HUSBAND_NAME")} text={pet_details?.fatherName || t("CS_NA")} />
@@ -214,7 +214,7 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_APPLICANT_EMAILID")} text={pet_details?.emailId || t("CS_NA")} />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_PET_DETAILS_HEADER")}</CardSubHeader>
+          <CardSubHeader className="ptr-ptrapplication-details-header">{t("PTR_PET_DETAILS_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PTR_PET_TYPE")} text={pet_details?.petDetails?.petType || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_BREED_TYPE")} text={pet_details?.petDetails?.breedType || t("CS_NA")} />
@@ -235,7 +235,7 @@ fetchBillData();
           <Toast
             error={showToast.key}
             label={t(showToast.label)}
-            style={{bottom:"0px"}}
+            className="ptr-ptrapplication-details-wrapper"
             onClose={() => {
               setShowToast(null);
             }}

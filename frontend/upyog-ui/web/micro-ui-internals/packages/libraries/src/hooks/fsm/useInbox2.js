@@ -1,9 +1,9 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { Search } from "../../services/molecules/FSM/Search";
 
 const useInbox = (tenantId, filters, filterFsmFn, workFlowConfig = {}) => {
   let { uuid } = Digit.UserService.getUser().info;
-
   const client = useQueryClient();
 
   const fetchFilters = () => {
@@ -18,63 +18,73 @@ const useInbox = (tenantId, filters, filterFsmFn, workFlowConfig = {}) => {
     if (filters.uuid && Object.keys(filters.uuid).length > 0) {
       filtersObj.assignee = filters.uuid.code === "ASSIGNED_TO_ME" ? uuid : "";
     }
-    if (mobileNumber) {
-      filtersObj.mobileNumber = mobileNumber;
-    }
-    if (applicationNos) {
-      filtersObj.applicationNos = applicationNos;
-    }
-    if (sortBy) {
-      filtersObj.sortBy = sortBy;
-    }
-    if (sortOrder) {
-      filtersObj.sortOrder = sortOrder;
-    }
+    if (mobileNumber) filtersObj.mobileNumber = mobileNumber;
+    if (applicationNos) filtersObj.applicationNos = applicationNos;
+    if (sortBy) filtersObj.sortBy = sortBy;
+    if (sortOrder) filtersObj.sortOrder = sortOrder;
+
     if (!total) return { limit, offset, sortBy, sortOrder, ...filtersObj };
     else return { limit: 100000, offset: 0, sortBy, sortOrder, ...filtersObj };
   };
 
   const workflowFilters = fetchFilters().assignee ? { assignee: uuid } : {};
-  const workFlowInstances = useQuery(
-    ["WORKFLOW", workflowFilters],
-    () => Digit.WorkflowService.getAllApplication(tenantId, { ...workflowFilters, businesssService: "FSM" }),
-    { ...workFlowConfig, select: (data) => data.ProcessInstances }
-  );
 
-  const { data: processInstances, isLoading: workflowLoading, isFetching: wfFetching, isSuccess: wfSuccess } = workFlowInstances;
-  let applicationNos = !wfFetching && wfSuccess ? { applicationNos: processInstances.map((e) => e.businessId).join() } : {};
-  applicationNos = applicationNos?.applicationNos === "" ? { applicationNos: "xyz" } : applicationNos;
+  const workFlowInstances = queryTemplate({
+    queryKey: ["WORKFLOW", workflowFilters],
+    queryFn: () =>
+      Digit.WorkflowService.getAllApplication(tenantId, {
+        ...workflowFilters,
+        businesssService: "FSM",
+      }),
+    select: (data) => data.ProcessInstances,
+    config: workFlowConfig,
+  });
 
-  if (!filterFsmFn)
+  const {
+    data: processInstances,
+    isLoading: workflowLoading,
+    isFetching: wfFetching,
+    isSuccess: wfSuccess,
+  } = workFlowInstances;
+
+  let applicationNos = !wfFetching && wfSuccess
+    ? { applicationNos: processInstances.map((e) => e.businessId).join() }
+    : {};
+  applicationNos =
+    applicationNos?.applicationNos === "" ? { applicationNos: "xyz" } : applicationNos;
+
+  if (!filterFsmFn) {
     filterFsmFn = (data) => {
       const fsm = data.fsm
-        .filter((application) => processInstances.find((wfApp) => wfApp.businessId === application.applicationNo))
+        .filter((application) =>
+          processInstances.find((wfApp) => wfApp.businessId === application.applicationNo)
+        )
         .map((e) => ({ ...e, totalCount: data.totalCount }));
       return combineResponses(fsm, processInstances);
     };
+  }
 
-  const appList = useQuery(
-    [
-      "FSM_SEARCH",
-      { ...fetchFilters(), applicationNos: fetchFilters().applicationNos ? fetchFilters().applicationNos : applicationNos.applicationNos },
-    ],
-    () =>
+  const resolvedApplicationNos = fetchFilters().applicationNos
+    ? fetchFilters().applicationNos
+    : applicationNos.applicationNos;
+
+  const appList = queryTemplate({
+    queryKey: ["FSM_SEARCH", { ...fetchFilters(), applicationNos: resolvedApplicationNos }],
+    queryFn: () =>
       Search.all(tenantId, {
         ...fetchFilters(),
-        applicationNos: fetchFilters().applicationNos ? fetchFilters().applicationNos : applicationNos.applicationNos,
+        applicationNos: resolvedApplicationNos,
       }),
-    {
-      enabled: !wfFetching && wfSuccess,
-      select: filterFsmFn,
-    }
-  );
+    select: filterFsmFn,
+    enabled: !wfFetching && wfSuccess,
+  });
 
   const revalidate = () => {
-    client.refetchQueries(["WORKFLOW"]);
-    client.refetchQueries(["FSM_SEARCH"]);
+    client.refetchQueries({ queryKey: ["WORKFLOW"] });
+    client.refetchQueries({ queryKey: ["FSM_SEARCH"] });
   };
 
-  client.setQueryData("FUNCTION_RESET_INBOX", { revalidate });
+  client.setQueryData(["FUNCTION_RESET_INBOX"], { revalidate });
 
   return {
     ...appList,
@@ -83,14 +93,12 @@ const useInbox = (tenantId, filters, filterFsmFn, workFlowConfig = {}) => {
 };
 
 const mapWfBybusinessId = (wfs) => {
-  return wfs.reduce((object, item) => {
-    return { ...object, [item["businessId"]]: item };
-  }, {});
+  return wfs.reduce((object, item) => ({ ...object, [item["businessId"]]: item }), {});
 };
 
 const combineResponses = (applicationDetails, workflowInstances) => {
   let wfMap = mapWfBybusinessId(workflowInstances);
-  const response = applicationDetails.map((application) => ({
+  return applicationDetails.map((application) => ({
     applicationNo: application.applicationNo,
     createdTime: new Date(application.auditDetails.createdTime),
     locality: application.address.locality.code,
@@ -101,8 +109,6 @@ const combineResponses = (applicationDetails, workflowInstances) => {
     tenantId: application.tenantId,
     totalCount: application.totalCount,
   }));
-
-  return response;
 };
 
 export default useInbox;

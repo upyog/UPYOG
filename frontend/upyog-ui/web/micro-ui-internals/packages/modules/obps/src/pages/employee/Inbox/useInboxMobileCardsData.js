@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { SearchField, RadioButtons } from "@upyog/digit-ui-react-components";
+import { SearchField, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 
 const useInboxMobileCardsData = ({parentRoute, table, getRedirectionLink}) => {
@@ -30,11 +30,11 @@ const useInboxMobileCardsData = ({parentRoute, table, getRedirectionLink}) => {
             <Controller
                 name="sortOrder"
                 control={controlSortForm}
-                render={({onChange, value}) => <RadioButtons
+                render={({ field }) => <RadioButtons
                     onSelect={(e) => {
-                        onChange(e.code)
+                        field.onChange(e.code)
                     }}
-                    selectedOption={sortOrderOptions.filter((option) => option.code === value)[0]}
+                    selectedOption={sortOrderOptions.filter((option) => option.code === field.value)[0]}
                     optionsKey="i18nKey"
                     name="sortOrder"
                     options={sortOrderOptions}

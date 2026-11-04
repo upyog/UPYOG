@@ -27,7 +27,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-//@EqualsAndHashCode(of = {"id"})
 @EqualsAndHashCode
 @ToString
 public class ProcessInstance   {

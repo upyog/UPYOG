@@ -1,9 +1,18 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { FSMService } from "../../services/elements/FSM";
 
-const useVehiclesSearch = (args) => {
-  const { tenantId, filters, config } = args;
-  return useQuery(["FSM_VEICLES_SEARCH", filters], () => FSMService.vehiclesSearch(tenantId, filters), config);
+const useVehiclesSearch = ({ tenantId, filters, config = {} }) => {
+  const queryKey = [
+    "FSM_VEHICLES_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+  ];
+
+  return queryTemplate({
+    queryKey,
+    queryFn: () => FSMService.vehiclesSearch(tenantId, filters),
+    config,
+  });
 };
 
 export default useVehiclesSearch;

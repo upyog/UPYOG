@@ -70,7 +70,7 @@ function callAjaxSearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : '/services/EGF/masters/coareport/coareportResult/',
+					url : '/services/EGF/masters/coareport/coareportResult',
 					type : "get",
 					"data" : getFormData(jQuery('form'))         
 				},

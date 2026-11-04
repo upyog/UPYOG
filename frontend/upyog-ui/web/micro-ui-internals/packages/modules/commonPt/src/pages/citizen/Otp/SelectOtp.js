@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from "react";
-import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@upyog/digit-ui-react-components";
+import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import useInterval from "../../../../../core/src/hooks/useInterval.js";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType="citizen" }) => {

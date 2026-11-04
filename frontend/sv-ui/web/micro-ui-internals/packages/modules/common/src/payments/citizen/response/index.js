@@ -1,15 +1,15 @@
-import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 
-export const SuccessfulPayment = (props)=>{
-  if(localStorage.getItem("BillPaymentEnabled")!=="true"){
+export const SuccessfulPayment = (props) => {
+  if (localStorage.getItem("BillPaymentEnabled") !== "true") {
     window.history.forward();
-   return null;
- }
- return <WrapPaymentComponent {...props}/>
+    return null;
+  }
+  return <WrapPaymentComponent {...props} />
 }
 
 export const convertEpochToDate = (dateEpoch) => {
@@ -25,14 +25,14 @@ export const convertEpochToDate = (dateEpoch) => {
     return "NA";
   }
 };
- const WrapPaymentComponent = (props) => {
+const WrapPaymentComponent = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { eg_pg_txnid: egId, workflow: workflw, propertyId } = Digit.Hooks.useQueryParams();
   const [printing, setPrinting] = useState(false);
   const [allowFetchBill, setallowFetchBill] = useState(false);
   const { businessService: business_service, consumerCode, tenantId } = useParams();
-  
+
   const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate({ egId }, business_service, {
     retry: false,
     staleTime: Infinity,
@@ -40,7 +40,7 @@ export const convertEpochToDate = (dateEpoch) => {
   });
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
-  const newTenantId=tenantId;
+  const newTenantId = tenantId;
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId,
@@ -70,7 +70,7 @@ export const convertEpochToDate = (dateEpoch) => {
 
   useEffect(() => {
     return () => {
-      localStorage.setItem("BillPaymentEnabled","false")
+      localStorage.setItem("BillPaymentEnabled", "false")
       queryClient.clear();
     };
   }, []);
@@ -100,11 +100,11 @@ export const convertEpochToDate = (dateEpoch) => {
           successful={false}
         />
         <CardText>{t("CS_PAYMENT_FAILURE_MESSAGE")}</CardText>
-          <React.Fragment>
-            <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
-              <Link to={`/sv-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
-            </div>
-          </React.Fragment>
+        <React.Fragment>
+          <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
+            <Link to={`/sv-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+          </div>
+        </React.Fragment>
       </Card>
     );
   }
@@ -114,16 +114,16 @@ export const convertEpochToDate = (dateEpoch) => {
   const printReciept = async () => {
     if (printing) return;
     setPrinting(true);
-    let paymentArray=[];
+    let paymentArray = [];
     const state = Digit.ULBService.getStateId();
-    let response = {filestoreIds: [payments.Payments[0]?.fileStoreId]};
+    let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
     if (!paymentData?.fileStoreId) {
-          let details
-          payments.Payments[0].additionalDetails=details;
-          paymentArray[0]=payments.Payments[0]
-          response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, "consolidatedreceipt");  
-        } 
-        
+      let details
+      payments.Payments[0].additionalDetails = details;
+      paymentArray[0] = payments.Payments[0]
+      response = await Digit.PaymentService.generatePdf(state, { Payments: [{ ...paymentData }] }, "consolidatedreceipt");
+    }
+
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     if (fileStore && fileStore[response.filestoreIds[0]]) {
       window.open(fileStore[response.filestoreIds[0]], "_blank");
@@ -131,10 +131,10 @@ export const convertEpochToDate = (dateEpoch) => {
     setPrinting(false);
   };
 
-  const svIdCard= async () => {
+  const svIdCard = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
+    const applicationDetails = await Digit.SVService.search({ tenantId, filters: { applicationNumber: consumerCode, isDraftApplication: false } });
     const generatePdfKeyForTL = "svidentitycard";
 
     if (applicationDetails) {
@@ -147,7 +147,7 @@ export const convertEpochToDate = (dateEpoch) => {
   const svCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode, isDraftApplication:false } });
+    const applicationDetails = await Digit.SVService.search({ tenantId, filters: { applicationNumber: consumerCode, isDraftApplication: false } });
     const generatePdfKeyForTL = "svcertificate";
 
     if (applicationDetails) {
@@ -158,7 +158,7 @@ export const convertEpochToDate = (dateEpoch) => {
   };
 
 
-  
+
   let bannerText;
   if (workflw) {
     bannerText = `CITIZEN_SUCCESS_UC_PAYMENT_MESSAGE`;
@@ -195,12 +195,12 @@ export const convertEpochToDate = (dateEpoch) => {
           rowContainerStyle={rowContainerStyle}
           last
           label={t("CS_PAYMENT_AMOUNT_PAID")}
-          text={"₹ " + paymentData?.totalAmountPaid ||( reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " +  reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0`) }
+          text={"₹ " + paymentData?.totalAmountPaid || (reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " + reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0`)}
         />
       </StatusTable>
-            
+
       {business_service == "sv-services" ? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={printReciept}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
@@ -209,7 +209,7 @@ export const convertEpochToDate = (dateEpoch) => {
         </div>
       ) : null}
       {business_service == "sv-services" ? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svCertificate}>
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={svCertificate}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
@@ -218,7 +218,7 @@ export const convertEpochToDate = (dateEpoch) => {
         </div>
       ) : null}
       {business_service == "sv-services" ? (
-        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svIdCard}>
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={svIdCard}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
@@ -226,10 +226,10 @@ export const convertEpochToDate = (dateEpoch) => {
           {t("SV_ID_CARD")}
         </div>
       ) : null}
-    
+
       {business_service == "sv-services" && (
         <Link to={`/digit-ui/citizen`}>
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{ marginTop: "15px" }} />
         </Link>
       )}
     </Card>

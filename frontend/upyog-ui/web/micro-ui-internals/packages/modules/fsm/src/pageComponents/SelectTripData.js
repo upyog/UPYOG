@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getVehicleType } from "../utils";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
@@ -55,8 +55,8 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
       },
       default: formData?.tripData?.amountPerTrip,
       disable: formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT"
-      ? false
-      : true,
+        ? false
+        : true,
       isMandatory: true,
     },
     {
@@ -91,9 +91,9 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
   }
 
   function setValue(object) {
-    let a = {...formData[config.key],...object}
-    console.log("config.key",config.key,a)
-    onSelect(config.key,  a);
+    let a = { ...formData[config.key], ...object }
+    console.log("config.key", config.key, a)
+    onSelect(config.key, a);
   }
   useEffect(() => {
     (async () => {
@@ -111,7 +111,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           capacity,
           slum,
         });
-        console.log("billingDetails",billingDetails)
+        console.log("billingDetails", billingDetails)
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
         if (billSlab?.price || billSlab?.price === 0) {
           setValue({
@@ -125,7 +125,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
             amount: "",
           });
           setError(true);
-        } 
+        }
       } else if (
         formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
         formData.tripData.noOfTrips &&
@@ -153,7 +153,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
               type={input.type}
               onChange={(e) =>
                 index === 0 &&
-                formData.address.propertyLocation?.code ===
+                  formData.address.propertyLocation?.code ===
                   "FROM_GRAM_PANCHAYAT"
                   ? setAmount(e.target.value)
                   : setTripNum(e.target.value)
@@ -166,7 +166,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           </div>
         </LabelFieldPair>
       ))}
-      {billError ? <CardLabelError style={{ width: "100%", textAlign: "center" }}>{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
+      {billError ? <CardLabelError className="fsm-select-trip-data-centered">{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
     </div>
   );
 };

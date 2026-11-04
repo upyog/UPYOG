@@ -52,11 +52,11 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +77,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private Long id;
     
     @Length(min = 1,max=50)
-    @SafeHtml
+    @SanitizeHtml
     @Column(updatable = false)
     private String billnumber;
     
@@ -89,32 +89,32 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private BigDecimal billamount;
     @Min(1)
     private BigDecimal fieldid;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     private String billstatus;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 1024)
     private String narration;
     @Min(1)
     private BigDecimal passedamount;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     private String billtype;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 20)
     private String expendituretype;
     private BigDecimal advanceadjusted;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 20)
     private String zone;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     private String division;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     @Column(updatable = false)
     private String workordernumber;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     private String billapprovalstatus;
     private Boolean isactive;
@@ -125,7 +125,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private EgwStatus status;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
     private EgBillregistermis egBillregistermis;
-    @SafeHtml
+    @SanitizeHtml
     private String worksdetailId;
     @Transient
     private User approver;
@@ -149,10 +149,10 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     private List<DocumentUpload> documentDetail = new ArrayList<>();
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String approvalDepartment;
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String approvalComent;
 
     public EgBillregister() {

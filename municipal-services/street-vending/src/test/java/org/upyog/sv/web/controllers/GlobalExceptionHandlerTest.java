@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @EnableWebMvc
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;
 
@@ -62,7 +62,7 @@ public class GlobalExceptionHandlerTest {
                 .build();
     }
 
-    // @Test
+    @Test
     void testHandleHttpMessageNotReadableExceptionCreate() throws Exception {
         // Simulate sending an invalid JSON payload
         MvcResult result = mockMvc.perform(post("/street-vending/_create")
@@ -75,7 +75,7 @@ public class GlobalExceptionHandlerTest {
         System.out.println("testHandleHttpMessageNotReadableExceptionCreate Response: " + result.getResponse().getContentAsString());
     }
 
-    // @Test
+    @Test
     void testHandleMethodArgumentNotValidExceptionCreate() throws Exception {
         // Create a request with invalid data but valid structure
         StreetVendingRequest requestBody = TestRequestObjectBuilder.createValidStreetVendingRequest();
@@ -97,7 +97,7 @@ public class GlobalExceptionHandlerTest {
         System.out.println("testHandleMethodArgumentNotValidExceptionCreate Response: " + result.getResponse().getContentAsString());
     }
 
-    // @Test
+    @Test
     void testHandleGenericExceptionCreate() throws Exception {
         // Create a valid request body
         StreetVendingRequest requestBody = TestRequestObjectBuilder.createValidStreetVendingRequest();
@@ -122,7 +122,7 @@ public class GlobalExceptionHandlerTest {
         System.out.println("testHandleGenericExceptionCreate Response: " + result.getResponse().getContentAsString());
     }
 
-    // @Test
+    @Test
     void testHandleGenericExceptionSearch() throws Exception {
         // Create a valid request body
         RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
@@ -145,7 +145,7 @@ public class GlobalExceptionHandlerTest {
         System.out.println("testHandleGenericExceptionSearch Response: " + result.getResponse().getContentAsString());
     }
 
-    // @Test
+    @Test
     void testHandleGenericExceptionUpdate() throws Exception {
         // Create a valid request body
         StreetVendingRequest requestBody = TestRequestObjectBuilder.createValidStreetVendingRequest();

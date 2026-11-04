@@ -1,7 +1,4 @@
-package org.upyog.rs.web.models.waterTanker;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.upyog.rs.web.models.waterTanker; // NOSONAR java:S120 - package name kept to preserve imports/API
 
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +24,7 @@ import org.upyog.rs.web.models.ResponseInfo;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@SuppressWarnings("java:S120")
 public class WaterTankerBookingResponse {
 
 	private ResponseInfo responseInfo;

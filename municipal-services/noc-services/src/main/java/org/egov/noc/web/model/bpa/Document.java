@@ -2,8 +2,8 @@ package org.egov.noc.web.model.bpa;
 
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 
 import org.egov.noc.web.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;

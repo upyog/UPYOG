@@ -3,7 +3,6 @@ import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@n
 import Filter from "./Filter";
 import Search from "./Search";
 import { areEqual } from "../../utils";
-import { useHistory } from "react-router-dom";
 
 const ApplicationCard = ({
   searchFields,
@@ -18,7 +17,7 @@ const ApplicationCard = ({
   const [popup, setPopup] = useState(false);
   const [params, setParams] = useState(searchParams);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory()
+  const navigate = Digit.Hooks.useCustomNavigate();
   useEffect(() => {
     if (type) setPopup(true);
   }, [type]);
@@ -47,7 +46,7 @@ const ApplicationCard = ({
     );
   }
   else if (data && data?.length > 0) {
-    result = <DetailsCard data={data}  linkPrefix={'/sv-ui/employee/engagement/event/inbox/event-details/'} serviceRequestIdKey={serviceRequestIdKey}/>
+    result = <DetailsCard data={data} linkPrefix={'/sv-ui/employee/engagement/event/inbox/event-details/'} serviceRequestIdKey={serviceRequestIdKey} />
   }
   return (
     <React.Fragment>

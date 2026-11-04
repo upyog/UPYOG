@@ -10,97 +10,102 @@ import React, { useEffect } from 'react';
  * - `useEffect`: Clears session storage on component mount to prevent stale data.
  */
 
-const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, path, light,adType,faceArea }) => {
-  const [params, setParams,clearParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
+const AdvertisementModuleCard = ({
+  imageSrc,
+  title,
+  location,
+  poleNo,
+  price,
+  path,
+  light,
+  adType,
+  faceArea
+}) => {
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
   const handleViewAvailability = () => {
     setParams({
-      faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
-      adType:{code:adType,value:adType,i18nKey:adType},
-      location:{code:location,value:location,i18nKey:location},
-      fromDate: new Date().toISOString().split("T")[0], // Current date
-      toDate: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split("T")[0], // 3 months later
-      nightLight:{
+      faceArea: {
+        code: faceArea,
+        value: faceArea,
+        i18nKey: faceArea
+      },
+      adType: {
+        code: adType,
+        value: adType,
+        i18nKey: adType
+      },
+      location: {
+        code: location,
+        value: location,
+        i18nKey: location
+      },
+      fromDate: new Date().toISOString().split("T")[0],
+      // Current date
+      toDate: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split("T")[0],
+      // 3 months later
+      nightLight: {
         i18nKey: "Yes",
         code: "Yes",
-        value: "true",
+        value: "true"
       }
     });
-    window.location.href = `${path}bookad/searchads`;
+    window.location.href = `bookad/searchads`;
   };
   useEffect(() => {
     clearParams();
-  }, []); 
+  }, []);
   const handleBookNow = () => {
     setParams({
-      faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
-      adType:{code:adType,value:adType,i18nKey:adType},
-      location:{code:location,value:location,i18nKey:location},
-      nightLight:{
+      faceArea: {
+        code: faceArea,
+        value: faceArea,
+        i18nKey: faceArea
+      },
+      adType: {
+        code: adType,
+        value: adType,
+        i18nKey: adType
+      },
+      location: {
+        code: location,
+        value: location,
+        i18nKey: location
+      },
+      nightLight: {
         i18nKey: "Yes",
         code: "Yes",
-        value: "true",
+        value: "true"
       }
     });
-    window.location.href = `${path}bookad/searchads`;
+    window.location.href = `bookad/searchads`;
   };
-  return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        backgroundColor: "white",
-        borderRadius: "8px",
-        overflow: "hidden",
-        maxWidth: "30%",
-        margin: "10px auto",
-        minWidth: "24%",
-      }}
-    >
-      <div style={{ width: "100%", height: "200px", position: "relative",padding: "10px"}}>
-        <img
-          src={imageSrc}
-          alt="Advertisement"
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            minWidth: "0",
-          }}
-        />
+  return <div className="ads-advertisement-module-card-bordered-rounded">
+      <div className="ads-advertisement-module-card-full-width-relative">
+        <img src={imageSrc} alt="Advertisement" className="ads-advertisement-module-card-img-full-width" />
       </div>
-      <div style={{ padding: "10px" }}>
-        <p style={{ margin: "0", color: "#a82227" }}>{light}</p>
-        <h3 style={{ margin: "5px 0", fontWeight: "bold" }}>{title}</h3>
+      <div className="ads-advertisement-module-card-item">
+        <p className="ads-advertisement-module-card-icon-red">{light}</p>
+        <h3 className="ads-advertisement-module-card-bold">{title}</h3>
         <p>
           {location} (
-          <button type="button" style={{ marginLeft: "5px", color: "#a82227" }}>
+          <button type="button" className="ads-advertisement-module-card-header-red">
             View Map
           </button>
           )
         </p>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="ads-advertisement-module-card-row-between-flex">
           <p>Pole No: {poleNo}</p>
           <p>₹ {price}</p>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <button
-            type="button"
-            onClick={handleViewAvailability}
-            style={{ backgroundColor: "green", color: "white", border: "1px solid #ccc", padding: "5px 10px", borderRadius: "4px" }}
-          >
+        <div className="ads-advertisement-module-card-row-between-flex">
+          <button type="button" onClick={handleViewAvailability} className="ads-advertisement-module-card-btn-green-bordered">
             View Availability
           </button>
-          <button
-            type="button"
-            onClick={handleBookNow}
-            style={{ backgroundColor: "#a82227", color: "white", border: "1px solid #ccc", padding: "5px 10px", borderRadius: "4px" }}
-          >
+          <button type="button" onClick={handleBookNow} className="ads-advertisement-module-card-btn-red-bordered">
             Book Now
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
 export { AdvertisementModuleCard };

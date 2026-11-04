@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.util.MdmsUtil;
@@ -16,11 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MdmsCacheService {
 
-	@Autowired
-	private MdmsUtil mdmsUtil;
+	private static final String CHILDREN_KEY = "children";
+
+	private final MdmsUtil mdmsUtil;
 
 	private final Map<String, Map<String, String>> localityCache = new HashMap<>();
 	private final Map<String, Map<String, String>> vendingZoneCache = new HashMap<>();
+
+	public MdmsCacheService(MdmsUtil mdmsUtil) {
+		this.mdmsUtil = mdmsUtil;
+	}
 
 	/**
 	 * Retrieves the locality name corresponding to a given locality code for a specific tenant.
@@ -35,18 +39,8 @@ public class MdmsCacheService {
 	 */
 	
 	public String getLocalityName(String tenantId, String code, RequestInfo requestInfo) {
-		Map<String, String> localityMap = localityCache.get(tenantId);
-
-		if (localityMap == null) {
-			localityMap = new HashMap<>();
-			Map<String, String> vendingZoneMap = new HashMap<>();
-			loadLocalityAndVendingZoneMaps(tenantId, requestInfo, localityMap, vendingZoneMap);
-
-			localityCache.put(tenantId, localityMap);
-			vendingZoneCache.put(tenantId, vendingZoneMap);
-		}
-
-		return localityMap.getOrDefault(code, null); // <- fixed from `tenantId` to `code`
+		Map<String, String> localityMap = getOrLoadLocalityMap(tenantId, requestInfo);
+		return localityMap.getOrDefault(code, null);
 	}
 	
 	/**
@@ -63,19 +57,25 @@ public class MdmsCacheService {
 	 */
 	
 	public String getVendingZoneName(String tenantId, String code, RequestInfo requestInfo) {
-        Map<String, String> vendingZoneMap = vendingZoneCache.get(tenantId);
+		Map<String, String> vendingZoneMap = vendingZoneCache.computeIfAbsent(tenantId, key -> {
+			Map<String, String> localityMap = new HashMap<>();
+			Map<String, String> zoneMap = new HashMap<>();
+			loadLocalityAndVendingZoneMaps(tenantId, requestInfo, localityMap, zoneMap);
+			localityCache.put(tenantId, localityMap);
+			return zoneMap;
+		});
+		return vendingZoneMap.getOrDefault(code, null);
+	}
 
-        if (vendingZoneMap == null) {
-            Map<String, String> localityMap = new HashMap<>();
-            vendingZoneMap = new HashMap<>();
-            loadLocalityAndVendingZoneMaps(tenantId, requestInfo, localityMap, vendingZoneMap);
-
-            localityCache.put(tenantId, localityMap);
-            vendingZoneCache.put(tenantId, vendingZoneMap);
-        }
-
-        return vendingZoneMap.getOrDefault(code, null);
-    }
+	private Map<String, String> getOrLoadLocalityMap(String tenantId, RequestInfo requestInfo) {
+		return localityCache.computeIfAbsent(tenantId, key -> {
+			Map<String, String> localityMap = new HashMap<>();
+			Map<String, String> vendingZoneMap = new HashMap<>();
+			loadLocalityAndVendingZoneMaps(tenantId, requestInfo, localityMap, vendingZoneMap);
+			vendingZoneCache.put(tenantId, vendingZoneMap);
+			return localityMap;
+		});
+	}
 
 	/**
 	 * Loads locality and vending zone mappings for a given tenant by retrieving boundary data from MDMS.
@@ -98,7 +98,7 @@ public class MdmsCacheService {
 		Object result = mdmsUtil.getLocationData(requestInfo, tenantId);
 
 		if (!(result instanceof Map)) {
-			System.out.println("MDMS result is not a Map: " + result);
+			log.warn("MDMS result is not a Map: {}", result);
 			return;
 		}
 
@@ -106,18 +106,16 @@ public class MdmsCacheService {
 		Object tenantBoundaryObj = resultMap.get(StreetVendingConstants.TENANTBOUNDARY);
 
 		if (!(tenantBoundaryObj instanceof List)) {
-			System.out.println("TenantBoundary is not a List: " + tenantBoundaryObj);
+			log.warn("TenantBoundary is not a List: {}", tenantBoundaryObj);
 			return;
 		}
 
 		List<Object> tenantBoundaries = (List<Object>) tenantBoundaryObj;
 
 		for (Object boundaryObj : tenantBoundaries) {
-			if (!(boundaryObj instanceof Map))
-				continue;
-
-			Map<String, Object> boundaryMap = (Map<String, Object>) boundaryObj;
-			processBoundaries(boundaryMap, localityMap, vendingZoneMap);
+			if (boundaryObj instanceof Map) {
+				processBoundaries((Map<String, Object>) boundaryObj, localityMap, vendingZoneMap);
+			}
 		}
 	}
 	
@@ -141,53 +139,52 @@ public class MdmsCacheService {
 
 		Object boundaryListObj = boundaryMap.get(StreetVendingConstants.BOUNDARY);
 		if (!(boundaryListObj instanceof List)) {
-			System.out.println("boundary is not a List: " + boundaryListObj);
+			log.warn("boundary is not a List: {}", boundaryListObj);
 			return;
 		}
 
 		List<Object> boundaryList = (List<Object>) boundaryListObj;
 
 		for (Object b : boundaryList) {
-			if (!(b instanceof Map))
-				continue;
-
-			Map<String, Object> boundary = (Map<String, Object>) b;
-
-			// Locality
-			String localityCode = boundary.get(StreetVendingConstants.CODE) != null
-					? boundary.get(StreetVendingConstants.CODE).toString()
-					: null;
-			String localityName = boundary.get(StreetVendingConstants.NAME) != null
-					? boundary.get(StreetVendingConstants.NAME).toString()
-					: null;
-
-			if (localityCode != null && localityName != null) {
-				localityMap.put(localityCode, localityName);
+			if (b instanceof Map) {
+				processBoundary((Map<String, Object>) b, localityMap, vendingZoneMap);
 			}
+		}
+	}
 
-			// Vending Zones
-			Object childrenObj = boundary.get("children");
-			if (childrenObj instanceof List) {
-				List<Object> children = (List<Object>) childrenObj;
-				for (Object childObj : children) {
-					if (!(childObj instanceof Map))
-						continue;
+	@SuppressWarnings("unchecked")
+	private void processBoundary(Map<String, Object> boundary, Map<String, String> localityMap,
+			Map<String, String> vendingZoneMap) {
+		putCodeNameMapping(boundary, localityMap);
+		processVendingZoneChildren(boundary, vendingZoneMap);
+	}
 
-					Map<String, Object> child = (Map<String, Object>) childObj;
-					String zoneCode = child.get(StreetVendingConstants.CODE) != null
-							? child.get(StreetVendingConstants.CODE).toString()
-							: null;
-					String zoneName = child.get(StreetVendingConstants.NAME) != null
-							? child.get(StreetVendingConstants.NAME).toString()
-							: null;
+	private void putCodeNameMapping(Map<String, Object> source, Map<String, String> targetMap) {
+		String code = getStringValue(source, StreetVendingConstants.CODE);
+		String name = getStringValue(source, StreetVendingConstants.NAME);
+		if (code != null && name != null) {
+			targetMap.put(code, name);
+		}
+	}
 
-					if (zoneCode != null && zoneName != null) {
-						vendingZoneMap.put(zoneCode, zoneName);
-					}
-				}
+	private String getStringValue(Map<String, Object> map, String key) {
+		Object value = map.get(key);
+		return value != null ? value.toString() : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void processVendingZoneChildren(Map<String, Object> boundary, Map<String, String> vendingZoneMap) {
+		Object childrenObj = boundary.get(CHILDREN_KEY);
+		if (!(childrenObj instanceof List)) {
+			return;
+		}
+
+		List<Object> children = (List<Object>) childrenObj;
+		for (Object childObj : children) {
+			if (childObj instanceof Map) {
+				putCodeNameMapping((Map<String, Object>) childObj, vendingZoneMap);
 			}
 		}
 	}
 
 }
-			

@@ -6,7 +6,6 @@ import org.egov.ewst.models.EwasteApplication;
 import org.egov.ewst.models.EwasteApplicationSearchCriteria;
 import org.egov.ewst.repository.builder.EwasteApplicationQueryBuilder;
 import org.egov.ewst.repository.rowmapper.EwasteApplicationRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -23,14 +22,16 @@ import java.util.List;
 @Repository
 public class EwasteApplicationRepository {
 
-	@Autowired
-	private EwasteApplicationQueryBuilder queryBuilder1;
+	private final EwasteApplicationQueryBuilder queryBuilder1;
+	private final JdbcTemplate jdbcTemplate;
+	private final EwasteApplicationRowMapper eRowMapper;
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
-	private EwasteApplicationRowMapper eRowMapper;
+	public EwasteApplicationRepository(EwasteApplicationQueryBuilder queryBuilder1, JdbcTemplate jdbcTemplate,
+			EwasteApplicationRowMapper eRowMapper) {
+		this.queryBuilder1 = queryBuilder1;
+		this.jdbcTemplate = jdbcTemplate;
+		this.eRowMapper = eRowMapper;
+	}
 
 	/**
 	 * Retrieves a list of Ewaste applications based on the provided search criteria.
@@ -42,6 +43,6 @@ public class EwasteApplicationRepository {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder1.getEwasteApplicationSearchQuery(searchCriteria, preparedStmtList);
 		log.info("Final query: " + query);
-		return jdbcTemplate.query(query, preparedStmtList.toArray(), eRowMapper);
+		return jdbcTemplate.query(query, eRowMapper, preparedStmtList.toArray());
 	}
 }

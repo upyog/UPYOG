@@ -53,7 +53,7 @@ import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Predicate;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

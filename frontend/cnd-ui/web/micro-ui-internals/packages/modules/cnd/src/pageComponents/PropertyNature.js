@@ -134,7 +134,7 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
             })}
           />
           <CardLabel>{t("CND_TIME_CONSTRUCTION")}<span className="astericColor">*</span></CardLabel>
-          <div style={cndStyles.constructionDatePicker}>
+          <div className="cnd-property-nature-datepicker-container">
             <DatePicker
               date={constructionFrom}
               name="constructionFrom"

@@ -21,10 +21,10 @@ export const Header = ({ user, onLogin, onLogout, onCreateAccount }) => (
         {user ? (
           <Button size="small" onClick={onLogout} label="Log out" />
         ) : (
-          <>
+          <Fragment>
             <Button size="small" onClick={onLogin} label="Log in" />
             <Button primary size="small" onClick={onCreateAccount} label="Sign up" />
-          </>
+          </Fragment>
         )}
       </div>
     </div>

@@ -94,10 +94,12 @@ public class MdmsDataQueryBuilderV2 {
         paginatedQuery.append(" OFFSET ? ");
         preparedStmtList.add(ObjectUtils.isEmpty(mdmsCriteriaV2.getOffset()) ? config.getDefaultOffset() : mdmsCriteriaV2.getOffset());
 
-        // Append limit
+    
+        // Append limit - if not passed in request, use defaultLimit (50)
+        Integer limit = ObjectUtils.isEmpty(mdmsCriteriaV2.getLimit()) ? config.getDefaultLimit() : mdmsCriteriaV2.getLimit();
         paginatedQuery.append(" LIMIT ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(mdmsCriteriaV2.getLimit()) ? config.getDefaultLimit() : mdmsCriteriaV2.getLimit());
-
+        preparedStmtList.add(limit);
+        
         return paginatedQuery.toString();
     }
 

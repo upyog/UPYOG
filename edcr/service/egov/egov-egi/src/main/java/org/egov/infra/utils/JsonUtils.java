@@ -96,6 +96,6 @@ public final class JsonUtils {
     }
 
     public static String toJSON(Object object) {
-        return new Gson().toJson(object);
+        return new  Gson().toJson(object);
     }
 }

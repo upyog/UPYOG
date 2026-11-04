@@ -1,5 +1,5 @@
 import React from "react";
-import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@upyog/digit-ui-react-components";
+import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import ChangeLanguage from "../components/ChangeLanguage";
 
 const SideBarMenu = (t, closeSidebar, redirectToLoginPage, redirectToScrutinyPage ,isEmployee, storeData, tenantId) => {
@@ -47,8 +47,8 @@ return [
     id: "help-line",
     text: (
       <React.Fragment>
-        {t("CS_COMMON_HELPLINE")}
-        <div className="telephone" style={{ marginTop: "-10%" }}>
+        <span className="sidebar-helpline-title">{t("CS_COMMON_HELPLINE")}</span>
+        <div className="telephone sidebar-helpline-telephone">
           <div className="link">
             <a href={`tel:${filteredTenantData}`}>{filteredTenantData}</a>
           </div>

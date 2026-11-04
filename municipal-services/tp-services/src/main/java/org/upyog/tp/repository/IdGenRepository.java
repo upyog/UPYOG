@@ -22,9 +22,9 @@ public class IdGenRepository {
 
 
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private TreePruningConfiguration config;
+    private final TreePruningConfiguration config;
 
 
     public IdGenRepository(RestTemplate restTemplate, TreePruningConfiguration config) {

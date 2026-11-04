@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Toast } from "@upyog/digit-ui-react-components";
+import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import WTSearchApplication from "../../components/SearchApplication";
 
@@ -27,11 +27,19 @@ const SearchApp = ({path,moduleCode}) => {
             ...(fromDate ? { fromDate } : {})
         };
 
-        let payload = Object.keys(data)
-            .filter(k => data[k])
-            .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {});
-
-        if (Object.keys(payload).length > 0 && (!payload.bookingNo && !payload.fromDate && !payload.status && !payload.toDate && !payload.mobileNumber)) {
+        // Filter out empty values and convert objects to codes
+        let payload = Object.keys(data).reduce((acc, key) => {
+            const value = data[key];
+            // Skip if value is empty, null, undefined, or just whitespace
+            if (!value || (typeof value === 'string' && !value.trim())) return acc;
+            // Convert object to code, otherwise use value as-is
+            return {...acc, [key]: typeof value === "object" ? value.code : value};
+        }, {});
+        
+        // Check if any actual search field is provided (excluding pagination fields)
+        const hasSearchFields = payload.bookingNo || payload.fromDate || payload.status ||  payload.toDate || payload.mobileNumber;
+        
+        if(!hasSearchFields) {
             setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });
         } else if ((payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate)) {
             setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
@@ -39,6 +47,10 @@ const SearchApp = ({path,moduleCode}) => {
             setPayload(payload);
         }
     }
+
+    const onClear = () => {
+        setPayload({});
+    };
 
     useEffect(() => {
       if (showToast) {
@@ -78,6 +90,7 @@ const SearchApp = ({path,moduleCode}) => {
                 tenantId={tenantId} 
                 setShowToast={setShowToast} 
                 onSubmit={onSubmit} 
+                onClear={onClear}
                 data={isSuccess && !isLoading ? (searchResult.length > 0 ? searchResult : { display: "ES_COMMON_NO_DATA" }) : ""} 
                 count={count} 
                 moduleCode={moduleCode}

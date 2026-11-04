@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
@@ -141,7 +141,7 @@ const FstpInbox = () => {
   } else {
     return (
       <React.Fragment>
-        <div style={{ marginLeft: "20px" }}>
+        <div className="fsm-fstp-inbox-spacing">
           <Header>{t("ES_COMMON_INBOX")}</Header>
         </div>
         <DesktopInbox

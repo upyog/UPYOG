@@ -69,9 +69,6 @@
 	<field name="billNumber" class="java.lang.String">
 		<fieldDescription><![CDATA[billNumber]]></fieldDescription>
 	</field>
-	<field name="class" class="java.lang.Class">
-		<fieldDescription><![CDATA[class]]></fieldDescription>
-	</field>
 	<field name="creditAmount" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[creditAmount]]></fieldDescription>
 	</field>

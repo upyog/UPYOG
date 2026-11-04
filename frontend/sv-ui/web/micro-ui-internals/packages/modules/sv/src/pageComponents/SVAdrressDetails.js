@@ -183,7 +183,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
       vendorId: null
     });
 
-     const createDependentObject = (dependent) => ({
+    const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -202,7 +202,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
       name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-});
+    });
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
@@ -230,8 +230,8 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
           createDependentObject(dep)
         );
         vendordetails = [
-            createVendorObject(formData?.owner?.vendorDetails),
-            createSpouseObject(formData?.owner?.spouseDetails),
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails),
           ...dependentPayload
         ];
       }
@@ -365,8 +365,6 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
         comments: "",
         businessService: "street-vending",
         moduleName: "sv-services",
-        businessService: "street-vending",
-        moduleName: "sv-services",
         varificationDocuments: [
           {
             additionalDetails: {},
@@ -451,7 +449,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-z0-9- ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "text",
                 title: t("SV_HOUSE_NO_ERROR_MESSAGE"),
               })}
@@ -471,7 +469,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z,-/ ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "textarea",
                 title: t("SV_LANDMARK_ERROR_MESSAGE"),
               })}
@@ -492,7 +490,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z,-/ ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "textarea",
                 title: t("SV_LANDMARK_ERROR_MESSAGE"),
               })}
@@ -511,7 +509,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z,- ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "text",
                 title: t("SV_LANDMARK_ERROR_MESSAGE"),
               })}
@@ -523,7 +521,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"city"}
               defaultValue={city}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={city}
@@ -541,7 +539,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"locality"}
               defaultValue={locality}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={locality}
@@ -611,7 +609,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-z0-9- ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "text",
                 title: t("SV_HOUSE_NO_ERROR_MESSAGE"),
               })}
@@ -631,7 +629,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z,-/ ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "textarea",
                 title: t("SV_LANDMARK_ERROR_MESSAGE"),
               })}
@@ -652,7 +650,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z,-/ ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "textarea",
                 title: t("SV_LANDMARK_ERROR_MESSAGE"),
               })}
@@ -671,7 +669,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               ValidationRequired={true}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z,- ]*$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "textarea",
                 title: t("SV_LANDMARK_ERROR_MESSAGE"),
               })}
@@ -683,7 +681,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"ccity"}
               defaultValue={ccity}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={ccity}
@@ -701,7 +699,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
               name={"clocality"}
               defaultValue={clocality}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={clocality}

@@ -49,8 +49,11 @@ package org.egov.egf.voucher.repository;
 
 import org.egov.commons.CVoucherHeader;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,11 +61,50 @@ import java.util.List;
  *
  */
 
+/**
+ * Spring Data JPA repository for {@link CVoucherHeader} entities,
+ * providing data access operations for journal vouchers.
+ *
+ * <p>Extends {@link JpaRepository} to inherit standard CRUD and pagination operations,
+ * and defines additional query methods for voucher number lookups, journal voucher counts,
+ * and payment counts used by the ULB (Urban Local Body) dashboard.</p>
+ *
+ * @see CVoucherHeader
+ */
 @Repository
 public interface JournalVoucherRepository extends JpaRepository<CVoucherHeader, Long> {
+
+    /**
+     * Finds a single {@link CVoucherHeader} by its exact voucher number.
+     *
+     * @param voucherNumber the exact voucher number to search for; must not be {@code null}
+     * @return the matching {@link CVoucherHeader}, or {@code null} if none found
+     */
 
     CVoucherHeader findByVoucherNumber(final String voucherNumber);
 
     List<CVoucherHeader> findByVoucherNumberContainingIgnoreCase(final String voucherNumber);
+
+
+    /**
+     * Returns the total number of payment vouchers whose voucher date falls within
+     * the given date range, for use on the ULB dashboard.
+     *
+     * <p>Counts records by joining {@code voucherheader} with {@code paymentheader}
+     * on the voucher header ID, ensuring only vouchers that have an associated
+     * payment entry are counted.</p>
+     *
+     * @param startDate the start of the date range (inclusive); must not be {@code null}
+     * @param endDate   the end of the date range (inclusive); must not be {@code null}
+     * @return the count of payment vouchers within the specified date range
+     */
+
+    //for ULB Dashboard
+    @Query(value = "SELECT COUNT(*) FROM voucherheader vh INNER JOIN paymentheader ph ON vh.id = ph.voucherheaderid WHERE vh.voucherdate BETWEEN :startDate AND :endDate", nativeQuery = true)
+    Long getPaymentsCount(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+
+    Long countByVoucherDateBetween(Date startDate, Date endDate);
+
 
 }

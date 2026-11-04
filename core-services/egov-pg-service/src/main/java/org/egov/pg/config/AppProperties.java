@@ -97,10 +97,22 @@ public class AppProperties {
     private final String internalMicroserviceUserMobilenumber;
 
     private final String internalMicroserviceUserType;
-
+    
+    private final String idGenRefundName;
+    
+    private final String idGenRefundFormat;
+    
+    private final String saveRefundTxnsTopic;
+    
+    private final String updateRefundTxnsTopic;
+    
+    private final Integer earlyReconcileJobRunIntervalRefund;
+    
+    private final String paymentRefundTopic;
     @Autowired
     public AppProperties(Environment environment){
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
+        this.earlyReconcileJobRunIntervalRefund = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunIntervalRefund.mins"));
         this.saveTxnTopic = environment.getRequiredProperty("persister.save.pg.txns");
         this.updateTxnTopic = environment.getRequiredProperty("persister.update.pg.txns");
         this.saveTxnDumpTopic = environment.getRequiredProperty("persister.save.pg.txnsDump");
@@ -142,6 +154,11 @@ public class AppProperties {
         this.internalMicroserviceUserUsername = environment.getRequiredProperty("internal.microservice.user.username");
         this.internalMicroserviceUserMobilenumber = environment.getRequiredProperty("internal.microservice.user.mobilenumber");
         this.internalMicroserviceUserType = environment.getRequiredProperty("internal.microservice.user.type");
+        this.idGenRefundName = environment.getRequiredProperty("egov.idgen.ref.name");
+        this.idGenRefundFormat = environment.getRequiredProperty("egov.idgen.ref.format");
+        this.saveRefundTxnsTopic = environment.getRequiredProperty("persister.save.pg.refund");
+        this.updateRefundTxnsTopic = environment.getRequiredProperty("persister.update.pg.refund");
+        this.paymentRefundTopic=environment.getRequiredProperty("egov.collectionservice.payment.refund");
     }
 
 }

@@ -14,31 +14,16 @@
 					"script": {
 						"exec": [
 							"var data=[",
-							"   {",
-							"        \"name\": \"Tax is 7.5% of the annual rent for the rented part of the property.\",",
-							"        \"code\": \"7_5_PERCENTTAX\",",
-							"        \"active\": true",
-							"      }",
-							"]",
 							"",
 							"pm.collectionVariables.set(\"raw\", data);",
 							"",
 							"var obj = pm.collectionVariables.get(\"raw\");",
 							"",
-							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
 							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							"",
-							""
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
 						],
 						"type": "text/javascript"
 					}

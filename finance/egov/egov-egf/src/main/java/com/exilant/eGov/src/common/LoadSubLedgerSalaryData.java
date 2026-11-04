@@ -59,7 +59,7 @@ import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,7 +102,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 							.append(" where  sph.salarybillid=sbd.id and sph.voucherheaderid=vh.id and vh.cgn= :cgn");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(sql);
-			pst = persistenceService.getSession().createSQLQuery(sql.toString());
+			pst = persistenceService.getSession().createNativeQuery(sql.toString());
 			pst.setParameter("cgn", cgn);
 			rset = pst.list();
             for (final Object[] element : rset) {
@@ -120,7 +120,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 					.append(" sph.voucherheaderid=vh.id  and f.id=vh.fundid and fs.id=vh.fundSourceid and vh.cgn= :cgn");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(sql);
-			pst = persistenceService.getSession().createSQLQuery(sql.toString());
+			pst = persistenceService.getSession().createNativeQuery(sql.toString());
 			pst.setParameter("cgn", cgn);
 			rset = pst.list();
             for (final Object[] element : rset) {
@@ -137,7 +137,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 							.append(" where a.cashinhand=b.id and a.chequeinhand=c.id and b.id!=c.id and a.id= :paidBy");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(sql);
-			pst = persistenceService.getSession().createSQLQuery(sql.toString());
+			pst = persistenceService.getSession().createNativeQuery(sql.toString());
 			pst.setParameter("paidBy", dc.getValue("subLedgerPaymentHeader_paidBy"));
 			rset = pst.list();
             for (final Object[] element : rset) {
@@ -153,7 +153,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 					.append(" a.id=b.bankid and b.id=c.branchid and c.id = :accId");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(sql);
-			pst = persistenceService.getSession().createSQLQuery(sql.toString());
+			pst = persistenceService.getSession().createNativeQuery(sql.toString());
 			pst.setParameter("accId", dc.getValue("accId"));
 			rset = pst.list();
             for (final Object[] element : rset)
@@ -166,7 +166,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 							.append(" sph.salarybillid=s.id and sph.voucherheaderid in(select id from voucherheader where cgn = :cgn)");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(sql);
-			pst = persistenceService.getSession().createSQLQuery(sql.toString());
+			pst = persistenceService.getSession().createNativeQuery(sql.toString());
 			pst.setParameter("cgn", cgn);
 			rset = pst.list();
             for (final Object[] element : rset)
@@ -184,7 +184,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 						.append(" and sph.voucherheaderid in (select id from voucherheader where cgn = :cgn) ");
 				if (LOGGER.isDebugEnabled())
 					LOGGER.debug(sql);
-				pst = persistenceService.getSession().createSQLQuery(sql.toString());
+				pst = persistenceService.getSession().createNativeQuery(sql.toString());
 				pst.setParameter("cgn", cgn);
 				rset = pst.list();
 
@@ -225,7 +225,7 @@ public class LoadSubLedgerSalaryData extends AbstractTask {
 							.append(" sph.voucherheaderid=vh.id and (chequeid is  null or chequeid =0 )and vh.cgn = :cgn");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(sql);
-			pst = persistenceService.getSession().createSQLQuery(sql.toString());
+			pst = persistenceService.getSession().createNativeQuery(sql.toString());
 			pst.setParameter("cgn", cgn);
 			rset = pst.list();
             for (final Object[] element : rset) {

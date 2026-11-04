@@ -50,8 +50,8 @@ package org.egov.infra.web.taglib;
 
 import org.apache.taglibs.standard.tag.rt.core.UrlTag;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.JspException;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;

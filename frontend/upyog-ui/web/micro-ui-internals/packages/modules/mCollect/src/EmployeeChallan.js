@@ -1,10 +1,11 @@
-import { Card, CardSubHeader, Header, Row, StatusTable, SubmitBar, ActionBar, Menu, Toast,MultiLink,DownloadBtnCommon} from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, Row, StatusTable, SubmitBar, ActionBar, Menu, Toast,MultiLink,DownloadBtnCommon} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useHistory, useRouteMatch } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import { stringReplaceAll, convertEpochToDate } from "./utils";
 import ActionModal from "./components/Modal";
 import { downloadAndPrintChallan, downloadAndPrintReciept } from "./utils";
+import "./EmployeeChallan.css";
 
 const EmployeeChallan = (props) => {
   const { t } = useTranslation();
@@ -16,8 +17,8 @@ const EmployeeChallan = (props) => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
-  const history = useHistory();
-  const { url } = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { url } = Digit.Hooks.useModuleBasePath();
   const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);
   const [showToast, setShowToast] = useState(null);
   useEffect(() => {
@@ -25,10 +26,10 @@ const EmployeeChallan = (props) => {
       case "CANCEL_CHALLAN":
         return setShowModal(true);
       case "UPDATE_CHALLAN":
-        return history.push(`/upyog-ui/employee/mcollect/modify-challan/${challanno}`);
+        return navigate(`/upyog-ui/employee/mcollect/modify-challan/${challanno}`);
       case "BUTTON_PAY":
-        return history.push(
-          `/upyog-ui/employee/payment/collect/${challanDetails?.businessService}/${challanno}/tenantId=${tenantId}?workflow=mcollect`
+        return navigate(
+          `/upyog-ui/employee/payment/collect/${challanDetails?.businessService}/${challanno}/${tenantId}?workflow=mcollect`
         );
       default:
         break;
@@ -51,7 +52,7 @@ const EmployeeChallan = (props) => {
         if (result.challans && result.challans.length > 0) {
           const challan = result.challans[0];
           let LastModifiedTime = Digit.SessionStorage.set("isMcollectAppChanged", challan.challanNo);
-          history.push(
+          navigate(
             `/upyog-ui/employee/mcollect/acknowledgement?purpose=challan&status=success&tenantId=${challan?.tenantId}&serviceCategory=${challan.businessService}&challanNumber=${challan.challanNo}&applicationStatus=${challan.applicationStatus}`,
             { from: url }
           );
@@ -120,22 +121,14 @@ const EmployeeChallan = (props) => {
 
   return (
     <React.Fragment>
-      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <style>{`
-  .multilinkWrapper employee-mulitlink-main-divNew {
-   max-width:100%;
-   margin-top:-20px
-  }`
-}
-
-        </style>
-        <div style={{display:"flex"}}>
-          <div style={{width:"80%"}}>
+      <div className="employee-application-details mcollect-remove fixed height from status count checkbox-mb-md">
+        <div className="mcollect-remove fixed height from status count checkbox-flex">
+          <div className="mcollect-remove fixed height from status count checkbox-item">
         <Header>{`${t("CHALLAN_DETAILS")}`} </Header>
         </div>
-        <div style={{width:"20%"}}>
+        <div className="mcollect-remove fixed height from status count checkbox-mt-neg">
           <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-divNew"
+              className="multilinkWrapper employee-mulitlink-main-divNew mc-employee-challan-wrapper"
               onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
               displayOptions={isDisplayDownloadMenu}
               options={challanDetails?.applicationStatus === "PAID" ? [challanDownload , receiptDownload] : [challanDownload]}
@@ -147,22 +140,22 @@ const EmployeeChallan = (props) => {
 </div>
       <div>
         <Card>
-          <StatusTable style={{ padding: "10px 0px" }}>
+          <StatusTable className="mc-employee-challan-table-cell">
             <Row label={`${t("UC_CHALLAN_NO")}`} text={challanno} />
-            <hr style={{ width: "35%", border: "1px solid #D6D5D4", marginTop: "1rem", marginBottom: "1rem" }} />
+            <hr className="mc-employee-challan-top-spacing" />
             {challanBillDetails?.map((data) => {
               return (
                 <Row label={t(stringReplaceAll(data?.taxHeadCode, ".", "_"))} text={`₹${data?.amount}` || 0} textStyle={{ whiteSpace: "pre" }} />
               );
             })}
-            <hr style={{ width: "35%", border: "1px solid #D6D5D4", marginTop: "1rem", marginBottom: "1rem" }} />
+            <hr className="mc-employee-challan-top-spacing" />
             <Row
-              label={<b style={{ padding: "10px 0px" }}>{t("UC_TOTAL_DUE_AMOUT_LABEL")}</b>}
+              label={<b className="mc-employee-challan-table-cell">{t("UC_TOTAL_DUE_AMOUT_LABEL")}</b>}
               text={`₹${totalDueAmount}`}
               textStyle={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}
             />
           </StatusTable>
-          <div style={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_SERVICE_DETAILS_LABEL")}</div>
+          <div className="mc-employee-challan-container-padding">{t("UC_SERVICE_DETAILS_LABEL")}</div>
           <StatusTable>
             <Row
               label={`${t("UC_SERVICE_CATEGORY_LABEL")}`}
@@ -174,7 +167,7 @@ const EmployeeChallan = (props) => {
             <Row label={`${t("UC_COMMENT_LABEL")}`} text={`${challanDetails?.description || t("CS_NA")}`} />
             <Row label={`${t("CS_INBOX_STATUS_FILTER")}`} text={t(`UC_${challanDetails?.applicationStatus || t("CS_NA")}`)} />
           </StatusTable>
-          <div style={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_CONSUMER_DETAILS_LABEL")}</div>
+          <div className="mc-employee-challan-container-padding">{t("UC_CONSUMER_DETAILS_LABEL")}</div>
           <StatusTable>
             <Row label={`${t("UC_CONS_NAME_LABEL")}`} text={challanDetails?.citizen.name || t("CS_NA")} />
             <Row label={`${t("UC_MOBILE_NUMBER")}`} text={challanDetails?.citizen.mobileNumber || t("CS_NA")} />

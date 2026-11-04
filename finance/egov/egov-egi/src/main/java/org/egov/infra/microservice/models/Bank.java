@@ -42,10 +42,10 @@ package org.egov.infra.microservice.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
@@ -59,16 +59,16 @@ public class Bank {
 
     @NotNull
     @Length(max = 50, min = 1)
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     @NotNull
     @Length(max = 100, min = 2)
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @Length(max = 250)
-    @SafeHtml
+    @SanitizeHtml
     private String description;
 
     @NotNull
@@ -76,9 +76,9 @@ public class Bank {
     // is this required?
 
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     private String type;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public Long getId() {

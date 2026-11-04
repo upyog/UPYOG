@@ -25,14 +25,14 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             case "ulb":
                 return (
                     <Controller
-                    rules={{ required: true }}
+                        rules={{ required: true }}
                         defaultValue={selectedTenat?.[0]}
-                        render={props => (
+                        render={({ field }) => (
                             <Dropdown
                                 option={userUlbs}
                                 optionKey={"i18nKey"}
-                                selected={props.value}
-                                select={props.onChange}
+                                selected={field.value}
+                                select={field.onChange}
                                 t={t}
                             />
                         )}
@@ -44,7 +44,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             default:
                 return (
                     <Controller
-                        render={(props) => <TextInput onChange={props.onChange} value={props.value} />}
+                        render={({ field }) => <TextInput onChange={field.onChange} value={field.value} />}
                         name={input.name}
                         control={control}
                         defaultValue={null}
@@ -90,7 +90,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                             </span>
                         </div>
                     )}
-                    <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+                    <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display: "grid" }}>
                         {searchFields
                             ?.map((input, index) => (
                                 <div key={input.name} className="input-fields">

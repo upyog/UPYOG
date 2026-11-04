@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Loader, CheckBox, Modal } from "..";
 
 const Heading = (props) => {
-    return <h1 style={{ marginLeft: "22px" }} className="heading-m BPAheading-m">{props.label}</h1>;
+    return <h1 className="heading-m BPAheading-m rc-citizen-consent-form-header">{props.label}</h1>;
 };
 
 const Close = () => (
@@ -13,7 +13,7 @@ const Close = () => (
 
 const CloseBtn = (props) => {
     return (
-        <div className="icon-bg-secondary" onClick={props.onClick} style={{ backgroundColor: "#FFFFFF" }}>
+        <div className="icon-bg-secondary rc-citizen-consent-form-wrapper" onClick={props.onClick}>
             <Close />
         </div>
     );
@@ -51,28 +51,28 @@ const Tempo = ({ t, styles, mdmsConfig = "", setMdmsConfig }) => {
                 actionCancelOnSubmit={closeModal}
                 formId="modal-action"
                 popupStyles={{ width: "720px", overflow: "auto" }}
-                style={{ minHeight: "45px", height: "auto", width: "160px" }}
+                className="rc-citizen-consent-form-wrapper-2"
                 hideSubmit={true}
                 headerBarMainStyle={{ margin: "0px", height: "35px" }}
             >
                 {isLoading ? <Loader /> : null}
 
-                {!isLoading && <div style={{margin: isMobile ? "10px -10px 10px -12px" : "10px 10px 10px 5px"}}>
+                {!isLoading && <div className={isMobile ? "tempo-margin--mobile" : "tempo-margin--desktop"}>
                     {selectedData?.length > 0 &&
                         selectedData?.map((value) =>
                             <div>
                                 {value?.header &&
-                                    <div style={{ fontWeight: "700", fontSize: "16px", margin: "10px 0px 10px 10px" }}>
+                                    <div className="rc-tempo-spacing">
                                         {t(value.header)}
                                     </div>}
                                 {value?.paragragh?.length &&
                                     value.paragragh.map((para) =>
-                                        <div style={{ fontSize: "16px", margin: "10px 0px 10px 10px" }}>
+                                        <div className="rc-tempo-spacing-2">
                                             {para?.paras?.map((value, index) => {
                                                 return <span>
                                                     {/* {index == 0 && "CCF_PP"} */}
                                                     {value && <span>{`${t(value)}`}</span>}
-                                                    {para?.linkLabels?.[index] && <a href={para?.links?.[index]} target={"_blank"} style={{color: "blue"}}>{`${t(para?.linkLabels?.[index])}`}</a>}
+                                                    {para?.linkLabels?.[index] && <a href={para?.links?.[index]} target={"_blank"} className="rc-tempo-wrapper">{`${t(para?.linkLabels?.[index])}`}</a>}
                                                     {/* {index == para?.paras?.length - 1 && "LABEL"} */}
                                                 </span>
                                             })}
@@ -81,21 +81,21 @@ const Tempo = ({ t, styles, mdmsConfig = "", setMdmsConfig }) => {
                                 }
                                 {value?.bulletinPoints?.length &&
                                     <div>
-                                        <ul style={{ listStyleType: "disc", width: "90%", marginLeft: "10%", fontSize: "16px" }}>
+                                        <ul className="rc-tempo-spacing-3">
                                             {value?.bulletinPoints?.map((point) => <li>{t(point)}</li>)}
                                         </ul>
                                     </div>
                                 }
                                 {value?.numericPoints?.length &&
                                     <div>
-                                        <ol style={{ listStyleType: "decimal", width: "90%", marginLeft: "10%", fontSize: "16px" }}>
+                                        <ol className="rc-tempo-spacing-4">
                                             {value.numericPoints.map((point) => <li>{t(point)}</li>)}
                                         </ol>
                                     </div>
                                 }
                                 {value?.subParagragh?.length &&
                                     value.subParagragh.map((subPara) =>
-                                        <div style={{ fontSize: "16px", margin: "10px 0px 10px 10px" }}>
+                                        <div className="rc-tempo-spacing-2">
                                             {t(subPara)}
                                         </div>
                                     )

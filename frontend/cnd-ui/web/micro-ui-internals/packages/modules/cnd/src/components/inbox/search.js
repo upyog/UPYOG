@@ -12,6 +12,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { cndStyles } from "../../utils/cndStyles";
+import { getValidationRules } from "../../utils";
 /**
  * The SearchApplication component creates a dynamic search form based on configurable search fields, 
  * with different layouts for mobile and desktop views. It manages form state, validation, and submission of search criteria.
@@ -77,7 +78,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
 
   const clearAll = (mobileView) => {
     return (
-      <LinkLabel style={mobileView?cndStyles.clearButtonMobile:cndStyles.clearButtonDesktop} onClick={clearSearch}>
+      <LinkLabel style={mobileView ? cndStyles.clearButtonMobile : cndStyles.clearButtonDesktop} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -86,7 +87,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={ isInboxPage ? cndStyles.searchContainerInbox:cndStyles.searchContainer}>
+        <div className="search-container" style={isInboxPage ? cndStyles.searchContainerInbox : cndStyles.searchContainer}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -105,25 +106,32 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                       <Label>{t(input.label) + ` ${input.isMandatory ? "*" : ""}`}</Label>
                       {!input.type ? (
                         <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />;
-                          }}
+                          render={({ field }) => (
+                            <TextInput onChange={field.onChange} value={field.value} maxlength={input.maxLength} maxLength={input.maxLength} />
+                          )}
                           name={input.name}
                           control={control}
                           defaultValue={""}
+                          rules={getValidationRules(input, t)}
                         />
                       ) : (
                         <Controller
-                          render={(props) => {
+                          render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} maxlength={input.maxLength} maxLength={input.maxLength} />;
                           }}
                           name={input.name}
                           control={control}
                           defaultValue={""}
+                          rules={getValidationRules(input, t)}
                         />
                       )}
                     </span>
+                    {formState?.errors?.[input.name] && (
+                      <CardLabelError className="cnd-search-field-error">
+                        {formState?.errors?.[input.name]?.message}
+                      </CardLabelError>
+                    )}
                   </div>
                 ))}
 

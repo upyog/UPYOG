@@ -62,17 +62,22 @@
 <input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <tr>
 	<td class="greybox"></td>
+	<%-- LTS Migration Fix (Struts 7 / WildFly 40): do not prefix url with '/'.
+	     ajaxdropdown.tag concatenates contextPath + url; a leading slash became
+	     //voucher/... and the Fund → Bank AJAX call failed. --%>
 	<egov:ajaxdropdown id="fromBankId" fields="['Text','Value']"
-		dropdownId="fromBankId" url="/voucher/common-ajaxLoadBanks.action" />
+		dropdownId="fromBankId" url="voucher/common-ajaxLoadBanks.action" />
 	<td class="greybox"><s:text name="contra.fromBank" /> <span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:hidden name="temp" value="contraBean.fromBankId" />
 	<td class="greybox"><s:select name="contraBean.fromBankId"
 			id="fromBankId" list="%{fromBankBranchMap}" headerKey="-1"
 			headerValue="%{getText('lbl.choose.options')}" onChange="loadFromAccNum(this);" /></td>
+	<%-- LTS Migration Fix (Struts 7 / WildFly 40): same leading-slash collapse
+	     as fromBankId so Bank → Account No AJAX reaches CommonAction. --%>
 	<egov:ajaxdropdown id="fromAccountNumber" fields="['Text','Value']"
 		dropdownId="fromAccountNumber"
-		url="/voucher/common-ajaxLoadAccountNumbers.action" />
+		url="voucher/common-ajaxLoadAccountNumbers.action" />
 	<td class="greybox"><s:text name="contra.fromBankAccount" /> <span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:select name="contraBean.fromBankAccountId"
@@ -133,17 +138,21 @@
 </tr>
 <tr>
 	<td class="bluebox"></td>
+	<%-- LTS Migration Fix (Struts 7 / WildFly 40): Transfer-To bank AJAX URL
+	     without a leading slash (see fromBankId comment above). --%>
 	<egov:ajaxdropdown id="toBankId" fields="['Text','Value']"
-		dropdownId="toBankId" url="/voucher/common-ajaxLoadBanks.action" />
+		dropdownId="toBankId" url="voucher/common-ajaxLoadBanks.action" />
 
 	<td class="bluebox"><s:text name="contra.toBank" /> <span
 		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:select name="contraBean.toBankId"
 			id="toBankId" list="%{toBankBranchMap}" headerKey="-1"
 			headerValue="%{getText('lbl.choose.options')}" onChange="loadToAccNum(this);" /></td>
+	<%-- LTS Migration Fix (Struts 7 / WildFly 40): Transfer-To account AJAX URL
+	     without a leading slash (see fromAccountNumber comment above). --%>
 	<egov:ajaxdropdown id="toAccountNumber" fields="['Text','Value']"
 		dropdownId="toAccountNumber"
-		url="/voucher/common-ajaxLoadAccountNumbers.action" />
+		url="voucher/common-ajaxLoadAccountNumbers.action" />
 	<td class="bluebox"><s:text name="contra.toBankAccount" /> <span
 		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:select name="contraBean.toBankAccountId"

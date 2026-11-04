@@ -92,7 +92,7 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
       );
     }
     if (item.type === "link") {
-      if (item.link.indexOf(`/${window?.contextPath}`) === -1 && isEmployee) {
+      if (item.link.indexOf(`/${window?.contextPath}/`) === -1 && isEmployee) {
         const getOrigin = window.location.origin;
         return (
           <a href={getOrigin + "/employee/" + item.link}>

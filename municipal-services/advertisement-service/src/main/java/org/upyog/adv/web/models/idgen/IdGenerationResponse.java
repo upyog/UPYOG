@@ -1,12 +1,12 @@
 package org.upyog.adv.web.models.idgen;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 
-import java.util.List;
 
 /**
  * <h1>IdGenerationResponse</h1>

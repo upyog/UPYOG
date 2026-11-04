@@ -119,13 +119,6 @@ public class BookingConfiguration {
 	@Value("${egov.user.update.path}")
 	private String userUpdateEndpoint;
 
-	// NOTIFICATION TOPICS
-//	@Value("${kafka.topics.notification.sms}")
-//	private String smsNotifTopic;
-//
-//	@Value("${kafka.topics.notification.email}")
-//	private String emailNotifTopic;
-
 	@Value("${kafka.topics.receipt.create}")
 	private String receiptCreateTopic;
 

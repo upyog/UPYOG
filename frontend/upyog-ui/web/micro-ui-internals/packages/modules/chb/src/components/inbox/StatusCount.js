@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CheckBox } from "@upyog/digit-ui-react-components";
+import { CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 
 const StatusCount = ({ status, searchParams, onAssignmentChange, statusMap, businessServices }) => {
   const { t } = useTranslation();
@@ -8,7 +8,7 @@ const StatusCount = ({ status, searchParams, onAssignmentChange, statusMap, busi
 
   return (
     <CheckBox
-      styles={{ height: "unset" }}
+      className="chb-status-count-checkbox"
       onChange={(e) => onAssignmentChange({ ...e, state: status.state }, status)}
       checked={(() => {
         return searchParams?.applicationStatus.some((e) => e.uuid === status.uuid);

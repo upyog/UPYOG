@@ -1,6 +1,5 @@
 import React, { useState } from "react"
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
-import { useForm, Controller } from "react-hook-form";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import UlbAssesmentSearch from "../../components/UlbAssesmentSearch";
@@ -68,7 +67,7 @@ const UlbAssesment = ({path}) => {
     //    config,
 
     //   );
-      const { isLoading, isSuccess,error,count, mutate: assessmentMutate } = Digit.Hooks.pt.UseAssessmentCreateUlb("pg.citya");
+      const { isPending: isLoading, isSuccess, error, count, data: mutationData, mutate: assessmentMutate } = Digit.Hooks.pt.UseAssessmentCreateUlb("pg.citya");
       const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
         tenantId,
         "pt",
@@ -81,6 +80,7 @@ const UlbAssesment = ({path}) => {
           },
         }
       );
+      const searchReult = mutationData?.Properties || [];
       console.log("mutate",assessmentMutate)
     return <React.Fragment>
         <UlbAssesmentSearch t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} financialYearsData={financialYearsData} /> 

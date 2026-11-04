@@ -1,0 +1,147 @@
+{
+  "moduleName":"water_tanker_vendor_module",
+  "description": "Water Tanker Vendor full workflow",
+  "baseUrl": "${selected.url}",
+
+  "instructions":[
+
+
+    {
+      "stepName":"Open Request Service",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[@href='/upyog-ui/citizen/wt-home']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 500
+    },
+
+    {
+      "stepName":"Open Water Tanker Vendor Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//div[contains(@class,'CitizenHomeCard')]//a[text()='Water Tanker Vendor Login']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 500
+    },
+
+
+
+    {
+      "stepName":"Open Search Booking",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href,'my-bookings')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 500
+    },
+
+
+
+    {
+      "stepName":"Enter Booking Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"bookingNo",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 500
+    },
+
+    {
+      "stepName":"Search Booking",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 500
+    },
+
+    {
+      "stepName": "Open Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//table//a[1]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Take Action",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar') and .//header[normalize-space()='TAKE ACTION']]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Click Assign Vehicle Driver",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Assign Vehicle Driver']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"Select Vehicle",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Vehicle Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@type='text']",
+      "action":"TYPE",
+      "inputValue":"${vehicle.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Assign Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.assign}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Assign Vehicle Driver Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Assign Vehicle Driver']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Take Action",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Click Complete Request",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Complete Request']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Complete Request Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.complete}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Complete Request Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Complete Request']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+.cg-justify-start {
+    justify-content: flex-start;
+    display: flex;
+    align-items: center
+}
+
+.cg-margin-bottom-20 {
+    margin-bottom: 20px
+}
+
+.cg-input-fullwidth {
+    margin-bottom: 0;
+    width: 100%
+}
+
+.cg-note {
+    color: green
+}
+
+.cg-note-red {
+    color: red;
+    padding-right: 3px
+}
+
+.cg-note-strong {
+    font-weight: bolder;
+    color: green
+}
+
+.cg-employee-application-details {
+    margin-bottom: 15px
+}
+
+.cg-status-padding {
+    padding: 10px 0px
+}
+
+.cg-hr-small {
+    width: 35%;
+    border: 1px solid #D6D5D4;
+    margin-top: 1rem;
+    margin-bottom: 1rem
+}
+
+.cg-total-label {
+    padding: 10px 0px
+}
+
+.cg-total-text {
+    font-size: 24px;
+    padding: 10px 0px;
+    font-weight: 700
+}
+
+.cg-section-title {
+    font-size: 24px;
+    padding: 10px 0px;
+    font-weight: 700
+}
+
+.cg-card-margin-top {
+    margin-top: 20px
+}
+
+.cg-text-center {
+    text-align: center
+}
+
+.cg-inbox-container-overflow {
+    overflow: auto
+}
+
+.cg-flex-1 {
+    flex: 1
+}
+
+.cg-result-margin-left {
+    margin-left: 24px
+}
+
+.cg-padding-0 {
+    padding: 0
+}
+
+.cg-white-space-pre {
+    white-space: pre
+}
+
+.cg-doc-margin-top-19 {
+    margin-top: 19px
+}
+
+.cg-doc-flex-wrap {
+    display: flex;
+    flex-wrap: wrap
+}
+
+.cg-doc-link {
+    min-width: 100px;
+    margin-right: 10px
+}
+
+.cg-doc-pdf-bg {
+    background: #f6f6f6;
+    padding: 8px
+}
+
+.cg-loader-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999
+}
+
+.cg-loader-module {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    width: 100%;
+    position: relative
+}
+
+.cg-loader-spinner {
+    width: 64px;
+    height: 64px;
+    border: 8px solid #1976d2;
+    border-top: 8px solid transparent;
+    border-radius: 50%;
+    animation: cg-spin 1.2s linear infinite
+}
+
+@keyframes cg-spin {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+.cg-mobile-margin-0 {
+    margin: 0
+}
+
+.cg-grid-full {
+    width: 100%;
+    display: grid
+}
+
+.cg-width-100 {
+    width: 100%
+}
+
+.cg-padding-top-9 {
+    padding-top: 9px
+}
+
+.cg-clear-right {
+    width: 240px;
+    text-align: right;
+    margin-left: 96px
+}
+
+.cg-font-normal {
+    font-weight: normal
+}
+
+.cg-align-center {
+    align-items: center
+}
+
+.cg-filter-label-flex {
+    display: flex;
+    align-items: center;
+    margin-top: auto
+}
+
+.cg-filter-span {
+    margin-left: 8px;
+    font-weight: normal
+}
+
+.cg-clear-search-border {
+    border: 1px solid #e0e0e0;
+    padding: 6px
+}
+
+.cg-clear-search-mobile {
+    border: 1px solid #e0e0e0;
+    padding: 6px;
+    margin-top: 5px
+}
+
+.cg-multi-server {
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden
+}
+
+.cg-btn-margin-right {
+    margin-right: 8px
+}
+
+.cg-field-width-100 {
+    width: 100%
+}
+
+.cg-upload-file input[type="file"] {
+    width: 280px
+}
+
+.cg-upload-file .file-upload-status {
+    width: 100%
+}
+
+.cg-error-style {
+    width: 70%;
+    margin-left: 30%;
+    font-size: 12px;
+    margin-top: -21px
+}
+
+.cg-cardlabel-pt10 {
+    padding-top: 10px
+}
+
+.cg-mobile-label-style {
+    margin-top: unset;
+    border: 1px solid #464646;
+    border-right: none
+}
+
+.cg-overflow-x-scroll {
+    overflow-x: scroll
+}
+
+.cg-margin-top-8 {
+    margin-top: 8px
+}
+
+.cg-status-green {
+    color: green
+}
+
+.cg-flex-none {
+    flex: none
+}
+
+.cg-table-cell {
+    padding: 20px 18px;
+    font-size: 16px
+}
+
+.cg-table-minwide {
+    min-width: 240px
+}
+
+.cg-margin-top-neg50 {
+    margin-top: -50px
+}
+
+.cg-display-flex {
+    display: flex
+}
+
+/* apply large options card for dropdowns within form-field */
+.form-field .options-card {
+    max-height: 960px
+}
+
+/* Banner defaults moved from inline styles */
+.cg-banner-padding {
+    padding: 10px
+}
+
+.cg-banner-header {
+    font-size: 32px;
+    word-break: break-word
+}
+
+/* Link styles for receipt table */
+.cg-link-blue-pointer {
+    color: blue;
+    cursor: pointer
+}
+
+/* Breadcrumb spacing for mobile */
+.cg-breadcrumb-mobile-margin {
+    margin-left: 2vw
+}
+
+/* Action link color used in utils getActionButton */
+.cg-link-action {
+    color: #FE7A51;
+    cursor: pointer
+}

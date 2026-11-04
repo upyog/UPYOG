@@ -1,0 +1,24 @@
+{
+  "moduleName": "ASSET_MANAGEMENT_SYSTEM",
+
+  "employees": {
+
+    "INITIATOR": {
+      "username": "ASSET_INITIATOR",
+      "password": "eGov@123",
+      "city": "City A"
+    },
+
+    "VERIFIER": {
+      "username": "ASSET_VERIFIER",
+      "password": "eGov@123",
+      "city": "City A"
+    },
+
+    "APPROVER": {
+      "username": "ASSET_APPROVER",
+      "password": "eGov@123",
+      "city": "City A"
+    }
+  }
+}

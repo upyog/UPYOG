@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom"
 import ApplicationCard from "./ApplicationCard";
 import EventLink from "../Events/EventLink";
 import { openDocumentLink, openUploadedDocument } from "../../utils";
@@ -31,7 +31,7 @@ const MobileInbox = ({ data, t, title, iconName, links, searchFields, searchPara
 
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="eng-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {/* {!isFstpOperator && !isSearch && <ApplicationLinks linkPrefix={parentRoute} isMobile={true} />} */}

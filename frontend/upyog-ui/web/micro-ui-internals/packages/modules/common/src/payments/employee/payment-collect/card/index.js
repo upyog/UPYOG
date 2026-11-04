@@ -26,14 +26,14 @@ export const useCardPaymentDetails = (props, t) => {
 
 const CardDetailsComponent = ({ ...props }) => {
   const { t } = useTranslation();
-  const [last4Digits, setLast4Digits] = useState(props?.value?.last4Digits);
-  const [transactionNumber, setTransactionNumber] = useState(props?.value?.transactionNumber);
-  const [reTransanctionNumber, setReTransanctionNumber] = useState(props?.value?.reTransanctionNumber);
+  const [last4Digits, setLast4Digits] = useState(props?.value?.last4Digits || "");
+  const [transactionNumber, setTransactionNumber] = useState(props?.value?.transactionNumber || "");
+  const [reTransanctionNumber, setReTransanctionNumber] = useState(props?.value?.reTransanctionNumber || "");
 
   useEffect(() => {
     if (props.onChange) {
       let errorMsg = "";
-      if (last4Digits.length !== 4) errorMsg = "ES_COMMON_ERROR_LAST_4_DIGITS";
+      if (last4Digits?.length !== 4) errorMsg = "ES_COMMON_ERROR_LAST_4_DIGITS";
       let errorObj = {};
       if (!last4Digits) errorObj.last4Digits = "ES_COMMON_LAST_4_DIGITS";
       if (!transactionNumber) errorObj.transactionNumber = "ES_COMMON_TRANSANCTION_NO";

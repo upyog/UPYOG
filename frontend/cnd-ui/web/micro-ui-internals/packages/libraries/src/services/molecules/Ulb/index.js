@@ -54,24 +54,6 @@ export const ULBService = {
     const initData = StoreService.getInitData();
     const tenantId = ULBService.getCurrentTenantId();
     return initData.tenants.find((tenant) => tenant.code === tenantId);
-  }
-  /**
-   * Custom method to get citizen's current selected city
-   *
-   *
-   * @example
-   * Digit.ULBService.getCitizenCurrentTenant() -> will return selected home city if not loggedin users city if not state tenant
-   *
-   * Digit.ULBService.getCitizenCurrentTenant(true) -> will return selected home city
-   * 
-   * @returns {String}
-   */,
-  getCitizenCurrentTenant: (selectedCity=false) => {
-    const homeCity=Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
-    if(selectedCity){
-      return homeCity;
-    }
-    return homeCity|| Digit.UserService.getUser()?.info?.permanentCity || ULBService.getStateId();
   },
 
   /**

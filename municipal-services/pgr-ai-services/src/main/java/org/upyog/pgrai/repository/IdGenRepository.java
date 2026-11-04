@@ -2,9 +2,9 @@ package org.upyog.pgrai.repository;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.pgrai.config.PGRConfiguration;
-import org.upyog.pgrai.web.models.Idgen.IdGenerationRequest;
-import org.upyog.pgrai.web.models.Idgen.IdGenerationResponse;
-import org.upyog.pgrai.web.models.Idgen.IdRequest;
+import org.upyog.pgrai.web.models.idgen.IdGenerationRequest;
+import org.upyog.pgrai.web.models.idgen.IdGenerationResponse;
+import org.upyog.pgrai.web.models.idgen.IdRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;

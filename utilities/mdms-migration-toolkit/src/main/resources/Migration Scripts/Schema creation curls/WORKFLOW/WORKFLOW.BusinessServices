@@ -1,0 +1,161 @@
+curl --location 'http://localhost:8094/mdms-v2/schema/v1/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "ver": ".01",
+        "ts": "",
+        "action": "_search",
+        "did": "1",
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "authToken": "d194d705-ddbc-451a-98d1-e380d71e39e8",
+        "userInfo": {
+            "id": 2038,
+            "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+            "userName": "MCS1",
+            "name": "Vishal",
+            "mobileNumber": "7895875858",
+            "emailId": "",
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Universal Collection Employee",
+                    "code": "UC_EMP",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg.citya"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "SchemaDefinition": {
+        "tenantId": "pg",
+        "code": "WORKFLOW.BusinessServices",
+        "description": null,
+        "definition": {
+            "type": "object",
+            "title": "Generated schema for Root",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "required": [
+                "tenantId",
+                "businessService",
+                "business",
+                "businessServiceSla",
+                "states"
+            ],
+            "x-unique": [
+                "businessService",
+                "business"
+            ],
+            "properties": {
+                "states": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "sla",
+                            "docUploadRequired",
+                            "isStartState",
+                            "isTerminateState",
+                            "isStateUpdatable"
+                        ],
+                        "properties": {
+                            "sla": {
+                                "type": [
+                                    "null",
+                                    "number"
+                                ],
+                                "default": null
+                            },
+                            "state": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "actions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "action",
+                                        "nextState",
+                                        "roles",
+                                        "active"
+                                    ],
+                                    "properties": {
+                                        "roles": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "action": {
+                                            "type": "string"
+                                        },
+                                        "active": {
+                                            "type": "boolean",
+                                            "default": false
+                                        },
+                                        "nextState": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "minItems": 0
+                            },
+                            "isStartState": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "isStateUpdatable": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "isTerminateState": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "applicationStatus": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "docUploadRequired": {
+                                "type": "boolean",
+                                "default": false
+                            }
+                        }
+                    }
+                },
+                "business": {
+                    "type": "string"
+                },
+                "tenantId": {
+                    "type": "string"
+                },
+                "businessService": {
+                    "type": "string"
+                },
+                "businessServiceSla": {
+                    "type": "number"
+                }
+            }
+        },
+        "isActive": true
+    }
+}'

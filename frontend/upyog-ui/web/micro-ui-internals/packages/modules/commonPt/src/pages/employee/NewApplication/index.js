@@ -1,35 +1,83 @@
 import React from "react";
-import { Loader } from "@upyog/digit-ui-react-components";
+
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 
-import CreatePropertyForm from '../../pageComponents/createForm';
-import PTAcknowledgement from '../../pageComponents/PTAcknowledgement';
+import { useQueryClient } from "@tanstack/react-query";
 
-const NewApplication = ({ path }) => {
-  let config = [];
-  const { t } = useTranslation();
-  
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useMatch,
+} from "react-router-dom";
+
+import CreatePropertyForm from "../../pageComponents/createForm";
+import PTAcknowledgement from "../../pageComponents/PTAcknowledgement";
+
+const NewApplication = () => {
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
-  const { pathname } = useLocation();
-  const history = useHistory();
-  const stateId = Digit.ULBService.getStateId();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
-  
-  const search = useLocation().search;
-  const redirectUrl = new URLSearchParams(search).get('redirectToUrl');
 
-  const createProperty = async () => {
-    history.push(`${match.path}/acknowledgement`);
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const stateId = Digit.ULBService.getStateId();
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  /*
+   * Store partially completed property creation form data in session storage.
+   * This allows users to retain entered values while navigating between
+   * property creation steps (for example, create form -> acknowledgement).
+   */
+
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(
+    "PT_CREATE_PROPERTY",
+    {},
+  );
+
+  /*
+   * Fetch common property form configurations from MDMS.
+   * These configurations decide the dynamic fields displayed during
+   * property creation.
+   */
+
+  const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(
+    stateId,
+    "PropertyTax",
+    "CommonFieldsConfig",
+  );
+
+  /*
+   * Fetch redirect URL if the property creation flow was initiated
+   * from another module/page.
+   */
+
+  const redirectUrl = new URLSearchParams(location.search).get("redirectToUrl");
+
+  /*
+   * Navigate to acknowledgement page after successful property creation.
+   * The acknowledgement component will handle final submission status.
+   */
+
+  const createProperty = () => {
+    navigate("acknowledgement");
   };
+  /*
+   * Clear temporary session data after successful acknowledgement
+   * and invalidate related queries so stale property creation data
+   * is not reused.
+   */
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+
+    queryClient.invalidateQueries({
+      queryKey: ["PT_CREATE_PROPERTY"],
+    });
   };
 
   if (isLoading) {
@@ -37,14 +85,42 @@ const NewApplication = ({ path }) => {
   }
 
   return (
-    <Switch>
-      <Route exact path={`${match.path}`}>
-        <CreatePropertyForm onSubmit={createProperty} value={params} redirectUrl={redirectUrl} userType={"employee"} />
-      </Route>
-      <Route exact path={`${match.path}/save-property`}>
-        <PTAcknowledgement data={params} onSuccess={onSuccess} redirectUrl={redirectUrl} userType={"employee"} />
-      </Route>
-    </Switch>
+    <Routes>
+      {/*
+        Default route renders the property creation form.
+        Saved form values are passed from session storage so users
+        can continue their unfinished application.
+      */}
+
+      <Route
+        path="*"
+        element={
+          <CreatePropertyForm
+            onSubmit={createProperty}
+            value={params}
+            redirectUrl={redirectUrl}
+            userType="employee"
+          />
+        }
+      />
+
+      {/*
+        After property creation, show acknowledgement page.
+        onSuccess removes temporary stored data after completion.
+      */}
+
+      <Route
+        path="save-property"
+        element={
+          <PTAcknowledgement
+            data={params}
+            onSuccess={onSuccess}
+            redirectUrl={redirectUrl}
+            userType="employee"
+          />
+        }
+      />
+    </Routes>
   );
 };
 

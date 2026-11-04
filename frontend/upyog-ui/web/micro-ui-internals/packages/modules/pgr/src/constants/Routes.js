@@ -36,4 +36,4 @@ export const Employee = {
   EditApplication: "/modify-application"
 };
 
-export const getRoute = (match, route) => `${match.path}${route}`;
+export const getRoute = (match, route) => `${route}`;

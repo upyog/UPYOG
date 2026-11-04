@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { WSService } from "../../services/elements/WS";
 import { PTService } from "../../services/elements/PT";
 import _ from "lodash";
@@ -57,8 +57,7 @@ const combineResponse = (WaterConnections, properties, billData, t) => {
 
 const useWaterSearch = ({tenantId, filters = {}, BusinessService="WS", t}, config = {}) => {
   
-  const response = useQuery(['WS_SEARCH', tenantId, filters, BusinessService,config], async () => await WSService.search({tenantId, filters: { ...filters }, businessService:BusinessService})
-  , {...config})
+  const response = queryTemplate({ queryKey: ['WS_SEARCH', tenantId, filters, BusinessService,config], queryFn: async () => await WSService.search({tenantId, filters: { ...filters }, businessService:BusinessService}), config: {...config} })
     let propertyids = "";
     let consumercodes = "";
     if(BusinessService === "WS")
@@ -74,13 +73,11 @@ const useWaterSearch = ({tenantId, filters = {}, BusinessService="WS", t}, confi
     let propertyfilter = { propertyIds : propertyids.substring(0, propertyids.length-1),}
     if(propertyids !== "" && filters?.locality) propertyfilter.locality = filters?.locality;
     config={...config,enabled:propertyids!==""?true:false}
-  const properties = useQuery(['WSP_SEARCH', tenantId, propertyfilter,BusinessService,config], async () => await PTService.search({ tenantId, filters:propertyfilter, auth:filters?.locality?false:true })
-  , {...config})
-  const billData = useQuery(['BILL_SEARCH', tenantId, consumercodes,BusinessService,config ], async () => await Digit.PaymentService.fetchBill(tenantId, {
+  const properties = queryTemplate({ queryKey: ['WSP_SEARCH', tenantId, propertyfilter,BusinessService,config], queryFn: async () => await PTService.search({ tenantId, filters:propertyfilter, auth:filters?.locality?false:true }), config: {...config} })
+  const billData = queryTemplate({ queryKey: ['BILL_SEARCH', tenantId, consumercodes,BusinessService,config ], queryFn: async () => await Digit.PaymentService.fetchBill(tenantId, {
     businessService: BusinessService,
     consumerCode: consumercodes.substring(0, consumercodes.length-1),
-  })
-  , {...config})
+  }), config: {...config} })
   return {isLoading:response?.isLoading || properties?.isLoading || billData?.isLoading, data : combineResponse(response?.data?.WaterConnection,properties?.data?.Properties,billData?.data?.Bill, t) };
 }
 

@@ -1,0 +1,455 @@
+{
+  "moduleName":"sewerage_employee_module",
+  "description": "Sewerage employee flow ",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions":[
+
+    {
+      "stepName":"Employee Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${selected.username}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Employee Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${selected.password}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Continue Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar') and .//header[text()='Continue']]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Open Sewerage Inbox",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href,'/ws/sewerage/search-application')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName": "Enter Application Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='text'])[1]",
+      "action": "TYPE_FROM_STORE",
+      "inputValue":"SEWERAGE_APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+
+
+    {
+      "stepName":"Search Application",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName": "Open Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//table//a[1]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Take Action Verify And Forward 1",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click Verify And Forward 1",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Verify and Forward']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Comment 1",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.verify}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Submit Verify And Forward 1",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Verify and Forward']",
+      "action":"CLICK_JS",
+      "dynamicSleep":2000
+    },
+
+
+    {
+      "stepName":"Take Action Edit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click Edit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Edit']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Proposed Water Closets",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"(//input[@type='number'])[1]",
+      "action":"TYPE",
+      "inputValue":"${closets.proposed}",
+      "dynamicSleep":2000
+    },
+    {
+      "stepName":"Proposed Toilets",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"(//input[@type='number'])[2]",
+      "action":"TYPE",
+      "inputValue":"${toilet.proposed}",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Water Closets",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"(//input[@type='number'])[3]",
+      "action":"TYPE",
+      "inputValue":"${water.proposed}",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Toilet Seats",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"(//input[@type='number'])[4]",
+      "action":"TYPE",
+      "inputValue":"${toilet.seats}",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Select Plumber",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:1",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Road Cutting Dropdown",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"1:0",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Area Of Plot",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//h2[contains(text(),'Area of Plot')]/following::input[1]",
+      "action":"TYPE",
+      "inputValue":"${plot.area}",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Upload Evidence 1",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Upload Evidence 2",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"(//input[@type='file'])[2]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Upload Evidence 3",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"(//input[@type='file'])[3]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Upload Evidence 4",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"(//input[@type='file'])[4]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Submit Edit Page",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'SUBMIT')]",
+      "action":"CLICK_JS",
+      "dynamicSleep":2000
+    },
+
+
+
+    {
+      "stepName":"Take Action Verify And Forward 3",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click Verify And Forward 3",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Verify and Forward']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Comment 3",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.verify}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Submit Verify And Forward 3",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Verify and Forward']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Take Action Approve Connection",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click Approve Connection",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Approve Connection']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Approve Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comments.approve}",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Submit Approve Connection",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Approve Connection']",
+      "action":"CLICK_JS",
+      "dynamicSleep":2000
+    },
+
+
+
+    {
+      "stepName":"Take Action Collect",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Wait For Collect",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//p[normalize-space()='Collect']",
+      "action": "WAIT_VISIBLE",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Click Collect",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "//p[normalize-space()='Collect']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Payer Mobile",
+      "locatorStrategy":"NAME",
+      "locatorValue":"payerMobile",
+      "action":"TYPE",
+      "inputValue": "${mobile.number}",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Receipt Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"instrumentNumber",
+      "action":"TYPE",
+      "inputValue":"${receipt.number}",
+      "dynamicSleep":2000
+    },
+    {
+      "stepName":"Take Action Collect",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Collect Payment')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Go Back To Home",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Go back to home page')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+    {
+      "stepName":"Open Sewerage Inbox",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href,'/ws/sewerage/search-application')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Enter Application Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='Application Number']/following::input[1]",
+      "action": "TYPE_FROM_STORE",
+      "inputValue":"SEWERAGE_APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Search Application",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName": "Open Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//table//a[1]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Take Action Activate Connection",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Click Activate Connection",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "//p[normalize-space()='Activate Connection']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Select Plumber Again",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:1",
+      "dynamicSleep":2000
+    },
+
+    {
+      "stepName":"Connection Date",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='date']",
+      "action": "SET_DATE_TODAY",
+      "inputValue": "0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Activate Connection Submit",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Activate Connection')]",
+      "action":"CLICK_JS",
+      "dynamicSleep":2000
+    }
+
+  ]
+}

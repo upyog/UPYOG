@@ -48,7 +48,7 @@
 
 package org.egov.infra.web.controller.admin.masters.department;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;

@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@nudmcdgnpm/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { openDocumentLink, openUploadedDocument } from '../../utils';
@@ -41,7 +41,7 @@ const DocumentDetails = ({ location, match, history, }) => {
                     filestoreId: { fileStoreId: details?.filestoreId },
                     documentLink: details?.documentLink
                 },
-                ULB: {code:details?.tenantId},
+                ULB: { code: details?.tenantId },
                 ...details
             }
             history.push({

@@ -1,5 +1,6 @@
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.utility.DcrConstants.FLOOR_HEIGHT_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.PLOT_AREA;
 
@@ -7,13 +8,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.common.entity.edcr.Block;
@@ -40,14 +40,8 @@ import org.egov.edcr.entity.blackbox.PlanDetail;
 import org.egov.edcr.entity.blackbox.StairDetail;
 import org.egov.edcr.service.LayerNames;
 import org.egov.edcr.utility.DcrConstants;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.edcr.utility.DcrConstants.FLOOR_HEIGHT_DESC;
 import org.egov.edcr.utility.Util;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.microservice.models.RequestInfo;
+import org.egov.infra.admin.master.service.ICityService;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,13 +67,12 @@ public class FarExtract extends FeatureExtract {
     @Autowired
     private MDMSValidator mDMSValidator;
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     private static final String VALIDATION_WRONG_COLORCODE_FLOORAREA = "msg.error.wrong.colourcode.floorarea";
     public static final String RULE_31_1 = "31(1)";
 
     /**
-     * @param doc
      * @param pl
      * @return 1) Floor area = (sum of areas of all polygon in Building_exterior_wall layer) - (sum of all polygons in FAR_deduct
      * layer) Color is not available here when color available change to getPolyLinesByLayerAndColor Api if required

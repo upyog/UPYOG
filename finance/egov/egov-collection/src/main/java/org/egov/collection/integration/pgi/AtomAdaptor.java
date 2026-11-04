@@ -61,12 +61,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+/*
+ * Jakarta EE 10 / JAXB 4.0 & JPA 3.1 Migration:
+ * Replaced javax.persistence (EntityManager, PersistenceContext, Query) and javax.xml.bind (JAXBContext, Unmarshaller, JAXBException)
+ * with jakarta.persistence and jakarta.xml.bind to support Jakarta EE 10 XML binding and JPA persistence runtimes.
+ */
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;

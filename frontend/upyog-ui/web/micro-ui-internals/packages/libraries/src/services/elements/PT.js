@@ -148,8 +148,7 @@ export const PTService = {
       auth:true,
       userService: true,
       method: "POST",
-      params: { tenantId, key :"pt-defaulternotice" },
-      auth: true,
+      params: { tenantId, key :"pt-defaulternotice" }
     }),
     getDefaulterNoticeStatus: (filters) =>
     Request({
@@ -158,8 +157,7 @@ export const PTService = {
       auth:true,
       userService: true,
       method: "POST",
-      params: {...filters },
-      auth: true,
+      params: {...filters }
     }),
 };
 

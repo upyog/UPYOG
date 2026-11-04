@@ -1,0 +1,26 @@
+{
+  "name": "@nudmcdgnpm/upyog-ui-module-asset-v2",
+  "version": "1.0.1",
+  "license": "MIT",
+  "main": "src/Module.js",
+  "description": "Developed for MCD",
+  "source": "src/Module.js",
+  "peerDependencies": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "@tanstack/react-query": "^5.0.0",
+    "react-i18next": "14.0.0",
+    "react-router-dom": "^6.23.0"
+  },
+  "dependencies": {
+    "@upyog/digit-ui-libraries": "3.10.0",
+    "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
+    "@nudmcdgnpm/upyog-ui-module-gis": "1.1.0",
+    "exifr": "^7.1.3",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
+    "lodash.merge": "^4.6.2",
+    "react-hook-form": "^7.51.0",
+    "xlsx": "^0.18.5"
+  }
+}

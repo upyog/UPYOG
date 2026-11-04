@@ -38,11 +38,36 @@
 	   http://www.springframework.org/schema/security/spring-security.xsd"
 	default-lazy-init="true">
 
+	<!-- Spring Security 6 compatibility: use Ant matchers explicitly for legacy URL patterns. -->
+	<bean id="resourcesMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/resources/**" />
+	</bean>
+
+	<bean id="downloadLogoMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/downloadfile/logo**" />
+	</bean>
+
+	<bean id="downloadGisMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/downloadfile/gis**" />
+	</bean>
+
+	<bean id="errorMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/error/**" />
+	</bean>
+
+	<bean id="cityDetailsMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/city/details" />
+	</bean>
+
+	<bean id="allMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/**" />
+	</bean>
+
 	<bean id="securityFilterChain" name="securityFilterChain"
 		class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>
-				<security:filter-chain pattern="/resources/**"
+				<security:filter-chain request-matcher-ref="resourcesMatcher"
 					filters="none" />
 			<!-- 	<security:filter-chain pattern="/help*"
 					filters="none" />
@@ -57,14 +82,14 @@
 				<security:filter-chain
 					pattern="/login/requiredlocations*" filters="none" /> -->
 				<security:filter-chain
-					pattern="/downloadfile/logo**" filters="none" />
+					request-matcher-ref="downloadLogoMatcher" filters="none" />
 				<security:filter-chain
-					pattern="/downloadfile/gis**" filters="none" />
-				<security:filter-chain pattern="/error/**"
+					request-matcher-ref="downloadGisMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="errorMatcher"
 					filters="none" />
-				<security:filter-chain pattern="/city/details"
+				<security:filter-chain request-matcher-ref="cityDetailsMatcher"
 					filters="none" />
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+				<security:filter-chain request-matcher-ref="allMatcher"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 				<!-- <security:filter-chain pattern="/public/**" filters="anonymousAuthenticationFilter"/> 
 					<security:filter-chain pattern="/**" filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" 
 					/> -->

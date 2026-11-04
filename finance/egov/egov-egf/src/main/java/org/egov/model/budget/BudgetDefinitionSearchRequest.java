@@ -49,7 +49,7 @@
 package org.egov.model.budget;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 /**
  * 
@@ -60,10 +60,10 @@ public class BudgetDefinitionSearchRequest {
 
 	private Long financialYearId;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String searchBere;
 	
-	@SafeHtml
+	@SanitizeHtml
     @Length(max = 20)
     private String isbere;
 

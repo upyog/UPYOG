@@ -1,17 +1,18 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { FSMService } from "../../services/elements/FSM";
-
-const useVendorUpdate = (tenantId) => {
-  return useMutation((vendorData) => VendorUpdateActions(vendorData, tenantId));
-};
 
 const VendorUpdateActions = async (vendorData, tenantId) => {
   try {
-    const response = await FSMService.updateVendor(vendorData, tenantId);
-    return response;
+    return await FSMService.updateVendor(vendorData, tenantId);
   } catch (error) {
-    throw new Error(error?.response?.data?.Errors[0].message);
+    throw new Error(error?.response?.data?.Errors?.[0]?.message);
   }
+};
+
+const useVendorUpdate = (tenantId) => {
+  return mutationTemplate({
+    mutationFn: (data) => VendorUpdateActions(data, tenantId),
+  });
 };
 
 export default useVendorUpdate;

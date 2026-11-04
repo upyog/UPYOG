@@ -1,7 +1,7 @@
-import { FormComposer, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { useParams, useLocation } from "react-router-dom";
 import { editMaintenanceConfig } from "../../../config/Create/editMaintenanceConfig";
 import { convertDateToEpoch } from "../../../utils";
@@ -11,7 +11,7 @@ const EditAssetMaintenance = () => {
   const { t } = useTranslation();
   const [canSubmit, setCanSubmit] = useState(false);
   const defaultValues = {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { id: applicationNo } = useParams();
   const location = useLocation();
   const assetMaintainanceData = location.state?.data;
@@ -92,7 +92,7 @@ const EditAssetMaintenance = () => {
       }
     };
     
-    history.replace("/upyog-ui/employee/asset/assetservice/edit-maintenance", { AssetMaintenance: formData,  applicationNo});
+    navigate("/upyog-ui/employee/asset/assetservice/edit-maintenance", { replace: true, state: { AssetMaintenance: formData,  applicationNo} });
 
   };
 

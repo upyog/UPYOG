@@ -68,48 +68,6 @@
   }
 
   .search-form-wns-inbox {
-    .clear-search-container {
-      grid-column: 2/3;
-      text-align: right;
-      .clear-search {
-        width: 100%;
-        color: rgb(244, 119, 56);
-      }
-    }
-    button {
-      width: 100%;
-    }
-
-    .filter-form {
-      height: fit-content;
-    }
-
-    .search-complaint-container {
-      flex-direction: column;
-      align-items: flex-start;
-      --bg-opacity: 1;
-      background-color: #fff;
-      background-color: rgba(255, 255, 255, var(--bg-opacity));
-      padding: 16px;
-      display: unset;
-      flex-wrap: unset;
-      justify-content: unset;
-      margin-bottom: 0;
-      .complaint-input-container {
-        display: grid !important;
-        grid-template-columns: 33.33% 33.33% 33.33%;
-      }
-      .form-field {
-        width: 100%;
-        padding-right: 15px;
-        .clear-search {
-          padding-top: 10px;
-        }
-      }
-    }
-    .submit {
-      margin-top: 0;
-      right: 0;
-    }
+    width: 100%;
   }
 }

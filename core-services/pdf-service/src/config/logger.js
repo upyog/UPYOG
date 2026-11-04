@@ -1,4 +1,7 @@
-const { createLogger, format, transports } = require("winston");
+// Before: used require() for winston - CommonJS style, incompatible with ESM
+// Change: replaced require() with import - native ESM for Node 22
+
+import { createLogger, format, transports } from "winston";
 
 const logger = createLogger({
   format: format.combine(

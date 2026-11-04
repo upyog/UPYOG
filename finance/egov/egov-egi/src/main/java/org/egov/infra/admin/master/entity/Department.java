@@ -53,14 +53,14 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import static org.egov.infra.admin.master.entity.Department.SEQ_DEPARTMENT;
 
@@ -78,12 +78,12 @@ public class Department extends AbstractAuditable {
     private Long id;
 
     @Length(min = 1, max = 128)
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @NotBlank
     @Length(min = 1, max = 128)
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     @Override

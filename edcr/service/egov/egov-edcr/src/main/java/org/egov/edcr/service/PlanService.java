@@ -71,6 +71,8 @@ public class PlanService {
     private OcComparisonService ocComparisonService;
     @Autowired
     private OcComparisonDetailService ocComparisonDetailService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
@@ -176,9 +178,8 @@ public class PlanService {
             LOG.info("*************Before serialization******************");
         File f = new File("plandetail.txt");
         try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            mapper.writeValue(f, plan);
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            objectMapper.writeValue(f, plan);
             detail.setPlanDetailFileStore(
                     fileStoreService.store(f, f.getName(), "text/plain", DcrConstants.APPLICATION_MODULE_TYPE));
             oos.flush();

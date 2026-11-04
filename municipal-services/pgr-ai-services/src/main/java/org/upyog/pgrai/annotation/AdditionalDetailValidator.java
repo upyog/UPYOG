@@ -35,10 +35,7 @@ public class AdditionalDetailValidator  implements ConstraintValidator<Character
         if(additionalDetails==null)
             return true;
 
-        if(additionalDetails.toString().length() > size)
-            return false;
-        else
-            return true;
+        return additionalDetails.toString().length() <= size;
     }
 
 }

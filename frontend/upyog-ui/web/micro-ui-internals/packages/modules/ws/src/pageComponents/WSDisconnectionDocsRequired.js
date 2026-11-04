@@ -1,87 +1,72 @@
 import React, { Fragment } from "react";
-import { Card, CardHeader, SubmitBar, CitizenInfoLabel, CardText, Loader, CardSubHeader, BackButton, BreadCrumb, Header, CardLabel, CardSectionHeader, CardCaption, ActionBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, SubmitBar, CitizenInfoLabel, CardText, Loader, CardSubHeader, BackButton, BreadCrumb, Header, CardLabel, CardSectionHeader, CardCaption, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import {  useLocation } from "react-router-dom";
 
 const WSDisconnectionDocsRequired = ({ userType }) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { pathname } = useLocation();
   const tenantId = Digit.ULBService.getStateId();
-  const goNext = () => {
-  }
-
-  const { isLoading: wsDocsLoading, data: wsDocs } =  Digit.Hooks.ws.WSSearchMdmsTypes.useWSServicesMasters(tenantId, "DisconnectionDocuments");
-
+  const goNext = () => {};
+  const {
+    isLoading: wsDocsLoading,
+    data: wsDocs
+  } = Digit.Hooks.ws.WSSearchMdmsTypes.useWSServicesMasters(tenantId, "DisconnectionDocuments");
   if (userType === "citizen") {
-    return (
-      <Fragment>
+    return <Fragment>
         <Card>
           <CardHeader>{t(`WS_COMMON_APPLICATION_DISCONNECTION`)}</CardHeader>
-          <CitizenInfoLabel style={{ margin: "0px" }} textStyle={{ color: "#0B0C0C", paddingLeft: "40px", paddingRight: "40px" }} text={t(`WS_DOCS_REQUIRED_TIME`)} showInfo={false} />
-          <CardText style={{ color: "#0B0C0C", marginTop: "12px" }}>{t(`WS_NEW_CONNECTION_TEST_1`)}</CardText>
-          <CardText style={{ color: "#0B0C0C", marginTop: "12px" }}>{t(`WS_NEW_CONNECTION_TEST_2`)}</CardText>
+          <CitizenInfoLabel textStyle={{
+          color: "#0B0C0C",
+          paddingLeft: "40px",
+          paddingRight: "40px"
+        }} text={t(`WS_DOCS_REQUIRED_TIME`)} showInfo={false} className="ws-disconnection-docs-required-label" />
+          <CardText className="ws-disconnection-docs-required-label-2">{t(`WS_NEW_CONNECTION_TEST_1`)}</CardText>
+          <CardText className="ws-disconnection-docs-required-label-2">{t(`WS_NEW_CONNECTION_TEST_2`)}</CardText>
           <CardSubHeader>{t("WS_DOC_REQ_SCREEN_LABEL")}</CardSubHeader>
-          <CardText style={{ color: "#0B0C0C", marginTop: "12px" }}>{t(`WS_NEW_CONNECTION_TEST_3`)}</CardText>
-          {wsDocsLoading ?
-            <Loader /> :
-            <Fragment>
-              {wsDocs?.DisconnectionDocuments?.map((doc, index) => (
-                <div>
-                  <div style={{ fontWeight: 700, marginBottom: "8px" }} key={index}>
-                    <div style={{ display: "flex" }}>
+          <CardText className="ws-disconnection-docs-required-label-2">{t(`WS_NEW_CONNECTION_TEST_3`)}</CardText>
+          {wsDocsLoading ? <Loader /> : <Fragment>
+              {wsDocs?.DisconnectionDocuments?.map((doc, index) => <div>
+                  <div key={index} className="ws-disconnection-docs-required-label-bold">
+                    <div className="ws-disconnection-docs-required-flex">
                       <div>{`${index + 1}.`}&nbsp;</div>
                       <div>{` ${t(doc?.code.replace('.', '_'))}`}</div>
                     </div>
                   </div>
-                  <div style={{ marginBottom: "16px", marginLeft: "18px",color:'gray' }}>
-                    {doc?.dropdownData?.map((value, index) => doc?.dropdownData?.length !== index + 1 ? <span style={{color:'gray'}} >{`${t(value?.i18nKey)}, `}</span> : <span style={{color:'gray'}}>{`${t(value?.i18nKey)}`}</span>)}
+                  <div className="ws-disconnection-docs-required-grey-text">
+                    {doc?.dropdownData?.map((value, index) => doc?.dropdownData?.length !== index + 1 ? <span className="ws-disconnection-docs-required-grey-text-2">{`${t(value?.i18nKey)}, `}</span> : <span className="ws-disconnection-docs-required-grey-text-2">{`${t(value?.i18nKey)}`}</span>)}
                   </div>
-                </div>
-              ))}
-            </Fragment>
-          }
+                </div>)}
+            </Fragment>}
           <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={() => {
-                history.push(match.path.replace("docsrequired", "application-form"));
+                navigate(pathname.replace("docsrequired", "application-form"));
               }} />
         </Card>
-      </Fragment>
-    );
+      </Fragment>;
   }
-
-  return (
-    <div style={{ margin: "16px" }}>
-      <Header styles={{fontSize: "32px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
-      <Card >
-        {wsDocsLoading ?
-          <Loader /> :
-          <div id="documents-div">
-            {wsDocs?.DisconnectionDocuments?.map((doc, index) => (
-              <div key={index} style={{ marginTop: "16px" }}>
-                <CardSectionHeader style={{ marginBottom: "16px", lineHeight: "28px", fontSize: "24px" }}>{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
-                {doc.dropdownData && doc.dropdownData.length > 1 && <p style={{ lineHeight: "24px", fontSize: "16px" }}>{t(`${doc?.code.replace('.', '_')}_DESCRIPTION`)}</p>}
-                <div style={{ margin: "16px 0", lineHeight: "18px", fontSize: "16px" }}>
-                  {doc?.dropdownData?.map((value, idx) => <p style={{ fontWeight: "bold", lineHeight: "32px" }}>{`${idx + 1}. ${t(value?.i18nKey)}`}</p>)}
+  return <div className="ws-disconnection-docs-required-item">
+      <Header styles={{
+      fontSize: "32px",
+      marginLeft: "18px"
+    }}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
+      <Card>
+        {wsDocsLoading ? <Loader /> : <div id="documents-div">
+            {wsDocs?.DisconnectionDocuments?.map((doc, index) => <div key={index} className="ws-disconnection-docs-required-mt-md">
+                <CardSectionHeader className="ws-disconnection-docs-required-title-lg">{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
+                {doc.dropdownData && doc.dropdownData.length > 1 && <p className="ws-disconnection-docs-required-item-2">{t(`${doc?.code.replace('.', '_')}_DESCRIPTION`)}</p>}
+                <div className="ws-disconnection-docs-required-item-3">
+                  {doc?.dropdownData?.map((value, idx) => <p className="ws-disconnection-docs-required-card-bold">{`${idx + 1}. ${t(value?.i18nKey)}`}</p>)}
                 </div>
-                <p style={{fontSize: "16px"}}>{t(`${doc?.code.replace('.', '_')}_BELOW_DESCRIPTION`)}</p>
-              </div>
-            ))}
-          </div>
-        }
-        <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-          {
-            <SubmitBar
-              label={t("ACTION_TEST_APPLY")}
-              onSubmit={() => {
-                history.push(match.path.replace("docsrequired", "application-form"));
-              }}
-              style={{ margin: "10px 10px 0px 0px" }}
-              disabled={wsDocsLoading ? true : false}
-            />}
+                <p className="ws-disconnection-docs-required-item-4">{t(`${doc?.code.replace('.', '_')}_BELOW_DESCRIPTION`)}</p>
+              </div>)}
+          </div>}
+        <ActionBar className="ws-disconnection-docs-required-flex-2">
+          {<SubmitBar label={t("ACTION_TEST_APPLY")} onSubmit={() => {
+          navigate(pathname.replace("docsrequired", "application-form"));
+        }} disabled={wsDocsLoading ? true : false} className="ws-disconnection-docs-required-link" />}
         </ActionBar>
       </Card>
-    </div>
-  )
+    </div>;
 };
-
 export default WSDisconnectionDocsRequired;

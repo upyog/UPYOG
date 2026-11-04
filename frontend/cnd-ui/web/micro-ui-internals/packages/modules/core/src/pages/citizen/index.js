@@ -1,7 +1,7 @@
 import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
+import { Route, Routes, Link } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
 import { AppHome, processLinkData } from "../../components/Home";    
 import TopBarSideBar from "../../components/TopBarSideBar";
@@ -68,17 +68,15 @@ const Home = ({
   const isMobile = window.Digit.Utils.browser.isMobile();
   const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
+  const path = "/cnd-ui/citizen";
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
-      <Route key={index} path={`${path}/${code.toLowerCase()}`}>
-        <Module stateCode={stateCode} moduleCode={code} userType="citizen" tenants={getTenants(tenants, appTenants)} />
-      </Route>
+      <Route key={index} path={`${code.toLowerCase()}/*`} element={<Module stateCode={stateCode} moduleCode={code} userType="citizen" tenants={getTenants(tenants, appTenants)} />} />
     ) : null;
   });
   
@@ -88,8 +86,8 @@ const Home = ({
         return a.orderNumber - b.orderNumber;
       });
     return (
-      <React.Fragment>
-        <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
+      <React.Fragment key={index}>
+        <Route path={`${code.toLowerCase()}-home`} element={
           <div className="moduleLinkHomePage">
             <img src={ "https://niuatt-filestore.s3.ap-south-1.amazonaws.com/pg/logo/Cnb.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
             <BackButton className="moduleLinkHomePageBackButton" />
@@ -99,31 +97,15 @@ const Home = ({
                   header={t(mdmsDataObj?.header)}
                   links={mdmsDataObj?.links}
                   Icon={() => <span />}
-                  // Info={
-                  //   code === "CND"
-                  //     ? () => (
-                  //         <CitizenInfoLabel
-                  //           style={{ margin: "0px", padding: "10px" }}
-                  //           info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                  //           text={t(`CND_INFO_LABEL_ONE`)}
-                  //         />
-                  //       )
-                  //     : null
-                  // }
-                  // isInfo={code === "CND" ? true : false}
                 />
               )}
             </div>
         
             <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
           </div>
-        </Route>
-        <Route key={"faq" + index} path={`${path}/${code.toLowerCase()}-faq`}>
-          <FAQsSection module={code?.toUpperCase()} />
-        </Route>
-        <Route key={"hiw" + index} path={`${path}/${code.toLowerCase()}-how-it-works`}>
-          <HowItWorks module={code?.toUpperCase()} />
-        </Route>
+        } />
+        <Route path={`${code.toLowerCase()}-faq`} element={<FAQsSection module={code?.toUpperCase()} />} />
+        <Route path={`${code.toLowerCase()}-how-it-works`} element={<HowItWorks module={code?.toUpperCase()} />} />
       </React.Fragment>
     );
   });
@@ -151,27 +133,19 @@ const Home = ({
           </div>
         )}
 
-        <Switch>
-          <Route exact path={path}>
-            <CitizenHome />
-          </Route>
-
-          <Route exact path={`${path}/select-language`}>
-            <LanguageSelection />
-          </Route>
-
-          <Route exact path={`${path}/select-location`}>
-            <LocationSelection />
-          </Route>
-          <Route path={`${path}/error`}>
+        <Routes>
+          <Route path="*" element={<CitizenHome />} />
+          <Route path="select-language" element={<LanguageSelection />} />
+          <Route path="select-location" element={<LocationSelection />} />
+          <Route path="error" element={
             <ErrorComponent
               initData={initData}
               goToHome={() => {
-                history.push("/cnd-ui/citizen");
+                navigate("/cnd-ui/citizen");
               }}
             />
-          </Route>
-          <Route path={`/cnd-ui/citizen/all-services`}>
+          } />
+          <Route path="all-services" element={
             <AppHome
               userType="citizen"
               modules={modules}
@@ -179,38 +153,22 @@ const Home = ({
               fetchedCitizen={isLinkDataFetched}
               isLoading={islinkDataLoading}
             />
-          </Route>
-
-          <Route path={`${path}/login`}>
-            <Login stateCode={stateCode} />
-          </Route>
-
-          <Route path={`${path}/register`}>
-            <Login stateCode={stateCode} isUserRegistered={false} />
-          </Route>
-
-          <PrivateRoute path={`${path}/user/profile`}>
-            <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
-          </PrivateRoute>
-
-          <ErrorBoundary initData={initData}>
-            {appRoutes}
-            {ModuleLevelLinkHomePages}
-          </ErrorBoundary>
-        </Switch>
+          } />
+          <Route path="login/*" element={<Login stateCode={stateCode} />} />
+          <Route path="register/*" element={<Login stateCode={stateCode} isUserRegistered={false} />} />
+          <Route path="user/profile" element={<PrivateRoute><UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} /></PrivateRoute>} />
+          {appRoutes}
+          {ModuleLevelLinkHomePages}
+        </Routes>
       </div>
 
       <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
           <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
 
           <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px" }} >|</span>
           <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
           
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
-
         </div>
         <div className="upyog-copyright-footer-web">
           <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>

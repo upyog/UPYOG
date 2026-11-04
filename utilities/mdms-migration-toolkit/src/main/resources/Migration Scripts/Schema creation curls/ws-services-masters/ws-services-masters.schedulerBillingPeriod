@@ -1,0 +1,65 @@
+curl --location 'http://localhost:8055/mdms-v2/schema/v1/_create' \
+--header 'Content-Type: application/json' \
+--header 'Content-Type: application/json' \
+--data '{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "ver": ".01",
+    "ts": "",
+    "action": "_search",
+    "did": "1",
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "authToken": "d194d705-ddbc-451a-98d1-e380d71e39e8",
+    "userInfo": {
+      "id": 2038,
+      "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+      "userName": "MCS1",
+      "name": "Vishal",
+      "mobileNumber": "7895875858",
+      "emailId": "",
+      "type": "EMPLOYEE",
+      "active": true,
+      "tenantId": "pg.citya"
+    }
+  },
+  "SchemaDefinition": {
+    "tenantId": "pg",
+    "code": "ws-services-masters.schedulerBillingPeriod",
+    "description": "Scheduler Billing Period",
+    "definition": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "required": [
+        "active",
+        "connectionType",
+        "billingCycle",
+        "taxPeriodFrom",
+        "taxPeriodTo"
+      ],
+      "x-unique": [
+        "connectionType",
+        "taxPeriodFrom"
+      ],
+      "properties": {
+        "active": {
+          "type": "boolean"
+        },
+        "connectionType": {
+          "type": "string"
+        },
+        "billingCycle": {
+          "type": "string"
+        },
+        "taxPeriodFrom": {
+          "type": "integer"
+        },
+        "taxPeriodTo": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "isActive": true
+  }
+}'

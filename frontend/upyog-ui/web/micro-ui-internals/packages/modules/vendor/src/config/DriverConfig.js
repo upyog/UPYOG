@@ -1,5 +1,6 @@
 import React from "react";
-const { DatePicker } = require("@upyog/digit-ui-react-components");
+// const { DatePicker } = require("@nudmcdgnpm/digit-ui-react-components");
+import { DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
 import { convertEpochToDate } from "../utils";
 
 const DriverConfig = (t, disabled = false) => {
@@ -48,7 +49,7 @@ const DriverConfig = (t, disabled = false) => {
           hideInEmployee: false,
           key: "additionalDetails",
           component: "SelectServiceType",
-          disable: disabled,
+          disable: false,
           texts: {
             headerCaption: "",
             header: "CS_COMMON_CHOOSE_GENDER",

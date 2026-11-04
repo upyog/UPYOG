@@ -46,13 +46,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class NotificationUtil {
 
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ServiceRequestRepository serviceRequestRepository;
 
-	private RequestServiceConfiguration config;
+	private final RequestServiceConfiguration config;
 
-	private Producer producer;
+	private final Producer producer;
 
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
 	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, RequestServiceConfiguration config,
@@ -81,7 +81,22 @@ public class NotificationUtil {
 	
 	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
 	
-	private final String URL = "url";
+
+	private static final String REQUEST_INFO_KEY = "RequestInfo";
+
+	private static final String TENANT_ID_KEY = "tenantId";
+
+	private static final String USER_TYPE_KEY = "userType";
+
+	private static final String USER_NAME_KEY = "userName";
+
+	private static final String CITIZEN_USER_TYPE = "CITIZEN";
+
+	private static final String USER_FETCH_EXCEPTION_MSG = "Exception while fetching user for username - ";
+
+	private static final String EXCEPTION_TRACE_MSG = "Exception trace: ";
+
+	private static final String PAY_LINK_PLACEHOLDER = "{PAY_LINK}";
 
 	/**
 	 * Extracts message for the specific code
@@ -111,26 +126,27 @@ public class NotificationUtil {
 	 * @param requestInfo The requestInfo of the request
 	 * @return Localization messages for the module
 	 */
+	@SuppressWarnings("java:S5411")
 	public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
 
 		String locale = RequestServiceConstants.NOTIFICATION_LOCALE;
 		Boolean isRetryNeeded = false;
 		String jsonString = null;
-		LinkedHashMap responseMap = null;
+		LinkedHashMap<String, Object> responseMap = null;
 
 		if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
 			locale = requestInfo.getMsgId().split("\\|")[1];
 			isRetryNeeded = true;
 		}
 
-		responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale),
+		responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(getUri(tenantId, locale),
 				requestInfo);
 		jsonString = new JSONObject(responseMap).toString();
 
 		if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
-			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(
-					getUri(tenantId, requestInfo, RequestServiceConstants.NOTIFICATION_LOCALE), requestInfo);
+			responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(
+					getUri(tenantId, RequestServiceConstants.NOTIFICATION_LOCALE), requestInfo);
 			jsonString = new JSONObject(responseMap).toString();
 			if (StringUtils.isEmpty(jsonString))
 				throw new CustomException("UG_RS_LOCALE_ERROR",
@@ -144,7 +160,8 @@ public class NotificationUtil {
 	 *
 	 * @return The uri for localization search call
 	 */
-	public StringBuilder getUri(String tenantId, RequestInfo requestInfo, String locale) {
+	@SuppressWarnings("java:S5411")
+	public StringBuilder getUri(String tenantId, String locale) {
 
 		if (config.getIsLocalizationStateLevel())
 			tenantId = tenantId.split("\\.")[0];
@@ -179,6 +196,7 @@ public class NotificationUtil {
 	 *
 	 * @param smsRequestList The list of SMSRequest to be sent
 	 */
+	@SuppressWarnings("java:S5411")
 	public void sendSMS(List<SMSRequest> smsRequestList) {
 
 		if (config.getIsSMSNotificationEnabled()) {
@@ -206,10 +224,10 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
-		userSearchRequest.put("userName", mobileNumber);
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, CITIZEN_USER_TYPE);
+		userSearchRequest.put(USER_NAME_KEY, mobileNumber);
 		try {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
@@ -220,8 +238,8 @@ public class NotificationUtil {
 				log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
 			}
 		} catch (Exception e) {
-			log.error("Exception while fetching user for username - " + mobileNumber);
-			log.error("Exception trace: ", e);
+			log.error(USER_FETCH_EXCEPTION_MSG + mobileNumber);
+			log.error(EXCEPTION_TRACE_MSG, e);
 		}
 
 		return mapOfPhoneNoAndUUIDs;
@@ -242,11 +260,11 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, CITIZEN_USER_TYPE);
 		for (String mobileNo : mobileNumbers) {
-			userSearchRequest.put("userName", mobileNo);
+			userSearchRequest.put(USER_NAME_KEY, mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 				if (null != user) {
@@ -256,9 +274,8 @@ public class NotificationUtil {
 					log.error("Service returned null while fetching user for username - " + mobileNo);
 				}
 			} catch (Exception e) {
-				log.error("Exception while fetching user for username - " + mobileNo);
-				log.error("Exception trace: ", e);
-				continue;
+				log.error(USER_FETCH_EXCEPTION_MSG + mobileNo);
+				log.error(EXCEPTION_TRACE_MSG, e);
 			}
 		}
 		return mapOfPhnoAndUUIDs;
@@ -305,6 +322,7 @@ public class NotificationUtil {
 	 *
 	 * @param emailRequestList The list of EmailRequest to be sent
 	 */
+	@SuppressWarnings("java:S5411")
 	public void sendEmail(List<EmailRequest> emailRequestList) {
 
 		if (config.getIsEmailNotificationEnabled()) {
@@ -340,16 +358,14 @@ public class NotificationUtil {
 	    String mobileNumber;
 	    RequestInfo requestInfo;
 
-	    if (request instanceof WaterTankerBookingRequest) {
-	        WaterTankerBookingRequest waterRequest = (WaterTankerBookingRequest) request;
+	    if (request instanceof WaterTankerBookingRequest waterRequest) {
 	        tenantId = waterRequest.getWaterTankerBookingDetail().getTenantId();
 	        requestInfo = waterRequest.getRequestInfo();
 	        localizationMessages = getLocalizationMessages(tenantId, requestInfo);
 	        messageMap = getCustomizedMsg(requestInfo, waterRequest.getWaterTankerBookingDetail(), localizationMessages);
 	        message = messageMap.get(RequestServiceConstants.MESSAGE_TEXT);
 	        mobileNumber = waterRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
-	    } else if (request instanceof MobileToiletBookingRequest) {
-	        MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+	    } else if (request instanceof MobileToiletBookingRequest toiletRequest) {
 	        tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
 	        requestInfo = toiletRequest.getRequestInfo();
 	        localizationMessages = getLocalizationMessages(tenantId, requestInfo);
@@ -380,7 +396,7 @@ public class NotificationUtil {
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
 		if (StringUtils.isEmpty(tenantId))
 			return masterData;
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId, moduleName, action);
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId);
 		//Can create filter as string using this
 		Filter masterDataFilter = filter(where(RequestServiceConstants.MODULE).is(moduleName)
 				.and(RequestServiceConstants.ACTION).is(action));
@@ -402,8 +418,6 @@ public class NotificationUtil {
 	 *
 	 * @param requestInfo The request information containing metadata about the request.
 	 * @param tenantId    The tenant ID for which the channel list is to be retrieved.
-	 * @param moduleName  The module name for filtering the data.
-	 * @param action      The specific action used to filter the channel list.
 	 * @return An {@link MdmsCriteriaReq} object containing the criteria for fetching 
 	 *         the channel list from MDMS.
 	 *
@@ -414,11 +428,10 @@ public class NotificationUtil {
 	 * - Wraps the criteria in an {@link MdmsCriteriaReq} and returns it.
 	 */
 	
-	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
 
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(RequestServiceConstants.CHANNEL_LIST);
-	//	masterDetail.setFilter("[?(@['module'] == 'CND' && @['action'] == '"+ action +"')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 
@@ -453,11 +466,11 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, CITIZEN_USER_TYPE);
 		for (String mobileNo : mobileNumbers) {
-			userSearchRequest.put("userName", mobileNo);
+			userSearchRequest.put(USER_NAME_KEY, mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 				if (null != user) {
@@ -469,9 +482,8 @@ public class NotificationUtil {
 					log.error("Service returned null while fetching user for username - " + mobileNo);
 				}
 			} catch (Exception e) {
-				log.error("Exception while fetching user for username - " + mobileNo);
-				log.error("Exception trace: ", e);
-				continue;
+				log.error(USER_FETCH_EXCEPTION_MSG + mobileNo);
+				log.error(EXCEPTION_TRACE_MSG, e);
 			}
 		}
 		return mapOfPhnoAndEmailIds;
@@ -489,10 +501,11 @@ public class NotificationUtil {
 	 */
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, WaterTankerBookingDetail waterTankerDetail,
 			String localizationMessage) {
-		String message = null, messageTemplate;
+		String message = null;
+		String messageTemplate;
 		String link = null;
-		String ACTION_STATUS = waterTankerDetail.getWorkflow().getAction();
-		switch (ACTION_STATUS) {
+		String actionStatus = waterTankerDetail.getWorkflow().getAction();
+		switch (actionStatus) {
 
 		case ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPLY, localizationMessage);
@@ -502,7 +515,6 @@ public class NotificationUtil {
 		case ACTION_STATUS_APPROVE:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPROVED, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-		//	link = getPayUrl(waterTankerDetail, message);
 			break;	
 			
 		case ACTION_STATUS_ASSIGN_VENDOR:
@@ -530,23 +542,25 @@ public class NotificationUtil {
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
 			break;
+
+		default:
+			break;
 		}
 		
 
-		if (message.contains("{PAY_LINK}")) {
+		if (message.contains(PAY_LINK_PLACEHOLDER)) {
 			 link = null;
 			 message = getPayUrl(waterTankerDetail, message);
 			 
 		}
 		
-		Map<String, String> messageMap = new HashMap<String, String>();
+		Map<String, String> messageMap = new HashMap<>();
 		messageMap.put(ACTION_LINK, link);
 		messageMap.put(MESSAGE_TEXT, message);
 		
 		log.info("getCustomizedMsg messageTemplate : " + message);
 		return messageMap;
 
-		//return message;
 	}
 
 	/**
@@ -561,10 +575,11 @@ public class NotificationUtil {
 	 */
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, MobileToiletBookingDetail mobileToiletDetail,
 												String localizationMessage) {
-		String message = null, messageTemplate;
+		String message = null;
+		String messageTemplate;
 		String link = null;
-		String ACTION_STATUS = mobileToiletDetail.getWorkflow().getAction();
-		switch (ACTION_STATUS) {
+		String actionStatus = mobileToiletDetail.getWorkflow().getAction();
+		switch (actionStatus) {
 
 			case ACTION_STATUS_APPLY:
 				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_APPLY, localizationMessage);
@@ -574,7 +589,6 @@ public class NotificationUtil {
 			case ACTION_STATUS_APPROVE:
 				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_APPROVED, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
-				//	link = getPayUrl(waterTankerDetail, message);
 				break;
 
 			case ACTION_STATUS_ASSIGN_VENDOR:
@@ -602,21 +616,23 @@ public class NotificationUtil {
 						localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
+
+			default:
+				break;
 		}
 
 
-		if (message.contains("{PAY_LINK}")) {
+		if (message.contains(PAY_LINK_PLACEHOLDER)) {
 			link = null;
 			message = getPayUrl(mobileToiletDetail, message);
 		}
 
-		Map<String, String> messageMap = new HashMap<String, String>();
+		Map<String, String> messageMap = new HashMap<>();
 		messageMap.put(ACTION_LINK, link);
 		messageMap.put(MESSAGE_TEXT, message);
 		log.info("getCustomizedMsg messageTemplate : " + message);
 		return messageMap;
 
-		//return message;
 	}
 	
 	private String getMessageWithNumberAndFinalDetails(WaterTankerBookingDetail waterTankerDetail, String message) {
@@ -641,7 +657,7 @@ public class NotificationUtil {
 				mobileToiletDetail.getTenantId(),
 				config.getBusinessServiceName());
 
-		message = message.replace("{PAY_LINK}", getShortenedUrl(config.getUiAppHost() + actionLink));
+		message = message.replace(PAY_LINK_PLACEHOLDER, getShortenedUrl(config.getUiAppHost() + actionLink));
 
 		return message;
 	}
@@ -660,7 +676,7 @@ public class NotificationUtil {
 	            waterTankerDetail.getTenantId(),
 	            config.getBusinessServiceName());
 
-	    message = message.replace("{PAY_LINK}", getShortenedUrl(config.getUiAppHost() + actionLink));
+	    message = message.replace(PAY_LINK_PLACEHOLDER, getShortenedUrl(config.getUiAppHost() + actionLink));
 
 	    return message;
 	}

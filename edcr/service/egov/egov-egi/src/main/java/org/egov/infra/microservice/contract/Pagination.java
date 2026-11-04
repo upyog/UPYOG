@@ -50,7 +50,7 @@ package org.egov.infra.microservice.contract;
 
 import org.springframework.data.domain.Page;
 
-import javax.validation.constraints.Max;
+import jakarta.validation.constraints.Max;
 
 public class Pagination {
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { CardLabel, Dropdown, FormStep, RadioButtons } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SelectAddress = ({ t, config, onSelect, value }) => {
   const allCities = Digit.Hooks.pgr.useTenants();
@@ -37,34 +37,34 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
     const { locality_complaint } = value;
     return locality_complaint ? locality_complaint : null;
   });
-
-  useEffect(async () => {
-    if (selectedCity && fetchedLocalities) {
-      const { pincode } = value;
-      let __localityList = pincode ? fetchedLocalities.filter((city) => city["pincode"] == pincode) : fetchedLocalities;
-      await setLocalities(__localityList);
-      if (pttype == "PT") {
-        let filteredLocalities = __localityList.filter(locality => locality.code === localitynew);
-        if (filteredLocalities) {
-          setSelectedLocality(filteredLocalities[0])
+ 
+  useEffect(() => {
+   function fetchLocalities() {
+      if (selectedCity && fetchedLocalities) {
+        const { pincode } = value;
+        let __localityList = pincode ? fetchedLocalities.filter((city) => city["pincode"] == pincode) : fetchedLocalities;
+        if (pttype == "PT") {
+          let filteredLocalities = __localityList.filter(locality => locality.code === localitynew);
+          if (filteredLocalities) {
+            setSelectedLocality(filteredLocalities[0])
+          }
+        }
+        else {
+          setLocalities(__localityList);
         }
       }
-      else {
-        setLocalities(__localityList);
-      }
     }
+    fetchLocalities();
   }, [selectedCity, fetchedLocalities]);
 
   function selectCity(city) {
     setSelectedLocality(null);
     setLocalities(null);
     setSelectedCity(city);
-    // Digit.SessionStorage.set("city_complaint", city);
   }
 
   function selectLocality(locality) {
     setSelectedLocality(locality);
-    // Digit.SessionStorage.set("locality_complaint", locality);
   }
 
   function onSubmit() {
@@ -75,7 +75,7 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
       <div>
         <CardLabel>{t("MYCITY_CODE_LABEL")}<span className="check-page-link-button"> *</span></CardLabel>
         {cities?.length < 5 ? (
-          <RadioButtons selectedOption={selectedCity} options={cities} optionsKey="i18nKey" onSelect={selectCity} />
+          <RadioButtons name="pgr-city" selectedOption={selectedCity} options={cities} optionsKey="i18nKey" onSelect={selectCity} />
         ) : (
           <Dropdown isMandatory selected={selectedCity} option={cities} select={selectCity} optionKey="i18nKey" t={t} />
         )}
@@ -83,7 +83,7 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
         {selectedCity && localities && (
           <React.Fragment>
             {localities?.length < 5 ? (
-              <RadioButtons selectedOption={selectedLocality} options={localities} optionsKey="i18nkey" onSelect={selectLocality} />
+              <RadioButtons name="pgr-locality" selectedOption={selectedLocality} options={localities} optionsKey="i18nkey" onSelect={selectLocality} />
             ) : (
               <Dropdown isMandatory selected={selectedLocality} optionKey="i18nkey" option={localities} select={selectLocality} t={t} />
             )}

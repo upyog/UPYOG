@@ -1,7 +1,9 @@
 package org.upyog.chb.repository.impl;
 
-import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,10 +16,11 @@ import jakarta.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.kafka.producer.Producer;
@@ -31,13 +34,13 @@ import org.upyog.chb.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingPaymentTimerDetails;
 import org.upyog.chb.web.models.BookingSlotDetail;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
+import org.upyog.chb.web.models.VenueBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingInitDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.VenueBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingRequestInit;
-import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
-import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
-import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.VenueBookingSearchCriteria;
+import org.upyog.chb.web.models.VenueSlotSearchCriteria;
+import org.upyog.chb.web.models.VenueSlotAvailabilityDetail;
 import org.upyog.chb.web.models.DocumentDetail;
 
 import digit.models.coremodels.PaymentDetail;
@@ -74,43 +77,62 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingRepository {
 
-	@Autowired
-	private Producer producer;
-	@Autowired
-	private CommunityHallBookingConfiguration bookingConfiguration;
-	@Autowired
-	private CommunityHallBookingQueryBuilder queryBuilder;
-	@Autowired
-	private CommunityHallBookingRowmapper bookingRowmapper;
-	
-	@Autowired
-	private BookingSlotDetailRowmapper slotDetailRowmapper;
+	private static final String TIMER_STATUS_ACTIVE = "ACTIVE";
 
-	@Autowired
-	private DocumentDetailsRowMapper detailsRowMapper;
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	private CommunityHallSlotAvailabilityRowMapper availabilityRowMapper;
+	private final Producer producer;
+	private final CommunityHallBookingConfiguration bookingConfiguration;
+	private final CommunityHallBookingQueryBuilder queryBuilder;
+	private final CommunityHallBookingRowmapper bookingRowmapper;
+	private final BookingSlotDetailRowmapper slotDetailRowmapper;
+	private final DocumentDetailsRowMapper detailsRowMapper;
+	private final JdbcTemplate jdbcTemplate;
+	private final CommunityHallSlotAvailabilityRowMapper availabilityRowMapper;
+
+	/**
+	 * Creates the repository with required persistence, query, and row-mapping collaborators.
+	 *
+	 * @param producer Kafka producer for asynchronous booking persistence events
+	 * @param bookingConfiguration module configuration (topics, timer values, etc.)
+	 * @param queryBuilder SQL query builder for booking and timer operations
+	 * @param bookingRowmapper maps booking header rows from search queries
+	 * @param slotDetailRowmapper maps slot detail rows for enriched booking responses
+	 * @param detailsRowMapper maps uploaded document rows for enriched booking responses
+	 * @param jdbcTemplate JDBC executor for synchronous reads and timer maintenance
+	 * @param availabilityRowMapper maps slot availability query results
+	 */
+	public CommunityHallBookingRepositoryImpl(Producer producer,
+			CommunityHallBookingConfiguration bookingConfiguration,
+			CommunityHallBookingQueryBuilder queryBuilder, CommunityHallBookingRowmapper bookingRowmapper,
+			BookingSlotDetailRowmapper slotDetailRowmapper, DocumentDetailsRowMapper detailsRowMapper,
+			JdbcTemplate jdbcTemplate, CommunityHallSlotAvailabilityRowMapper availabilityRowMapper) {
+		this.producer = producer;
+		this.bookingConfiguration = bookingConfiguration;
+		this.queryBuilder = queryBuilder;
+		this.bookingRowmapper = bookingRowmapper;
+		this.slotDetailRowmapper = slotDetailRowmapper;
+		this.detailsRowMapper = detailsRowMapper;
+		this.jdbcTemplate = jdbcTemplate;
+		this.availabilityRowMapper = availabilityRowMapper;
+	}
 
 	@Override
-	public void saveCommunityHallBooking(CommunityHallBookingRequest bookingRequest) {
+	public void saveCommunityHallBooking(VenueBookingRequest bookingRequest) {
 		log.info("Saving community hall booking request data for booking no : "
-				+ bookingRequest.getHallsBookingApplication().getBookingNo());
+				+ bookingRequest.getVenueBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getCommunityHallBookingSaveTopic(), bookingRequest);
 
 	}
 
 	@Override
-	public void saveCommunityHallBookingInit(CommunityHallBookingRequest bookingRequest) {
+	public void saveCommunityHallBookingInit(VenueBookingRequest bookingRequest) {
 		log.info("Saving community hall booking init data : "
-				+ bookingRequest.getHallsBookingApplication().getBookingId());
+				+ bookingRequest.getVenueBookingApplication().getBookingId());
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
-		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
+		VenueBookingDetail bookingDetail = bookingRequest.getVenueBookingApplication();
 		CommunityHallBookingRequestInit testPersist = CommunityHallBookingRequestInit.builder()
 				.bookingId(bookingDetail.getBookingId()).tenantId(bookingDetail.getTenantId())
 				.bookingStatus(bookingDetail.getBookingStatus())
-				.bookingDetails(bookingRequest.getHallsBookingApplication())
+				.bookingDetails(bookingRequest.getVenueBookingApplication())
 				.createdBy(requestInfo.getUserInfo().getUuid())
 				.createdDate(CommunityHallBookingUtil.getCurrentTimestamp())
 				.lastModifiedBy(requestInfo.getUserInfo().getUuid())
@@ -122,76 +144,71 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	}
 
 	@Override
-	public List<CommunityHallBookingDetail> getBookingDetails(
-			CommunityHallBookingSearchCriteria bookingSearchCriteria) {
+	public List<VenueBookingDetail> getBookingDetails(
+			VenueBookingSearchCriteria bookingSearchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getCommunityHallBookingSearchQuery(bookingSearchCriteria, preparedStmtList);
 
 		log.info("getBookingDetails : Final query: " + query);
 		log.info("preparedStmtList :  " + preparedStmtList);
-		List<CommunityHallBookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(),
-				bookingRowmapper);
+		List<VenueBookingDetail> bookingDetails = queryWithExtractor(query, bookingRowmapper, preparedStmtList);
 
 		log.info("Fetched booking details size : " + bookingDetails.size());
 
-		if (bookingDetails.size() == 0) {
+		if (bookingDetails.isEmpty()) {
 			return bookingDetails;
 		}
 
-		HashMap<String, CommunityHallBookingDetail> bookingMap = bookingDetails.stream().collect(Collectors.toMap(
-				CommunityHallBookingDetail::getBookingId, Function.identity(), (left, right) -> left, HashMap::new));
+		HashMap<String, VenueBookingDetail> bookingMap = bookingDetails.stream().collect(Collectors.toMap(
+				VenueBookingDetail::getBookingId, Function.identity(), (left, right) -> left, HashMap::new));
 
-		List<String> bookingIds = new ArrayList<String>();
-		bookingIds.addAll(bookingMap.keySet());
+		List<String> bookingIds = new ArrayList<>(bookingMap.keySet());
 
-		List<BookingSlotDetail> slotDetails = jdbcTemplate.query(queryBuilder.getSlotDetailsQuery(bookingIds),
-				bookingIds.toArray(), slotDetailRowmapper);
-		slotDetails.stream().forEach(slotDetail -> {
-			bookingMap.get(slotDetail.getBookingId()).addBookingSlots(slotDetail);
-		});
+		List<BookingSlotDetail> slotDetails = queryWithExtractor(queryBuilder.getSlotDetailsQuery(bookingIds),
+				slotDetailRowmapper, bookingIds);
+		slotDetails.forEach(slotDetail ->
+			bookingMap.get(slotDetail.getBookingId()).addBookingSlots(slotDetail));
 
-		List<DocumentDetail> documentDetails = jdbcTemplate.query(queryBuilder.getDocumentDetailsQuery(bookingIds),
-				bookingIds.toArray(), detailsRowMapper);
+		List<DocumentDetail> documentDetails = queryWithExtractor(queryBuilder.getDocumentDetailsQuery(bookingIds),
+				detailsRowMapper, bookingIds);
 
-		documentDetails.stream().forEach(documentDetail -> {
-			bookingMap.get(documentDetail.getBookingId()).addUploadedDocumentDetailsItem(documentDetail);
-		});
+		documentDetails.forEach(documentDetail ->
+			bookingMap.get(documentDetail.getBookingId()).addUploadedDocumentDetailsItem(documentDetail));
 		return bookingDetails;
 	}
 
 	@Override
-	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria) {
+	public Integer getBookingCount(@Valid VenueBookingSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getCommunityHallBookingSearchQuery(criteria, preparedStatement);
 
 		if (query == null)
 			return 0;
 
-		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
-		return count;
+		return queryForInteger(query, preparedStatement);
 	}
 
 	@Override
-	public void updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
+	public void updateBooking(@Valid VenueBookingRequest communityHallsBookingRequest) {
 		log.info("Updating community hall booking request data for booking no : "
-				+ communityHallsBookingRequest.getHallsBookingApplication().getBookingNo());
+				+ communityHallsBookingRequest.getVenueBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getCommunityHallBookingUpdateTopic(), communityHallsBookingRequest);
 	}
 
 	@Override
-	public List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
-			CommunityHallSlotSearchCriteria criteria) {
+	public List<VenueSlotAvailabilityDetail> getCommunityHallSlotAvailability(
+			VenueSlotSearchCriteria criteria) {
 		List<Object> paramsList = new ArrayList<>();
 
 		StringBuilder query = queryBuilder.getCommunityHallSlotAvailabilityQuery(criteria, paramsList);
 
-		String hallCodeQuery = " AND ecsd.hall_code ";
+		String hallCodeQuery = " AND ecsd.unit_code ";
 
-		if (StringUtils.isNotBlank(criteria.getHallCode())) {
+		if (StringUtils.isNotBlank(criteria.getUnitCode())) {
 			query.append(hallCodeQuery).append(" = ? ");
-			paramsList.add(criteria.getHallCode());
+			paramsList.add(criteria.getUnitCode());
 		} else {
-			List<String> hallCodes = criteria.getHallCodes();
+			List<String> hallCodes = criteria.getUnitCodes();
 			query.append(hallCodeQuery).append(" IN ( ");
 			int i = 0;
 			while (i < hallCodes.size()) {
@@ -209,80 +226,61 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 		log.info("getBookingDetails : Final query: " + query);
 		log.info("paramsList : " + paramsList);
-		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(),
-				paramsList.toArray(), availabilityRowMapper);
+		List<VenueSlotAvailabilityDetail> availabiltityDetails = queryWithExtractor(query.toString(),
+				availabilityRowMapper, paramsList);
 
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);
 		return availabiltityDetails;
 	}
 
 	@Override
-	public void createBookingTimer(CommunityHallSlotSearchCriteria criteria, RequestInfo requestInfo,
+	public void createBookingTimer(VenueSlotSearchCriteria criteria, RequestInfo requestInfo,
 			boolean updateBookingStatus) {
-		String bookingId = criteria.getBookingId();
+		createBookingTimer(criteria, requestInfo, updateBookingStatus, null);
+	}
+
+	@Override
+	public void createBookingTimer(VenueSlotSearchCriteria criteria, RequestInfo requestInfo,
+			boolean updateBookingStatus, List<BookingPaymentTimerDetails> timerDetails) {
+		String bookingId = getTimerBookingReference(criteria);
 		String createdBy = requestInfo.getUserInfo().getUuid();
 		long createdTime = CommunityHallBookingUtil.getCurrentTimestamp();
-		String communitycode = criteria.getCommunityHallCode();
-		String hallcode = criteria.getHallCode();
 		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
 		long lastModifiedTime = CommunityHallBookingUtil.getCurrentTimestamp();
-		String tenantId = criteria.getTenantId();
-
-		// Parse bookingStartDate and bookingEndDate into LocalDate
-		LocalDate startDate = LocalDate.parse(criteria.getBookingStartDate());
-		LocalDate endDate = LocalDate.parse(criteria.getBookingEndDate());
-
-//		// Log the information at the beginning of the method
-//		log.info("Executing Insert Query with the following details: ");
-//		log.info("Booking ID: {}", bookingId);
-//		log.info("Created By: {}", createdBy);
-//		log.info("Created Time: {}", createdTime);
-//
-//		// Query execution
-//		String query = CommunityHallBookingQueryBuilder.PAYMENT_TIMER_INSERT_QUERY;
-//		jdbcTemplate.update(query, bookingId, createdBy, createdTime, "ACTIVE", null, communitycode, hallcode, lastModifiedBy, lastModifiedTime);
-
-		// Log the information
-		log.info("Executing Insert Query with the following details: ");
-		log.info("Booking ID: {}", bookingId);
-		log.info("Created By: {}", createdBy);
-		log.info("Created Time: {}", createdTime);
-		log.info("Community Code: {}", communitycode);
-		log.info("Hall Code: {}", hallcode);
-		log.info("Date Range: {} to {}", startDate, endDate);
-
-		// Iterate through the date range
+		LocalTime startTime = LocalTime.parse(criteria.getFromTime());
+		LocalTime endTime = LocalTime.parse(criteria.getToTime());
+		
 		List<Object[]> batchArgs = new ArrayList<>();
-		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-			batchArgs.add(new Object[] { bookingId, createdBy, createdTime, "ACTIVE", // Status
-					null, // Booking No (optional, replace with actual value if available)
-					communitycode, hallcode, date, // Booking Date
-					tenantId, lastModifiedBy, lastModifiedTime });
+		if (timerDetails != null && !timerDetails.isEmpty()) {
+			for (BookingPaymentTimerDetails detail : timerDetails) {
+				batchArgs.add(new Object[] { detail.getBookingId(), detail.getCreatedBy(), detail.getCreatedTime(),
+						detail.getStatus() != null ? detail.getStatus() : TIMER_STATUS_ACTIVE, null, detail.getVenueCode(),
+						detail.getUnitCode(), detail.getBookingDate(), detail.getTenantId(), lastModifiedBy,
+						lastModifiedTime,startTime , endTime });
+			}
+		} else {
+			var hallCodes = org.upyog.chb.util.CommunityHallSlotCriteriaUtil.resolveHallCodes(criteria);
+			var bookingDates = org.upyog.chb.util.CommunityHallSlotCriteriaUtil.resolveBookingDates(criteria);
+			for (var date : bookingDates) {
+				for (var hallcode : hallCodes) {
+					batchArgs.add(new Object[] { bookingId, createdBy, createdTime, TIMER_STATUS_ACTIVE, null,
+							criteria.getVenueCode(), hallcode, date, criteria.getTenantId(), lastModifiedBy,
+							lastModifiedTime,startTime , endTime});
+				}
+			}
 		}
 
-		// Execute batch insert
-		String query = CommunityHallBookingQueryBuilder.PAYMENT_TIMER_INSERT_QUERY;
-		jdbcTemplate.batchUpdate(query, batchArgs);
-
-		// Log after the query execution
-		log.info("Insert Query Executed Successfully for Booking ID: {}", bookingId);
+		log.info("Insert payment timer rows bookingId={} count={}", bookingId, batchArgs.size());
+		jdbcTemplate.batchUpdate(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_INSERT_QUERY, batchArgs);
 
 		if (updateBookingStatus) {
 			updateBookingSynchronously(bookingId, createdBy, null, BookingStatusEnum.PENDING_FOR_PAYMENT.toString());
 		}
-
 	}
-	
-//	@Override
-//	public void deleteBookingTimer(String bookingId, boolean updateBookingStatus) {
-//		log.info("Deleting booking timer query : {} booking id : {} ", CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY, bookingId);
-//		jdbcTemplate.update(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY, bookingId);
-//		if(updateBookingStatus) {
-//			log.info("updating booking status of booking ids : {} ", bookingId);
-//			updateBookingSynchronously(bookingId, "SYSTEM_USER", null, BookingStatusEnum.EXPIRED.toString());
-//		}
-//
-//	}
+
+	private String getTimerBookingReference(VenueSlotSearchCriteria criteria) {
+		return StringUtils.isNotBlank(criteria.getBookingId()) ? criteria.getBookingId() : criteria.getDraftId();
+	}
 	
 	@Override
 	public void deleteBookingTimer(String bookingIds, boolean updateBookingStatus) {
@@ -293,14 +291,12 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 		List<String> bookingIdList = Arrays.asList(bookingIds.split(","));
 
-		// Generate placeholders for the number of booking IDs
 		String placeholders = String.join(",", Collections.nCopies(bookingIdList.size(), "?"));
 		String deleteQuery = String.format(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY,
 				placeholders);
 
 		log.info("Executing booking timer delete query: {} for booking IDs: {}", deleteQuery, bookingIdList);
 
-		// Convert the list to an array for use in the query
 		jdbcTemplate.update(deleteQuery, bookingIdList.toArray());
 
 		if (updateBookingStatus) {
@@ -322,14 +318,14 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 		timerValueInMilleconds = timerValueInMilleconds * 60 * 1000;
 
-		List<BookingPaymentTimerDetails> bookingPaymentTimerDetails = jdbcTemplate.query(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_SELECT_EXPIRED_QUERY, new Object[]{currentTimeMillis,
-				timerValueInMilleconds, "ACTIVE"},
-				new GenericRowMapper<>(BookingPaymentTimerDetails.class));
-		return bookingPaymentTimerDetails;
+		return queryWithExtractor(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_SELECT_EXPIRED_QUERY,
+				new GenericRowMapper<>(BookingPaymentTimerDetails.class), currentTimeMillis,
+				timerValueInMilleconds, TIMER_STATUS_ACTIVE);
 
 	}
 
 	@Override
+	@Transactional
 	public void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status) {
 		
 		log.info("updateBookingSynchronously for booking id : {} by uuid : ", bookingId, uuid);
@@ -338,34 +334,50 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		long lastUpdatedTime = CommunityHallBookingUtil.getCurrentTimestamp();
 		String receiptNo = null;
 		long receiptDate = 0l;
-		//Update payment date and receipt no on successful payment when payment detail object is received
 		if (paymentDetail != null) {
 			receiptNo =	paymentDetail.getReceiptNumber();
 			receiptDate=	paymentDetail.getReceiptDate();
 		}
 		
 		log.info("Updating payment status of booking id : {} to status : {}", bookingId, status);
-		
+
+		log.info("Params -> status: {}, lastUpdateBy: {}, lastUpdatedTime: {}, receiptNo: {}, receiptDate: {}, bookingId: {}, paymentDetail: {}",
+				status, lastUpdateBy, lastUpdatedTime, receiptNo, receiptDate, bookingId, paymentDetail);
 		if(paymentDetail != null) {
-			jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_DETAIL_QUERY, status, lastUpdateBy, lastUpdatedTime, receiptNo, receiptDate, bookingId);
+			Integer updatedRows=jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_DETAIL_QUERY, status, lastUpdateBy, lastUpdatedTime, receiptNo, receiptDate, bookingId);
+			log.info("Updated rows in booking detail table: {}", updatedRows);
 		} else {
-			jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, lastUpdateBy, lastUpdatedTime, bookingId);
+			Integer updatedRows=jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, lastUpdateBy, lastUpdatedTime, bookingId);
+			log.info("Updated rows in booking detail table: {}", updatedRows);
 		}
-		
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_SLOT_QUERY, status, lastUpdateBy, lastUpdatedTime, bookingId);
-		
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_SLOT_DETAIL_AUDIT_QUERY, bookingId);
+
+		Integer updatedSlotQueryRows=jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_SLOT_QUERY, status, lastUpdateBy, lastUpdatedTime, bookingId);
+		log.info("Updated rows in booking slot table: {}", updatedSlotQueryRows);
+
+		Integer updatedAuditQueryRows=jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
+		log.info("Updated rows in booking detail audit table: {}", updatedAuditQueryRows);
+
+		Integer updatedSlotAuditQueryRows=jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_SLOT_DETAIL_AUDIT_QUERY, bookingId);
+		log.info("Updated rows in slot detail audit table: {}", updatedSlotAuditQueryRows);
 	}
 
 	@Override
-	public List<BookingPaymentTimerDetails> getBookingTimer(CommunityHallSlotSearchCriteria criteria) {
+	public void updateTimerBookingId(String bookingId, String bookingNo, String draftId) {
+		if (StringUtils.isBlank(draftId)) {
+			return;
+		}
+		jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_TIMER_BOOKING_ID_QUERY, bookingId, bookingNo,
+				draftId);
+	}
+
+	@Override
+	public List<BookingPaymentTimerDetails> getBookingTimer(VenueSlotSearchCriteria criteria) {
 		
-		List<BookingPaymentTimerDetails> paymentTimerList = jdbcTemplate.query(CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, 
-				new Object[]{criteria.getBookingId()},
-				new GenericRowMapper<>(BookingPaymentTimerDetails.class));
+		List<BookingPaymentTimerDetails> paymentTimerList = queryWithExtractor(
+				CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY,
+				new GenericRowMapper<>(BookingPaymentTimerDetails.class), getTimerBookingReference(criteria));
 		
-		log.info("Booking payment timer query : {} and parmas : {}", CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, criteria.getBookingId());
+		log.info("Booking payment timer query : {} and parmas : {}", CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, getTimerBookingReference(criteria));
 		
 		return paymentTimerList;
 	}
@@ -375,9 +387,9 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		
 		String bookingIdString = String.join(",", bookingIds);
 		
-		List<BookingPaymentTimerDetails> paymentTimerList = jdbcTemplate.query(CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, 
-				new Object[]{bookingIdString},
-				new GenericRowMapper<>(BookingPaymentTimerDetails.class));
+		List<BookingPaymentTimerDetails> paymentTimerList = queryWithExtractor(
+				CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY,
+				new GenericRowMapper<>(BookingPaymentTimerDetails.class), bookingIdString);
 		
 		log.info("Booking payment timer query : {} and parmas : {}", CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, bookingIdString);
 		return paymentTimerList;
@@ -393,30 +405,23 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 	@Override
 	public List<BookingPaymentTimerDetails> getBookingTimerByCreatedBy(RequestInfo info,
-	        CommunityHallSlotSearchCriteria criteria) {
+	        VenueSlotSearchCriteria criteria) {
 
-	    // Parse bookingStartDate and bookingEndDate into SQL-compatible Date objects
-	    Date startDate = Date.valueOf(criteria.getBookingStartDate()); // String to SQL Date
-	    Date endDate = Date.valueOf(criteria.getBookingEndDate());     // String to SQL Date
-
-	    // Execute query with updated criteria
-	    List<BookingPaymentTimerDetails> timerDetails = jdbcTemplate.query(
+	    LocalDate startDate = LocalDate.parse(criteria.getBookingStartDate());
+	    LocalDate endDate = LocalDate.parse(criteria.getBookingEndDate());
+	    LocalTime startTime = LocalTime.parse(criteria.getFromTime());
+	    LocalTime endTime = LocalTime.parse(criteria.getToTime()) ;
+	    
+	    return queryWithRowMapper(
 	        CommunityHallBookingQueryBuilder.SELECT_TIMER_QUERY,
-	        new Object[] {
-	            criteria.getTenantId(), 
-	            criteria.getCommunityHallCode(),
-	            criteria.getHallCode(),
-	            startDate,
-	            endDate
-	        },
 	        (rs, rowNum) -> {
 	            BookingPaymentTimerDetails details = new BookingPaymentTimerDetails();
 	            details.setBookingId(rs.getString("booking_id"));
 	            details.setCreatedBy(rs.getString("createdby"));
 	            details.setCreatedTime(rs.getLong("createdtime"));
 	            details.setStatus(rs.getString("status"));
-	            details.setCommunityHallcode(rs.getString("community_hall_code"));
-	            details.setHallcode(rs.getString("hall_code"));
+	            details.setVenueCode(rs.getString("venue_code"));
+	            details.setUnitCode(rs.getString("unit_code"));
 	            details.setLastModifiedBy(rs.getString("lastmodifiedby"));
 	            details.setLastModifiedTime(rs.getObject("lastmodifiedtime", Long.class));
 	            details.setTenantId(rs.getString("tenant_id"));
@@ -425,10 +430,81 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	                details.setBookingDate(sqlDate.toLocalDate());
 	            }
 	            return details;
-	        }
+	        },
+	        criteria.getTenantId(),
+	        criteria.getVenueCode(),
+	        criteria.getUnitCode(),
+	        startTime,
+	        endTime,
+	        startDate,
+	        endDate
 	    );
+	}
 
-	    return timerDetails;
+	/**
+	 * Binds positional JDBC parameters on a prepared statement.
+	 *
+	 * @param ps prepared statement with {@code ?} placeholders
+	 * @param parameters values to bind in statement order
+	 * @throws SQLException when parameter binding fails
+	 */
+	private static void bindParameters(PreparedStatement ps, Object[] parameters) throws SQLException {
+		for (int i = 0; i < parameters.length; i++) {
+			ps.setObject(i + 1, parameters[i]);
+		}
+	}
+
+	/**
+	 * Executes a query using a {@link ResultSetExtractor} and a list of bind parameters.
+	 *
+	 * @param <T> result type produced by the extractor
+	 * @param sql SQL with positional placeholders
+	 * @param extractor maps the full result set to a single object (for example a list)
+	 * @param parameters bind values in statement order
+	 * @return extracted result, never {@code null} for list-based extractors used in this repository
+	 */
+	private <T> T queryWithExtractor(String sql, ResultSetExtractor<T> extractor, List<?> parameters) {
+		Object[] args = parameters.toArray();
+		return jdbcTemplate.query(sql, ps -> bindParameters(ps, args), extractor);
+	}
+
+	/**
+	 * Executes a query using a {@link ResultSetExtractor} and varargs bind parameters.
+	 *
+	 * @param <T> result type produced by the extractor
+	 * @param sql SQL with positional placeholders
+	 * @param extractor maps the full result set to a single object
+	 * @param parameters bind values in statement order
+	 * @return extracted result
+	 */
+	private <T> T queryWithExtractor(String sql, ResultSetExtractor<T> extractor, Object... parameters) {
+		return jdbcTemplate.query(sql, ps -> bindParameters(ps, parameters), extractor);
+	}
+
+	/**
+	 * Executes a query using a {@link RowMapper} and varargs bind parameters.
+	 *
+	 * @param <T> row type
+	 * @param sql SQL with positional placeholders
+	 * @param rowMapper maps each row to {@code T}
+	 * @param parameters bind values in statement order
+	 * @return list of mapped rows, empty when no rows match
+	 */
+	private <T> List<T> queryWithRowMapper(String sql, RowMapper<T> rowMapper, Object... parameters) {
+		return jdbcTemplate.query(sql, ps -> bindParameters(ps, parameters), rowMapper);
+	}
+
+	/**
+	 * Runs a scalar integer query (for example {@code COUNT(*)}) and returns {@code 0} when no row is returned.
+	 *
+	 * @param sql SQL with positional placeholders
+	 * @param parameters bind values in statement order
+	 * @return first integer column from the first row, or {@code 0} if the result set is empty
+	 */
+	private int queryForInteger(String sql, List<Object> parameters) {
+		Object[] args = parameters.toArray();
+		List<Integer> results = jdbcTemplate.query(sql, ps -> bindParameters(ps, args), (rs, rowNum) -> rs.getInt(1));
+		return results.isEmpty() ? 0 : results.get(0);
 	}
 
 

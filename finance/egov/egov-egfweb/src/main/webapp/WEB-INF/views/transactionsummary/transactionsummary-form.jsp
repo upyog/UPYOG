@@ -48,10 +48,10 @@
 
 
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn"%>
+<%@ taglib uri="jakarta.tags.sql" prefix="sql"%>
 <%@ taglib uri="/WEB-INF/tags/sitemesh-decorator.tld" prefix="decorator"%>
 <%@ taglib uri="/WEB-INF/tags/sitemesh-page.tld" prefix="page"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>

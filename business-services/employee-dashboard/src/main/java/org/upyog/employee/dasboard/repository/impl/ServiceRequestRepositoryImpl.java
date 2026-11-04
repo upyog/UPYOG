@@ -34,48 +34,63 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 		StringBuilder query;
 
 		switch (moduleName) {
-		case OBPAS:
-			query = DashboardQueryConstant.OBPAS_DASHBOARD_QUERY_;
+			case OBPAS:
+				query = DashboardQueryConstant.OBPAS_DASHBOARD_QUERY_;
 
-			break;
-		case ASSET:
-			query = DashboardQueryConstant.ASSET_DASHBOARD_QUERY_;
-			break;
-		case FSM:
-			query = DashboardQueryConstant.FSM_DASHBOARD_QUERY_;
-			break;
-		case PGR:
-			query = DashboardQueryConstant.PGR_DASHBOARD_QUERY_;
-			break;
-		case CHB:
-			query = DashboardQueryConstant.CHB_DASHBOARD_QUERY_;
-			break;
-		case PT:
-			query = DashboardQueryConstant.PT_DASHBOARD_QUERY_;
-			break;
-		case SEWERAGE:
-			query = DashboardQueryConstant.SEWERAGE_DASHBOARD_QUERY_;
-			break;	
-		case PETSERVICES:
-			query = DashboardQueryConstant.PETSERVICES_DASHBOARD_QUERY_;
-			break;
-		case TL:
-			query = DashboardQueryConstant.TL_DASHBOARD_QUERY_;
-			break;
-		case WATER:
-			query = DashboardQueryConstant.WATER_DASHBOARD_QUERY_;
-			break;		
-		case EWASTE:
-			query = DashboardQueryConstant.EWASTE_DASHBOARD_QUERY_;
-			break;
-		case SV:
-			query = DashboardQueryConstant.SV_DASHBOARD_QUERY_;
-			break;
-		case ALL:
-			query = DashboardQueryConstant.DASHBOARD_QUERY_ALL;
-			break;
-		default:
-			throw new IllegalArgumentException("Module Not found");
+				break;
+			case ASSET:
+				query = DashboardQueryConstant.ASSET_DASHBOARD_QUERY_;
+				break;
+			case FSM:
+				query = DashboardQueryConstant.FSM_DASHBOARD_QUERY_;
+				break;
+			case PGR:
+				query = DashboardQueryConstant.PGR_DASHBOARD_QUERY_;
+				break;
+			case CHB:
+				query = DashboardQueryConstant.CHB_DASHBOARD_QUERY_;
+				break;
+			case PT:
+				query = DashboardQueryConstant.PT_DASHBOARD_QUERY_;
+				break;
+			case SEWERAGE:
+				query = DashboardQueryConstant.SEWERAGE_DASHBOARD_QUERY_;
+				break;
+			case PETSERVICES:
+				query = DashboardQueryConstant.PETSERVICES_DASHBOARD_QUERY_;
+				break;
+			case TL:
+				query = DashboardQueryConstant.TL_DASHBOARD_QUERY_;
+				break;
+			case WATER:
+				query = DashboardQueryConstant.WATER_DASHBOARD_QUERY_;
+				break;
+			case EWASTE:
+				query = DashboardQueryConstant.EWASTE_DASHBOARD_QUERY_;
+				break;
+			case SV:
+				query = DashboardQueryConstant.SV_DASHBOARD_QUERY_;
+				break;
+			case CND:
+				query = DashboardQueryConstant.CND_DASHBOARD_QUERY_;
+				break;
+			case WT:
+				query = DashboardQueryConstant.WT_DASHBOARD_QUERY_;
+				break;
+			case MT:
+				query = DashboardQueryConstant.MT_DASHBOARD_QUERY_;
+				break;
+			case TP:
+				query = DashboardQueryConstant.TP_DASHBOARD_QUERY_;
+				break;
+			case ADS:
+				query = DashboardQueryConstant.ADV_DASHBOARD_QUERY_;
+				break;
+			case ALL:
+				query = DashboardQueryConstant.DASHBOARD_QUERY_ALL;
+				break;
+			default:
+				throw new IllegalArgumentException("Module Not found");
 		}
 		log.info("Executing query for module: {} - Query: {}", moduleName, query.toString());
 		return jdbcTemplate.queryForObject(query.toString(), new Object[]{tenantid}, new EmployeeDashboardDetailsRowMapper(moduleName));

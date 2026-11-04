@@ -72,7 +72,10 @@ module.exports = {
     challan: process.env.EGOV_ECHALLAN_HOST || 'http://echallan-services.egov:8080/',
     mcollectBilling: process.env.EGOV_BILLING_HOST || 'http://billing-service.egov:8080/',
     wns: process.env.EGOV_WNS_HOST || HOST,
-    sw:  process.env.EGOV_WNS_HOST || HOST
+    sw:  process.env.EGOV_WNS_HOST || HOST,
+    // pdf: "http://localhost:8087",
+    // payments: "http://localhost:8090",  for running local 
+
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",

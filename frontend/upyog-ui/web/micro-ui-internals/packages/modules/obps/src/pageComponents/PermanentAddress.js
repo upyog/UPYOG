@@ -1,4 +1,4 @@
-import { CardLabel, CheckBox, CitizenInfoLabel, FormStep, Loader, TextInput, TextArea, OpenLinkContainer, BackButton } from "@upyog/digit-ui-react-components";
+import { CardLabel, CheckBox, CitizenInfoLabel, FormStep, Loader, TextInput, TextArea, OpenLinkContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/Timeline";
 
@@ -42,7 +42,7 @@ const PermanentAddress = ({ t, config, onSelect, value, userType, formData }) =>
     <React.Fragment>
       <div className={isopenlink ? "OpenlinkContainer" : ""}>
 
-        {isopenlink && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isopenlink && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Timeline currentStep={2} flow="STAKEHOLDER" />
         <FormStep
           config={config}

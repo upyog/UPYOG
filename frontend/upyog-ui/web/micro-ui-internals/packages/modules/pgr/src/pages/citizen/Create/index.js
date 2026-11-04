@@ -1,21 +1,20 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import merge from "lodash.merge";
 import { useDispatch } from "react-redux";
 import { createComplaint } from "../../../redux/actions/index";
 import { PGR_CITIZEN_COMPLAINT_CONFIG, PGR_CITIZEN_CREATE_COMPLAINT } from "../../../constants/Citizen";
 import Response from "./Response";
 
 import { config as defaultConfig } from "./defaultConfig";
-import { Redirect, Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { Navigate, Route, Routes, useLocation, useMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const CreateComplaint = () => {
   const ComponentProvider = Digit.Contexts.ComponentProvider;
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const match = useRouteMatch();
-  const history = useHistory();
+  const match = useMatch("*");
+  const navigate = Digit.Hooks.useCustomNavigate();
   const registry = useContext(ComponentProvider);
   const dispatch = useDispatch();
   const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
@@ -38,7 +37,7 @@ export const CreateComplaint = () => {
     if (nextStep === null) {
       wrapperSubmit();
     } else {
-      history.push(`${match.path}/${nextStep}`);
+      navigate(`${nextStep}`);
     }
   }, [params, nextStep]);
 
@@ -95,9 +94,14 @@ export const CreateComplaint = () => {
         },
       };
 
-      await dispatch(createComplaint(data));
+      const response = await dispatch(createComplaint(data));
+      // Persist the API response to sessionStorage so the Response page
+      // can render the success banner even after a browser refresh.
+      if (response) {
+        sessionStorage.setItem("PGR_COMPLAINT_RESPONSE", JSON.stringify(response));
+      }
       await client.refetchQueries(["complaintsList"]);
-      history.push(`${match.path}/response`);
+      navigate(`response`);
     }
   };
 
@@ -124,22 +128,20 @@ export const CreateComplaint = () => {
   if (isLoading) return null;
 
   return (
-    <Switch>
+    <Routes>
       {Object.keys(config.routes).map((route, index) => {
         const { component, texts, inputs } = config.routes[route];
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${match.path}/${route}`} key={index}>
-            <Component config={{ texts, inputs }} onSelect={handleSelect} onSkip={handleSkip} value={params} t={t} />
-          </Route>
+          <Route
+            path={`${route}/*`}
+            key={index}
+            element={<Component config={{ texts, inputs }} onSelect={handleSelect} onSkip={handleSkip} value={params} t={t} />}
+          />
         );
       })}
-      <Route path={`${match.path}/response`}>
-        <Response match={match} />
-      </Route>
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path={`response`} element={<Response match={match} />} />
+      <Route path="*" element={<Navigate to={`${config.indexRoute}`} />} />
+    </Routes>
   );
 };

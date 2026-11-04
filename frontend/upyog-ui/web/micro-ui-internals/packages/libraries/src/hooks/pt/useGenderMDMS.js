@@ -1,9 +1,9 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useGenderMDMS = (tenantId, moduleCode, type, config = {}) => {
   const useGenderDetails = () => {
-    return useQuery("PT_GENDER_DETAILS", () => MdmsService.getGenderType(tenantId, moduleCode ,type), config);
+    return queryTemplate({ queryKey: ["PT_GENDER_DETAILS"], queryFn: () => MdmsService.getGenderType(tenantId, moduleCode ,type), config });
   };
   
 

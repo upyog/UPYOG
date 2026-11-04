@@ -47,16 +47,16 @@
  */
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class RemittanceInstrument {
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
-    @SafeHtml
+    @SanitizeHtml
     private String id;
-    @SafeHtml
+    @SanitizeHtml
     private String remittance;
-    @SafeHtml
+    @SanitizeHtml
     private String instrument;
 
     private Boolean reconciled;

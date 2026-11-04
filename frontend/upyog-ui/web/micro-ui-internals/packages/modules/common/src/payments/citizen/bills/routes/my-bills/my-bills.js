@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { ArrowLeft, Header, Loader } from "@upyog/digit-ui-react-components";
+import { ArrowLeft, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 
 import MyBill from "./my-bill";
 
 export const BillList = ({ billsList, currentPath, businessService }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const consumerCodes = billsList.map((bill) => bill.consumerCode);
   // const { mobileNumber } = Digit.UserService.getUser()?.info;
@@ -68,19 +68,11 @@ export const BillList = ({ billsList, currentPath, businessService }) => {
                 <MyBill {...{ bill, currentPath, businessService, getKeyNotesConfig }} />
               </div>
             ))}
-          {!applicationList?.length > 0 && <p style={{ paddingLeft: "16px" }}>{t("CS_BILLS_TEXT_NO_BILLS_FOUND")}</p>}
+          {!applicationList?.length > 0 && <p className="cmn-my-bills-spacing">{t("CS_BILLS_TEXT_NO_BILLS_FOUND")}</p>}
         {/* </div> */}
         {businessService === "PT" && (
           <p
-            style={{
-              paddingLeft: "16px",
-              paddingTop: "16px",
-              // position: "fixed",
-              // bottom: "40px",
-              // backgroundColor: "#e3e3e3",
-              // textAlign: "left",
-              // width: "100%",
-            }}
+            className="cmn-my-bills-spacing-2"
           >
             {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_PROPERTY")}
             <span className="link">

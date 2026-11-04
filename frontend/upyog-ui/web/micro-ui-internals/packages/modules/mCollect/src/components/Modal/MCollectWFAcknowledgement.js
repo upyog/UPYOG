@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -20,13 +20,9 @@ const MCollectWFAcknowledgement = () => {
       <CardText>{t("UC_BILL_GENERATION_MESSAGE_SUB")}</CardText>
 
       <ActionBar
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "baseline",
-        }}
+        className="mc-mcollect-wfacknowledgement-flex-row"
       >
-        <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+        <Link to={`/upyog-ui/employee`} className="mc-mcollect-wfacknowledgement-spacing">
           <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
         <SubmitBar label={t("UC_BUTTON_PAY")} onClick={proceedToPayment} />

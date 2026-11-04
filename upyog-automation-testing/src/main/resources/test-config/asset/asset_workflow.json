@@ -1,0 +1,27 @@
+{
+  "moduleName": "ASSET_MANAGEMENT_SYSTEM",
+
+  "steps": [
+
+    {
+      "name": "Employee Application",
+      "type": "EMPLOYEE",
+      "module": "ASSET_MANAGEMENT_SYSTEM",
+      "role": "INITIATOR"
+    },
+
+    {
+      "name": "Employee Verifier",
+      "type": "EMPLOYEE",
+      "module": "ASSET_MANAGEMENT_SYSTEM_VERIFIER",
+      "role": "VERIFIER"
+    },
+
+    {
+      "name": "Employee Approver",
+      "type": "EMPLOYEE",
+      "module": "ASSET_MANAGEMENT_SYSTEM_APPROVER",
+      "role": "APPROVER"
+    }
+  ]
+}

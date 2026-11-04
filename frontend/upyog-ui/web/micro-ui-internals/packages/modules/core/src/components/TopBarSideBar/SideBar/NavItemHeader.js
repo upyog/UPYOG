@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from "react-router-dom";
+import * as DigitComponents from "@nudmcdgnpm/digit-ui-react-components";
 import {
   ArrowForward,
   ArrowVectorDown,
@@ -16,7 +17,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import ReactTooltip from "react-tooltip";
 import { useTranslation } from 'react-i18next';
 
@@ -47,10 +48,10 @@ const NavItemHeader = props => {
     collections: <CollectionIcon />,
   };
   const leftIconArray = icon?.split?.(":")?.[1];
-  const leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
+  let leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
   const iconArr=item?.icon?.leftIcon?.split?.(":")|| item?.leftIcon?.split?.(":");
   if(iconArr?.[0]=='dynamic'){
-    var IconComp = require("@upyog/digit-ui-react-components")?.[iconArr?.[1]];
+    var IconComp = DigitComponents?.[iconArr?.[1]];
     leftIcon=IconComp?<IconComp/>:leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();
@@ -69,10 +70,10 @@ const NavItemHeader = props => {
         onClick={onExpandChange}
         style={item?.elementStyle ? {...item?.elementStyle,display:"flex"}:{display:"flex"}}
       >
-         <div className={`sidebar-link ${expanded ? "active": ""}`} style={{width:item?.nested ?"240px":"260px",overflow:"auto"}}>{!item?.nested && leftIcon}
-         <div className='actions' style={{padding:"0px",marginRight:"auto"}}>
+         <div className={`sidebar-link ${expanded ? "active" : ""} ${item?.nested ? "sidebar-link-nested" : "sidebar-link-root"}`}>{!item?.nested && leftIcon}
+         <div className="actions core-nav-item-header-container-padding">
          <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-        <span style={{color:expanded ? "#a82227":""}}>{trimModuleName}</span>
+        <span className={expanded ? "text-crimson" : ""}>{trimModuleName}</span>
         {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}
@@ -113,12 +114,11 @@ const NavItemHeader = props => {
               <NavLink
                 key={key}
                 to={item?.to?.includes("upyog-ui") ? item?.to : "/employee/" + item?.to}
-                className="custom-link"
+                className="custom-link core-nav-item-header-top-spacing"
                 activeClassName="actions"
-                style={{marginLeft:"40px", marginTop:"10px"}}
               >
                 <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-                <span style={{fontSize:"14px"}}>{trimModuleName}</span>
+                <span className="core-nav-item-text-style">{trimModuleName}</span>
                 {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}

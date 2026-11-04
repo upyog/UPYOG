@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { newConfigMutate } from "../../../config/Mutate/config";
-import { useHistory } from "react-router-dom";
+
 
 const MutationForm = ({ applicationData, tenantId }) => {
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
 
   const { data: mutationDocs, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "MutationDocuments");
+  const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
   const defaultValues = {
     originalData: applicationData,
   };
@@ -19,13 +20,25 @@ const MutationForm = ({ applicationData, tenantId }) => {
   useEffect(() => {
     setMutationHappened(false);
     clearSuccessData();
+    sessionStorage.removeItem("EMPLOYEE_MUTATION_TRIGGERED");
   }, []);
 
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const onFormValueChange = (setValue, formData, formState) => {
-    setSubmitValve(!Object.keys(formState.errors).length);
-    if (!Object.keys(formState.errors).length) {
+    const errorKeys = Object.keys(formState.errors || {});
+    // Exclude "documents" from the generic error check — document errors are
+    // managed separately via addError/removeError in SelectDocuments and we
+    // validate them directly via formData below.
+    const hasOtherErrors = errorKeys.filter((key) => key !== "documents").length > 0;
+
+    // Check that all required documents have been uploaded.
+    // SelectDocuments sets formData.documents = { documents: [...uploaded], propertyTaxDocumentsLength: N }
+    const uploadedDocs = formData?.documents?.documents || [];
+    const requiredDocCount = formData?.documents?.propertyTaxDocumentsLength || 0;
+    const allDocsUploaded = requiredDocCount > 0 && uploadedDocs.length >= requiredDocCount;
+
+    if (!hasOtherErrors && formData?.additionalDetails && allDocsUploaded) {
       let { additionalDetails } = formData;
       let {
         documentDate,
@@ -33,7 +46,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
         documentValue,
         marketValue,
         reasonForTransfer,
-      } = additionalDetails;
+      } = additionalDetails || {};
       setSubmitValve(
         !(
           !documentDate ||
@@ -43,11 +56,14 @@ const MutationForm = ({ applicationData, tenantId }) => {
           !reasonForTransfer
         )
       );
+    } else {
+      setSubmitValve(false);
     }
     if (formData?.ownershipCategory?.code?.includes?.("MULTIPLE")) {
       if (formData?.owners?.length < 2) setSubmitValve(false);
     }
   };
+
 
   const onSubmit = (data) => {
     data.originalData.owners = data.originalData?.owners?.filter((owner) => owner.status == "ACTIVE");
@@ -67,12 +83,12 @@ const MutationForm = ({ applicationData, tenantId }) => {
             altContactNumber: data.owners[0].altContactNumber,
             status: "INACTIVE",
           })),
-          ...data.owners.map((owner,index) => {
+          ...data.owners.map((owner, index) => {
             let obj = {};
             let gender = owner.gender.code;
             let ownerType = owner.ownerType.code;
             let relationship = owner.relationship.code;
-            let additionalDetails= {ownerSequence:index, ownerName:owner?.name}
+            let additionalDetails = { ownerSequence: index, ownerName: owner?.name }
             obj.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
             if (owner.documents) {
               let { documentUid, documentType } = owner.documents;
@@ -105,12 +121,12 @@ const MutationForm = ({ applicationData, tenantId }) => {
               altContactNumber: data.owners[0].altContactNumber,
               status: "INACTIVE",
             })),
-            ...data.owners.map((owner,index) => {
+            ...data.owners.map((owner, index) => {
               let obj = {};
               let gender = owner.gender.code;
               let ownerType = owner.ownerType.code;
               let relationship = owner.relationship.code;
-              let additionalDetails= {ownerSequence:index, ownerName:owner?.name}
+              let additionalDetails = { ownerSequence: index, ownerName: owner?.name }
               obj.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
               if (owner.documents) {
                 let { documentUid, documentType } = owner.documents;
@@ -151,39 +167,73 @@ const MutationForm = ({ applicationData, tenantId }) => {
       };
     }
     else {
-      submitData.Property.institution=null;
+      submitData.Property.institution = null;
     }
-    history.replace("/upyog-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
+    mutation.mutate(
+      submitData,
+      {
+        onSuccess: (responseData) => {
+          navigate("/upyog-ui/employee/pt/response", {
+            replace: true,
+            state: {
+              Property: submitData.Property,
+              responseData,
+              isSuccess: true,
+              action: "SUBMIT",
+              key: "UPDATE"
+            }
+          });
+        },
+        onError: (error) => {
+          navigate("/upyog-ui/employee/pt/response", {
+            replace: true,
+            state: {
+              Property: submitData.Property,
+              responseData: null,
+              isSuccess: false,
+              error: error?.response?.data?.Errors?.[0]?.message || error?.message || "Error updating mutation",
+              action: "SUBMIT",
+              key: "UPDATE"
+            }
+          });
+        }
+      }
+    );
   };
 
+  if (isLoading || mutation.isPending) {
+    return <Loader />;
+  }
+
   const configs = newConfigMutate;
-console.log("config", configs);
   return (
-    <FormComposer
-      heading={t("ES_TITLE_MUTATE_PROPERTY")}
-      isDisabled={!canSubmit}
-      label={t("ES_COMMON_APPLICATION_SUBMIT")}
-      config={configs.map((config) => {
-        return {
-          ...config,
-          body: [
-            ...config.body.filter((a) => !a.hideInEmployee),
-            {
-              withoutLabel: true,
-              type: "custom",
-              populators: {
-                name: "originalData",
-                component: (props, customProps) => <React.Fragment />,
+    <React.Fragment>
+      <FormComposer
+        heading={t("ES_TITLE_MUTATE_PROPERTY")}
+        isDisabled={!canSubmit}
+        label={t("ES_COMMON_APPLICATION_SUBMIT")}
+        config={configs.map((config) => {
+          return {
+            ...config,
+            body: [
+              ...config.body.filter((a) => !a.hideInEmployee),
+              {
+                withoutLabel: true,
+                type: "custom",
+                populators: {
+                  name: "originalData",
+                  component: (props, customProps) => <React.Fragment />,
+                },
               },
-            },
-          ],
-        };
-      })}
-      fieldStyle={{ marginRight: 0 }}
-      onSubmit={onSubmit}
-      defaultValues={defaultValues}
-      onFormValueChange={onFormValueChange}
-    />
+            ],
+          };
+        })}
+        fieldStyle={{ marginRight: 0 }}
+        onSubmit={onSubmit}
+        defaultValues={defaultValues}
+        onFormValueChange={onFormValueChange}
+      />
+    </React.Fragment>
   );
 };
 

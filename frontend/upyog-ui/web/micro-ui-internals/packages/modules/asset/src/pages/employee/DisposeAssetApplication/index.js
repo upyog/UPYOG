@@ -1,7 +1,7 @@
-import { FormComposer, Loader,Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader,Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import { disposeConfig } from "../../../config/Create/disposeConfig";
 import {convertStringToFloat} from "../../../utils/index"
 
@@ -11,7 +11,7 @@ const DisposeAssetApplication = () => {
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const { id: applicationNo } = useParams();
 
@@ -98,7 +98,7 @@ const DisposeAssetApplication = () => {
           if(applicationDetails){
             console.log('success data is coming')
             // setShowToast({ error: false, label: 'Asset Dispose Successfully'});
-            history.replace("/upyog-ui/employee/asset/assetservice/asset-dispose-response", { AssetDisposal: applicationDetails, applicationNo }); 
+            navigate("/upyog-ui/employee/asset/assetservice/asset-dispose-response", { replace: true, state: { AssetDisposal: applicationDetails, applicationNo } }); 
           }
         }
         catch (error) {

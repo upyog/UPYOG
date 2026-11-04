@@ -1,4 +1,4 @@
-import { Card, DetailsCard, FilterAction, Loader, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, FilterAction, Loader, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import SearchCitizenFilter from "./SearchCitizenFilter";
 import SearchCitizen from "./SearchCitizen";
@@ -47,11 +47,11 @@ const ApplicationCitizenCard = ({
   let result;
   if (!data || data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="bills-application-citizen-card-card">
         {t("CS_MYAPPLICATIONS_NO_APPLICATION")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="bills-application-citizen-card-centered">
               {text}
             </p>
           ))}

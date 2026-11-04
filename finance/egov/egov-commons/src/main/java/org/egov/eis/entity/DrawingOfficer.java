@@ -53,17 +53,17 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import static org.egov.eis.entity.DrawingOfficer.SEQ_DRAWINGOFFICER;
 
@@ -73,16 +73,16 @@ import static org.egov.eis.entity.DrawingOfficer.SEQ_DRAWINGOFFICER;
 public class DrawingOfficer extends AbstractAuditable implements EntityType {
     public static final String SEQ_DRAWINGOFFICER = "SEQ_EG_DRAWINGOFFICER";
     private static final long serialVersionUID = 1678672850806848215L;
-    @SafeHtml
+    @SanitizeHtml
     private String accountNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String tan;
     @Id
     @GeneratedValue(generator = SEQ_DRAWINGOFFICER, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank")
@@ -93,7 +93,7 @@ public class DrawingOfficer extends AbstractAuditable implements EntityType {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
     private Position position;
-    @SafeHtml
+    @SanitizeHtml
     private String ifscCode;
 
     public Long getId() {

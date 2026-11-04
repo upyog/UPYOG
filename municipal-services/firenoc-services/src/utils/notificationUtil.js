@@ -9,7 +9,7 @@ let payloads = [];
 let smsRequest = {};
 let events = [];
 
-const sendEventNotificaiton = (tenantId) => {
+const sendEventNotificaiton = (tenantId,RequestInfo) => {
     let requestPayload = {
       RequestInfo,
       events
@@ -162,8 +162,15 @@ export const sendFireNOCSMSRequest = async (FireNOCs, RequestInfo) => {
       }
     }
     // console.log("events",events);
+    // if (events.length > 0) {
+    //   sendEventNotificaiton(tenantId);
+    // }
     if (events.length > 0) {
-      sendEventNotificaiton(tenantId);
+      try {
+        sendEventNotificaiton(tenantId, RequestInfo);
+      } catch (error) {
+        console.error("Failed to prepare FIRENOC event notification", error);
+      }
     }
 
     producer.send(payloads, function(err, data) {

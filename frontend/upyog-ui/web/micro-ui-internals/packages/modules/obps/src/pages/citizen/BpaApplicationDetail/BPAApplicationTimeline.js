@@ -1,6 +1,6 @@
 import React, { Fragment, useState} from "react";
 import { useTranslation } from "react-i18next";
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import BPACaption from "./BPACaption";
 
 const BPAApplicationTimeline = (props) => {
@@ -54,7 +54,7 @@ const BPAApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="obps-application-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

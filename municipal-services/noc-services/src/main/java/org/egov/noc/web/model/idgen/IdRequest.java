@@ -1,7 +1,7 @@
 package org.egov.noc.web.model.idgen;
 
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

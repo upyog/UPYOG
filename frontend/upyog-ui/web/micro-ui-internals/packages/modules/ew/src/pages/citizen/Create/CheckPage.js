@@ -2,16 +2,18 @@ import {
   Card,
   CardHeader,
   CardSubHeader,
+  CardSectionHeader,
+  CardText,
   CheckBox,
   LinkButton,
   Row,
   StatusTable,
   SubmitBar,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { checkForNA } from "../../../utils";
+
+import { checkForNA, getFixedFilename } from "../../../utils";
 import Timeline from "../../../components/EWASTETimeline";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
 
@@ -24,9 +26,9 @@ import ApplicationTable from "../../../components/inbox/ApplicationTable";
  */
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   function routeTo() {
-    history.push(jumpTo);
+    navigate(jumpTo);
   }
 
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
@@ -44,7 +46,7 @@ const ActionButton = ({ jumpTo }) => {
  */
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const { address, ownerKey, ewdet } = value;
 
@@ -86,7 +88,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <div>
           {/* Section for product details */}
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
-          <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
+          <div className="ew-check-page-container-padding">
             <ApplicationTable
               t={t}
               data={productRows}
@@ -104,10 +106,10 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             />
             <br />
             {/* Displaying the net price */}
-            <StatusTable style={{ marginLeft: "20px" }}>
+            <StatusTable className="ew-ewasteproduct-list-table-cell">
               <Row
                 label={t("EWASTE_NET_PRICE")}
-                text={<div style={{ marginLeft: "295px" }}>{"₹ " + ewdet?.calculatedAmount}</div>}
+                text={<div className="ew-check-page-spacing">{"₹ " + ewdet?.calculatedAmount}</div>}
                 actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/productdetails`}`} />}
               />
             </StatusTable>

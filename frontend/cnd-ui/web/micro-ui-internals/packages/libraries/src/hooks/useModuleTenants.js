@@ -1,11 +1,12 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
 import { useTranslation } from "react-i18next";
 
 const useModuleTenants = (module, config = {}) => {
   const { t } = useTranslation();
 
-  return useQuery(["ULB_TENANTS", module], () => Digit.SessionStorage.get("initData"), {
+  return queryTemplate({
+    queryKey: ["ULB_TENANTS", module],
+    queryFn: () => Digit.SessionStorage.get("initData"),
     select: (data) => ({
       ddr: data.modules
         .find((e) => e.module === module)
@@ -33,7 +34,7 @@ const useModuleTenants = (module, config = {}) => {
           ),
         })),
     }),
-    ...config,
+    config: { ...config },
   });
 };
 export default useModuleTenants;

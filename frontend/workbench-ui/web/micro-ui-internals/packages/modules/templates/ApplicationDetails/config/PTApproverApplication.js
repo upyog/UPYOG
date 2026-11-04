@@ -1,4 +1,4 @@
-import { Dropdown, UploadFile } from "@egovernments/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@upyog/workbench-ui-react-components";
 import React from "react";
 
 export const configPTApproverApplication = ({

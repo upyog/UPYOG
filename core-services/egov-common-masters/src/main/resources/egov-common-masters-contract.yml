@@ -1,0 +1,1039 @@
+swagger: 2.0
+info:
+  version: 1.0.0
+  title: EgovCommonMasters Service
+  description: |
+    Shared common master data service.
+  contact:
+    name: UPYOG NUDM Team
+    email: "cdg-contact@niua.org"
+schemes:
+  - https
+basePath: /egov-common-masters
+x-api-id: org.egov.egov.common.masters
+x-common-path: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml"
+paths:
+  /_create:
+    post:
+      summary: Create
+      description: Create for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Default
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /_search:
+    post:
+      summary: Search
+      description: Search for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Default
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /_update:
+    post:
+      summary: Update
+      description: Update for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Default
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /bloodgroups/_search:
+    post:
+      summary: Search bloodgroups
+      description: Search bloodgroups for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search bloodgroups completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Bloodgroups
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /businessDetails/_create:
+    post:
+      summary: Create businessDetails
+      description: Create businessDetails for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create businessDetails completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Businessdetails
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create businessdetails
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /businessDetails/_search:
+    post:
+      summary: Search businessDetails
+      description: Search businessDetails for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search businessDetails completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Businessdetails
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /businessDetails/_update:
+    post:
+      summary: Update businessDetails
+      description: Update businessDetails for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update businessDetails completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Businessdetails
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update businessdetails
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /calendaryears/{calendarYearId}/_update:
+    post:
+      summary: "Update calendaryears {calendarYearId}"
+      description: "Update calendaryears {calendarYearId} for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response."
+      responses:
+        201:
+          description: "Update calendaryears {calendarYearId} completed successfully"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Calendaryears
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: "Request payload with RequestInfo and domain data for update calendaryears {calendaryearid}"
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /calendaryears_create:
+    post:
+      summary: Create calendaryears
+      description: Create calendaryears for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create calendaryears completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Calendaryears_Create
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create calendaryears
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /calendaryears_search:
+    post:
+      summary: Search calendaryears
+      description: Search calendaryears for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search calendaryears completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Calendaryears_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /calendaryears_searchfutureyears:
+    post:
+      summary: Searchfutureyears
+      description: Searchfutureyears for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Searchfutureyears completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Calendaryears_Searchfutureyears
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /categories_search:
+    post:
+      summary: Search categories
+      description: Search categories for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search categories completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Categories_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /communities_search:
+    post:
+      summary: Search communities
+      description: Search communities for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search communities completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Communities_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /departments/v1/_create:
+    post:
+      summary: Create departments v1
+      description: Create departments v1 for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create departments v1 completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Departments
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create departments v1
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /departments/v1/_search:
+    post:
+      summary: Search departments v1
+      description: Search departments v1 for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search departments v1 completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Departments
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /departments/v1/_update:
+    post:
+      summary: Update departments v1
+      description: Update departments v1 for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update departments v1 completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Departments
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update departments v1
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /departments_search:
+    post:
+      summary: Search departments
+      description: Search departments for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search departments completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Departments_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /genders/_search:
+    post:
+      summary: Search genders
+      description: Search genders for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search genders completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Genders
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /holidays/{holidayId}/_update:
+    post:
+      summary: "Update holidays {holidayId}"
+      description: "Update holidays {holidayId} for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response."
+      responses:
+        201:
+          description: "Update holidays {holidayId} completed successfully"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Holidays
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: "Request payload with RequestInfo and domain data for update holidays {holidayid}"
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /holidays_create:
+    post:
+      summary: Create holidays
+      description: Create holidays for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create holidays completed successfully
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Holidays_Create
+      parameters:
+        - name: ErrorResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create holidays
+          required: True
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /holidays_search:
+    post:
+      summary: Search holidays
+      description: Search holidays for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search holidays completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Holidays_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /holidays_searchprefixsuffix:
+    post:
+      summary: Getprefixsuffixholidays
+      description: Getprefixsuffixholidays for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Getprefixsuffixholidays completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Holidays_Searchprefixsuffix
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /holidaytypes_search:
+    post:
+      summary: Search holidaytypes
+      description: Search holidaytypes for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search holidaytypes completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Holidaytypes_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /languages_search:
+    post:
+      summary: Search languages
+      description: Search languages for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search languages completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Languages_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /maritalstatuses/_search:
+    post:
+      summary: Search maritalstatuses
+      description: Search maritalstatuses for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search maritalstatuses completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Maritalstatuses
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /modules_search:
+    post:
+      summary: Search modules
+      description: Search modules for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search modules completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Modules_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /relationships/_search:
+    post:
+      summary: Search relationships
+      description: Search relationships for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search relationships completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Relationships
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /religions_search:
+    post:
+      summary: Search religions
+      description: Search religions for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search religions completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Religions_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /uomcategories_search:
+    post:
+      summary: Search uomcategories
+      description: Search uomcategories for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search uomcategories completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Uomcategories_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /uoms_search:
+    post:
+      summary: Search uoms
+      description: Search uoms for egov-common-masters. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search uoms completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Uoms_Search
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+definitions:
+  ErrorResponse:
+    type: object
+    description: Request/Response contract for ErrorResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      EgovCommonMastApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/EgovCommonMastApplication"
+  Object:
+    type: object
+    description: Request/Response contract for Object
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      EgovCommonMastApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/EgovCommonMastApplication"
+  EgovCommonMastApplication:
+    type: object
+    description: A domain application object for egov-common-masters
+    properties:
+      id:
+        type: string
+        description: Unique identifier (UUID)
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of ULB
+        maxLength: 128
+        minLength: 2
+      applicationNumber:
+        type: string
+        description: Unique application number
+        readOnly: true
+      status:
+        type: string
+        description: Application status
+      auditDetails:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails"
+    required:
+      - tenantId
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the action

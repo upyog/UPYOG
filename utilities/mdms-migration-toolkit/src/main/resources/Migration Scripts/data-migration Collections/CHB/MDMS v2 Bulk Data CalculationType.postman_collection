@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "auto-CHB.CalculationType",
+		"name": "MDMS v2 Bulk Data - CHB CalculationType",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data = [{\"id\": \"1\", \"communityHallCode\": \"Sector_70\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 7500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"2\", \"communityHallCode\": \"Sector_70\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"3\", \"communityHallCode\": \"Sector_71\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 10500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"4\", \"communityHallCode\": \"Sector_71\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"5\", \"communityHallCode\": \"Sector_69\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 10500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"6\", \"communityHallCode\": \"Sector_69\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"7\", \"communityHallCode\": \"Sector_65_Phase_11\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 7500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"8\", \"communityHallCode\": \"Sector_65_Phase_11\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"9\", \"communityHallCode\": \"Sector_61_Phase_7\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 10500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"10\", \"communityHallCode\": \"Sector_61_Phase_7\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"11\", \"communityHallCode\": \"Sector_59_Phase_5\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 10500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"12\", \"communityHallCode\": \"Sector_59_Phase_5\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"13\", \"communityHallCode\": \"Sector_55_Phase_1\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 10500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"14\", \"communityHallCode\": \"Sector_55_Phase_1\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"15\", \"communityHallCode\": \"Sector_54_Phase_2\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 7500, \"taxApplicable\": true, \"calculationDurationType\": \"DAY\"}, {\"id\": \"16\", \"communityHallCode\": \"Sector_54_Phase_2\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 10000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"16\", \"communityHallCode\": \"Sector_54_Phase_2\", \"applicationType\": \"COMMUNITY_HALL_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 1000, \"taxApplicable\": false, \"calculationDurationType\": \"DAY\"}, {\"id\": \"17\", \"communityHallCode\": \"CENTRAL_PARK\", \"applicationType\": \"PARK_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 500, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"18\", \"communityHallCode\": \"CENTRAL_PARK\", \"applicationType\": \"PARK_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 200, \"taxApplicable\": false, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"19\", \"communityHallCode\": \"DUSSEHRA_PARK\", \"applicationType\": \"PARK_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 400, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"20\", \"communityHallCode\": \"DUSSEHRA_PARK\", \"applicationType\": \"PARK_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 150, \"taxApplicable\": false, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"21\", \"communityHallCode\": \"DISTRICT_SPORTS_STADIUM\", \"applicationType\": \"STADIUM_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 150, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"22\", \"communityHallCode\": \"DISTRICT_SPORTS_STADIUM\", \"applicationType\": \"STADIUM_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 500, \"taxApplicable\": false, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"23\", \"communityHallCode\": \"DAV_SPORTS_GROUND\", \"applicationType\": \"STADIUM_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"BOOKING_FEES\", \"amount\": 900, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"24\", \"communityHallCode\": \"DAV_SPORTS_GROUND\", \"applicationType\": \"STADIUM_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 3000, \"taxApplicable\": false, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"25\", \"communityHallCode\": \"CANTT_GUEST_HOUSE\", \"applicationType\": \"GUEST_HOUSE_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"ROOM_TARIFF\", \"amount\": 150, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"26\", \"communityHallCode\": \"CANTT_GUEST_HOUSE\", \"applicationType\": \"GUEST_HOUSE_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 2000, \"taxApplicable\": false, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"27\", \"communityHallCode\": \"COMMUNITY_GUEST_HOUSE\", \"applicationType\": \"GUEST_HOUSE_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"ROOM_TARIFF\", \"amount\": 100, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"28\", \"communityHallCode\": \"COMMUNITY_GUEST_HOUSE\", \"applicationType\": \"GUEST_HOUSE_BOOKING\", \"serviceType\": \"NEW_BOOKING\", \"feeType\": \"SECURITY_DEPOSIT\", \"amount\": 1500, \"taxApplicable\": false, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"29\", \"communityHallCode\": \"SADAR_CREMATORIUM\", \"applicationType\": \"CREMATION_SERVICE\", \"serviceType\": \"SERVICE_REQUEST\", \"feeType\": \"CREMATION_FEE\", \"amount\": 500, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"30\", \"communityHallCode\": \"SADAR_CREMATORIUM\", \"applicationType\": \"CREMATION_SERVICE\", \"serviceType\": \"SERVICE_REQUEST\", \"feeType\": \"SERVICE_CHARGE\", \"amount\": 100, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"31\", \"communityHallCode\": \"NORTHSIDE_CREMATORIUM\", \"applicationType\": \"CREMATION_SERVICE\", \"serviceType\": \"SERVICE_REQUEST\", \"feeType\": \"CREMATION_FEE\", \"amount\": 400, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}, {\"id\": \"32\", \"communityHallCode\": \"NORTHSIDE_CREMATORIUM\", \"applicationType\": \"CREMATION_SERVICE\", \"serviceType\": \"SERVICE_REQUEST\", \"feeType\": \"SERVICE_CHARGE\", \"amount\": 80, \"taxApplicable\": true, \"calculationDurationType\": \"HOURLY\"}];",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");",
+							"var items = pm.globals.get(\"i\");",
+							"if (items < data.length){",
+							"    pm.globals.set(\"i\", Number(items) + 1);",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");",
+							"}else{",
+							"    pm.globals.set(\"i\", 0);",
+							"    postman.setNextRequest(null)",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null,\n            \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"\n        }\n    },\n    \"Mdms\": {\n        \"tenantId\": \"pg\",\n        \"schemaCode\": \"CHB.CalculationType\",\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/CHB.CalculationType",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"CHB.CalculationType"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

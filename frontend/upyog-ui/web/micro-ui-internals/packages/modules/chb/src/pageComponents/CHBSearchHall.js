@@ -12,7 +12,7 @@ import {
   Toast,
   InfoIcon,
   Card
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { addDays, startOfDay, endOfDay, format, differenceInCalendarDays } from 'date-fns';
 import ChbCommunityHallDetails from "../components/ChbCommunityHallDetails";
@@ -234,7 +234,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const checkboxColumn = {
     id: "selection",
     Header: ({ getToggleAllRowsSelectedProps }) => (
-      <div style={{ paddingLeft: '50px' }}>
+      <div className="chb-chbsearch-hall-spacing">
         <input
           type="checkbox"
           checked={bookingSlotDetails.length === data.length}
@@ -255,7 +255,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       </div>
     ),
     Cell: ({ row }) => (
-      <div style={{ paddingLeft: '50px' }}>
+      <div className="chb-chbsearch-hall-spacing">
         <input
           type="checkbox"
           checked={bookingSlotDetails.some(selectedRow => selectedRow.slotId === row.original.slotId)}
@@ -410,13 +410,13 @@ const handleBookClick = () => {
         <CardHeader>{`${t("CHB_SEARCH_COMMUNITY_HALL_HEADER")}`}/{`${t("CHB_PARK")}`}</CardHeader>
         <div>
           <CardLabel>{`${t("CHB_SELECT_HALL_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <div style={{ display: "flex", flexDirection: "row", gap: "10px"}}>
+          <div className="chb-chbsearch-hall-flex-container">
             <Controller
               control={control}
               name={"selectedHall"}
               defaultValue={selectedHall}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={selectedHall}
@@ -431,7 +431,7 @@ const handleBookClick = () => {
                 />
               )}
             />
-            <div onClick={handleViewReportClick} style={{ cursor: "pointer",display: "flex", marginTop:"10px"}}>
+            <div onClick={handleViewReportClick} className="chb-chbsearch-hall-clickable">
                <InfoIcon/>
             </div>
             {showDetails &&(
@@ -439,7 +439,7 @@ const handleBookClick = () => {
               )}
           </div>
           <div className="filter-label"><CardLabel>{`${t("CHB_SELECT_DATE")}`} <span className="check-page-link-button">*</span></CardLabel></div>
-          <div className="employee-select-wrap" style={{ width: "50%" }}>
+          <div className="employee-select-wrap chb-chbaddress-details-wrapper">
             <div className="select">
               <input
                 className="employee-select-wrap--elipses"
@@ -483,7 +483,7 @@ const handleBookClick = () => {
             name={"hallCode"}
             defaultValue={hallCode}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
                 selected={hallCode}
@@ -498,11 +498,11 @@ const handleBookClick = () => {
         </div>
         <div>
           <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-          <SubmitBar label={t("CHB_BOOK")} onSubmit={handleBookClick} style={{ margin: "20px" }} disabled={!isCheckboxSelected} />
+          <SubmitBar label={t("CHB_BOOK")} onSubmit={handleBookClick} className="chb-chbsearch-hall-spacing-2" disabled={!isCheckboxSelected} />
         </div>
       </FormStep>
       {showTable && ( // Only show table when showTable is true
-       <Card style={{ overflowX: 'auto'}}>
+       <Card className="chb-chbsearch-hall-card">
          <ApplicationTable
            t={t}
            data={data}

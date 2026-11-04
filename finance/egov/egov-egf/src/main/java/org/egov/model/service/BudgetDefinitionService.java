@@ -49,8 +49,8 @@ package org.egov.model.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -110,11 +110,11 @@ public class BudgetDefinitionService {
 	}
 
 	public List<Budget> findAll() {
-		return budgetDefinitionRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+		return budgetDefinitionRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 	public Budget findOne(final Long id) {
-		return budgetDefinitionRepository.findOne(id);
+		return budgetDefinitionRepository.findById(id).orElse(null);
 	}
 
 	public List<Budget> search(final BudgetDefinitionSearchRequest budgetDefinitionSearchRequest) {
@@ -176,7 +176,7 @@ public class BudgetDefinitionService {
 		String validationMessage = "";
 
 		if (budget.getParent() != null && budget.getParent().getId() != null && budget.getParent().getId() > 0) {
-			final Budget b = budgetDefinitionRepository.findOne(budget.getParent().getId());
+			final Budget b = budgetDefinitionRepository.findById(budget.getParent().getId()).orElse(null);
 			if (!b.getIsbere().equals(budget.getIsbere()))
 				validationMessage = messageSource.getMessage("budget.invalid.parent", new String[] { b.getName() },
 						null);
@@ -223,14 +223,14 @@ public class BudgetDefinitionService {
 	}
 
 	public Long getApproved(final Long financialYearId) {
-		return budgetDefinitionRepository.countByIdNotInAndStatusIdInAndFinancialYearIdIsAndIsbereIs(
+		return budgetDefinitionRepository.countByIdNotInAndStatusIdAndFinancialYearIdIsAndIsbereIs(
 				budgetDefinitionRepository.findParentBudget(), getBudgetApprovedStatus().getId(), financialYearId, RE);
 
 	}
 
 	public Long getVerified(final Long financialYearId) {
 		final List<Long> bb = budgetDetailService.getBudgetIdList();
-		return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIsAndIsbereIsAndIdIn(
+		return budgetDefinitionRepository.countByStatusIdAndFinancialYearIdIsAndIsbereIsAndIdIn(
 				getBudgetStatus("Created").getId(), financialYearId, RE, bb);
 
 	}
@@ -247,7 +247,7 @@ public class BudgetDefinitionService {
 
 	public Long getNotApprovedBudgetCount(final Long financialYearId) {
 		final List<Long> bb = budgetDefinitionRepository.findParentBudget();
-		return budgetDefinitionRepository.countByStatusIdNotInAndFinancialYearIdIsAndIsbereIsAndIdNotIn(
+		return budgetDefinitionRepository.countByStatusIdNotAndFinancialYearIdIsAndIsbereIsAndIdNotIn(
 				getBudgetStatus("Approved").getId(), financialYearId, RE, bb);
 	}
 

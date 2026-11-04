@@ -20,22 +20,19 @@
   background-color: transparent;
 }
 .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
-  border: 1px solid;
+  border: 1px solid #d4cde2;
   border-right: none;
-  height: 32px !important;
-  margin-top: -16px !important;
-  z-index: 999;
-  background-color:#ffffffeb;
+  height: 40px !important;
+  margin-top: 0 !important;
+  background-color: #f4f3f7;
 }
 @screen dt {
   .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
-    border: 1px solid black;
+    border: 1px solid #d4cde2;
     border-right: none;
-    height: 32px !important;
-    margin-top: -16px !important;
-    z-index: 999;
-    background-color: #ffffffeb;
-
+    height: 40px !important;
+    margin-top: 0 !important;
+    background-color: #f4f3f7;
   }
  .loginFormStyleEmployee .employeeCard, .banner .bannerCard{
     min-width: 270px !important;

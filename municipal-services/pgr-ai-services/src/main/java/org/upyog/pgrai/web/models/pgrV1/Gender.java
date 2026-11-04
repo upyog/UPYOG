@@ -38,7 +38,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.upyog.pgrai.web.models.pgrV1;
+package org.upyog.pgrai.web.models.pgrv1;
 
 /**
  * Represents the gender of a citizen in the system.

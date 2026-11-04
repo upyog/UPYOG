@@ -1,7 +1,7 @@
-import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from '@nudmcdgnpm/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar, PDFSvg, Menu, GenericFileIcon, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Confirmation from '../Modal/Confirmation';
 import { format } from "date-fns";
 import { openUploadedDocument } from '../../utils';
@@ -16,7 +16,7 @@ const DocumentDetails = () => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -26,7 +26,7 @@ const DocumentDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/sv-ui/employee/engagement/event/edit-event/${id}`)
+      navigate(`/sv-ui/employee/engagement/event/edit-event/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -36,22 +36,22 @@ const DocumentDetails = () => {
 
   const handleDelete = () => {
     const details = {
-        events: [
-          {
-            ...data?.applicationData,
-            status: "CANCELLED",
-          },
-        ],
-      };
-      history.push("/sv-ui/employee/engagement/event/response?delete=true", details);
+      events: [
+        {
+          ...data?.applicationData,
+          status: "CANCELLED",
+        },
+      ],
+    };
+    navigate("/sv-ui/employee/engagement/event/response?delete=true", details);
   };
 
   function onModalCancel() {
     setShowModal(false)
   }
- 
-  if(isLoading){
-    return <Loader/>
+
+  if (isLoading) {
+    return <Loader />
   }
 
   return (
@@ -69,7 +69,7 @@ const DocumentDetails = () => {
 
         : null}
       <Header>{t(`ES_TITLE_APPLICATION_DETAILS`)}</Header>
-  
+
       <div className="notice_and_circular_main gap-ten">
         <div className="documentDetails_wrapper">
           <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_ULB_LABEL")}:`}</p> <p>{getUlbName(data?.tenantId)}</p> </div>
@@ -80,11 +80,11 @@ const DocumentDetails = () => {
           <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_FROM_TIME_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.fromDate ? format(new Date(data?.applicationData?.eventDetails?.fromDate), 'HH:mm') : null}</p> </div>
           <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_TO_TIME_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.toDate ? format(new Date(data?.applicationData?.eventDetails?.toDate), 'HH:mm') : null}</p> </div>
           <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_ADDRESS_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.address ? data?.applicationData?.eventDetails?.address : null}</p> </div>
-          <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t( "EVENTS_MAP_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.latitude && data?.applicationData?.eventDetails?.longitude ?
-                Digit.Utils.getStaticMapUrl(data?.applicationData?.eventDetails?.latitude, data?.applicationData?.eventDetails?.longitude) :
-                'N/A' }</p> </div>
-          <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t( "EVENTS_ORGANIZER_NAME_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.organizer ? data?.applicationData?.eventDetails?.organizer : "-"}</p> </div>
-          <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t( "EVENTS_ENTRY_FEE_INR_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.fees ? data?.applicationData?.eventDetails?.fees: "NA"}</p> </div>  
+          <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_MAP_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.latitude && data?.applicationData?.eventDetails?.longitude ?
+            Digit.Utils.getStaticMapUrl(data?.applicationData?.eventDetails?.latitude, data?.applicationData?.eventDetails?.longitude) :
+            'N/A'}</p> </div>
+          <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_ORGANIZER_NAME_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.organizer ? data?.applicationData?.eventDetails?.organizer : "-"}</p> </div>
+          <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t("EVENTS_ENTRY_FEE_INR_LABEL")}:`}</p> <p>{data?.applicationData?.eventDetails?.fees ? data?.applicationData?.eventDetails?.fees : "NA"}</p> </div>
 
 
           {data?.applicationData?.eventDetails?.documents?.length ? <div className="documentDetails_pdf">

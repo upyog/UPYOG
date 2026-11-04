@@ -189,7 +189,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
       vendorId: null
     });
 
-     const createDependentObject = (dependent) => ({
+    const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -208,7 +208,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
       name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-});
+    });
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
@@ -236,8 +236,8 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
           createDependentObject(dep)
         );
         vendordetails = [
-            createVendorObject(formData?.owner?.vendorDetails),
-            createSpouseObject(formData?.owner?.spouseDetails),
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails),
           ...dependentPayload
         ];
       }
@@ -358,8 +358,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
         comments: "",
         businessService: "street-vending",
         moduleName: "sv-services",
-        businessService: "street-vending",
-        moduleName: "sv-services",
         varificationDocuments: [
           {
             additionalDetails: {},
@@ -457,7 +455,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
                 name={"ownerCategory"}
                 defaultValue={ownerCategory}
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                render={(props) => (
+                render={({ field }) => (
                   <Dropdown
                     className="form-field"
                     selected={ownerCategory}
@@ -537,7 +535,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
                     name={`beneficiary-${index}`}
                     // defaultValue={"-"}
                     rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-                    render={(props) => (
+                    render={({ field }) => (
                       <Dropdown
                         className="form-field"
                         selected={convertToObject(beneficiaryList[index]?.schemeName)}
@@ -565,7 +563,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
                     ValidationRequired={false}
                     {...(validation = {
                       isRequired: false,
-                      pattern: "^[a-zA-Z0-9-/ ]*$",
+                      pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                       type: "text",
                       title: t("SV_INPUT_DID_NOT_MATCH"),
                     })}

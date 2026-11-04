@@ -2,18 +2,19 @@ package org.egov.asset.repository.querybuilder;
 
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.web.models.disposal.AssetDisposalSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class AssetDisposalQueryBuilder {
 
-    @Autowired
-    private AssetConfiguration config;
+    private final AssetConfiguration config;
+
+    public AssetDisposalQueryBuilder(AssetConfiguration config) {
+        this.config = config;
+    }
 
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
@@ -45,9 +46,8 @@ public class AssetDisposalQueryBuilder {
             + "doc.docdetails "
             + "FROM eg_asset_disposal_details disposal "
             + LEFT_OUTER_JOIN_STRING + " eg_asset_disposal_documents doc ON disposal.disposal_id = doc.disposalid ";
-            //+ " AND doc.documenttype IN ('ASSET.DISPOSE.DOC1')";
 
-    private final String paginationWrapper = "SELECT * FROM " +
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
             "({}) result) result_offset WHERE offset_ > ? AND offset_ <= ?";
 
@@ -152,7 +152,7 @@ public class AssetDisposalQueryBuilder {
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, AssetDisposalSearchCriteria criteria) {
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
 
         if (criteria.getLimit() == null && criteria.getOffset() == null) {
             limit = config.getMaxSearchLimit();

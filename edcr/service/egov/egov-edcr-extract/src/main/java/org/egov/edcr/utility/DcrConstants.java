@@ -107,8 +107,9 @@ public class DcrConstants {
     public static final String SHORTESTDISTANCETOROAD = "Minimum distance from accessory block to road";
     public static final String ACCESSORRY_BLK_DIST_FRM_PLOT_BNDRY = "Accessory block %s distance from plot boundary";
 
-    // ----- names
-
+    /**
+     * EDCR string constants: layer tokens, plan-type keys, validation messages, and related labels.
+     */
     public static Integer FLOOR_COLOUR_CODE = 10;
 
     public static final int DECIMALDIGITS = 10;
@@ -179,6 +180,21 @@ public class DcrConstants {
     public static final String EDCR_DXF_PDF = "EDCR_DXF_PDF";
     public static final String DXF_PDF_CONVERSION_ENABLED = "DXF_PDF_CONVERSION_ENABLED";
 
+    /**
+     * App-config key for how DXF is turned into PDF during extract
+     *
+     * Stored in Digit DCR app config (EG_APPCONFIG table).
+     *
+     * When the value is YES (case-insensitive):
+     * - DxfToPdfConverterExtract uses MDMS DxfToPdfLayerConfig when MDMS is on and/or EDCR_DXF_PDF rules to build
+     *   many EdcrPdfDetail rows, runs sanitize, toggles layers per sheet, and may produce several PDFs — legacy behaviour.
+     *
+     * When the value is NO (case-insensitive):
+     * - One synthetic EdcrPdfDetail for the whole drawing, no sheet regex parsing, no sanitize; kabejaSinglePageDXFToPdf
+     *   turns on the tuned Kabeja path in DxfToPdfUnifiedConverter and DcrSvgGenerator.
+     */
+    public static final String DXF_TO_PDF_USE_LEGACY_LAYER_SHEETS = "DXF_TO_PDF_USE_LEGACY_LAYER_SHEETS";
+
     public static final String EXISTING = "Existing";
     public static final String PROPOSED = "Proposed";
 
@@ -196,4 +212,6 @@ public class DcrConstants {
     public static final String PORTICO_DISTANCETO_EXTERIORWALL = "Block %s Portico %s Portico distance to exteriorwall";
     public static final String PDF_EXT = "application/pdf";
 
+    /** App config value: KABEJA (default) or ASPOSE; read in DxfToPdfUnifiedConverter. */
+    public static final String DXF_TO_PDF_ENGINE = "DXF_TO_PDF_ENGINE";
 }

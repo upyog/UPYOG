@@ -1,4 +1,4 @@
-package org.upyog.pgrai.web.models.Idgen;
+package org.upyog.pgrai.web.models.idgen;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

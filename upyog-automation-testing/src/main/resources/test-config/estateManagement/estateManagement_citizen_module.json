@@ -1,0 +1,111 @@
+{
+  "moduleName": "estateManagement_citizen_module",
+  "description": "Estate Management Citizen workflow",
+  "baseUrl": "${selected.url}",
+  "instructions": [
+
+    {
+      "stepName": "Navigate to Estate Management module",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='${module.em.url}']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click New Request",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'My Application')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Enter Allotment Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='text'])[1]",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Search",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='Search']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Make Payment",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Make Payment')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Proceed To Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'proceed to pay')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Select ICICI",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='ICICI']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click UPYOG Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 4000
+    },
+    {
+      "stepName": "Open Cards Section",
+      "locatorStrategy": "ID",
+      "locatorValue": "nbAccordionBtn",
+      "action": "CLICK",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Test Bank",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='radio' and @value='Test Bank']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Pay Now",
+      "locatorStrategy": "ID",
+      "locatorValue": "paytBtn1",
+      "action": "CLICK",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter OTP",
+      "locatorStrategy": "ID",
+      "locatorValue": "otp",
+      "action": "TYPE",
+      "inputValue": "123456",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Verify OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@onclick='cardsubmit()']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Accept Transaction Alert",
+      "action": "ACCEPT_ALERT",
+      "dynamicSleep": 1000
+    }
+  ]
+}

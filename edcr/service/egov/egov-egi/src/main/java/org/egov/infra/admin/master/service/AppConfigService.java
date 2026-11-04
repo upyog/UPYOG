@@ -84,7 +84,7 @@ public class AppConfigService {
     }
 
     public Page<AppConfig> getAllAppConfig(AppConfigSearchRequest searchRequest) {
-        Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+        Pageable pageable = PageRequest.of(searchRequest.pageNumber(), searchRequest.pageSize(),
                 searchRequest.orderDir(), searchRequest.orderBy());
         return isBlank(searchRequest.getModuleName()) ? appConfigRepository.findAll(pageable) :
                 appConfigRepository.findByModuleName(searchRequest.getModuleName(), pageable);

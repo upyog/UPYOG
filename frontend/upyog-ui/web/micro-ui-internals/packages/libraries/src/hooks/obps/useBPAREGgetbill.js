@@ -1,27 +1,32 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useBPAREGgetbill = ({ tenantId, businessService, ...filters }, config = {}) => {
-    const queryClient = useQueryClient();
-    const params = { businessService, ...filters };
-  
-    const _tenantId = tenantId || Digit.UserService.getUser()?.info?.tenantId;
-  
-    const { isLoading, error, isError, data, status } = useQuery(
-      ["billsForBuisnessService", businessService, { ...filters }, config],
-      () => Digit.OBPSService.BPAREGGetBill(_tenantId, params),
-      {
-        retry: (count, err) => {
-          return false;
-        },
-        ...config,
-      }
-    );
-    return {
-      isLoading,
-      error,
-      isError,
-      data,
-      status,
-      revalidate: () => queryClient.invalidateQueries(["billsForBuisnessService", businessService]),
-    };
+  const client = useQueryClient();
+
+  const _tenantId =
+    tenantId || Digit.UserService.getUser()?.info?.tenantId;
+
+  const queryKey = [
+    "OBPS_BPA_REG_BILL",
+    _tenantId,
+    businessService,
+    JSON.stringify(filters),
+  ];
+
+  const query = queryTemplate({
+    queryKey,
+    queryFn: () =>
+      Digit.OBPSService.BPAREGGetBill(_tenantId, {
+        businessService,
+        ...filters,
+      }),
+    config: { retry: false, ...config },
+  });
+
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
   };
+};

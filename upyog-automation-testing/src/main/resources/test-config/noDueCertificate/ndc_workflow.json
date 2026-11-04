@@ -1,0 +1,19 @@
+{
+  "moduleName": "NO_DUE_CERTIFICATE",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "NO_DUE_CERTIFICATE"
+    },
+
+    {
+      "name": "Employee Flow",
+      "type": "EMPLOYEE",
+      "module": "NO_DUE_CERTIFICATE",
+      "role": "NDC_CEMP"
+    }
+  ]
+}

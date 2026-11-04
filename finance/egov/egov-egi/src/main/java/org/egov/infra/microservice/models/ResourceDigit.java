@@ -1,16 +1,16 @@
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class ResourceDigit {
-    @SafeHtml
+    @SanitizeHtml
     private String contentType;
-    @SafeHtml
+    @SanitizeHtml
     private String fileName;
     private org.springframework.core.io.Resource resource;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
-    @SafeHtml
+    @SanitizeHtml
     private String fileSize;
     public String getContentType() {
         return contentType;

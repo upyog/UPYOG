@@ -1,6 +1,6 @@
-import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+
 
 import { configWTApproverApplication } from "../config/WTApproverApplication";
 /*
@@ -104,7 +104,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectVehicle, setSelectVehicle] = useState(null);
   const [comment, setComment] = useState("");
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
 
   useEffect(() => {
@@ -194,7 +194,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             return; // Or handle as needed
         }
       
-        return history.push(`/upyog-ui/employee/payment/collect/${servicePath}/${applicationData.bookingNo}`);
+        return navigate(`/upyog-ui/employee/payment/collect/${servicePath}/${applicationData.bookingNo}`);
       }
       setConfig(
         configWTApproverApplication({
@@ -224,6 +224,20 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
+      popupStyles={{
+        maxHeight: "calc(100vh - 48px)",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+      popupModuleMianStyles={{
+        flex: "1 1 auto",
+        minHeight: 0,
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: "18px",
+      }}
       isDisabled={
         (action?.docUploadRequired && !uploadedFile && !comment) ||
         (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" && !selectedVendor && !comment) ||
@@ -231,20 +245,20 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         !comment
       }
     >
-       
-      <FormComposer
-        config={config.form}
-        noBoxShadow
-        inline
-        childrenAtTheBottom
-        onSubmit={submit}
-        defaultValues={defaultValues}
-        formId="modal-action"
-        onFormValueChange={(setValue, values) => {
-          setComment(values?.comments);
-        }}
-      />
-      
+      <div className="wt-action-modal-wrapper">
+        <FormComposer
+          config={config.form}
+          noBoxShadow
+          inline
+          childrenAtTheBottom
+          onSubmit={submit}
+          defaultValues={defaultValues}
+          formId="modal-action"
+          onFormValueChange={(setValue, values) => {
+            setComment(values?.comments);
+          }}
+        />
+      </div>
     </Modal>
   ) : (
     <Loader />

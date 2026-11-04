@@ -27,9 +27,9 @@
  * 
  */
 
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
-import { cardBodyStyle, stringReplaceAll } from "../utils";
+import { stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
 
 const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
@@ -58,7 +58,7 @@ const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
           <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
           <CardSubHeader>{t("PTR_DOC_REQ_SCREEN_LABEL")}</CardSubHeader>
           <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_LABEL_TEXT")}</CardText>
-          <CardText style={{color: 'red'}}>{t('PTR_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD')}</CardText>
+          <CardText className="ptr-ptrservice-doc-required-asterisk">{t('PTR_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD')}</CardText>
 
           <div>
             {isLoading && <Loader />}
@@ -78,7 +78,7 @@ const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
                         {index + 1}. {t(stringReplaceAll(code, ".", "_"))}
                       </CardSubHeader>
                       {dropdownData.map((dropdownData, dropdownIndex) => (
-                        <CardText className={"primaryColor"}>
+                        <CardText key={dropdownData?.code || dropdownIndex} className={"primaryColor"}>
                           {`${dropdownIndex + 1}`}. {t(stringReplaceAll(dropdownData?.code, ".", "_"))}
                         </CardText>
                       ))}

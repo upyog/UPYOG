@@ -12,17 +12,17 @@ import {
   SubmitBar,
   CardText,
   CitizenInfoLabel,
-} from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+} from "@nudmcdgnpm/digit-ui-react-components";
+
 import { useTranslation } from "react-i18next";
 import Timeline from "../../../components/TLTimelineInFSM";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   function routeTo() {
-    history.push(jumpTo);
+    navigate(jumpTo);
   }
 
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
@@ -30,7 +30,7 @@ const ActionButton = ({ jumpTo }) => {
 
 const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const { address, propertyID,  propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo, roadWidth, distancefromroad } = value;
 
@@ -165,7 +165,7 @@ const CheckPage = ({ onSubmit, value }) => {
       </Card>
       {propertyType && (
         <CitizenInfoLabel
-          style={{ marginTop: "8px", padding: "16px" }}
+          className="fsm-check-page-top-spacing"
           info={t("CS_FILE_APPLICATION_INFO_LABEL")}
           text={t("CS_FILE_APPLICATION_INFO_TEXT", { content: t("CS_DEFAULT_INFO_TEXT"), ...propertyType })}
         />

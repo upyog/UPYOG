@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse handleJsonParseException(HttpMessageNotReadableException ex) {
-        return buildErrorResponse("INVALID_JSON", "Malformed or incorrect JSON format", HttpStatus.BAD_REQUEST);
+        return buildErrorResponse("Malformed or incorrect JSON format", HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpClientErrorException.class)
     public ErrorResponse handleHttpClientErrorException(HttpClientErrorException ex) {
-        return buildErrorResponse("EXTERNAL_API_ERROR", "Client error from external service: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse("Client error from external service: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HttpServerErrorException.class)
     public ErrorResponse handleHttpServerErrorException(HttpServerErrorException ex) {
-        return buildErrorResponse("EXTERNAL_API_FAILURE", "Server error from external service: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildErrorResponse("Server error from external service: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(ResourceAccessException.class)
     public ErrorResponse handleResourceAccessException(ResourceAccessException ex) {
-        return buildErrorResponse("EXTERNAL_SERVICE_UNREACHABLE", "Could not connect to external service. Please try again later.", HttpStatus.SERVICE_UNAVAILABLE);
+        return buildErrorResponse("Could not connect to external service. Please try again later.", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     /**
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(UnknownHostException.class)
     public ErrorResponse handleUnknownHostException(UnknownHostException ex) {
-        return buildErrorResponse("SERVICE_UNAVAILABLE", "External service is unreachable or DNS resolution failed.", HttpStatus.SERVICE_UNAVAILABLE);
+        return buildErrorResponse("External service is unreachable or DNS resolution failed.", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     /**
@@ -113,19 +113,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        ErrorResponse errorResponse = buildErrorResponse("INTERNAL_SERVER_ERROR", "An unexpected error occurred. Please contact support.", HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorResponse errorResponse = buildErrorResponse("An unexpected error occurred. Please contact support.", HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Helper method to build ErrorResponse.
      *
-     * @param code    The error code.
      * @param message The error message.
      * @param status  The HttpStatus.
      * @return ErrorResponse object.
      */
-    private ErrorResponse buildErrorResponse(String code, String message, HttpStatus status) {
+    private ErrorResponse buildErrorResponse(String message, HttpStatus status) {
         Error error = new Error();
         error.setCode(status.value());
         error.setMessage(message);

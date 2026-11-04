@@ -17,70 +17,70 @@
         {
           Header: t("CHB_BOOKING_NO"),
           Cell: ({ row }) => {
+            const bookingNo = row?.original?.searchData?.["bookingNo"];
             return (
               <div>
                 <span className="link">
-                  
-                  <Link to={`${props.parentRoute}/application-details/` + `${row?.original?.searchData?.["bookingNo"]}`}>
-
-                    {row.original?.searchData?.["bookingNo"]}
+                  <Link to={`${props?.parentRoute}/application-details/` + `${bookingNo}`}>
+                    {bookingNo || t("CS_NA")}
                   </Link>
                 </span>
               </div>
             );
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["bookingNo"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["bookingNo"] || t("CS_NA")),
         },
         
         {
           Header: t("CHB_APPLICANT_NAME"),
-          Cell: ( row ) => {
-          
-            return GetCell(`${row?.cell?.row?.original?.searchData?.applicantDetail?.["applicantName"]}`)
-            
+          Cell: ({ row }) => {
+            const applicantName = row?.original?.searchData?.applicantDetail?.["applicantName"] || row?.cell?.row?.original?.searchData?.applicantDetail?.["applicantName"];
+            return GetCell(applicantName || t("CS_NA"));
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.applicantDetail?.["applicantName"]),
-          
+          mobileCell: (original) => GetMobCell(original?.searchData?.applicantDetail?.["applicantName"] || t("CS_NA")),
         },
         {
-          Header: t("CHB_COMMUNITY_HALL_NAME"),
+          Header: t("CHB_VENUE_NAME_LABEL"),
           Cell: ({ row }) => {
-            return GetCell(`${t(row.original?.searchData?.["communityHallCode"])}`);
-           
+            const hallOrVenueCode = row?.original?.searchData?.["venueCode"] || row?.original?.searchData?.["communityHallCode"];
+            return GetCell(hallOrVenueCode ? t(hallOrVenueCode) : t("CS_NA"));
           },
-          mobileCell: (original) => GetMobCell(`${t(original?.searchData?.["communityHallCode"])}`),
+          mobileCell: (original) => {
+            const hallOrVenueCode = original?.searchData?.["venueCode"] || original?.searchData?.["communityHallCode"];
+            return GetMobCell(hallOrVenueCode ? t(hallOrVenueCode) : t("CS_NA"));
+          },
         },
 
         {
           Header: t("CHB_BOOKING_DATE"),
           Cell: ({ row }) => {
-            return row?.original?.searchData?.bookingSlotDetails.length > 1 
-            ? GetCell(`${row?.original?.searchData?.bookingSlotDetails[0]?.["bookingDate"]}` + " - " + `${row?.original?.searchData?.bookingSlotDetails[row?.original?.searchData?.bookingSlotDetails.length-1]?.["bookingDate"]}`) 
-            : GetCell(`${row?.original?.searchData?.bookingSlotDetails[0]?.["bookingDate"]}`);
+            const slots = row?.original?.searchData?.bookingSlotDetails;
+            if (!slots || !slots.length) return GetCell(t("CS_NA"));
+            return slots.length > 1 
+              ? GetCell(`${slots[0]?.["bookingDate"]}` + " - " + `${slots[slots.length-1]?.["bookingDate"]}`) 
+              : GetCell(`${slots[0]?.["bookingDate"]}`);
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.bookingSlotDetails.length > 1 
-            ? GetCell(`${row?.original?.searchData?.bookingSlotDetails[0]?.["bookingDate"]}` + " - " + `${row?.original?.searchData?.bookingSlotDetails[row?.original?.searchData?.bookingSlotDetails.length-1]?.["bookingDate"]}`) 
-            : GetCell(`${row?.original?.searchData?.bookingSlotDetails[0]?.["bookingDate"]}`)),
+          mobileCell: (original) => {
+            const slots = original?.searchData?.bookingSlotDetails;
+            if (!slots || !slots.length) return GetMobCell(t("CS_NA"));
+            return slots.length > 1 
+              ? GetMobCell(`${slots[0]?.["bookingDate"]}` + " - " + `${slots[slots.length-1]?.["bookingDate"]}`) 
+              : GetMobCell(`${slots[0]?.["bookingDate"]}`);
+          },
         },
 
-        
         {
           Header: t("CHB_STATUS"),
           Cell: ({ row }) => {
-            
-            const wf = row.original?.workflowData;
-            return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
-
-
+            const status = row?.original?.workflowData?.state?.["applicationStatus"] || row?.original?.searchData?.["bookingStatus"];
+            return GetCell(status ? t(status) : t("CS_NA"));
           },
-          mobileCell: (original) => GetMobCell(t(`ES_CHB_COMMON_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
-        
-
+          mobileCell: (original) => {
+            const status = original?.workflowData?.state?.["applicationStatus"] || original?.searchData?.["bookingStatus"];
+            return GetMobCell(status ? t(`ES_CHB_COMMON_STATUS_${status}`) || t(status) : t("CS_NA"));
+          },
         },
-        
       ],
-      serviceRequestIdKey: (original) => original?.[t("CHB_INBOX_UNIQUE_BOOKING_NO")]?.props?.children,
-
-      
+      serviceRequestIdKey: (original) => original?.searchData?.["bookingNo"] || original?.[t("CHB_INBOX_UNIQUE_BOOKING_NO")]?.props?.children,
     },
   });

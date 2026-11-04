@@ -1,12 +1,18 @@
-import get from "lodash/get";
+// Before: mixed require() and import, missing .js extensions on local imports
+// Change: replaced require() with ESM import, added .js extensions for Node 22 ESM compatibility
+
+import get from "lodash.get";
 import axios from "axios";
 import {
   getLocalisationkey,
   findLocalisation,
   getDateInRequiredFormat,
   getValue
-} from "./commons";
-import logger from "../config/logger";
+} from "./commons.js";
+import logger from "../config/logger.js";
+
+import jp from "jsonpath";
+
 /**
  *
  * @param {*} key -name of the key used to identify module configs. Provided request URL
@@ -32,7 +38,6 @@ export const externalAPIMapping = async function (
   requestInfo,
   unregisteredLocalisationCodes
 ) {
-  var jp = require("jsonpath");
   var objectOfExternalAPI = getValue(
     jp.query(dataconfig, "$.DataConfigs.mappings.*.mappings.*.externalAPI.*"),
     [],
@@ -185,9 +190,27 @@ export const externalAPIMapping = async function (
     responsePromises.push(resPromise)
   }
 
-  responses = await Promise.all(responsePromises)
+  responses = await Promise.all(responsePromises);
+
   for (let i = 0; i < externalAPIArray.length; i++) {
-    var res = responses[i].data
+  let res = responses[i]?.data;
+
+  /*
+ * API responses may come as either a string or an object.
+ * If the response is a string, parse it to JSON so downstream processing (jp.query) can read values correctly.
+ * If already an object, continue normally.
+ * Catch and log parsing errors safely without breaking execution.
+ */
+  try {
+    if (typeof res === "string") {
+      res = JSON.parse(res);
+      logger.info("Parsed string response to JSON object");
+    }
+  } catch (err) {
+    logger.error("Failed to process API response");
+    logger.error(err.stack || err);
+  }
+
 
     //putting required data from external API call in format config
 

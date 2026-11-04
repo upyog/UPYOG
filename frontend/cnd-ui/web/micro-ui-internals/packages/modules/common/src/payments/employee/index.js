@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouteMatch, Switch, Route, Link } from "react-router-dom";
+import { Route, Link, Routes, useLocation } from "react-router-dom";
 import { CollectPayment } from "./payment-collect";
 import { SuccessfulPayment, FailedPayment } from "./response";
 import { testForm } from "../../hoc/testForm-config";
@@ -10,7 +10,10 @@ subFormRegistry?.addSubForm("testForm", testForm);
 
 const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   const userType = "employee";
-  const { path: currentPath } = useRouteMatch();
+  const { path: currentPath } = Digit.Hooks.useModuleBasePath();
+  const { pathname } = useLocation();
+  const parts = pathname.split("/").filter(Boolean);
+  const employeeHomePath = parts.length >= 2 ? `/${parts[0]}/${parts[1]}` : "/cnd-ui/employee";
 
   const { t } = useTranslation();
 
@@ -21,19 +24,13 @@ const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   return (
     <React.Fragment>
       <p className="breadcrumb" style={{ marginLeft: "15px" }}>
-        <Link to={`/sv-ui/employee`}>{t("ES_COMMON_HOME")}</Link>
+        <Link to={employeeHomePath}>{t("ES_COMMON_HOME")}</Link>
       </p>
-      <Switch>
-        <Route path={`${currentPath}/collect/:businessService/:consumerCode`}>
-          <CollectPayment {...commonProps} basePath={currentPath} />
-        </Route>
-        <Route path={`${currentPath}/success/:businessService/:receiptNumber/:consumerCode`}>
-          <SuccessfulPayment {...commonProps} />
-        </Route>
-        <Route path={`${currentPath}/failure`}>
-          <FailedPayment {...commonProps} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="collect/:businessService/:consumerCode" element={<CollectPayment {...commonProps} basePath={currentPath} />} />
+        <Route path="success/:businessService/:receiptNumber/:consumerCode" element={<SuccessfulPayment {...commonProps} />} />
+        <Route path="failure" element={<FailedPayment {...commonProps} />} />
+      </Routes>
     </React.Fragment>
   );
 };

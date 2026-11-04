@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import Filter from "./Filter";
 import Search from "./Search";
 import { areEqual } from "../../utils";
-import { useHistory } from "react-router-dom";
 
 const ApplicationCard = ({
   searchFields,
@@ -18,7 +17,7 @@ const ApplicationCard = ({
   const [popup, setPopup] = useState(false);
   const [params, setParams] = useState(searchParams);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory()
+  const navigate = Digit.Hooks.useCustomNavigate();
   useEffect(() => {
     if (type) setPopup(true);
   }, [type]);
@@ -35,11 +34,11 @@ const ApplicationCard = ({
   let result;
   if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="eng-application-card-card">
         {t("ES_NO_EVENTS")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="eng-application-card-centered">
               {text}
             </p>
           ))}

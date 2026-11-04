@@ -119,7 +119,8 @@ module.exports = function (app) {
     "/individual/v1/_search",
     "/bpa-services/v1/preapprovedplan/_search",
     "/bpa-calculator/_estimate",
-    "/requester-services-dx/eSign/filestoreId/v1/_search"
+    "/requester-services-dx/eSign/filestoreId/v1/_search",
+    "/requester-services-dx/eSign/process"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

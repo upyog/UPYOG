@@ -84,7 +84,7 @@ import org.displaytag.model.TableModel;
 import org.displaytag.util.TagConstants;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -162,42 +162,49 @@ public class EGovPdfView implements BinaryExportView {
 
 	}
 
-	protected void generatePDFTable() throws JspException, BadElementException {
-		if (this.header) {
-			generateCaption();
-			generateHeaders();
+	protected void generatePDFTable() throws BadElementException, PdfGenerationException {
+		try {
+			if (this.header) {
+				generateCaption();
+				generateHeaders();
+			}
+			this.tablePDF.endHeaders();
+			generateRows();
+		} catch (Exception e) {
+			throw new PdfGenerationException(e);
 		}
-		this.tablePDF.endHeaders();
-		generateRows();
-
 	}
 
 	/**
 	 * Generates all the row cells.
-	 * @throws JspException for errors during value retrieving from the table model
 	 * @throws BadElementException errors while generating content
+	 * @throws PdfGenerationException wraps any exception during row generation
 	 */
-	protected void generateRows() throws JspException, BadElementException {
-		// get the correct iterator (full or partial list according to the exportFull field)
-		final RowIterator rowIterator = this.model.getRowIterator(this.exportFull);
-		// iterator on rows
-		while (rowIterator.hasNext()) {
-			final Row row = rowIterator.next();
+	protected void generateRows() throws BadElementException, PdfGenerationException {
+		try {
+			// get the correct iterator (full or partial list according to the exportFull field)
+			final RowIterator rowIterator = this.model.getRowIterator(this.exportFull);
+			// iterator on rows
+			while (rowIterator.hasNext()) {
+				final Row row = rowIterator.next();
 
-			// iterator on columns
-			final ColumnIterator columnIterator = row.getColumnIterator(this.model.getHeaderCellList());
+				// iterator on columns
+				final ColumnIterator columnIterator = row.getColumnIterator(this.model.getHeaderCellList());
 
-			while (columnIterator.hasNext()) {
-				final Column column = columnIterator.nextColumn();
+				while (columnIterator.hasNext()) {
+					final Column column = columnIterator.nextColumn();
 
-				// Get the value to be displayed for the column
-				final Object value = column.getValue(this.decorated);
-				final Cell cell = getCell(ObjectUtils.toString(value));
-				if (value instanceof BigDecimal) {
-					cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					// Get the value to be displayed for the column
+					final Object value = column.getValue(this.decorated);
+					final Cell cell = getCell(ObjectUtils.toString(value));
+					if (value instanceof BigDecimal) {
+						cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+					}
+					this.tablePDF.addCell(cell);
 				}
-				this.tablePDF.addCell(cell);
 			}
+		} catch (Exception e) {
+			throw new PdfGenerationException(e);
 		}
 	}
 
@@ -233,7 +240,7 @@ public class EGovPdfView implements BinaryExportView {
 	}
 
 	@Override
-	public void doExport(final OutputStream out) throws JspException {
+	public void doExport(final OutputStream out) throws IOException, PdfGenerationException {
 
 		try {
 			// Initialize the table with the appropriate number of columns

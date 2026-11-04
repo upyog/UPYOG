@@ -1,6 +1,5 @@
-import React,{useState,useEffect} from "react";
-import { Modal, Card,SubmitBar, CheckBox} from "@nudmcdgnpm/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Modal, Card, SubmitBar, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import { demandPayloadData } from "../utils";
 
 const Close = () => (
@@ -19,8 +18,6 @@ const CloseBtn = (props) => {
 };
 
 /**
- * @author - Shivank - NIUA
- * @modified - Khalid Rashid - NIUA
  *  Developed for renew feature , when click on renew button this pop-up will render and 
  * show two buttons, Proceed with payment and Proceed with editing application 
  * and then the user can redirected accordingly
@@ -31,14 +28,14 @@ const CloseBtn = (props) => {
 
 const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
     const mutation = Digit.Hooks.sv.useCreateDemand();
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
 
     const Heading = (props) => {
         return <h1 className="heading-m">{props.label}</h1>;
     };
 
     const proceedWithApplication = () => {
-        history.push(`renew-application/info`)
+        navigate(`/sv-ui/citizen/sv/renew-application/info`)
     }
 
 
@@ -53,33 +50,33 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
                 name: err.name
             });
         }
-        history.push("renew-application/check/makePayment");
+        navigate("/sv-ui/citizen/sv/renew-application/check/makePayment");
     }
 
     return (
         <React.Fragment>
-        <Modal
-            headerBarMain={<Heading label={t("SV_WANT_TO_EDIT")}/>}
-            headerBarEnd={<CloseBtn onClick={closeModal} />}
-            actionCancelLabel={t("CS_COMMON_BACK")}
-            actionCancelOnSubmit={closeModal}
-            hideSubmit={true}
-            formId="modal-action"
-        >
-            <Card style={{ boxShadow: "none" }}>
-            <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '20px', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                }}>
-                {<SubmitBar label={t("SV_YES_PROCEED_WITH_APPLICATION")} onSubmit={proceedWithApplication} />}
-                {<SubmitBar label={t("SV_NO_PROCEED_PAYEMNT")} onSubmit={onRedirectedToCheckPage} />}
-            </div>
-            </Card>
-        </Modal>
-    </React.Fragment>
+            <Modal
+                headerBarMain={<Heading label={t("SV_WANT_TO_EDIT")} />}
+                headerBarEnd={<CloseBtn onClick={closeModal} />}
+                actionCancelLabel={t("CS_COMMON_BACK")}
+                actionCancelOnSubmit={closeModal}
+                hideSubmit={true}
+                formId="modal-action"
+            >
+                <Card style={{ boxShadow: "none" }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '20px',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}>
+                        {<SubmitBar label={t("SV_YES_PROCEED_WITH_APPLICATION")} onSubmit={proceedWithApplication} />}
+                        {<SubmitBar label={t("SV_NO_PROCEED_PAYEMNT")} onSubmit={onRedirectedToCheckPage} />}
+                    </div>
+                </Card>
+            </Modal>
+        </React.Fragment>
     );
 };
 export default RenewPopup;

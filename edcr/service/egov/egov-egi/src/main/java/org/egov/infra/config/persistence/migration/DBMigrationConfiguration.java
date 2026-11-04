@@ -66,6 +66,16 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
+/**
+ * Flyway database migration configuration.
+ *
+ * <p>Uses Flyway 9.22.3 for schema migrations across tenant, main, sample, and
+ * statewide migration paths. Migration runs at application startup when
+ * {@code db.migration.enabled=true} (also set in the Docker CMD).</p>
+ *
+ * <p>The {@code flyway} bean is declared with {@code @DependsOn} so JPA entity manager
+ * factory initialization waits until migrations complete.</p>
+ */
 @Configuration
 public class DBMigrationConfiguration {
 

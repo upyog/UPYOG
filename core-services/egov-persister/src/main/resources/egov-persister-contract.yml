@@ -1,0 +1,101 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: eGov Persister Service
+  description: |
+    Kafka-to-PostgreSQL persistence engine driven by persister YAML definitions.
+
+    This service is event-driven and does not expose domain REST APIs. It consumes
+    Kafka messages mapped through persister YAML files and executes the configured
+    SQL operations against PostgreSQL. Failed messages are published to the
+    `egov-persister-deadletter` topic when tracer error publishing is enabled.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /common-persist
+x-api-id: org.egov.infra.persist
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Spring Actuator health endpoint for service liveness monitoring.
+      responses:
+        '200':
+          description: Service is healthy
+          schema:
+            $ref: '#/definitions/HealthResponse'
+      tags:
+        - Health
+  /info:
+    get:
+      summary: Service info
+      description: Returns build and application metadata from Spring Actuator.
+      responses:
+        '200':
+          description: Service metadata retrieved successfully
+          schema:
+            type: object
+      tags:
+        - Health
+definitions:
+  HealthResponse:
+    type: object
+    description: Standard Spring Actuator health response
+    properties:
+      status:
+        type: string
+        example: UP
+  ServiceMaps:
+    type: object
+    description: Persister YAML mapping definition loaded from configured repository path
+    properties:
+      serviceName:
+        type: string
+        description: Name of the service whose events are persisted
+      mappings:
+        type: array
+        description: Topic-to-query mappings for this service
+        items:
+          $ref: '#/definitions/Mapping'
+  Mapping:
+    type: object
+    description: Kafka topic mapping to one or more SQL query definitions
+    properties:
+      topic:
+        type: string
+        description: Kafka topic consumed by egov-persister
+      queries:
+        type: array
+        description: SQL query definitions executed for messages on this topic
+        items:
+          $ref: '#/definitions/QueryMap'
+  QueryMap:
+    type: object
+    description: SQL query definition executed against PostgreSQL
+    properties:
+      query:
+        type: string
+        description: SQL statement or named query reference
+      basePath:
+        type: string
+        description: JSON path to the root object in the Kafka payload
+      jsonMaps:
+        type: array
+        description: JSON path to SQL parameter mappings
+        items:
+          type: object
+  PersistEvent:
+    type: object
+    description: |
+      Generic Kafka persistence event consumed by egov-persister. Actual payload
+      shape is defined per topic in persister YAML files such as persister.yml,
+      egov-pg-service-persister.yml, and upyog-draft-persister.yml.
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      additionalProperties:
+        type: object
+        description: Domain payload fields mapped by persister YAML definitions

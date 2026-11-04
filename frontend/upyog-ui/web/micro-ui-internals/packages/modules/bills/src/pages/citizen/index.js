@@ -1,26 +1,30 @@
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Inbox from "../../pages/citizen/SearchBill/Inbox";
 import { useTranslation } from "react-i18next";
 
 const App = () => {
-  const { path, url, ...match } = useRouteMatch();
+  const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
   const inboxInitialState = {
     searchParams: {},
   };
   return (
     <span className={"bill-citizen"}>
-      <Switch>
-        <AppContainer>
-          <BackButton>Back</BackButton>
-          <PrivateRoute
-            path={`${path}/billSearch`}
-            component={(props) => <Inbox filterComponent="CITIZEN_SEARCH_FILTER" initialStates={inboxInitialState} isInbox={true} />}
+      <AppContainer>
+        <BackButton>Back</BackButton>
+        <Routes>
+          <Route
+            path={`/billSearch`}
+            element={
+              <PrivateRoute>
+                <Inbox filterComponent="CITIZEN_SEARCH_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              </PrivateRoute>
+            }
           />
-        </AppContainer>
-      </Switch>
+        </Routes>
+      </AppContainer>
     </span>
   );
 };

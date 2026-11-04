@@ -1,4 +1,4 @@
-import { Header, Localities, Toast } from "@upyog/digit-ui-react-components";
+import { Header, Localities, Toast, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import PropertyType  from "../../utils/PropertyType";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -177,34 +177,39 @@ const Search = () => {
     }
   },[searchBy])
   const onSubmit = useCallback((_data) => {
-    console.log("_data",_data)
-    if(Object.keys(_data).includes("propertyType"))
-    {
+    console.log("_data", _data);
+    if (searchBy === "defaulterNotice") {
       setFormData(_data);
-      console.log("_data2",payload)
-      setPayload({locality:_data.locality.code, propertyType:_data.propertyType.code})
-      console.log("_data3",payload)
+      setPayload({
+        locality: _data.locality?.code || _data.locality,
+        propertyType: _data.propertyType?.code || _data.propertyType,
+        searchBy: "defaulterNotice"
+      });
+      setShowToast(null);
     }
     else {
       setFormData(_data);   
-      console.log("_data5",formData)  
-      if (Object.keys(_data).filter((k) => _data[k] && typeof _data[k] !== "object")) {
+      const keys = Object.keys(_data).filter((k) => _data[k] && k !== "propertyType");
+      if (keys.length > 0) {
         setPayload(
-          Object.keys(_data)
-            .filter((k) => _data[k])
-            .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" ? _data[key].code : _data[key] }), {})
+          keys.reduce((acc, key) => ({
+            ...acc,
+            [key]: typeof _data[key] === "object" ? _data[key].code : _data[key],
+            searchBy
+          }), {})
         );
-        console.log("_data4",payload)
         setShowToast(null);
       } else {
         setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       }
     }
-  
-  });
+  }, [searchBy]);
   return (
-    <React.Fragment>
-      <Header>{t("SEARCH_PROPERTY")}</Header>
+    <div className="pt-search-page-wrapper">
+      <Header className="pt-search-header">{t("SEARCH_PROPERTY")}</Header>
+      <Card className={"card-search-heading"}>
+        <span className="pt-search-application-card-grey-text">{t("PT_PROVIDE_ONE_PARAM_TO_SEARCH", "Provide at least one parameter to search for a property")}</span>
+      </Card>
       <SearchComponent
         t={t}
         payload={formData}
@@ -216,9 +221,9 @@ const Search = () => {
         onReset={onReset}
       />
       
-      {Object.keys(payload).includes("propertyType") ?
+      {payload.searchBy === "defaulterNotice" ? (
       <SearchPTIDPropComponent t={t} showToast={showToast} setShowToast={setShowToast} tenantId={tenantId} payload={payload} ptSearchConfig={{...ptSearchConfig}} />
-      : Object.keys(payload).length > 0 ? (
+      ) : Object.keys(payload).length > 0 ? (
         <SearchResultComponent t={t} showToast={showToast} setShowToast={setShowToast} tenantId={tenantId} payload={payload} ptSearchConfig={{...ptSearchConfig}} />
       ):""}
       {showToast && (
@@ -231,7 +236,7 @@ const Search = () => {
           }}
         />
       )}
-    </React.Fragment>
+    </div>
   );
 };
 

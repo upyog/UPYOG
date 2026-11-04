@@ -1,0 +1,380 @@
+{
+  "moduleName": "advertisement_citizen_module",
+  "description": "Advertisement citizen full UI workflow",
+  "baseUrl": "${selected.url}",
+  "instructions": [
+
+    {
+      "stepName": "Open Advertisement Home",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/citizen/ads-home']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Open Advertisement Booking",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/ads/bookad')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Select Category",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Advertisement Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:1",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Location",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "2:5",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Set From Date",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='date']",
+      "action": "SET_DATE_TODAY",
+      "inputValue": "0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Set To Date",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='date']",
+      "action": "SET_DATE_TODAY",
+      "inputValue": "1",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Select Night Light Yes",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[normalize-space()='Yes']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Click Search",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Search')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Select First Available Site",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//tr[td[contains(.,'Available')]]//input[@type='checkbox'])[1]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Add To Cart",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Add to Cart')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "View Cart",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'View Cart')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Book Now",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Book Now')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Fill New Details",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Fill New Details')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Address Page Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Applicant Name",
+      "locatorStrategy": "NAME",
+      "locatorValue": "applicantName",
+      "action": "TYPE",
+      "inputValue": "${applicant.name}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Applicant Email",
+      "locatorStrategy": "NAME",
+      "locatorValue": "emailId",
+      "action": "TYPE",
+      "inputValue": "${applicant.email}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Applicant Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "House Number",
+      "locatorStrategy": "NAME",
+      "locatorValue": "houseNo",
+      "action": "TYPE",
+      "inputValue": "${house.number}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "House Name",
+      "locatorStrategy": "NAME",
+      "locatorValue": "houseName",
+      "action": "TYPE",
+      "inputValue": "${house.name}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Street Name",
+      "locatorStrategy": "NAME",
+      "locatorValue": "streetName",
+      "action": "TYPE",
+      "inputValue":"${street.name}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Address Line 1",
+      "locatorStrategy": "NAME",
+      "locatorValue": "addressline1",
+      "action": "TYPE",
+      "inputValue": "${address.line1}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Address Line 2",
+      "locatorStrategy": "NAME",
+      "locatorValue": "addressline2",
+      "action": "TYPE",
+      "inputValue": "${address.line2}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Landmark",
+      "locatorStrategy": "NAME",
+      "locatorValue": "landmark",
+      "action": "TYPE",
+      "inputValue": "${address.landmark}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Select City Dropdown",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Locality Dropdown",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Pincode",
+      "locatorStrategy": "NAME",
+      "locatorValue": "pincode",
+      "action": "TYPE",
+      "inputValue": "${address.pincode}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Address Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Sample Document Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Sample Document",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Address Proof Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Address Proof",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[2]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Identity Proof Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "2:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Identity Proof",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[3]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Documents Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Accept Declaration",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox']",
+      "action": "CHECK_LAST_CHECKBOX",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Submit Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Submit')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Booking No.') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
+    },
+    {
+      "stepName": "Click Make Payment",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'make payment')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Click Proceed To Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'proceed to pay')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Select ICICI",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='ICICI']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click UPYOG Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 4000
+    },
+    {
+      "stepName": "Open Cards Section",
+      "locatorStrategy": "ID",
+      "locatorValue": "nbAccordionBtn",
+      "action": "CLICK",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Test Bank",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='radio' and @value='Test Bank']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Pay Now",
+      "locatorStrategy": "ID",
+      "locatorValue": "paytBtn1",
+      "action": "CLICK",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter OTP",
+      "locatorStrategy": "ID",
+      "locatorValue": "otp",
+      "action": "TYPE",
+      "inputValue": "123456",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Verify OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@onclick='cardsubmit()']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Accept Transaction Alert",
+      "action": "ACCEPT_ALERT",
+      "dynamicSleep": 1000
+    }
+  ]
+}

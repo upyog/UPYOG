@@ -48,13 +48,13 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Fundsource;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -81,7 +81,7 @@ public class FundSourceHibernateDAO {
     }
 
     public List<Fundsource> findAll() {
-        return (List<Fundsource>) getCurrentSession().createCriteria(Fundsource.class).list();
+        return getCurrentSession().createQuery("from Fundsource", Fundsource.class).list();
     }
 
     @PersistenceContext
@@ -104,7 +104,7 @@ public class FundSourceHibernateDAO {
 
     public Fundsource getFundSourceByCode(final String code) {
         final Query query = getCurrentSession().createQuery("from Fundsource f where f.code=:code");
-        query.setString("code", code);
+        query.setParameter("code", code);
         return (Fundsource) query.uniqueResult();
     }
 }

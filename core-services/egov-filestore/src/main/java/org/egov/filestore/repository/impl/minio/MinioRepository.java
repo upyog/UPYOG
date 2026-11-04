@@ -91,8 +91,8 @@ public class MinioRepository implements CloudFilesManager {
 			PutObjectArgs.Builder putObjectArgsBuilder = PutObjectArgs.builder()
 					.bucket(minioConfig.getBucketName())
 					.object(fileNameWithPath)
-					.stream(is, fileSize, -1) // Set part size to -1 for auto detection
-					.contentType(multipartFile.getContentType()); // Change this as per your file's content type
+					.stream(is, contentLength, 10 * 1024 * 1024) // 10MB part size
+                	.contentType(multipartFile.getContentType() != null ? multipartFile.getContentType() : "application/octet-stream");
 
 			// If the file is larger than 5 MB, set the part size explicitly (5 * 1024 * 1024 bytes)
 			/*if (fileSize > 5 * 1024 * 1024) {

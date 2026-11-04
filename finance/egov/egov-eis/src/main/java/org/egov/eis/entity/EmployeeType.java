@@ -50,19 +50,19 @@ package org.egov.eis.entity;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 
 import static org.egov.eis.entity.EmployeeType.SEQ_EMPLOYEETYPE;
 
@@ -73,7 +73,7 @@ public class EmployeeType extends AbstractAuditable {
 
     public static final String SEQ_EMPLOYEETYPE = "SEQ_EGEIS_EMPLOYEETYPE";
     private static final long serialVersionUID = 747671541670667791L;
-    @SafeHtml
+    @SanitizeHtml
     @Column(name = "name", unique = true)
     @Pattern(regexp = Constants.ALPHABETS)
     public String name;

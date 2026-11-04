@@ -81,6 +81,23 @@ public class NotificationUtil {
         return message;
     }
 
+    public String getCustomizedMsgByNotificationType(String notificationType, String status, String localizationMessage) {
+        StringBuilder notificationCode = new StringBuilder();
+        notificationCode.append(notificationType).append("_").append(status);
+        String path = "$..messages[?(@.code==\"{}\")].message";
+        path = path.replace("{}", notificationCode);
+        String message = null;
+        try {
+            ArrayList<String> messageObj = (ArrayList<String>) JsonPath.parse(localizationMessage).read(path);
+            if(messageObj != null && messageObj.size() > 0) {
+                message = messageObj.get(0);
+            }
+        } catch (Exception e) {
+            log.warn("Fetching from localization failed", e);
+        }
+        return message;
+    }
+
     /**
      * Send the SMSRequest on the SMSNotification kafka topic
      * @param smsRequestList The list of SMSRequest to be sent

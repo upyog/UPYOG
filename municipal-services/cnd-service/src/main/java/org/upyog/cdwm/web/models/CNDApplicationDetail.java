@@ -59,7 +59,7 @@ public class CNDApplicationDetail {
     @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate requestedPickupDate;
 
-    //TODO: Convert to enum
+  // Kept as String to align with workflow status codes from the external workflow service.
     private String applicationStatus;
 
     AuditDetails auditDetails;

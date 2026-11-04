@@ -48,12 +48,12 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.EgActiondetails;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,24 +69,24 @@ public class EgActiondetailsHibernateDAO  {
 
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final String moduleId, final ArrayList<String> actionType, final String moduleType) {
 		final Query qry = getCurrentSession().createQuery("from EgActiondetails ad where ad.moduleid =:moduleId and ad.actiontype in (:actionType) and ad.moduletype=:moduleType order by lastmodifieddate");
-		qry.setString("moduleId", moduleId);
+		qry.setParameter("moduleId", moduleId);
 		qry.setParameterList("actionType", actionType);
-		qry.setString("moduleType", moduleType);
+		qry.setParameter("moduleType", moduleType);
 		return qry.list();
 	}
 
 	public EgActiondetails getEgActiondetailsByWorksdetailId(final String moduleId, final String actionType, final String moduleType) {
 		final Query qry = getCurrentSession().createQuery("from EgActiondetails ad where ad.moduleid =:moduleId and ad.actiontype =:actionType and ad.moduletype=:moduleType order by lastmodifieddate");
-		qry.setString("moduleId", moduleId);
-		qry.setString("actionType", actionType);
-		qry.setString("moduleType", moduleType);
+		qry.setParameter("moduleId", moduleId);
+		qry.setParameter("actionType", actionType);
+		qry.setParameter("moduleType", moduleType);
 		return (EgActiondetails) qry.uniqueResult();
 	}
 
 	public List<EgActiondetails> getEgActiondetailsFilterBy(final ArrayList<String> actionType, final String moduleType) {
 		final Query qry = getCurrentSession().createQuery("from EgActiondetails ad where ad.actiontype in (:actionType) and ad.moduletype=:moduleType order by lastmodifieddate");
 		qry.setParameterList("actionType", actionType);
-		qry.setString("moduleType", moduleType);
+		qry.setParameter("moduleType", moduleType);
 		return qry.list();
 	}
 }

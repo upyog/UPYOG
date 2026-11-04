@@ -52,7 +52,6 @@ package org.egov.egf.web.actions.report;
 
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,10 +101,11 @@ import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
+
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -196,7 +196,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @Action(value = "/report/billRegisterReport-newform")
     public String newform() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         isCompleteBillRegisterReport = false;
         loadDropdownData();
         toDate = fromDate = null;
@@ -210,7 +210,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @Action(value = "/report/billRegisterReport-searchform")
     public String searchform() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         isCompleteBillRegisterReport = true;
         loadDropdownData();
         toDate = fromDate = null;
@@ -225,7 +225,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @ValidationErrorPage(value = "new")
     public String list() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | list | start");
         setPageSize(50);
@@ -253,13 +253,18 @@ public class BillRegisterReportAction extends SearchFormAction {
 			pageNum = 1;
 		}
 		
-		Query query = persistenceService.getSession().createSQLQuery(mainQuery);
+		Query query = persistenceService.getSession().createNativeQuery(mainQuery);
 		persistenceService.populateQueryWithParams(query, params);
-		final Page resultPage = new Page(query, pageNum, pageSize);
+		final Page resultPage = new Page((org.hibernate.query.Query) query, pageNum, pageSize);
 
-		Query countQuery = persistenceService.getSession().createSQLQuery(countQry);
+		Query countQuery = persistenceService.getSession().createNativeQuery(countQry);
 		persistenceService.populateQueryWithParams(countQuery, params);
-		final int searchCount = ((BigInteger) countQuery.uniqueResult()).intValue();
+		/*
+		 * LTS / Hibernate 6 + PostgreSQL: count(*) used to come back as BigInteger;
+		 * newer drivers return Long. Accept any Number.
+		 */
+		final Number countResult = (Number) countQuery.uniqueResult();
+		final int searchCount = countResult == null ? 0 : countResult.intValue();
 
 		this.searchResult = new EgovPaginatedList(resultPage, searchCount, getSort(),
 				SortOrderEnum.fromName(getSortDir()));
@@ -270,7 +275,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @Action(value = "/report/billRegisterReport-billSearch")
     public String billSearch() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | completeBill | start");
         isCompleteBillRegisterReport = true;
@@ -364,7 +369,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                         final Query qry = persistenceService.getSession().createQuery(
                                                 "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
                                                 " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId());
                                         qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
@@ -397,7 +402,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                         final Query qry = persistenceService.getSession().createQuery(
                                                 "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
                                                 " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId());
                                         qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
@@ -445,7 +450,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                         final Query qry = persistenceService.getSession().createQuery(
                                                 "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
                                                 " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId());
                                         qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
@@ -477,7 +482,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                                         final Query qry = persistenceService.getSession().createQuery(
                                                 "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
                                                 " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId());
                                         qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
@@ -571,7 +576,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                     final Query qry = persistenceService.getSession().createQuery(
                             "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
                             " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                    qry.setLong("vhId", remittancePaymentItem.get(i).getVoucherheader().getId());
+                    qry.setParameter("vhId", remittancePaymentItem.get(i).getVoucherheader().getId());
                     qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
                     instrumentVoucherList = qry.list();
 

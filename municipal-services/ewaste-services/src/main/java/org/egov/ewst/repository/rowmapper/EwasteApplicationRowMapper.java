@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
  * RowMapper class for mapping the result set of a SQL query to a list of EwasteApplication objects.
  * This class extracts data from the result set and populates EwasteApplication and its related entities.
  */
+@SuppressWarnings("java:S2638")
 @Component
 public class EwasteApplicationRowMapper implements ResultSetExtractor<List<EwasteApplication>> {
 

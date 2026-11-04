@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowDown,CheckSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { ArrowDown, CheckSvg } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * @author - Shivank - NUDM
@@ -55,37 +55,37 @@ const MultiSelectDropdown = ({ options, selectedValues, onChange, optionKey, pla
   const isSelected = (option) => selectedOptions.some((item) => item[optionKey] === option[optionKey]);
 
   return (
-    <div style={{marginBottom:"25px", width:"58%"}}>
-    <div className="multi-select-dropdown-wrap" ref={optionRef}>
-      <div className={`master${dropdownStatus ? `-active` : ``}`} onClick={toggleDropdown}>
-        <div className="label">
+    <div className="cnd-multi-select-dropdown-container">
+      <div className="multi-select-dropdown-wrap" ref={optionRef}>
+        <div className={`master${dropdownStatus ? `-active` : ``}`} onClick={toggleDropdown}>
+          <div className="label">
             {/* Display selected options or placeholder text */}
-          <p>{selectedOptions.length > 0 ? selectedOptions.map((opt) => t ? t(opt[optionKey]) : opt[optionKey]).join(", ") : placeholder}</p>
+            <p>{selectedOptions.length > 0 ? selectedOptions.map((opt) => t ? t(opt[optionKey]) : opt[optionKey]).join(", ") : placeholder}</p>
 
-          <ArrowDown />
+            <ArrowDown />
+          </div>
         </div>
-      </div>
-      
-      {dropdownStatus && (
-        <div className="server" id="jk-dropdown-unique">
-          {options.map((option, index) => (
-            <div key={index} className="option-item" style={index % 2 !== 0 ? { background: "#EEEEEE" } : {}}>
-              <input
-                type="checkbox"
-                value={option[optionKey]}
-                checked={isSelected(option)}
-                onChange={() => handleSelection(option)}
-                style={{ minWidth: "24px", width: "100%" }}
-              />
-              <div className="custom-checkbox">
-                <CheckSvg style={{ innerWidth: "24px", width: "24px" }} />
+
+        {dropdownStatus && (
+          <div className="server" id="jk-dropdown-unique">
+            {options.map((option, index) => (
+              <div key={index} className={`option-item ${index % 2 !== 0 ? "cnd-multi-select-dropdown-zebra" : ""}`}>
+                <input
+                  type="checkbox"
+                  value={option[optionKey]}
+                  checked={isSelected(option)}
+                  onChange={() => handleSelection(option)}
+                  className="cnd-multi-select-dropdown-input"
+                />
+                <div className="custom-checkbox">
+                  <CheckSvg className="cnd-multi-select-dropdown-checkmark" />
+                </div>
+                <p className="label">{t(option[optionKey])}</p>
               </div>
-              <p className="label">{t(option[optionKey])}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,31 +1,19 @@
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { OBPSService } from "../../services/elements/OBPS";
-import { useMutation } from "react-query";
 
-const updateNOCAPI = async (data, tenantId) => {
-  try {
-    const response = await OBPSService.updateNOC(data, tenantId);
-    return response;
-  } catch (error) {
-    throw new Error(error?.response?.data?.Errors[0].code);
-  }
-}
+const updateNOCAPI = (data, tenantId) =>
+  OBPSService.updateNOC(data, tenantId);
 
-const updateAPI = async (data, tenantId) => {
-  try {
-    const response = await OBPSService.update(data, tenantId);
-    return response;
-  } catch (error) {
-    throw new Error(error?.response?.data?.Errors[0].code);
-  }
-}
+const updateAPI = (data, tenantId) =>
+  OBPSService.update(data, tenantId);
 
 const useObpsAPI = (tenantId, type = false) => {
-  if (type) {
-    return useMutation((data) => updateNOCAPI(data, tenantId));
-  } 
-  else {
-    return useMutation((data) => updateAPI(data, tenantId));
-  }
+  return mutationTemplate({
+    mutationFn: (data) =>
+      type
+        ? updateNOCAPI(data, tenantId)
+        : updateAPI(data, tenantId),
+  });
 };
 
 export default useObpsAPI;

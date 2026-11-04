@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowForward } from "@upyog/digit-ui-react-components";
+import { ArrowForward } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const FaqComponent = props => {
@@ -10,8 +10,7 @@ const FaqComponent = props => {
 
   return (
     <div className="faqs border-none" onClick={() => toggleOpen(!isOpen)}>
-          <div className="faq-question" style={{justifyContent: t(question).length > 30 && isOpen ? "revert" : "space-between", 
-          display: Digit.Utils.browser.isMobile() && t(question).length > 30 && isOpen ? "block" : "flex"}}>
+          <div className={`faq-question ${t(question).length > 30 && isOpen ? (Digit.Utils.browser.isMobile() ? "display-block" : "justify-revert") : "display-flex"}`}>
         <span>
         {t(question)}
         </span>

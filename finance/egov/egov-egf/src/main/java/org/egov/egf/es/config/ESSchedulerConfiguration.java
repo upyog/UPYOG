@@ -5,7 +5,7 @@ import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 
 import org.egov.egf.es.scheduler.ESDashboardJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;

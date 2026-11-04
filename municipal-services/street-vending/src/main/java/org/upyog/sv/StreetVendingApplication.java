@@ -40,7 +40,7 @@ public class StreetVendingApplication {
 	@Value("${app.timezone}")
 	private String timeZone;
 	
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(StreetVendingApplication.class, args);
     }
     @Bean

@@ -91,13 +91,14 @@
 		<display:column media="html" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Date"
 			style="width:5%;text-align:center">
-			<s:if
-				test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
-				<b><s:property value="#attr.currentRowObject.voucherdate" /></b>
-			</s:if>
-			<s:else>
-				<s:property value="#attr.currentRowObject.voucherdate" />
-			</s:else>
+			<c:choose>
+				<c:when test="${currentRowObject.voucherdate == 'Opening Balance' || currentRowObject.voucherdate == 'Closing Balance' || currentRowObject.voucherdate == 'Total'}">
+					<b><c:out value="${currentRowObject.voucherdate}" /></b>
+				</c:when>
+				<c:otherwise>
+					<c:out value="${currentRowObject.voucherdate}" />
+				</c:otherwise>
+			</c:choose>
 		</display:column>
 		<display:column media="pdf" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Number"
@@ -108,10 +109,12 @@
 		<display:column media="html" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Number"
 			style="width:8%;text-align:center">
-			<a href="#"
-				onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')">
-				<s:property value="#attr.currentRowObject.vouchernumber" />
-			</a>
+			<c:if test="${not empty currentRowObject.vouchernumber}">
+				<a href="#"
+					onclick="return viewVoucher('${currentRowObject.vhId}')">
+					<c:out value="${currentRowObject.vouchernumber}" />
+				</a>
+			</c:if>
 		</display:column>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Voucher Type Name" style="width:8%;text-align:center"
@@ -125,13 +128,14 @@
 		<display:column media="html" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Amount"
 			style="width:6%;text-align:right">
-			<s:if
-				test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
-				<b><s:property value="#attr.currentRowObject.debitamount" /></b>
-			</s:if>
-			<s:else>
-				<s:property value="#attr.currentRowObject.debitamount" />
-			</s:else>
+			<c:choose>
+				<c:when test="${currentRowObject.voucherdate == 'Opening Balance' || currentRowObject.voucherdate == 'Closing Balance' || currentRowObject.voucherdate == 'Total'}">
+					<b><c:out value="${currentRowObject.debitamount}" /></b>
+				</c:when>
+				<c:otherwise>
+					<c:out value="${currentRowObject.debitamount}" />
+				</c:otherwise>
+			</c:choose>
 		</display:column>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Voucher Date" style="width:5%;text-align:center"
@@ -145,10 +149,12 @@
 		<display:column media="html" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Voucher Number"
 			style="width:8%;text-align:center">
-			<a href="#"
-				onclick="return viewVoucher('<s:property value="#attr.currentRowObject.vhId"/>')">
-				<s:property value="#attr.currentRowObject.creditvouchernumber" />
-			</a>
+			<c:if test="${not empty currentRowObject.creditvouchernumber}">
+				<a href="#"
+					onclick="return viewVoucher('${currentRowObject.vhId}')">
+					<c:out value="${currentRowObject.creditvouchernumber}" />
+				</a>
+			</c:if>
 		</display:column>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Voucher Type Name" style="width:8%;text-align:center"
@@ -162,13 +168,14 @@
 		<display:column media="html" headerClass="bluebgheadtd"
 			class="blueborderfortd" title="Amount"
 			style="width:6%;text-align:right">
-			<s:if
-				test="%{ #attr.currentRowObject.voucherdate == 'Opening Balance' || #attr.currentRowObject.voucherdate == 'Closing Balance' || #attr.currentRowObject.voucherdate == 'Total'}">
-				<b><s:property value="#attr.currentRowObject.creditamount" /></b>
-			</s:if>
-			<s:else>
-				<s:property value="#attr.currentRowObject.creditamount" />
-			</s:else>
+			<c:choose>
+				<c:when test="${currentRowObject.voucherdate == 'Opening Balance' || currentRowObject.voucherdate == 'Closing Balance' || currentRowObject.voucherdate == 'Total'}">
+					<b><c:out value="${currentRowObject.creditamount}" /></b>
+				</c:when>
+				<c:otherwise>
+					<c:out value="${currentRowObject.creditamount}" />
+				</c:otherwise>
+			</c:choose>
 		</display:column>
 		<display:caption media="pdf">
 			<div align="left" style="text-align: left;">

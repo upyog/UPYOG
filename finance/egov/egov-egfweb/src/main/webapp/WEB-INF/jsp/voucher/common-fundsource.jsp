@@ -44,4 +44,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="fundSouceList" status="status"> {"Text":"<s:property value="%{name}" />","Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
+  --%><%--
+  LTS Migration Fix (Struts 7 OGNL): use #s.name / #s.id. Implicit row properties
+  fail silently (struts.el.throwExceptionOnFailure=false) and the Fund Source
+  dropdown stayed empty after Scheme change.
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="fundSouceList" status="status"> {"Text":"<s:property value="%{#s.name}" />","Value":"<s:property value="%{#s.id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

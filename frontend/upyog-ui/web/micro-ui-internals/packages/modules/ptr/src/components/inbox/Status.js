@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import StatusCount from "./StatusCount";
 
@@ -15,8 +15,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap,
  
 
   const translateState = (state, t) => {
-    return `${t(map[state.stateBusinessService])}` + " - " + t(`ES_PTR_COMMON_STATUS_${state.state || "CREATED"}`);
-    // return t(`ES_PT_COMMON_STATUS_${state.state || "CREATED"}`);
+    return t(`ES_PTR_COMMON_STATUS_${state.state || "CREATED"}`);
   };
 
 
@@ -26,7 +25,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap,
 
   return userRoleStates?.filter((e) => !e.isTerminateState).length ? (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label ptr-new-inbox-filter-text-style">
         {t("ES_INBOX_STATUS")}
       </div>
       {userRoleStates

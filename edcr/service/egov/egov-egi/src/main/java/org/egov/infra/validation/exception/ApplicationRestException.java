@@ -51,11 +51,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @SuppressWarnings("serial")
-@org.codehaus.jackson.map.annotate.JsonSerialize(using = ApplicationRestExceptionJackson1Serializer.class)
-@org.codehaus.jackson.map.annotate.JsonDeserialize(using = ApplicationRestExceptionJackson1Deserializer.class)
-@com.fasterxml.jackson.databind.annotation.JsonSerialize(using = ApplicationRestExceptionJackson2Serializer.class)
-@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = ApplicationRestExceptionJackson2Deserializer.class)
+@JsonSerialize(using = ApplicationRestExceptionJackson2Serializer.class)
+@JsonDeserialize(using = ApplicationRestExceptionJackson2Deserializer.class)
 public class ApplicationRestException extends RuntimeException {
 
     public static final String ERROR = "error";

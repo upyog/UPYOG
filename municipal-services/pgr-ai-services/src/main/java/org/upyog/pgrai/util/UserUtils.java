@@ -1,6 +1,7 @@
 package org.upyog.pgrai.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.Role;
 import org.egov.common.utils.MultiStateInstanceUtil;
@@ -9,15 +10,17 @@ import org.upyog.pgrai.repository.ServiceRequestRepository;
 import org.upyog.pgrai.web.models.User;
 import org.upyog.pgrai.web.models.user.UserDetailResponse;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for user-related operations in the PGR (Public Grievance Redressal) system.
@@ -25,30 +28,20 @@ import java.util.List;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class UserUtils {
 
-    private ObjectMapper mapper;
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
 
-    private ServiceRequestRepository serviceRequestRepository;
+    private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
-    private PGRConfiguration config;
+    private final ObjectMapper mapper;
 
-    @Autowired
-    private MultiStateInstanceUtil centralInstanceUtil;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    /**
-     * Constructor for UserUtils.
-     *
-     * @param mapper ObjectMapper for JSON operations.
-     * @param serviceRequestRepository Repository for service requests.
-     * @param config Configuration properties for the PGR system.
-     */
-    @Autowired
-    public UserUtils(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, PGRConfiguration config) {
-        this.mapper = mapper;
-        this.serviceRequestRepository = serviceRequestRepository;
-        this.config = config;
-    }
+    private final PGRConfiguration config;
+
+    private final MultiStateInstanceUtil centralInstanceUtil;
 
     /**
      * Calls the user service and returns a UserDetailResponse.
@@ -65,7 +58,7 @@ public class UserUtils {
         else if (uri.toString().contains(config.getUserCreateEndpoint()))
             dobFormat = "dd/MM/yyyy";
         try {
-            LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userRequest);
             parseResponse(responseMap, dobFormat);
             return mapper.convertValue(responseMap, UserDetailResponse.class);
         } catch (IllegalArgumentException e) {
@@ -79,18 +72,18 @@ public class UserUtils {
      * @param responseMap The response map from the user API.
      * @param dobFormat The date format for the "dob" field.
      */
-    public void parseResponse(LinkedHashMap responseMap, String dobFormat) {
-        List<LinkedHashMap> users = (List<LinkedHashMap>) responseMap.get("user");
+    public void parseResponse(Map<String, Object> responseMap, String dobFormat) {
+        List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
         String format1 = "dd-MM-yyyy HH:mm:ss";
         if (users != null) {
             users.forEach(map -> {
                 map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-                if ((String) map.get("lastModifiedDate") != null)
-                    map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+                if ((String) map.get(LAST_MODIFIED_DATE) != null)
+                    map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
                 if ((String) map.get("dob") != null)
                     map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-                if ((String) map.get("pwdExpiryDate") != null)
-                    map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+                if ((String) map.get(PWD_EXPIRY_DATE) != null)
+                    map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
             });
         }
     }
@@ -104,11 +97,19 @@ public class UserUtils {
      * @throws CustomException If the date cannot be parsed.
      */
     private Long dateTolong(String date, String format) {
-        SimpleDateFormat f = new SimpleDateFormat(format);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
         try {
-            Date d = f.parse(date);
-            return d.getTime();
-        } catch (ParseException e) {
+            if (format.contains("HH:mm:ss")) {
+                return LocalDateTime.parse(date, formatter)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli();
+            }
+            return LocalDate.parse(date, formatter)
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli();
+        } catch (DateTimeParseException e) {
             throw new CustomException("INVALID_DATE_FORMAT", "Failed to parse date format in user");
         }
     }

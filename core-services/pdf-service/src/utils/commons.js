@@ -1,9 +1,22 @@
-import axios from "axios";
-import envVariables from "../EnvironmentVariables";
-import get from "lodash/get";
-const NodeCache = require("node-cache");
-var moment = require("moment-timezone");
+/**
+ * commons.js
+ * Shared utility functions used across the PDF service.
+ * Handles localisation fetching with in-memory caching, date formatting,
+ * localisation key building, value safety checks, and footer function restoration.
+ *
+ * Before: used require() for node-cache and moment-timezone - CommonJS style
+ * Change: replaced require() with ESM imports - native ESM for Node 22
+ */
 
+import axios from "axios";
+import envVariables from "../EnvironmentVariables.js";
+import get from "lodash.get";
+import NodeCache from "node-cache";
+import moment from "moment-timezone";
+
+// In-memory cache for localisation API responses
+// stdTTL: 300 — cached data expires after 300 seconds (5 minutes)
+// Avoids repeated HTTP calls to localisation service for the same pdfKey + locale combination
 const cache = new NodeCache({ stdTTL: 300 });
 
 let datetimezone = envVariables.DATE_TIMEZONE;
@@ -28,13 +41,16 @@ export const getTransformedLocale = (label) => {
  * @param {*} isMainTypeRequired  - ex:- "GOODS_RETAIL_TST-1" = get localisation for "RETAIL"
  * @param {*} isSubTypeRequired  - - ex:- "GOODS_RETAIL_TST-1" = get localisation for "GOODS_RETAIL_TST-1"
  */
- export const findLocalisation = async (
+// Fetches localisation messages from the localisation service
+// Uses in-memory cache to avoid repeated API calls for the same pdfKey + locale
+export const findLocalisation = async (
   requestInfo,
   moduleList,
   codeList,
   pdfKey
 ) => {
   let cacheData = null;
+  // Extract locale from msgId (format: "msgId|locale"), fallback to defaultLocale
   let locale = requestInfo.msgId;
   if (null != locale) {
     locale = locale.split("|");
@@ -43,21 +59,23 @@ export const getTransformedLocale = (label) => {
     locale = defaultLocale;
   }
 
+  // Check cache using pdfKey + locale as cache key
   if(pdfKey!=null){
     let cacheKey = pdfKey + '-' + locale;
     cacheData = await verifyCache(cacheKey);
   }
-    
+
+  // Return cached data if available
   if(cacheData!= null && Object.keys(cacheData).length>=1){
     return cacheData;
   }
   else{
+    // Extract state-level tenantId (e.g. "pb.amritsar" -> "pb")
     let statetenantid = get(
       requestInfo,
       "userInfo.tenantId",
       defaultTenant
     ).split(".")[0];
-  
   
     let url = egovLocHost + egovLocSearchCall;
     console.log("Localisation API URL:", url);
@@ -71,8 +89,6 @@ export const getTransformedLocale = (label) => {
       }
     };
   
-    console.log("moduleList:", moduleList);
-    console.log("codeList:", codeList);
     request.messageSearchCriteria.module = moduleList.toString();
     request.messageSearchCriteria.codes = codeList.toString().split(",");
   
@@ -82,20 +98,8 @@ export const getTransformedLocale = (label) => {
         accept: "application/json, text/plain, */*"
       }
     };
-  
-    // let responseBody = await axios.post(url,request,headers)
-    // .then(function (response) {
-    //   return response;
-    // })
-    // .catch((error) => {
-    //   throw error
-    //  });
 
-    console.log("----LOCALISATION API DEBUG----");
-    console.log("URL:", url);
-    console.log("Request Payload:", JSON.stringify(request, null, 2));
-    console.log("Headers:", headers);
-
+    // Call localisation API and cache the response
     let responseBody = await axios.post(url, request, headers)
     .then(function (response) {
       console.log("Localisation API Success");
@@ -104,7 +108,6 @@ export const getTransformedLocale = (label) => {
     })
     .catch((error) => {
       console.log("Localisation API ERROR");
-
       if (error.response) {
         console.log("Status:", error.response.status);
         console.log("Error Data:", error.response.data);
@@ -114,25 +117,29 @@ export const getTransformedLocale = (label) => {
       throw error;
     });
   
+    // Store response in cache against pdfKey for future requests
     if(pdfKey!=null)
       cache.set(pdfKey, responseBody.data);
-  
   
     return responseBody.data;
   }
 }
 
+// Checks if localisation data for the given pdfKey exists in cache
+// Returns cached data if found, null otherwise
 export const verifyCache = async (pdfKey) => {
   let cacheData = null;
   if (cache.has(pdfKey)) {
     cacheData = cache.get(pdfKey);
-
     return Promise.resolve(cacheData);
   }
   else
     return cacheData;
 }
 
+// Builds a localisation key from the given value by applying prefix and required parts
+// Supports category, main type, and sub type parts joined by delimiter
+// Returns array if input was array, single value otherwise
 export const getLocalisationkey = async (
   prefix,
   key,
@@ -151,6 +158,7 @@ export const getLocalisationkey = async (
   } else if (typeof key == "string" || typeof key == "number") {
     keyArray.push(key);
   } else {
+    // input is an array — process each item individually
     keyArray = key;
     isArray = true;
   }
@@ -183,6 +191,7 @@ export const getLocalisationkey = async (
       )}`;
     }
 
+    // if no part is required, use the full key as-is
     if (!isCategoryRequired && !isMainTypeRequired && !isSubTypeRequired) {
       codeFromKey = getLocalisationLabel(item, prefix);
     }
@@ -203,9 +212,10 @@ const getLocalisationLabel = (key, prefix) => {
   return key;
 };
 
+// Converts epoch timestamp to formatted date string using configured timezone
+// Falls back to "DD/MM/YYYY" if no format is provided
 export const getDateInRequiredFormat = (et, dateformat = "DD/MM/YYYY") => {
   if (!et) return "NA";
-  // var date = new Date(Math.round(Number(et)));
   return moment(et).tz(datetimezone).format(dateformat);
 };
 
@@ -227,6 +237,9 @@ export const getValue = (value, defaultValue, path) => {
   } else return value;
 };
 
+// Converts footer string from format config into a function if it exists
+// pdfmake requires footer to be a function — JSON.stringify destroys functions,
+// so footer is stored as a string in config and restored here before PDF generation
 export const convertFooterStringtoFunctionIfExist = (footer) => {
   if (footer != undefined) {
     footer = Function(`'use strict'; return (${footer})`)();

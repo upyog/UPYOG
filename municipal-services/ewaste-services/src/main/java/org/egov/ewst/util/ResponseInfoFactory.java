@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ResponseInfoFactory {
 
+	private static final String DEFAULT_RES_MSG_ID = "uief87324";
+
 	/**
 	 * Creates a ResponseInfo object based on the provided RequestInfo and success status.
 	 *
@@ -18,14 +20,14 @@ public class ResponseInfoFactory {
 	 * @param success     The success status of the operation.
 	 * @return A ResponseInfo object with the specified details.
 	 */
-	public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final Boolean success) {
+	public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final boolean success) {
 
 		final String apiId = requestInfo != null ? requestInfo.getApiId() : "";
 		final String ver = requestInfo != null ? requestInfo.getVer() : "";
 		Long ts = null;
 		if (requestInfo != null)
 			ts = requestInfo.getTs();
-		final String resMsgId = "uief87324"; // FIXME : Hard-coded
+		final String resMsgId = DEFAULT_RES_MSG_ID;
 		final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
 		final String responseStatus = success ? "successful" : "failed";
 

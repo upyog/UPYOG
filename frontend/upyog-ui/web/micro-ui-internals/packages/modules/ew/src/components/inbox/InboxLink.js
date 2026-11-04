@@ -1,5 +1,5 @@
 // Importing necessary components and hooks from external libraries
-import { Card, PropertyHouse } from "@upyog/digit-ui-react-components"; // UI components for cards and icons
+import { Card, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for cards and icons
 import React, { useEffect, useState } from "react"; // React library and hooks for state and lifecycle management
 import { Link } from "react-router-dom"; // Component for navigation links
 import { useTranslation } from "react-i18next"; // Hook for translations

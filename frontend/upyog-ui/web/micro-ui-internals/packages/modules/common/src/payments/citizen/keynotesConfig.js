@@ -17,7 +17,7 @@ export const getKeyNotesConfig = (businessService, t) => {
                   <React.Fragment>
                     {"₹" + d["totalAmount"]}
                     {days >= 0 ? (
-                      <span className={"card-label-error"} style={{ fontSize: "16px", fontWeight: "normal" }}>{` ( ${t(
+                      <span className={`${"card-label-error"} cmn-keynotes-config-text-style`}>{` ( ${t(
                         "CS_PAYMENT_OVERDUE"
                       )} ${days} ${t(days === 1 ? "CS_COMMON_DAY" : "CS_COMMON_DAYS")})`}</span>
                     ) : null}

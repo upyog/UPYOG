@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fromUnixTime, format } from 'date-fns';
-import { Card, CardHeader, Label, SearchIconSvg, Toast, StatusTable, TextInput, Row, CardCaption, SubmitBar, Loader } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, Label, SearchIconSvg, Toast, StatusTable, TextInput, Row, CardCaption, SubmitBar, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 import { useTranslation } from "react-i18next";
 import { ocScrutinyDetailsData } from "../utils";
@@ -183,11 +183,10 @@ const OCBasicDetails = ({ formData, onSelect, config }) => {
       <Timeline currentStep={1} flow="OCBPA" />
       <div className={isMobile ? "obps-search" : ""} style={!isMobile ? { maxWidth: "960px", minWidth: "640px", marginRight: "auto" } : {}}>
         <Label>{t(`OBPS_SEARCH_EDCR_NUMBER`)}</Label>
-        <TextInput className="searchInput"
+        <TextInput className="searchInput obps-basic-details-bottom-spacing"
           onKeyPress={handleKeyPress}
           onChange={event => setScrutinyNumber({ edcrNumber: event.target.value })} value={scrutinyNumber?.edcrNumber} signature={true} signatureImg={!disableVlaue && <SearchIconSvg className="signature-img" onClick={!disableVlaue && scrutinyNumber?.edcrNumber ? () => handleSearch() : null} />}
           disable={isDisabled}
-          style={{ marginBottom: "10px" }}
         />
       </div>
       {isLoadingApplication ? <Loader /> : null}

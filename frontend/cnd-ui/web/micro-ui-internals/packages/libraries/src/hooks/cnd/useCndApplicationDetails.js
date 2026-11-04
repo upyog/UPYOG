@@ -11,30 +11,39 @@
 * @returns {object} - React query result object containing application data
 */
 
- import { useQuery } from "react-query";
- import { CNDSearch } from "../../services/molecules/CND/Search";
- 
- const useCndApplicationDetails = (t, tenantId, applicationNumber, isUserDetailRequired,config = {}, userType, args) => {
-   
-   const defaultSelect = (data) => {
-      let applicationDetails = data.applicationDetails.map((obj) => {
-       return obj;
-     });
-     
-     return {
-       applicationData : data,
-       applicationDetails
-     }
-   };
- 
-    // Query function that fetches the application details
-   return useQuery(
-     ["APPLICATION_SEARCH", "CND_SEARCH", applicationNumber, isUserDetailRequired, userType, args],
-     () => CNDSearch.applicationDetails(t, tenantId, applicationNumber, isUserDetailRequired, userType, args),
-     { select: defaultSelect, ...config }
-  
-   );
- };
- 
- export default useCndApplicationDetails;
- 
+import { queryTemplate } from "../../common/queryTemplate";
+import { CNDSearch } from "../../services/molecules/CND/Search";
+
+const useCndApplicationDetails = (t, tenantId, applicationNumber, isUserDetailRequired, config = {}, userType, args) => {
+  const queryKey = [
+    "APPLICATION_SEARCH",
+    "CND_SEARCH",
+    applicationNumber,
+    isUserDetailRequired,
+    userType,
+    JSON.stringify(args)
+  ];
+
+  const queryFn = () =>
+    CNDSearch.applicationDetails(t, tenantId, applicationNumber, isUserDetailRequired, userType, args);
+
+  const select = (data) => {
+    let applicationDetails = data.applicationDetails.map((obj) => {
+      return obj;
+    });
+
+    return {
+      applicationData: data,
+      applicationDetails
+    };
+  };
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config
+  });
+};
+
+export default useCndApplicationDetails;

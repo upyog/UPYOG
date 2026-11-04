@@ -53,11 +53,6 @@ package org.egov.services.financingsource;
 import org.apache.log4j.Logger;
 import org.egov.commons.Fundsource;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 
@@ -87,16 +82,16 @@ public class FinancingSourceService extends PersistenceService<Fundsource, Integ
             LOGGER.debug("FinancingSourceService | getFinancialSourceBasedOnSubScheme | Start ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Received sub scheme id = " + subSchemeId);
-        final Criteria criteria = getSession().createCriteria(Fundsource.class);
-        criteria.add(Restrictions.eq("isactive", true));
+        final StringBuilder query = new StringBuilder("from Fundsource fs where fs.isactive = true");
         if (!subSchemeId.equals(-1)) {
-            final Criterion subschmeNull = Restrictions.isNull("subSchemeId");
-            final Criterion subschme = Restrictions.eq("subSchemeId.id", subSchemeId);
-            final LogicalExpression orExp = Restrictions.or(subschme, subschmeNull);
-            criteria.add(orExp);
-            criteria.addOrder(Order.asc("name"));
+            query.append(" and (fs.subSchemeId.id = :subSchemeId or fs.subSchemeId is null) order by fs.name");
+            final List<Fundsource> listFundSource = getSession().createQuery(query.toString(), Fundsource.class)
+                    .setParameter("subSchemeId", subSchemeId).list();
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("financial source list size = " + listFundSource.size());
+            return listFundSource;
         }
-        final List<Fundsource> listFundSource = criteria.list();
+        final List<Fundsource> listFundSource = getSession().createQuery(query.toString(), Fundsource.class).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("financial source list size = " + listFundSource.size());
         return listFundSource;
@@ -106,11 +101,9 @@ public class FinancingSourceService extends PersistenceService<Fundsource, Integ
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("FinancingSourceService | getListOfSharedFinancialSource | Start ");
-        final Criteria criteria = getSession().createCriteria(Fundsource.class);
-        criteria.add(Restrictions.eq("isactive", true));
-        criteria.add(Restrictions.isNull("subSchemeId"));
-        criteria.addOrder(Order.asc("name"));
-        final List<Fundsource> listFundSource = criteria.list();
+        final List<Fundsource> listFundSource = getSession().createQuery(
+                "from Fundsource fs where fs.isactive = true and fs.subSchemeId is null order by fs.name",
+                Fundsource.class).list();
         return listFundSource;
     }
 }

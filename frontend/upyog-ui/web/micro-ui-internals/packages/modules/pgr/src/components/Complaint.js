@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { Card, DateWrap, KeyNote } from "@upyog/digit-ui-react-components";
-import { CardSubHeader } from "@upyog/digit-ui-react-components";
+
+import { Card, DateWrap, KeyNote } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { LOCALIZATION_KEY } from "../constants/Localization";
 
 // import { ConvertTimestampToDate } from "../@upyog/digit-utils/services/date";
@@ -10,11 +10,11 @@ import { LOCALIZATION_KEY } from "../constants/Localization";
 const Complaint = ({ data, path }) => {
   let { serviceCode, serviceRequestId, applicationStatus } = data;
 
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { t } = useTranslation();
 
   const handleClick = () => {
-    history.push(`${path}/${serviceRequestId}`);
+    navigate(`${serviceRequestId}`);
   };
 
   const closedStatus = ["RESOLVED", "REJECTED", "CLOSEDAFTERREJECTION", "CLOSEDAFTERRESOLUTION"];

@@ -1,0 +1,6 @@
+config:
+-   name: builds/workbench-ui
+    build:
+      - work-dir: frontend/workbench-ui/web/
+      dockerfile: web/docker/Dockerfile
+      image-name: workbench-ui

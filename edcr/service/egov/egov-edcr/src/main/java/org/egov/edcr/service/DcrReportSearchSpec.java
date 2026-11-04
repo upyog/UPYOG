@@ -53,8 +53,8 @@ import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.SearchBuildingPlanScrutinyForm;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
 
 public final class DcrReportSearchSpec {
 

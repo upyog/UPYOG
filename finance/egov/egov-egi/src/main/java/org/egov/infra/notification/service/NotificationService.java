@@ -57,8 +57,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.jms.Destination;
-import javax.jms.MapMessage;
+import jakarta.jms.Destination;
+import jakarta.jms.MapMessage;
 
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 import static org.egov.infra.notification.NotificationConstants.ATTACHMENT;

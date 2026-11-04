@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone } from "@upyog/digit-ui-react-components";
+import { TelePhone } from "@nudmcdgnpm/digit-ui-react-components";
 import Reason from "./Reason";
 
 const TLCaption = ({ data }) => {

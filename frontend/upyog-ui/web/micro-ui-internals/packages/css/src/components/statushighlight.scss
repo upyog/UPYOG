@@ -5,13 +5,15 @@
 
   p {
     padding-top: 6px;
-    @apply block text-center text-caption-m text-error cursor-pointer;
+    @apply block text-center text-caption-m cursor-pointer;
+    color: #ffffff !important;
   }
 
   &.success {
     @apply bg-success;
+
     p {
-      @apply text-success;
+      color: #ffffff !important;
     }
   }
 }

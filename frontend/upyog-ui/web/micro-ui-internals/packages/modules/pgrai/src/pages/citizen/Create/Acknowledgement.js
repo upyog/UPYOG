@@ -1,7 +1,7 @@
-import { Banner, Card, Loader, Row, StatusTable, SubmitBar,Toast } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, Row, StatusTable, SubmitBar,Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, {useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch,useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { DataConvert } from "../../../utils";
 
 const GetActionMessage = (props) => {
@@ -27,7 +27,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.ServiceWrappers?.[0]?.service?.serviceRequestId}
       info={props.isSuccess ? props.t("PGR_AI_BOOKING_NO") : ""}
       successful={props.isSuccess}
-      style={{ width: "100%" }}
+      className="pgrai-acknowledgement-fullwidth"
     />
   );
 };
@@ -43,9 +43,9 @@ const Acknowledgement = ({ data, onSuccess }) => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.pgrAi.useCreate(tenantId);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { tenants } = storeData || {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
 
@@ -68,7 +68,7 @@ useEffect(() => {
       return () => clearTimeout(timer); // Clear timer on cleanup
     }
   }, [showToast]);
-  return mutation.isLoading || mutation.isIdle ? (
+  return mutation.isPending || mutation.isIdle ? (
     <Loader />
   ) : (
     <Card>
@@ -77,7 +77,7 @@ useEffect(() => {
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
       {mutation.isSuccess && (
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+      <div className="pgrai-acknowledgement-flex-container">
         {user.type==="EMPLOYEE" &&(<Link to={`/upyog-ui/employee`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}

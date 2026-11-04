@@ -7,15 +7,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.tp.config.TreePruningConfiguration;
 import org.upyog.tp.constant.TreePruningConstants;
 import org.upyog.tp.service.NotificationService;
 import org.upyog.tp.util.NotificationUtil;
-import org.upyog.tp.web.models.events.Action;
-import org.upyog.tp.web.models.events.ActionItem;
 import org.upyog.tp.web.models.events.Event;
 import org.upyog.tp.web.models.events.EventRequest;
 import org.upyog.tp.web.models.events.Recepient;
@@ -30,11 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-    @Autowired
-    private TreePruningConfiguration config;
+    private final TreePruningConfiguration config;
+    private final NotificationUtil util;
 
-    @Autowired
-    private NotificationUtil util;
+    public NotificationServiceImpl(TreePruningConfiguration config, NotificationUtil util) {
+        this.config = config;
+        this.util = util;
+    }
 
     /**
      * Processes a booking request and sends notifications based on the application status.
@@ -48,30 +47,26 @@ public class NotificationServiceImpl implements NotificationService {
         String tenantId;
         RequestInfo requestInfo;
         Map<String, String> messageMap;
-        String localizationMessages;
 
-        if (request instanceof TreePruningBookingRequest) {
-            TreePruningBookingRequest treePruningRequest = (TreePruningBookingRequest) request;
+        if (request instanceof TreePruningBookingRequest treePruningRequest) {
             tenantId = treePruningRequest.getTreePruningBookingDetail().getTenantId();
             requestInfo = treePruningRequest.getRequestInfo();
-            localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
+            String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
             messageMap = util.getCustomizedMsg(requestInfo, treePruningRequest.getTreePruningBookingDetail(), localizationMessages);
         } else {
             throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         }
 
-        EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
+        EventRequest eventRequest = getEventsForRS(request, messageMap);
         log.info("Event Request in RequestService process method: " + eventRequest);
 
         Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
         List<String> configuredChannelNames = util.fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(), status);
 
-        // Send app notification
         if (eventRequest != null) {
             util.sendEventNotification(eventRequest);
         }
 
-        // Send SMS notification
         if (isNotificationEnabled(config.getIsSMSNotificationEnabled(), configuredChannelNames, TreePruningConstants.CHANNEL_NAME_SMS)) {
             List<SMSRequest> smsRequests = new LinkedList<>();
             util.enrichSMSRequest(request, smsRequests);
@@ -80,7 +75,6 @@ public class NotificationServiceImpl implements NotificationService {
             }
         }
 
-        // Send Email notification
         if (isNotificationEnabled(config.getIsEmailNotificationEnabled(), configuredChannelNames, TreePruningConstants.CHANNEL_NAME_EMAIL)) {
             Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
             List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(TreePruningConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
@@ -95,20 +89,18 @@ public class NotificationServiceImpl implements NotificationService {
      *
      * @param request    The booking request object (
      *                   {@link TreePruningBookingRequest}).
-     * @param actionLink The action link for the notification.
      * @param messageMap The message content map for the notification.
      * @return An {@link EventRequest} object containing event details, or null if
      *         an error occurs.
      */
 
-    private EventRequest getEventsForRS(Object request, String actionLink, Map<String, String> messageMap) {
+    private EventRequest getEventsForRS(Object request, Map<String, String> messageMap) {
         List<Event> events = new ArrayList<>();
         String tenantId;
         String mobileNumber;
         RequestInfo requestInfo;
 
-        if (request instanceof TreePruningBookingRequest) {
-            TreePruningBookingRequest tankerRequest = (TreePruningBookingRequest) request;
+        if (request instanceof TreePruningBookingRequest tankerRequest) {
             tenantId = tankerRequest.getTreePruningBookingDetail().getTenantId();
             mobileNumber = tankerRequest.getTreePruningBookingDetail().getApplicantDetail().getMobileNumber();
             requestInfo = tankerRequest.getRequestInfo();
@@ -117,7 +109,6 @@ public class NotificationServiceImpl implements NotificationService {
             return null;
         }
 
-        String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
         List<String> toUsers = new ArrayList<>();
         Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, requestInfo, tenantId);
 
@@ -131,13 +122,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
         log.info("Recipient object in RequestService: " + recepient);
-
-        ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-        List<ActionItem> actionItems = new ArrayList<>();
-        actionItems.add(actionItem);
-
-        Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-                .eventId(TreePruningConstants.CHANNEL_NAME_EVENT).build();
 
         events.add(Event.builder().tenantId(tenantId).description(message)
                 .eventType(TreePruningConstants.USREVENTS_EVENT_TYPE)

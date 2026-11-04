@@ -1,11 +1,12 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 import ReceiptsService from "../../services/elements/Receipts";
 
 export const useReceiptsSearch = (searchparams, tenantId, filters, isupdated, config = {}) => {
   const client = useQueryClient();
-  let businessService = searchparams?.businessServices;
-  const { isLoading, error, data, ...rest } = useQuery(["RECEIPTS_SEARCH", searchparams, tenantId, filters, isupdated], () => ReceiptsService.search(tenantId, filters, searchparams, businessService), config);
-  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["RECEIPTS_SEARCH", searchparams, tenantId, filters, isupdated]), ...rest };
+  const businessService = searchparams?.businessServices;
+  const { isLoading, error, data, ...rest } = queryTemplate({ queryKey: ["RECEIPTS_SEARCH", searchparams, tenantId, filters, isupdated], queryFn: () => ReceiptsService.search(tenantId, filters, searchparams, businessService), config });
+  return { isLoading, error, data, revalidate: () => client.invalidateQueries({ queryKey: ["RECEIPTS_SEARCH", searchparams, tenantId, filters, isupdated] }), ...rest };
 };
 
 export default useReceiptsSearch;

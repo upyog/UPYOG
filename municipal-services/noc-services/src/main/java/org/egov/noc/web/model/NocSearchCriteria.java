@@ -2,7 +2,7 @@ package org.egov.noc.web.model;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -67,6 +67,9 @@ public class NocSearchCriteria {
     
     @JsonProperty("status")
     private List<String> status;
+
+    @JsonProperty("applicationStatus")
+    private String applicationStatus;
 
     public boolean isEmpty() {
         return (this.tenantId == null && this.ids == null && this.applicationNo == null

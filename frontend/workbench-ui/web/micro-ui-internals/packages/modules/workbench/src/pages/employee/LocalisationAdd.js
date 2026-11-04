@@ -19,7 +19,7 @@ import {
   BreakLine,
   InfoIconOutline,
   UploadIcon
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/workbench-ui-react-components";
 import { useTranslation } from "react-i18next";
 import reducer, { intialState } from "../../utils/LocAddReducer";
 // import sampleFile from "../../utils/file.xlsx"
@@ -213,14 +213,6 @@ const LocalisationAdd = () => {
               value={state.tableState[row.index]?.code}
               defaultValue={""}
               style={{ marginBottom: "0px" }}
-              // onBlur={(e) => {
-              //   dispatch({type:"UPDATE_ROW_KEYCODE",state:{
-              //     row,
-              //     value:e.target.value,
-              //     id:row.index
-              //   }})
-
-              // }}
             />
           );
         },
@@ -232,29 +224,6 @@ const LocalisationAdd = () => {
           return String(value ? value : t("ES_COMMON_NA"));
         },
       },
-      // {
-      //   Header: t("WBH_LOC_DEFAULT_VALUE"),
-      //   accessor: "defaultMessage",
-      //   Cell: ({ value, col, row, ...rest }) => {
-      //     return (
-      //       <TextInput
-      //         className={"field"}
-      //         textInputStyle={{ width: "70%", marginLeft: "2%" }}
-      //         disabled={true}
-      //         value={state.tableState[row.index]?.message}
-      //         defaultValue={""}
-      //         style={{ marginBottom: "0px" }}
-      //       />
-      //     );
-      //   }
-      // },
-      // {
-      //   Header: t("WBH_LOC_DEFAULT_VALUE"),
-      //   accessor: "module",
-      //   Cell: ({ value, col, row }) => {
-      //     return String(value ? value : t("ES_COMMON_NA"));
-      //   },
-      // },
       {
         Header: t("WBH_LOC_LOCALE"),
         accessor: "locale",
@@ -397,19 +366,6 @@ const LocalisationAdd = () => {
       
       setShowToast({ label, isError: true });
       closeToast();
-      // dispatch({
-      //   type:"CLEAR_STATE",
-      // })
-      // dispatch({
-      //   type:"ADD_ROW",
-      //   state:{
-      //     code: "",
-      //     message: "",
-      //     locale: selectedLang.value,
-      //     module: selectedModule.value,
-      //     id: 0,
-      //   }
-      // })
     };
 
     mutation.mutate(
@@ -585,20 +541,6 @@ const LocalisationAdd = () => {
     });
 
    }
-
-  //   const result = await Digit.ParsingUtils.parseXlsToJsonMultipleSheets(event);
-  //  const updatedResult = convertObjectOfArraysToSingleArray(result)
-  //  //make result for default locale
-  //  const updatedResultDefault = updatedResult.map(row=> {
-  //   return {
-  //     ...row,
-  //     locale:"default"
-  //   }
-  //  })
-  //  const filteredResult = splitArrayIntoDynamicSubsetsByPropertyAndKeys(updatedResult,"module",["message","module","locale","code"])
-  //  const filteredResultDefault = splitArrayIntoDynamicSubsetsByPropertyAndKeys(updatedResultDefault,"module",["message","module","locale","code"])
-  //  setJsonResult(filteredResult)
-  //  setJsonResultDefault(filteredResultDefault)
   //  //here the result will contain all the sheets in an object
   };
 
@@ -649,15 +591,6 @@ const LocalisationAdd = () => {
         />
       )}
       {<GenerateXlsx inputRef={inputRef}/>}
-      {/* {
-        <div>
-          <h2>bobbyhadz.com</h2>
-
-          <a href={require("../../utils/file.xlsx")} download="Example-PDF-document" target="_blank" rel="noreferrer">
-            <button>Download .pdf file</button>
-          </a>
-        </div>
-      } */}
       <Card>
         <LabelFieldPair style={{ alignItems: "flex-start" }}>
           <CardLabel style={{ marginBottom: "0.4rem" }}>{t("WBH_LOC_SELECT_LANG")}</CardLabel>
@@ -691,39 +624,6 @@ const LocalisationAdd = () => {
       {showToast && <Toast label={showToast.label} error={showToast?.isError} isDleteBtn={true} onClose={() => setShowToast(null)}></Toast>}
       {selectedLang && selectedModule && (
         <Card>
-          {/* {selectedLang && selectedModule && (
-          <div style={{ display: "flex" }}>
-            <Button
-              label={t("ADD_NEW_ROW")}
-              variation="secondary"
-              onButtonClick={() => {
-                handleAddRow();
-              }}
-              type="button"
-            />
-            <Button
-              label={t("CLEAR_LOC_TABLE")}
-              variation="secondary"
-              onButtonClick={() => {
-                dispatch({
-                  type: "CLEAR_STATE",
-                });
-                // dispatch({
-                //   type: "ADD_ROW",
-                //   state: {
-                //     code: "",
-                //     message: "",
-                //     locale: selectedLang.value,
-                //     module: selectedModule.value,
-                //     id: 0,
-                //   },
-                // });
-              }}
-              type="button"
-            />
-          </div>
-        )} */}
-
           {state.tableState.length > 0 && (
             <Table
               pageSizeLimit={50}
@@ -766,16 +666,6 @@ const LocalisationAdd = () => {
                   dispatch({
                     type: "CLEAR_STATE",
                   });
-                  // dispatch({
-                  //   type: "ADD_ROW",
-                  //   state: {
-                  //     code: "",
-                  //     message: "",
-                  //     locale: selectedLang.value,
-                  //     module: selectedModule.value,
-                  //     id: 0,
-                  //   },
-                  // });
                 }}
                 type="button"
               />

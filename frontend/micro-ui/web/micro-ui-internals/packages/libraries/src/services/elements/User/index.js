@@ -151,8 +151,6 @@ export const UserService = {
       data: { user: {tenantId, ...user} } ,
     });
   },
-<<<<<<< HEAD
-=======
   // user search for user profile
   userSearchNewV2: async (tenantId, data, filters) => {
     return Request({
@@ -176,5 +174,4 @@ export const UserService = {
       params: { tenantId: stateCode },
     }),
 
->>>>>>> master-LTS
 };

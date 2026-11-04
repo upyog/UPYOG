@@ -7,8 +7,6 @@ import digit.models.coremodels.IdRequest;
 import digit.models.coremodels.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.cdwm.config.CNDConfiguration;
@@ -16,19 +14,21 @@ import org.upyog.cdwm.repository.ServiceRequestRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class IdgenUtil {
-	
-	@Autowired
-	private ObjectMapper mapper;
 
-	@Autowired
-	private ServiceRequestRepository restRepo;
-	
-	@Autowired
-	private CNDConfiguration config;
+	private final ObjectMapper mapper;
+
+	private final ServiceRequestRepository restRepo;
+
+	private final CNDConfiguration config;
+
+	public IdgenUtil(ObjectMapper mapper, ServiceRequestRepository restRepo, CNDConfiguration config) {
+		this.mapper = mapper;
+		this.restRepo = restRepo;
+		this.config = config;
+	}
 
 	/**
 	 * Generates a list of unique IDs using the ID generation service.
@@ -58,6 +58,6 @@ public class IdgenUtil {
 		if (CollectionUtils.isEmpty(idResponses))
 			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
-		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+		return idResponses.stream().map(IdResponse::getId).toList();
 	}
 }

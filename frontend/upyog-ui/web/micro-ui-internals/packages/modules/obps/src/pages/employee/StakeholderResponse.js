@@ -1,13 +1,13 @@
-import { Banner, Card, CardText, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 
 
 const StakeholderResponse = (props) => {
   const { state } = props.location;
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const bparegData = state?.data?.Licenses?.[0];
   const typeofStakeholder = bparegData?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split('.')[0]
 
@@ -20,7 +20,7 @@ const StakeholderResponse = (props) => {
   }
 
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
+    navigate(`/upyog-ui/employee`);
   }
 
   return (
@@ -31,11 +31,11 @@ const StakeholderResponse = (props) => {
           applicationNumber={bparegData?.applicationNumber}
           info={t("BPA_NEW_STAKEHOLDER_REGISTRATION_APP_LABEL")}
           successful={bparegData?.status == "REJECTED" ? false : true}
-          style={{ padding: "10px" }}
+          className="obps-acknowledgement-container-padding"
           headerStyles={{fontSize: "32px", wordBreak: "break-word"}}
         />
-        <CardText style={{ paddingBottom: "10px", marginBottom: "10px" }}>{getSubHeaderMessage()}</CardText>
-        <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
+        <CardText className="obps-obpsresponse-card">{getSubHeaderMessage()}</CardText>
+        <ActionBar className="obps-obpsresponse-flex-row">
           <SubmitBar
             label={t("CORE_COMMON_GO_TO_HOME")}
             onSubmit={onSubmit}

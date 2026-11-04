@@ -1,10 +1,8 @@
 package org.upyog.sv.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.util.EncryptionDecryptionUtil;
@@ -19,8 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StreetVendingEncryptionService {
 
-	@Autowired
-	private EncryptionDecryptionUtil encryptionDecryptionUtil;
+	private final EncryptionDecryptionUtil encryptionDecryptionUtil;
+
+	public StreetVendingEncryptionService(EncryptionDecryptionUtil encryptionDecryptionUtil) {
+		this.encryptionDecryptionUtil = encryptionDecryptionUtil;
+	}
 
 	public StreetVendingDetail encryptObject(StreetVendingRequest streetVendingRequest) {
 		List<VendorDetail> vendorDetails = streetVendingRequest.getStreetVendingDetail().getVendorDetail();
@@ -36,7 +37,7 @@ public class StreetVendingEncryptionService {
 		List<VendorDetail> encryptedVendorDetails = vendorDetails.stream()
 				.map(vendorDetail -> encryptionDecryptionUtil.encryptObject(vendorDetail,
 						StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY, VendorDetail.class))
-				.collect(Collectors.toList());
+				.toList();
 		if (bankDetail != null) {
 			BankDetail encryptedBankDetail = encryptionDecryptionUtil.encryptObject(bankDetail,
 					StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY, BankDetail.class);

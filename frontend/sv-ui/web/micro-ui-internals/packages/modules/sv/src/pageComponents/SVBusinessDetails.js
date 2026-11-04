@@ -30,28 +30,28 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
   const [isSameForAll, setIsSameForAll] = useState(previousData?.vendingOperationTimeDetails?.length === 7 || editdata?.vendingOperationTimeDetails?.length === 7 ? true : false || formData?.businessDetails?.isSameForAll); // Flag to check if same for all days 
- 
+
   const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
-  formData?.businessDetails?.daysOfOperation || (() => {
-    const operationTimeDetails = previousData?.vendingOperationTimeDetails || editdata?.vendingOperationTimeDetails || [];
-    
-    // Create a map for quick lookup by dayOfWeek
-    const dayMap = {};
-    operationTimeDetails.forEach(detail => {
-      dayMap[detail.dayOfWeek] = detail;
-    });
-    
-    return [
-      { name: "Monday", isSelected: !!dayMap["MONDAY"], startTime: dayMap["MONDAY"]?.fromTime || "", endTime: dayMap["MONDAY"]?.toTime || "" },
-      { name: "Tuesday", isSelected: !!dayMap["TUESDAY"], startTime: dayMap["TUESDAY"]?.fromTime || "", endTime: dayMap["TUESDAY"]?.toTime || "" },
-      { name: "Wednesday", isSelected: !!dayMap["WEDNESDAY"], startTime: dayMap["WEDNESDAY"]?.fromTime || "", endTime: dayMap["WEDNESDAY"]?.toTime || "" },
-      { name: "Thursday", isSelected: !!dayMap["THURSDAY"], startTime: dayMap["THURSDAY"]?.fromTime || "", endTime: dayMap["THURSDAY"]?.toTime || "" },
-      { name: "Friday", isSelected: !!dayMap["FRIDAY"], startTime: dayMap["FRIDAY"]?.fromTime || "", endTime: dayMap["FRIDAY"]?.toTime || "" },
-      { name: "Saturday", isSelected: !!dayMap["SATURDAY"], startTime: dayMap["SATURDAY"]?.fromTime || "", endTime: dayMap["SATURDAY"]?.toTime || "" },
-      { name: "Sunday", isSelected: !!dayMap["SUNDAY"], startTime: dayMap["SUNDAY"]?.fromTime || "", endTime: dayMap["SUNDAY"]?.toTime || "" },
-    ];
-  })()
-);
+    formData?.businessDetails?.daysOfOperation || (() => {
+      const operationTimeDetails = previousData?.vendingOperationTimeDetails || editdata?.vendingOperationTimeDetails || [];
+
+      // Create a map for quick lookup by dayOfWeek
+      const dayMap = {};
+      operationTimeDetails.forEach(detail => {
+        dayMap[detail.dayOfWeek] = detail;
+      });
+
+      return [
+        { name: "Monday", isSelected: !!dayMap["MONDAY"], startTime: dayMap["MONDAY"]?.fromTime || "", endTime: dayMap["MONDAY"]?.toTime || "" },
+        { name: "Tuesday", isSelected: !!dayMap["TUESDAY"], startTime: dayMap["TUESDAY"]?.fromTime || "", endTime: dayMap["TUESDAY"]?.toTime || "" },
+        { name: "Wednesday", isSelected: !!dayMap["WEDNESDAY"], startTime: dayMap["WEDNESDAY"]?.fromTime || "", endTime: dayMap["WEDNESDAY"]?.toTime || "" },
+        { name: "Thursday", isSelected: !!dayMap["THURSDAY"], startTime: dayMap["THURSDAY"]?.fromTime || "", endTime: dayMap["THURSDAY"]?.toTime || "" },
+        { name: "Friday", isSelected: !!dayMap["FRIDAY"], startTime: dayMap["FRIDAY"]?.fromTime || "", endTime: dayMap["FRIDAY"]?.toTime || "" },
+        { name: "Saturday", isSelected: !!dayMap["SATURDAY"], startTime: dayMap["SATURDAY"]?.fromTime || "", endTime: dayMap["SATURDAY"]?.toTime || "" },
+        { name: "Sunday", isSelected: !!dayMap["SUNDAY"], startTime: dayMap["SUNDAY"]?.fromTime || "", endTime: dayMap["SUNDAY"]?.toTime || "" },
+      ];
+    })()
+  );
   const [backupDays, setBackupDays] = useState(formData?.businessDetails?.backupDays || [...daysOfOperation]); // Backup array to store original days of operation
 
 
@@ -82,28 +82,28 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
  * Dependencies: [allCities, editdata?.locality, fetchedVendingZones, previousData?.locality]
  */
   useEffect(() => {
-  if (editdata?.locality && allCities && allCities.length > 0) {
-    allCities.map((city) => {
-      if (city.code === editdata?.locality) setVendorLocality(city);
+    if (editdata?.locality && allCities && allCities.length > 0) {
+      allCities.map((city) => {
+        if (city.code === editdata?.locality) setVendorLocality(city);
+      }
+      )
     }
-    )
-  }
-  if(editdata?.vendingZone && structuredVendingZone) {
-    structuredVendingZone.map((zone) => {
-      if (zone.code === editdata?.vendingZone) setvendingZones(zone);
-    })
-  }
-  if (previousData?.locality && allCities && allCities.length > 0) {
-    allCities.map((city) => {
-      if (city.code === previousData?.locality) setVendorLocality(city);
+    if (editdata?.vendingZone && structuredVendingZone) {
+      structuredVendingZone.map((zone) => {
+        if (zone.code === editdata?.vendingZone) setvendingZones(zone);
+      })
     }
-    )
-  }
-  if(previousData?.vendingZone && structuredVendingZone) {
-    structuredVendingZone.map((zone) => {
-      if (zone.code === previousData?.vendingZone) setvendingZones(zone);
-    })
-  }
+    if (previousData?.locality && allCities && allCities.length > 0) {
+      allCities.map((city) => {
+        if (city.code === previousData?.locality) setVendorLocality(city);
+      }
+      )
+    }
+    if (previousData?.vendingZone && structuredVendingZone) {
+      structuredVendingZone.map((zone) => {
+        if (zone.code === previousData?.vendingZone) setvendingZones(zone);
+      })
+    }
   }, [allCities, editdata?.locality, fetchedVendingZones, previousData?.locality]);
 
   /* this checks two conditions:
@@ -132,62 +132,62 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
 
 
   const handleRowChange = (rowIndex) => {
-  const updatedDays = [...daysOfOperation];
-  const isCurrentlySelected = updatedDays[rowIndex].isSelected;
-  
-  if (isCurrentlySelected) {
-    // Deselecting: Clear the times
-    updatedDays[rowIndex] = {
-      ...updatedDays[rowIndex],
-      isSelected: false,
-      startTime: "",
-      endTime: ""
-    };
-  } else {
-    // Reselecting: Find the first selected day's time and apply it
-    const firstSelectedDay = updatedDays.find(day => day.isSelected && (day.startTime || day.endTime));
-    
-    updatedDays[rowIndex] = {
-      ...updatedDays[rowIndex],
-      isSelected: true,
-      startTime: firstSelectedDay?.startTime || "",
-      endTime: firstSelectedDay?.endTime || ""
-    };
-  }
-  
-  setDaysOfOperation(updatedDays);
-};
+    const updatedDays = [...daysOfOperation];
+    const isCurrentlySelected = updatedDays[rowIndex].isSelected;
+
+    if (isCurrentlySelected) {
+      // Deselecting: Clear the times
+      updatedDays[rowIndex] = {
+        ...updatedDays[rowIndex],
+        isSelected: false,
+        startTime: "",
+        endTime: ""
+      };
+    } else {
+      // Reselecting: Find the first selected day's time and apply it
+      const firstSelectedDay = updatedDays.find(day => day.isSelected && (day.startTime || day.endTime));
+
+      updatedDays[rowIndex] = {
+        ...updatedDays[rowIndex],
+        isSelected: true,
+        startTime: firstSelectedDay?.startTime || "",
+        endTime: firstSelectedDay?.endTime || ""
+      };
+    }
+
+    setDaysOfOperation(updatedDays);
+  };
 
 
   // function to handle day time selection
   const onTimeChange = (index, time, value) => {
-  let updatedDays = [...daysOfOperation];
-  updatedDays[index][time] = value;
+    let updatedDays = [...daysOfOperation];
+    updatedDays[index][time] = value;
 
-  if (updatedDays[index].startTime || updatedDays[index].endTime) {
-    updatedDays[index].isSelected = true;
-  } else {
-    updatedDays[index].isSelected = false;
-  }
+    if (updatedDays[index].startTime || updatedDays[index].endTime) {
+      updatedDays[index].isSelected = true;
+    } else {
+      updatedDays[index].isSelected = false;
+    }
 
-  // Apply change only to selected rows or the edited row itself
-  if (isSameForAll) {
-    const { startTime, endTime } = updatedDays[index];
+    // Apply change only to selected rows or the edited row itself
+    if (isSameForAll) {
+      const { startTime, endTime } = updatedDays[index];
 
-    updatedDays = updatedDays.map((day, i) => {
-      if (day.isSelected || i === index) {
-        return {
-          ...day,
-          startTime,
-          endTime,
-        };
-      }
-      return day;
-    });
-  }
+      updatedDays = updatedDays.map((day, i) => {
+        if (day.isSelected || i === index) {
+          return {
+            ...day,
+            startTime,
+            endTime,
+          };
+        }
+        return day;
+      });
+    }
 
-  setDaysOfOperation(updatedDays);
-};
+    setDaysOfOperation(updatedDays);
+  };
 
   // Handle toggle for isSameForAll and apply backup if needed
   const handleToggleIsSameForAll = () => {
@@ -387,7 +387,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
       vendorId: null
     });
 
-     const createDependentObject = (dependent) => ({
+    const createDependentObject = (dependent) => ({
       applicationId: "",
       auditDetails: {
         createdBy: "",
@@ -406,7 +406,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
       name: dependent?.dependentName,
       relationshipType: "DEPENDENT",
       vendorId: null
-});
+    });
 
     // Helper function to check if a string is empty or undefined
     const isEmpty = (str) => !str || str.trim() === '';
@@ -434,8 +434,8 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
           createDependentObject(dep)
         );
         vendordetails = [
-            createVendorObject(formData?.owner?.vendorDetails),
-            createSpouseObject(formData?.owner?.spouseDetails),
+          createVendorObject(formData?.owner?.vendorDetails),
+          createSpouseObject(formData?.owner?.spouseDetails),
           ...dependentPayload
         ];
       }
@@ -569,8 +569,6 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
         comments: "",
         businessService: "street-vending",
         moduleName: "sv-services",
-        businessService: "street-vending",
-        moduleName: "sv-services",
         varificationDocuments: [
           {
             additionalDetails: {},
@@ -668,7 +666,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
               name={"vendingType"}
               defaultValue={vendingType}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={vendingType}
@@ -686,7 +684,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
               name={"locality"}
               defaultValue={vendorLocality}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={vendorLocality}
@@ -705,7 +703,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
               name={"vendingZones"}
               defaultValue={vendingZones}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={vendingZones}
@@ -815,7 +813,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-/ ]*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "text",
                 title: t("SV_INPUT_DID_NOT_MATCH"),
               })}
@@ -827,7 +825,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
               name={"vendingPayment"}
               defaultValue={vendingPayment}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
                   className="form-field"
                   selected={vendingPayment}
@@ -853,7 +851,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
               ValidationRequired={false}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z0-9-/ ]+$",
+                pattern: "^[a-zA-Z0-9\\/\\- ]*$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}

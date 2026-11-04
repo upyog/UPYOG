@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS ug_cnd_application_details (
 );
 
 
-CREATE TABLE ug_cnd_waste_detail (
+CREATE TABLE IF NOT EXISTS ug_cnd_waste_detail (
     application_id VARCHAR(64),
     waste_type_id VARCHAR(64),
     entered_by_user_type VARCHAR(50),
@@ -48,7 +48,7 @@ CREATE TABLE ug_cnd_waste_detail (
 );
 
 
-CREATE TABLE ug_cnd_document_detail (
+CREATE TABLE IF NOT EXISTS ug_cnd_document_detail (
     document_detail_id VARCHAR(64) PRIMARY KEY,
     application_id VARCHAR(64),
     document_type VARCHAR(100),
@@ -64,7 +64,7 @@ CREATE TABLE ug_cnd_document_detail (
 );
 
 
-CREATE TABLE ug_cnd_disposal_deposit_centre_detail (
+CREATE TABLE IF NOT EXISTS ug_cnd_disposal_deposit_centre_detail (
     disposal_id VARCHAR(64) PRIMARY KEY,
     application_id VARCHAR(64),
     vehicle_id VARCHAR(64),
@@ -84,7 +84,7 @@ CREATE TABLE ug_cnd_disposal_deposit_centre_detail (
 );
 
 
-CREATE TABLE ug_cnd_application_details_audit (
+CREATE TABLE IF NOT EXISTS ug_cnd_application_details_audit (
     application_id VARCHAR(64) PRIMARY KEY,  -- Using application_id as the primary key
     tenant_id VARCHAR(64) NOT NULL,
     application_number VARCHAR(64) UNIQUE NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE ug_cnd_application_details_audit (
 );
 
 
-CREATE TABLE ug_cnd_waste_detail_audit (
+CREATE TABLE IF NOT EXISTS ug_cnd_waste_detail_audit (
     application_id VARCHAR(64),
     waste_type_id VARCHAR(64),
     entered_by_user_type VARCHAR(50),
@@ -134,7 +134,7 @@ CREATE TABLE ug_cnd_waste_detail_audit (
 );
 
 
-CREATE TABLE ug_cnd_document_detail_audit (
+CREATE TABLE IF NOT EXISTS ug_cnd_document_detail_audit (
     document_detail_id VARCHAR(64) PRIMARY KEY,
     application_id VARCHAR(64),
     document_type VARCHAR(100),
@@ -150,7 +150,7 @@ CREATE TABLE ug_cnd_document_detail_audit (
 );
 
 
-CREATE TABLE ug_cnd_disposal_deposit_centre_detail_audit (
+CREATE TABLE IF NOT EXISTS ug_cnd_disposal_deposit_centre_detail_audit (
     disposal_id VARCHAR(64) PRIMARY KEY,
     application_id VARCHAR(64),
     vehicle_id VARCHAR(64),
@@ -168,6 +168,33 @@ CREATE TABLE ug_cnd_disposal_deposit_centre_detail_audit (
 
     FOREIGN KEY (application_id) REFERENCES ug_cnd_application_details(application_id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE IF NOT EXISTS public.ug_cnd_applicant_details (
+    application_id           VARCHAR(64) PRIMARY KEY,
+    name_of_applicant        VARCHAR(100) NOT NULL,
+    mobile_number            VARCHAR(12)  NOT NULL,
+    email_id                 VARCHAR(200),
+    alternate_mobile_number  VARCHAR(100),
+    createdby                VARCHAR(64),
+    lastmodifiedby           VARCHAR(64),
+    createdtime              BIGINT NOT NULL,
+    lastmodifiedtime         BIGINT
+);
+
+CREATE TABLE IF NOT EXISTS public.ug_cnd_address_details (
+    application_id   VARCHAR(64) PRIMARY KEY,
+    house_number     VARCHAR(100),
+    address_line_1   VARCHAR(100) NOT NULL,
+    address_line_2   VARCHAR(100),
+    landmark         VARCHAR(100),
+    floor_number     VARCHAR(50),
+    city             VARCHAR(100) NOT NULL,
+    locality         VARCHAR(100) NOT NULL,
+    pinCode          VARCHAR(12)  NOT NULL,
+    address_type     VARCHAR(50)
+);
+
 
 CREATE SEQUENCE IF NOT EXISTS seq_cnd_application_id;
 

@@ -63,11 +63,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.ReceiptDetail;
@@ -139,7 +140,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
 @Results({ @Result(name = BaseFormAction.NEW, location = "receipt-new.jsp"),
-		@Result(name = com.opensymphony.xwork2.Action.SUCCESS, location = "receipt-success.jsp"),
+		@Result(name = org.apache.struts2.action.Action.SUCCESS, location = "receipt-success.jsp"),
 		@Result(name = BaseFormAction.INDEX, location = "receipt-index.jsp"),
 		@Result(name = ReceiptAction.REDIRECT, location = "receipt-redirect.jsp"),
 		@Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
@@ -731,6 +732,23 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	private void validateMiscDetails() {
+		/*
+		 * Java 17 / Struts 7 migration note:
+		 * During testing, a few misc receipt fields reached validation before they were
+		 * populated on the action. Reading the request values as a fallback preserves
+		 * the legacy form behavior and prevents false required-field validation errors.
+		 */
+		if (ServletActionContext.getRequest() != null) {
+			if (StringUtils.isEmpty(serviceCategory)) {
+				setServiceCategory(ServletActionContext.getRequest().getParameter("serviceCategory"));
+			}
+			if (StringUtils.isEmpty(paidBy)) {
+				setPaidBy(ServletActionContext.getRequest().getParameter("paidBy"));
+			}
+			if (StringUtils.isEmpty(billSource)) {
+				setBillSource(ServletActionContext.getRequest().getParameter("billSource"));
+			}
+		}
 		if (StringUtils.isEmpty(serviceCategory))
 			addActionError(getText("error.select.service.category"));
 		if ((instrHeaderCash.getInstrumentAmount() != null

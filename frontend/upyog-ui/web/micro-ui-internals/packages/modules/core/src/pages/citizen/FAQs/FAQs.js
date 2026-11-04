@@ -1,4 +1,4 @@
-import { Header, TextInput, SearchIconSvg, ArrowForward, Loader, BackButton} from "@upyog/digit-ui-react-components";
+import { Header, TextInput, SearchIconSvg, ArrowForward, Loader, BackButton} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, Fragment, useRef, useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import FaqComponent from "./FaqComponent";
@@ -15,7 +15,7 @@ const FAQsSection = ({module}) => {
 
   const { isLoading, data } = Digit.Hooks.useGetFAQsJSON(Digit.ULBService.getStateId());
 
-  const moduleFaqs = data?.MdmsRes["common-masters"]?.faqs[0]?.[`${module}`].faqs;
+  const moduleFaqs = data?.MdmsRes?.["common-masters"]?.faqs?.[0]?.[`${module}`]?.faqs || [];
 
   if(isLoading){
     return <Loader/>
@@ -23,8 +23,8 @@ const FAQsSection = ({module}) => {
   return (
     <Fragment>
     <div className="faq-page">
-      <BackButton style={{marginLeft : "unset"}}></BackButton>
-        <div style={{ marginBottom: "15px" }}>
+      <BackButton className="core-faqs-action-btn"></BackButton>
+        <div className="core-faqs-bottom-spacing">
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px"}}>{t("FAQ_S")}</Header>
         </div>
         <div className="faq-list">

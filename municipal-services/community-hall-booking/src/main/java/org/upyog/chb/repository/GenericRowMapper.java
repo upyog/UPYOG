@@ -1,16 +1,21 @@
 package org.upyog.chb.repository;
 
-import java.lang.reflect.Field;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.ResultSetExtractor;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * Features:
  * - Implements the ResultSetExtractor interface to process the ResultSet.
- * - Uses reflection to map result set columns to fields in the specified class.
+ * - Uses JavaBeans property descriptors to map result set columns to object properties.
  * - Handles various data types, including primitive types, strings, and dates.
  * - Logs errors and exceptions for debugging and monitoring purposes.
  * 
@@ -36,14 +41,14 @@ import lombok.extern.slf4j.Slf4j;
  * Methods:
  * 1. extractData:
  *    - Processes the ResultSet and maps each row to an object of the specified type.
- *    - Uses ResultSetMetaData to retrieve column names and dynamically maps them to fields.
+ *    - Uses ResultSetMetaData to retrieve column names and dynamically maps them to properties.
  * 
  * Usage:
  * - This class is used in the repository layer to map database query results to objects.
  * - It ensures consistency and reusability of mapping logic across the application.
  * 
  * Limitations:
- * - Requires that the field names in the class match the column names in the database.
+ * - Requires that property names in the class match the column names in the database.
  * - May require additional handling for complex data types or nested objects.
  */
 @Slf4j
@@ -51,26 +56,37 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
 
     private final Class<T> mappedClass;
 
+    /**
+     * @param mappedClass target type whose JavaBean properties are matched to result-set column labels
+     */
     public GenericRowMapper(Class<T> mappedClass) {
         this.mappedClass = mappedClass;
     }
 
+    /**
+     * Maps every row in {@code rs} to an instance of {@code T} using JavaBean property descriptors.
+     *
+     * @param rs JDBC result set positioned before the first row
+     * @return list of mapped objects, empty when the result set has no rows
+     * @throws SQLException when reading the result set fails
+     * @throws DataAccessException when reflection-based mapping fails
+     */
     @Override
-    public List<T> extractData(ResultSet rs) {
+    @SuppressWarnings("java:S2638")
+    public List<T> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<T> results = new ArrayList<>();
 
         try {
-            // Get metadata for column names
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
+            BeanInfo beanInfo = Introspector.getBeanInfo(mappedClass, Object.class);
 
             while (rs.next()) {
                 T instance = mappedClass.getDeclaredConstructor().newInstance();
 
-                // Map to hold column values
                 Map<String, Object> columnValueMap = new HashMap<>();
                 for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnLabel(i).toLowerCase(); // Column name in lowercase
+                    String columnName = metaData.getColumnLabel(i).toLowerCase();
                     log.info("column name  {}", columnName);
                     Object columnValue = rs.getObject(i);
                     log.info("column value {} ", columnValue);
@@ -78,30 +94,28 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     columnValueMap.put(columnName, columnValue);
                 }
 
-                // Map fields to column values
-                for (Field field : mappedClass.getDeclaredFields()) {
-                    String fieldName = field.getName().toLowerCase(); // Match field name to column name
-                    if (columnValueMap.containsKey(fieldName)) {
-                        field.setAccessible(true);
-                        Object value = columnValueMap.get(fieldName);
+                for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+                    String propertyName = propertyDescriptor.getName().toLowerCase();
+                    if (propertyDescriptor.getWriteMethod() != null
+                            && columnValueMap.containsKey(propertyName)) {
+                        Object value = columnValueMap.get(propertyName);
 
-                        // Handle LocalDate conversion
-                        if (field.getType().equals(LocalDate.class) && value instanceof java.sql.Date) {
-                            value = ((java.sql.Date) value).toLocalDate();
+                        if (propertyDescriptor.getPropertyType().equals(LocalDate.class)
+                                && value instanceof java.sql.Date sqlDate) {
+                            value = sqlDate.toLocalDate();
                         }
 
-                        field.set(instance, value);
+                        propertyDescriptor.getWriteMethod().invoke(instance, value);
                     }
                 }
 
                 results.add(instance);
             }
 
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to extract data to class: " + mappedClass.getName(), e);
+        } catch (SQLException | ReflectiveOperationException | IntrospectionException e) {
+            throw new DataRetrievalFailureException("Failed to extract data to class: " + mappedClass.getName(), e);
         }
 
         return results;
     }
 }
-

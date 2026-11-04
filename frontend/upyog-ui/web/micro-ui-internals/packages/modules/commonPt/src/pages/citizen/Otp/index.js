@@ -1,14 +1,14 @@
 import React, { useMemo,useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch, useLocation, useHistory} from "react-router-dom";
+import { Route, useLocation,  Routes } from "react-router-dom";
 import SelectOtp from "./SelectOtp";
 import { loginSteps } from "./config";
 
 const CitizenOtp = (props) => {
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
+  const { path } = Digit.Hooks.useModuleBasePath();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const [params1, setParmas1] = useState({mobileNumber: location.state.mobileNumber, otp: ''});
   const [isOtpValid, setIsOtpValid] = useState(true);
@@ -41,11 +41,11 @@ const CitizenOtp = (props) => {
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
         
         if (location.state?.redirectBackTo) {
-          history.replace(location.state?.redirectBackTo, {
+          navigate(location.state?.redirectBackTo, { replace: true, state: {
             data: location.state?.redirectData
-          });
+          } });
         } else {
-          history.replace('upyog-ui/citizen/');
+          navigate('upyog-ui/citizen/', { replace: true });
         }
     } catch (err) {
       setIsOtpValid(false);

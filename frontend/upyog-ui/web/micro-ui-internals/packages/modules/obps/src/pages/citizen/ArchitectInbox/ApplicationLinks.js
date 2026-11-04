@@ -1,4 +1,4 @@
-import { Card, OBPSIconSolidBg } from "@upyog/digit-ui-react-components";
+import { Card, OBPSIconSolidBg } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ const InboxLinks = ({ parentRoute, businessService, allLinks, headerText }) => {
   }, []);
 
   const GetLogo = () => (
-    <div className="header" style={{ justifyContent: "flex-start" }}>
+    <div className="header obps-application-links-wrapper">
       <span className="logo">
       <OBPSIconSolidBg />
       </span>{" "}

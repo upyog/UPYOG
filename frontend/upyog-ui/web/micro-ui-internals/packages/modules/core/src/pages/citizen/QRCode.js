@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Row, CardHeader, StatusTable } from "@upyog/digit-ui-react-components";
+import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 const QRCode = ({ path }) => {
     const { t } = useTranslation();
@@ -52,7 +52,7 @@ const QRCode = ({ path }) => {
     );
     return (
         <React.Fragment>
-            <div style={{ width: "100%" }}>
+            <div className="core-assets-qrcode-fullwidth">
                 <Card>
                     <CardHeader>Receipt Summary</CardHeader>
                     {!recieptDataLoading ?

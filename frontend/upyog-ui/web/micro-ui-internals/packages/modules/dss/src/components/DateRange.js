@@ -1,4 +1,4 @@
-import { Calender } from "@upyog/digit-ui-react-components";
+import { Calender } from "@nudmcdgnpm/digit-ui-react-components";
 import {
   addHours,
   addMinutes,
@@ -199,7 +199,7 @@ const DateRange = ({ values, onFilterChange, t }) => {
           <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
         </div>
         {isModalOpen && (
-          <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "unset" }}>
+          <div className="options-card dss-custom-date-range-wrapper">
             <DateRangePicker
               className="pickerShadow"
               focusedRange={focusedRange}

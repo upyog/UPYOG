@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.sv.config.StreetVendingConfiguration;
@@ -33,14 +32,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StreetyVendingNotificationServiceImpl implements StreetyVendingNotificationService {
 
-	@Autowired
-	private StreetVendingConfiguration config;
+	private final StreetVendingConfiguration config;
+	private final NotificationUtil util;
+	private final StreetVendingEncryptionService decrypt;
 
-	@Autowired
-	private NotificationUtil util;
-	
-	@Autowired
-	private StreetVendingEncryptionService decrypt;
+	public StreetyVendingNotificationServiceImpl(StreetVendingConfiguration config, NotificationUtil util,
+			StreetVendingEncryptionService decrypt) {
+		this.config = config;
+		this.util = util;
+		this.decrypt = decrypt;
+	}
 
 	
 	/**
@@ -103,6 +104,8 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
      * Generates an EventRequest object for a given Street Vending request.
      *
      * @param request the StreetVendingRequest containing details of the street vending application
+     * @param actionLink action link for the notification
+     * @param messageMap customized message map for the notification
      * @return an EventRequest containing event details for notifications, or null if no events are generated
      */
 	private EventRequest getEventsForSV(StreetVendingRequest request, String actionLink,
@@ -110,7 +113,6 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getStreetVendingDetail().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 		List<String> toUsers = new ArrayList<>();
 		StreetVendingDetail	decryptedDetail = decrypt.decryptObject(request.getStreetVendingDetail(), request.getRequestInfo());
 		String mobileNumber = decryptedDetail.getVendorDetail().get(0).getMobileNo();
@@ -122,9 +124,7 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		
-		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getStreetVendingDetail(),
-				localizationMessages);
+
 		String message = messageMap.get(StreetVendingConstants.MESSAGE_TEXT);
 		log.info("Message for event in StreetVending:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();

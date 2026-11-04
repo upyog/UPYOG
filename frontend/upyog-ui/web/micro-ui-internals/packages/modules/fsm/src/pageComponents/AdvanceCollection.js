@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams, useLocation } from "react-router-dom";
 
 const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFieldStyle }) => {
@@ -154,24 +154,14 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
                   />
                   {currentValue > TotalAmount && (
                     <CardLabelError
-                      style={{
-                        width: "100%",
-                        marginTop: "-15px",
-                        fontSize: "14px",
-                        marginBottom: "0px",
-                      }}
+                      className="fsm-advance-collection-fullwidth"
                     >
                       {t("FSM_ADVANCE_AMOUNT_MAX")}
                     </CardLabelError>
                   )}
                   {currentValue < AdvanceAmount && (
                     <CardLabelError
-                      style={{
-                        width: "100%",
-                        marginTop: "-15px",
-                        fontSize: "14px",
-                        marginBottom: "0px",
-                      }}
+                      className="fsm-advance-collection-fullwidth"
                     >
                       {t("FSM_ADVANCE_AMOUNT_MIN")}
                     </CardLabelError>
@@ -181,12 +171,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
                     applicationData?.advanceAmount > 0 &&
                     Number(currentValue) === 0 && (
                       <CardLabelError
-                        style={{
-                          width: "100%",
-                          marginTop: "-15px",
-                          fontSize: "14px",
-                          marginBottom: "0px",
-                        }}
+                        className="fsm-advance-collection-fullwidth"
                       >
                         {t("FSM_ADVANCE_AMOUNT_NOT_ZERO")}
                       </CardLabelError>

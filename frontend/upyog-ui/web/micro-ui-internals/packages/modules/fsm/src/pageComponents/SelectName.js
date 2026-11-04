@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
@@ -84,7 +84,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                   {t(input.label)}
                   {input.isMandatory ? <span className="check-page-link-button"> *</span> : null}
                 </CardLabel>
-                <div className="field" style={{display:"flex"}}>
+                <div className="field fsm-registry-search-flex-container">
                   {input.componentInFront ? input.componentInFront : null}
                   <TextInput
                     key={input.name}
@@ -96,7 +96,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                                   </div>
                               </LabelFieldPair>
               {input.name==="emailId" && error && (
-                  <CardLabelError style={{color:"red"}}>{error}</CardLabelError>
+                  <CardLabelError className="fsm-select-name-required-asterisk">{error}</CardLabelError>
                 )}
             </React.Fragment>
           )}

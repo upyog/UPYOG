@@ -12,7 +12,7 @@ const EditApplication = () => {
     let applicationNumber=url.split("application/")[1];   
     const tenantId = Digit.ULBService.getCurrentTenantId();
     id=applicationNumber;
-  const { isLoading, complaintDetails } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
+  const { isLoading, data: complaintDetails } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
   
   return complaintDetails && !isLoading ? <EditForm applicationData={complaintDetails?.service  } details={complaintDetails?.details} complaintDetails={complaintDetails} /> : null;
 };

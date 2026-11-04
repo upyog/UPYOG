@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo } from "react";
-import { FilterFormField, Loader, RadioButtons, RemoveableTag, CheckBox, MultiSelectDropdown } from "@upyog/digit-ui-react-components";
+import { FilterFormField, Loader, RadioButtons, RemoveableTag, CheckBox, MultiSelectDropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -21,16 +21,15 @@ const FilterFormFieldsComponent = ({
   const selectedApplicationType = useWatch({
     control: controlFilterForm,
     name: "applicationType",
-    defaultValue: filterFormState?.applicationType || null,
+    defaultValue: filterFormState?.applicationType || [],
   });
 
-  let totalnewWSCount = 0, totalModifyWSCount = 0,  totalDisconnectionWSCount = 0, totalnewSWCOunt = 0, totalModifySWCount = 0, totalDisconnectionSWCount = 0;
-  const totalnewWS = statuses?.filter((e) => e.businessservice === "NewWS1")?.forEach(data => totalnewWSCount = totalnewWSCount +  data?.count);
-  const totalModifyWS = statuses?.filter((e) => e.businessservice === "ModifyWSConnection")?.forEach(data => totalModifyWSCount = totalModifyWSCount +  data?.count);;
-  const totalDisconnectionWS = statuses?.filter((e) => e.businessservice === "DisconnectWSConnection")?.forEach(data => totalDisconnectionWSCount = totalDisconnectionWSCount +  data?.count);;
-  const totalnewSW = statuses?.filter((e) => e.businessservice === "NewSW1")?.forEach(data => totalnewSWCOunt = totalnewSWCOunt +  data?.count);;
-  const totalModifySW = statuses?.filter((e) => e.businessservice === "ModifySWConnection")?.forEach(data => totalModifySWCount = totalModifySWCount +  data?.count);;
-  const totalDisconnectionSW = statuses?.filter((e) => e.businessservice === "DisconnectSWConnection")?.forEach(data => totalDisconnectionSWCount = totalDisconnectionSWCount +  data?.count);;
+  const totalnewWSCount = statuses?.filter((e) => e.businessservice === "NewWS1")?.reduce((sum, data) => sum + (data?.count || 0), 0) || 0;
+  const totalModifyWSCount = statuses?.filter((e) => e.businessservice === "ModifyWSConnection")?.reduce((sum, data) => sum + (data?.count || 0), 0) || 0;
+  const totalDisconnectionWSCount = statuses?.filter((e) => e.businessservice === "DisconnectWSConnection")?.reduce((sum, data) => sum + (data?.count || 0), 0) || 0;
+  const totalnewSWCount = statuses?.filter((e) => e.businessservice === "NewSW1")?.reduce((sum, data) => sum + (data?.count || 0), 0) || 0;
+  const totalModifySWCount = statuses?.filter((e) => e.businessservice === "ModifySWConnection")?.reduce((sum, data) => sum + (data?.count || 0), 0) || 0;
+  const totalDisconnectionSWCount = statuses?.filter((e) => e.businessservice === "DisconnectSWConnection")?.reduce((sum, data) => sum + (data?.count || 0), 0) || 0;
 
   const applicationTypeStatuses = checkPathName
     ? [
@@ -50,7 +49,7 @@ const FilterFormFieldsComponent = ({
     : [
         {
           code: "NewSW1",
-          name: `${t("CS_COMMON_INBOX_NEWSW1")} (${totalnewSWCOunt})`,
+          name: `${t("CS_COMMON_INBOX_NEWSW1")} (${totalnewSWCount})`,
         },
         {
           code: "ModifySWConnection",
@@ -62,27 +61,19 @@ const FilterFormFieldsComponent = ({
         },
       ];
 
-  const selectrole = (listOfSelections, props) => {
-    const res = listOfSelections.map((propsData) => {
-      const data = propsData[1];
-      return data;
-    });
-    return props.onChange(res);
-  };
-
   return (
     <>
       <FilterFormField>
         <Controller
           name="assignee"
           control={controlFilterForm}
-          render={(props) => {
+          render={({ field }) => {
             return (
               <RadioButtons
                 onSelect={(e) => {
-                  props.onChange(e.code);
+                  field.onChange(e.code);
                 }}
-                selectedOption={availableOptions.filter((option) => option.code === props.value)[0]}
+                selectedOption={availableOptions.filter((option) => option.code === field.value)[0]}
                 optionsKey="name"
                 name="assignee"
                 options={availableOptions}
@@ -96,22 +87,18 @@ const FilterFormFieldsComponent = ({
         <Controller
           name="locality"
           control={controlFilterForm}
-          render={(props) => {
-            const renderRemovableTokens = useMemo(
-              () =>
-                props?.value?.map((locality, index) => {
-                  return (
-                    <RemoveableTag
-                      key={index}
-                      text={locality.i18nkey}
-                      onClick={() => {
-                        props.onChange(props?.value?.filter((loc) => loc.code !== locality.code));
-                      }}
-                    />
-                  );
-                }),
-              [props?.value]
-            );
+          render={({ field }) => {
+            const renderRemovableTokens = field.value?.map((locality, index) => {
+              return (
+                <RemoveableTag
+                  key={index}
+                  text={locality.i18nkey}
+                  onClick={() => {
+                    field.onChange(field.value?.filter((loc) => loc.code !== locality.code));
+                  }}
+                />
+              );
+            });
             return loadingLocalitiesForEmployeesCurrentTenant ? (
               <Loader />
             ) : (
@@ -120,10 +107,16 @@ const FilterFormFieldsComponent = ({
                 <MultiSelectDropdown
                   options={localitiesForEmployeesCurrentTenant ? localitiesForEmployeesCurrentTenant : []}
                   optionsKey="i18nkey"
-                  props={props}
+                  props={{ field }}
                   isPropsNeeded={true}
-                  onSelect={selectrole}
-                  selected={props?.value}
+                  onSelect={(listOfSelections) => {
+                    const res = listOfSelections.map((propsData) => {
+                      const data = propsData[1];
+                      return data;
+                    });
+                    field.onChange(res);
+                  }}
+                  selected={field.value}
                   defaultLabel={t("ES_WS_ALL_SELECTED")}
                   defaultUnit={t("WS_SELECTED_TEXT")}
                 />
@@ -133,74 +126,68 @@ const FilterFormFieldsComponent = ({
           }}
         />
       </FilterFormField>
+
       <FilterFormField>
         <Controller
           name="applicationType"
           control={controlFilterForm}
-          render={(props) => {
+          render={({ field }) => {
             function changeItemCheckStatus(value) {
-              props.onChange(value);
+              field.onChange(value);
             }
-            const renderStatusCheckBoxess = useMemo(
-              () =>
-                applicationTypeStatuses?.map((status, index) => {
-                  return (
-                    <CheckBox
-                      onChange={(e) =>
-                        e.target.checked
-                          ? changeItemCheckStatus([...props.value, status?.code])
-                          : changeItemCheckStatus(props.value?.filter((ele) => ele !== status?.code))
-                      }
-                      checked={props.value?.includes(status?.code)}
-                      label={status?.name}
-                      value={status.name}
-                      key={index + 1}
-                    />
-                  );
-                }),
-              [props.value, statuses]
-            );
+            const renderStatusCheckBoxess = applicationTypeStatuses?.map((status, index) => {
+              return (
+                <CheckBox
+                  onChange={(e) =>
+                    e.target.checked
+                      ? changeItemCheckStatus([...field.value, status?.code])
+                      : changeItemCheckStatus(field.value?.filter((ele) => ele !== status?.code))
+                  }
+                  checked={field.value?.includes(status?.code)}
+                  label={status?.name}
+                  value={status.name}
+                  key={index + 1}
+                />
+              );
+            });
             return (
               <>
                 <div className="filter-label sub-filter-label">{t("WS_COMMON_TABLE_COL_APP_TYPE_LABEL")}</div>
-                {isInboxLoading ? <Loader /> : <> {renderStatusCheckBoxess}</>}
+                {isInboxLoading ? <Loader /> : <>{renderStatusCheckBoxess}</>}
               </>
             );
           }}
         />
       </FilterFormField>
+
       {selectedApplicationType?.length > 0 ? (
         <FilterFormField>
           <Controller
             name="applicationStatus"
             control={controlFilterForm}
-            render={(props) => {
+            render={({ field }) => {
               function changeItemCheckStatus(value) {
-                props.onChange(value);
+                field.onChange(value);
               }
-              const renderStatusCheckBoxes = useMemo(
-                () =>
-                  statuses
-                    ?.filter((e) => {
-                      const value = selectedApplicationType;
-                      return value.includes(e.businessservice);
-                    })
-                    ?.map((status, index) => {
-                      return (
-                        <CheckBox
-                          key={index + 1}
-                          onChange={(e) =>
-                            e.target.checked
-                              ? changeItemCheckStatus([...props.value, status?.statusid])
-                              : changeItemCheckStatus(props.value?.filter((id) => id !== status?.statusid))
-                          }
-                          checked={props.value?.includes(status?.statusid)}
-                          label={`${t(`WF_${status.businessservice.toUpperCase()}_${status.applicationstatus.split("_").pop()}`)} (${status.count})`}
-                        />
-                      );
-                    }),
-                [props.value, statuses, selectedApplicationType]
-              );
+              const renderStatusCheckBoxes = statuses
+                ?.filter((e) => {
+                  const value = selectedApplicationType;
+                  return value.includes(e.businessservice);
+                })
+                ?.map((status, index) => {
+                  return (
+                    <CheckBox
+                      key={index + 1}
+                      onChange={(e) =>
+                        e.target.checked
+                          ? changeItemCheckStatus([...field.value, status?.statusid])
+                          : changeItemCheckStatus(field.value?.filter((id) => id !== status?.statusid))
+                      }
+                      checked={field.value?.includes(status?.statusid)}
+                      label={`${t(`WF_${status.businessservice.toUpperCase()}_${status.applicationstatus.split("_").pop()}`)} (${status.count})`}
+                    />
+                  );
+                });
               return (
                 <>
                   <div className="filter-label sub-filter-label">{t("WS_MYCONNECTIONS_STATUS")}</div>

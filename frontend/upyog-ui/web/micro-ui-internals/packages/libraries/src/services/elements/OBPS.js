@@ -253,7 +253,7 @@ export const OBPSService = {
         inspectionReport: [],
         values: [
           { title: "BPAREG_FEES", value: <span>&#8377;{paymentRes?.Payments?.[0]?.totalAmountPaid}</span>},
-          { title: "BPA_STATUS_LABEL", isTransLate: true, isStatus: true, value: paymentRes?.Payments?.[0]?.totalAmountPaid ? ("WF_BPA_PAID") : "NA", isTransLate:true }
+          { title: "BPA_STATUS_LABEL", isStatus: true, value: paymentRes?.Payments?.[0]?.totalAmountPaid ? ("WF_BPA_PAID") : "NA", isTransLate:true }
         ]
       }
     }

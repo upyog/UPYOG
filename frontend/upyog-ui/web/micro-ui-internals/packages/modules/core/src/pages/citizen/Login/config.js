@@ -16,6 +16,7 @@ export const loginSteps = [
           required: true,
           minLength: 10,
           maxLength: 10,
+          
         },
       },
     ],

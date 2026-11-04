@@ -1,12 +1,12 @@
-import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@upyog/digit-ui-react-components";
+import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
 import ChangeLanguage from "../ChangeLanguage";
 
 const TextToImg = (props) => (
   <span className="user-img-txt" onClick={props.toggleMenu} title={props.name}>
-    {props?.name?.[0]?.toUpperCase()}
+    {props?.name}
   </span>
 );
 const TopBar = ({
@@ -24,30 +24,35 @@ const TopBar = ({
   logoUrl,
   showLanguageChange = true,
   setSideBarScrollTop,
+  toggleSidebarWidth,
+  isSidebarCollapsed
 }) => {
   const [profilePic, setProfilePic] = React.useState(null);
 
-  React.useEffect(async () => {
-    const tenant = Digit.ULBService.getCurrentTenantId();
-    const uuid = userDetails?.info?.uuid;
-    if (uuid) {
-      const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
-      if (usersResponse?.user?.[0]?.photo) {
+  React.useEffect(() => {
+    const fetchProfilePic = async () => {
+      const tenant = Digit.ULBService.getCurrentTenantId();
+      const uuid = userDetails?.info?.uuid;
+      if (uuid && uuid !== "asdf" && !profilePic) {
         try {
-          const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
-          if (file?.data?.fileStoreIds?.[0]?.url) {
-            setProfilePic(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
+          const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+          if (usersResponse?.user?.[0]?.photo) {
+            const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
+            if (file?.data?.fileStoreIds?.[0]?.url) {
+              setProfilePic(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
+            }
           }
         } catch (err) {
           console.error("Error fetching profile photo:", err);
         }
       }
-    }
-  }, [profilePic !== null, userDetails?.info?.uuid]);
+    };
+    fetchProfilePic();
+  }, [profilePic, userDetails?.info?.uuid]);
 
   const CitizenHomePageTenantId = Digit.ULBService.getCitizenCurrentTenant(true);
 
-  let history = useHistory();
+  let navigate = Digit.Hooks.useCustomNavigate();
   const { pathname } = useLocation();
 
   const conditionsToDisableNotificationCountTrigger = () => {
@@ -66,17 +71,9 @@ const TopBar = ({
     },
   });
 
-  const updateSidebar = () => {
-    if (!Digit.clikOusideFired) {
-      toggleSidebar(true);
-      setSideBarScrollTop(true);
-    } else {
-      Digit.clikOusideFired = false;
-    }
-  };
 
   function onNotificationIconClick() {
-    history.push("/upyog-ui/citizen/engagement/notifications");
+    navigate("/upyog-ui/citizen/engagement/notifications");
   }
 
   const urlsToDisableNotificationIcon = (pathname) =>
@@ -84,13 +81,18 @@ const TopBar = ({
       ? false
       : ["/upyog-ui/citizen/select-language", "/upyog-ui/citizen/select-location"].includes(pathname);
 
-  if (CITIZEN) {
+  if (true) {
+    const isEmployee = Digit.UserService?.getType?.() === "employee" || window.location.href.includes("/employee");
     return (
       <div>
         <TopBarComponent
           img={stateInfo?.logoUrlWhite}
           isMobile={true}
-          toggleSidebar={updateSidebar}
+          toggleSidebar={toggleSidebarWidth}
+          isSidebarCollapsed={isSidebarCollapsed}
+          userOptions={userOptions}
+          profilePic={profilePic}
+          TextToImg={TextToImg}
           logoUrl={stateInfo?.logoUrlWhite}
           onLogout={handleLogout}
           userDetails={userDetails}
@@ -99,7 +101,10 @@ const TopBar = ({
           cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
           onNotificationIconClick={onNotificationIconClick}
           hideNotificationIconOnSomeUrlsWhenNotLoggedIn={urlsToDisableNotificationIcon(pathname)}
-          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
+          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} classes={"nav-lang-change"} /> : null}
+          changeCity={!mobileView && isEmployee ? <ChangeCity dropdown={true} t={t} classes={"nav-city-change"} /> : null}
+          handleUserDropdownSelection={handleUserDropdownSelection}
+          isEmployee={isEmployee}
         />
       </div>
     );
@@ -109,7 +114,7 @@ const TopBar = ({
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
       <img className="city" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+      <span className="core-top-bar-fullwidth">
         {loggedin &&
           (cityDetails?.city?.ulbGrade ? (
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
@@ -146,7 +151,7 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src={profilePic} style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <img src={profilePic} className="core-top-bar-wrapper" />
                     )
                   }
                 />

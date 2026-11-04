@@ -10,6 +10,7 @@
 .heading-m {
   @apply font-bold text-text-primary text-heading-m ml-md pt-sm;
 }
+
 .BPAheading-m {
   margin-left: 22px;
 }
@@ -19,18 +20,22 @@
 }
 
 .employee-home-footer {
-  @apply flex  h-10 bg-grey-bg pb-md pt-sm justify-center w-full;
+  @apply flex h-10 bg-grey-bg pb-md pt-sm justify-center w-full;
+
   img {
     height: 100%;
   }
 }
-.employee-login-home-footer{
+
+.employee-login-home-footer {
   @apply flex fixed bottom-0 h-10 bg-grey-bg pb-md pt-sm justify-center w-full;
-  img{
+
+  img {
     @apply ml-sm
   }
 }
-.fieldInspectionWrapper{
+
+.fieldInspectionWrapper {
   border: 1px solid #d6d5d4;
   padding: 16px;
   margin-top: 8px;
@@ -46,28 +51,60 @@
   min-width: 280px;
 }
 
+.ground-container:not(.employee-workspace-layout .ground-container) {
+  width: calc(100% - 20px) !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+  margin-bottom: 40px !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  display: flex;
+  flex-direction: column;
+}
+
 @screen dt {
-  .ground-container {
-    margin-bottom: 56px;
-    
-    @apply p-md;
+  .ground-container:not(.employee-workspace-layout .ground-container) {
+    width: calc(100% - 20px) !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    margin-bottom: 40px !important;
+    padding: 0 !important;
+    background-color: transparent !important;
   }
+
   .heading-m {
     @apply text-heading-m-dt;
   }
+
   .BPAheading-m {
     margin-left: 22px;
   }
+
   .break-line {
     margin-top: 40px;
     margin-bottom: 40px;
   }
-  .employee-home-footer {
-  }
+
+  .employee-home-footer {}
+
   .moduleCardWrapper {
     @apply flex flex-row flex-wrap !important;
   }
+
   .gridModuleWrapper {
-    @apply grid grid-cols-4 gap-4;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    align-items: stretch;
+
+    >.full-width-card {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .gridModuleWrapper {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
   }
 }

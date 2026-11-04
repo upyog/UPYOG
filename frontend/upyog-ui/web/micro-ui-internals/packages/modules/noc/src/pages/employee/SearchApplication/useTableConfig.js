@@ -1,3 +1,7 @@
+/**
+ * Custom hook providing table column configurations for NOC application search results.
+ * Defines columns for Application Number, Application Date, Applicant Name, Source Module, Status, and Current Owner.
+ */
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

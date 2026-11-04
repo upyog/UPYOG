@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header } from "@upyog/digit-ui-react-components";
-//import { FormComposerV2 } from "../../../../../../../react-components/src";
-import { useHistory } from "react-router-dom";
+import { FormComposer, Toast, Header } from "@nudmcdgnpm/digit-ui-react-components";
+
 import WorkerConfig from "../../configs/WorkerConfig";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddWorker = ({ parentUrl, heading }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -285,7 +284,7 @@ const AddWorker = ({ parentUrl, heading }) => {
         }
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=WORKER`);
+          navigate(`/upyog-ui/employee/fsm/registry?selectedTabs=WORKER`);
         }, 5000);
       },
     });

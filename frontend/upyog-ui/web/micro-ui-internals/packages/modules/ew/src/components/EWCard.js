@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * Renders the E-Waste module card for employee dashboard.
@@ -37,7 +37,7 @@ const EWCard = () => {
 
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
-    moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("TITLE_E_WASTE")}</div>,
+    moduleName: <div className="ew-ewcard-wrapper">{t("TITLE_E_WASTE")}</div>,
     kpis: [],
     links: links.filter((link) => !link?.role || EW_CEMP),
   };

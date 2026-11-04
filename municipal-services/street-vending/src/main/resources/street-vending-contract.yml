@@ -1,0 +1,123 @@
+swagger: 2.0
+info:
+  version: 1.0.0
+  title: StreetVending Service
+  description: |
+    Street vending application and workflow service.
+  contact:
+    name: UPYOG NUDM Team
+    email: "cdg-contact@niua.org"
+schemes:
+  - https
+basePath: /sv-services
+x-api-id: org.egov.street.vending
+x-common-path: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml"
+paths:
+  /street-vending/_createdemand:
+    post:
+      summary: Createdemandforrenewal
+      description: Createdemandforrenewal for street-vending. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Createdemandforrenewal completed successfully
+          schema:
+            $ref: "#/definitions/StreetVendingDemandResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Street Vending
+      parameters:
+        - name: StreetVendingDemandResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for createdemandforrenewal
+          required: True
+          schema:
+            $ref: "#/definitions/StreetVendingDemandResponse"
+  /street-vending/trigger-payment-schedule:
+    post:
+      summary: Triggerpaymentschedule
+      description: Triggerpaymentschedule for street-vending. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Triggerpaymentschedule completed successfully
+          schema:
+            $ref: "#/definitions/String"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Street Vending
+      parameters:
+        - name: String
+          in: body
+          description: Request payload with RequestInfo and domain data for triggerpaymentschedule
+          required: True
+          schema:
+            $ref: "#/definitions/String"
+definitions:
+  StreetVendingDemandResponse:
+    type: object
+    description: Request/Response contract for StreetVendingDemandResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      StreetVendingApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/StreetVendingApplication"
+  String:
+    type: object
+    description: Request/Response contract for String
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      StreetVendingApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/StreetVendingApplication"
+  StreetVendingApplication:
+    type: object
+    description: A domain application object for street-vending
+    properties:
+      id:
+        type: string
+        description: Unique identifier (UUID)
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of ULB
+        maxLength: 128
+        minLength: 2
+      applicationNumber:
+        type: string
+        description: Unique application number
+        readOnly: true
+      status:
+        type: string
+        description: Application status
+      auditDetails:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails"
+    required:
+      - tenantId
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the action

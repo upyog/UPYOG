@@ -1,7 +1,6 @@
 package org.upyog.adv.web.models.billing;
 
 import java.util.List;
-
 import org.egov.common.contract.response.ResponseInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

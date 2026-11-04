@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
@@ -29,12 +29,12 @@ const useNewInboxGeneral = ({ tenantId, ModuleCode, filters, middleware = [], co
 
     // Query function to fetch inbox data
   const query = useQuery(
-    ["INBOX", workflowFilters, searchFilters, ModuleCode, limit, offset, sortBy, sortOrder],
-    () =>
-      InboxGeneral.Search({
-        inbox: { tenantId, processSearchCriteria: workflowFilters, moduleSearchCriteria: { ...searchFilters, sortBy, sortOrder,isUserDetailRequired }, limit, offset },
-      }),
     {
+      queryKey: ["INBOX", workflowFilters, searchFilters, ModuleCode, limit, offset, sortBy, sortOrder],
+      queryFn: () =>
+        InboxGeneral.Search({
+          inbox: { tenantId, processSearchCriteria: workflowFilters, moduleSearchCriteria: { ...searchFilters, sortBy, sortOrder,isUserDetailRequired }, limit, offset },
+        }),
       select: (data) => {
         const { statusMap, totalCount } = data;
 

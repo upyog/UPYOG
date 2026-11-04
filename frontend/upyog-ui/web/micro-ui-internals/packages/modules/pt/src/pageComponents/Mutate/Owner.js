@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { Route, useLocation,  Routes, Navigate } from "react-router-dom";
 
 const createOwnerDetails = () => ({
   name: "",
@@ -128,11 +128,12 @@ const OwnerCitizen = (props) => {
   const { pathname } = useLocation();
   const [owners, setOwners] = Digit.Hooks.useSessionStorage("PT_MUTATE_MULTIPLE_OWNERS", [createOwnerDetails()]);
 
-  const [lastPath, setLastPath] = Digit.Hooks.useSessionStorage("PT_MUTATE_MULTIPLE_OWNERS_LAST_PATH", `/0/${config[0].route}`);
-  const { path, url } = useRouteMatch();
+  const [lastPath, setLastPath] = Digit.Hooks.useSessionStorage("PT_MUTATE_MULTIPLE_OWNERS_LAST_PATH", `0/${config[0].route}`);
+  const { path, url } = Digit.Hooks.useModuleBasePath();
+  const parentPath = pathname.split("/multiple-owners")[0] + "/multiple-owners";
 
   const allowMultipleOwners = formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS";
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   useEffect(() => {
     if (!owners.length) setOwners([createOwnerDetails()]);
@@ -142,13 +143,14 @@ const OwnerCitizen = (props) => {
     if (!allowMultipleOwners && owners.length > 1) {
       setOwners([owners[0]]);
       onSelect(propsConfig.key, [owners[0]]);
-      history.replace(`${path}/0/${config[0].route}`);
+      navigate(`${parentPath}/0/${config[0].route}`, { replace: true });
     }
   }, [allowMultipleOwners]);
 
   useEffect(() => {
-    if (lastPath !== pathname.split(path)[1]) {
-      setLastPath(pathname.split(path)[1]);
+    const relPath = pathname.split("multiple-owners/")[1];
+    if (relPath && lastPath !== relPath) {
+      setLastPath(relPath);
     }
   }, [pathname]);
 
@@ -165,7 +167,7 @@ const OwnerCitizen = (props) => {
   };
 
   useEffect(() => {
-    if (owners.length > prevOwnerLength) history.push(`${path}/${owners.length - 1}/${config[0].route}`);
+    if (owners.length > prevOwnerLength) navigate(`${parentPath}/${owners.length - 1}/${config[0].route}`);
   }, [owners]);
 
   const removeOwner = (owner) => {
@@ -177,18 +179,27 @@ const OwnerCitizen = (props) => {
   return (
     <React.Fragment>
       {/* <p>this is multi owner page</p> */}
-      <Switch>
+      <Routes>
         {owners.map((owner, index) => {
           return (
-            <Route key={owner.key} path={`${path}/${index}`}>
-              <OwnerSteps owner={owner} ownerIndex={index} {...commonProps} />
-            </Route>
+            <Route
+              key={owner.key}
+              path={`${index}/*`}
+              element={<OwnerSteps owner={owner} ownerIndex={index} {...commonProps} />}
+            />
           );
         })}
-        <Route>{pathname != `${path}${lastPath}` && lastPath != "" ? <Redirect to={`${path}${lastPath}`}></Redirect> : null}</Route>
-      </Switch>
+        <Route
+          path="*"
+          element={
+            pathname.split("multiple-owners/")[1] != `${lastPath}` && lastPath != "" ? (
+              <Navigate to={`${parentPath}/${lastPath}`} replace />
+            ) : null
+          }
+        />
+      </Routes>
       {/* <Route>
-        <Redirect to={`${path}/${lastPath ? lastPath : "0"}`} />
+        <Navigate to={`/${lastPath ? lastPath : "0"}`} replace />
      
       </Route> */}
     </React.Fragment>
@@ -198,9 +209,9 @@ const OwnerCitizen = (props) => {
 const OwnerSteps = ({ owner, addNewOwner, removeOwner, setOwners, owners, ownerIndex, propsConfig, ...props }) => {
   const { t } = useTranslation();
 
-  const { path } = useRouteMatch();
+  const { path } = Digit.Hooks.useModuleBasePath();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const addOwner = (data) => {
     // handle submission of prev on click of add Owner
@@ -220,7 +231,7 @@ const OwnerSteps = ({ owner, addNewOwner, removeOwner, setOwners, owners, ownerI
           .join("&")}`
       : "";
 
-    const goToNext = skipStep ? history.replace : history.push;
+    const goToNext = skipStep ? ((u, s) => navigate(u, s != null ? { replace: true, state: s } : { replace: true })) : navigate;
 
     if (!activeRouteObj.nextStep) {
       if (ownerIndex !== owners.length - 1) {
@@ -239,13 +250,15 @@ const OwnerSteps = ({ owner, addNewOwner, removeOwner, setOwners, owners, ownerI
   };
 
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route key={index} path={`${path}/${routeObj.route}`}>
-            {
+          <Route
+            key={index}
+            path={`${routeObj.route}/*`}
+            element={
               <Component
                 config={routeObj}
                 onSelect={handleSelectForOwner}
@@ -256,13 +269,10 @@ const OwnerSteps = ({ owner, addNewOwner, removeOwner, setOwners, owners, ownerI
                 addNewOwner={addOwner}
               />
             }
-          </Route>
+          />
         );
       })}
-      {/* <Route>
-        <Redirect to={`${path}/${config[0].route}`} />
-      </Route> */}
-    </Switch>
+    </Routes>
   );
 };
 

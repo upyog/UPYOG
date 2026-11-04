@@ -1,4 +1,4 @@
-import { UploadFile } from "@upyog/digit-ui-react-components"
+import { UploadFile } from "@nudmcdgnpm/digit-ui-react-components"
 import React from 'react';
 
 export const configAcceptApplication = ({ t, action, selectFile, uploadedFile, error, isCommentRequired = true, setUploadedFile, file }) => {

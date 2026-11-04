@@ -1,0 +1,17 @@
+.ws-connection-details-root {
+  margin-bottom: 15px;
+}
+
+.ws-connection-details-header-row {
+  display: flex;
+}
+
+.ws-connection-details-title {
+  width: 80%;
+}
+
+.ws-connection-details-download-wrap {
+  max-width: 100%;
+  z-index: 10;
+  margin-top: -20px;
+}

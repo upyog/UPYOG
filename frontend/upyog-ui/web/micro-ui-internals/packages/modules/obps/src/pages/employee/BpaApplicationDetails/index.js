@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { newConfig as newConfigFI } from "../../../config/InspectionReportConfig";
 import get from "lodash/get";
@@ -19,7 +19,7 @@ const BpaApplicationDetail = () => {
   const [showToast, setShowToast] = useState(null);
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   // delete
   const [_formData, setFormData, _clear] = Digit.Hooks.useSessionStorage("store-data", null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
@@ -343,11 +343,11 @@ const BpaApplicationDetail = () => {
   return (
     <Fragment>
       <div className={"employee-main-application-details"}>
-      <div className={"employee-application-detailsNew"} style={{marginBottom: "15px",height:"auto !important", maxHeight:"none !important"}}>
+      <div className={`${"employee-application-detailsNew"} obps-index-bottom-spacing`}>
         <Header styles={{marginLeft:"0px", paddingTop: "10px", fontSize: "32px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+        <div className="obps-index-flex-row">
                
-        <div style={{zIndex: "10",  position: "relative"}}>
+        <div className="obps-index-wrapper-9">
         {dowloadOptions && dowloadOptions.length>0 && <MultiLink                
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
@@ -357,7 +357,7 @@ const BpaApplicationDetail = () => {
           optionsClassName={"employee-options-btn-className"}
           />}  
         </div>     
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} className="obps-index-action-btn" onClick={handleViewTimeline}></LinkButton>
         </div>
       {data?.applicationData?.status === "FIELDINSPECTION_INPROGRESS" && (userInfo?.info?.roles.filter(role => role.code === "BPA_FIELD_INSPECTOR")).length>0 && <FormComposer
         heading={t("")}

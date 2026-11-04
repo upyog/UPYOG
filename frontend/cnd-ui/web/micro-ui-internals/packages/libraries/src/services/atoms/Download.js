@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import XLSX from "xlsx";
@@ -36,7 +35,7 @@ const Download = {
       }
     };
 
-    const element = ReactDOM.findDOMNode(node.current);
+    const element = node.current;
     html2canvas(element, {
       scrollY: -window.scrollY,
       scrollX: 0,
@@ -87,36 +86,41 @@ const Download = {
         changeClasses('dss-white-pre-line',"dss-white-pre-temp");
 
   applyCss();
-    const element = ReactDOM.findDOMNode(node.current);
+    const element = node.current;
 
 
-    return domtoimage.toJpeg(element, {
-      quality: 1,
-      bgcolor: 'white',
-      filter:node=>!node?.className?.includes?.("divToBeHidden"),
-      style:{
-        margin:'25px'
-      }
-     }).then(function (dataUrl) {
-/*  to enable pdf
-    var htmlImage = new Image();
-      htmlImage.src = dataUrl;
-      var pdf = new jsPDF( 'l', 'pt', [element.offsetWidth, element.offsetHeight] );
-      pdf.setFontStyle?.("Bold");
-      pdf.setFontSize?.(30);
-      pdf.text?.(325, 40, 'Certificate');
-      // e(imageData, format, x, y, width, height, alias, compression, rotation)
-      pdf.addImage?.( htmlImage, 25, 50, 50, element.offsetWidth, element.offsetHeight );
-      pdf.save?.( fileName +'.pdf' );
-      */
-            changeClasses("dss-white-pre-temp",'dss-white-pre-line');
-
-     revertCss();
-     var blobData = dataURItoBlob(dataUrl);
+    return html2canvas(element, {
+      scrollY: -window.scrollY,
+      scrollX: 0,
+      useCORS: true,
+      scale: 1.5,
+      height: element.scrollHeight,
+      windowHeight: element.scrollHeight,
+      ignoreElements: (node) => node?.className?.includes?.("divToBeHidden")
+    }).then(function (canvas) {
+       const dataUrl = canvas.toDataURL('image/png');
+       var pdf = new jsPDF('p', 'pt', 'a4');
+       const imgProps = pdf.getImageProperties(dataUrl);
+       const margin = 20;
+       const pdfWidth = pdf.internal.pageSize.getWidth() - (2 * margin);
+       const pageHeight = pdf.internal.pageSize.getHeight();
+       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+       let heightLeft = pdfHeight;
+       let position = margin;
+       pdf.addImage(dataUrl, 'PNG', margin, position, pdfWidth, pdfHeight);
+       heightLeft -= pageHeight;
+       while (heightLeft > 0) {
+         position -= pageHeight;
+         pdf.addPage();
+         pdf.addImage(dataUrl, 'PNG', margin, position, pdfWidth, pdfHeight);
+         heightLeft -= pageHeight;
+       }
+       
+       changeClasses("dss-white-pre-temp",'dss-white-pre-line');
        revertCss();
        return share
-       ? resolve(new File([blobData], `${fileName}.jpeg`, { type: "image/jpeg" }))
-       : saveAs(dataUrl, `${fileName}.jpeg`)
+       ? resolve(new File([pdf.output('blob')], `${fileName}.pdf`, { type: "application/pdf" }))
+       : saveAs(pdf.output('datauristring'), `${fileName}.pdf`);
         });
     
 
@@ -189,7 +193,7 @@ const Download = {
       return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
     };
     changeClasses('dss-white-pre-line',"dss-white-pre-temp");
-    const element = ReactDOM.findDOMNode(node.current);
+    const element = node.current;
     return domtoimage.toJpeg(element, {
       quality: 1,
       bgcolor: 'white'
@@ -204,3 +208,4 @@ const Download = {
   },
 };
 export default Download;
+

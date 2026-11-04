@@ -32,13 +32,13 @@ public class CNDConfiguration {
     /** Used for application no creation **/
 
     @Value("${egov.idgen.cnd.application.id.name}")
-    private String CNDApplicationKey;
+    private String cndApplicationKey;
 
     @Value("${egov.usr.events.paynow.link}")
     private String payNowLink;
 
     @Value("${egov.idgen.cnd.application.id.format}")
-    private String CNDApplicationFormat;
+    private String cndApplicationFormat;
 
     // Kafka topics for saving water tanker data
     @Value("${persister.create.cnd.service.topic}")

@@ -33,7 +33,7 @@ const ErrorComponent = (props) => {
         <h1>{t(config.infoMessage)}</h1>
         <button
           onClick={() => {
-            props.goToHome();
+              props.goToHome();
           }}
         >
           {t(config.buttonInfo)}

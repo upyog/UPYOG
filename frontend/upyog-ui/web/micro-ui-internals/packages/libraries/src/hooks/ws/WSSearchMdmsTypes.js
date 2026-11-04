@@ -1,22 +1,19 @@
-import { useQuery } from "react-query";
-import { getMultipleTypes, MdmsService, getGeneralCriteria } from "../../services/elements/MDMS"
+import { queryTemplate } from "../../common/queryTemplate";
+import { getMultipleTypes, MdmsService } from "../../services/elements/MDMS"
 
 const WSSearchMdmsTypes = {
   useWSMDMSBillAmendment: ({tenantId, config={}}) => {
     const BillAmendmentMdmsDetails = getMultipleTypes(tenantId, "BillAmendment", ["documentObj", "DemandRevisionBasis"])
-    return useQuery([tenantId, "WS_BILLAMENDMENT_MDMS"], () => MdmsService.getDataByCriteria(tenantId, BillAmendmentMdmsDetails, "BillAmendment"), {
-      select: ({BillAmendment}) => {
+    return queryTemplate({ queryKey: [tenantId, "WS_BILLAMENDMENT_MDMS"], queryFn: () => MdmsService.getDataByCriteria(tenantId, BillAmendmentMdmsDetails, "BillAmendment"), select: ({BillAmendment}) => {
         return BillAmendment?.DemandRevisionBasis.map( (e, index) => {
           return { ...e, i18nKey: `DEMAND_REVISION_BASIS_${e.code}`, allowedDocuments: BillAmendment?.documentObj[index] }
         })
-      },
-      ...config
-    });
+      }, config });
   },
   useWSServicesMasters: (tenantId, type) =>
-    useQuery(
-      [tenantId, type, "WS_WS_SERVICES_MASTERS"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, type, "WS_WS_SERVICES_MASTERS"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -36,8 +33,7 @@ const WSSearchMdmsTypes = {
           },
           "ws-services-masters"
         ),
-      {
-        select: (data) => {
+      select: (data) => {
           const wsDocsData = type ? type : "Documents";
           data?.["ws-services-masters"]?.[wsDocsData]?.forEach(type => {
             type.code = type.code;
@@ -47,14 +43,13 @@ const WSSearchMdmsTypes = {
             })
           })
           return data?.["ws-services-masters"] ? data?.["ws-services-masters"] : []
-        }
-      }
-    ),
+        },
+    }),
 
   useWSServicesCalculation: (tenantId) =>
-    useQuery(
-      [tenantId, "WS_WS_SERVICES_CALCULATION"],
-      () =>
+    queryTemplate({
+      queryKey: [tenantId, "WS_WS_SERVICES_CALCULATION"],
+      queryFn: () =>
         MdmsService.getDataByCriteria(
           tenantId,
           {
@@ -74,15 +69,13 @@ const WSSearchMdmsTypes = {
           },
           "ws-services-calculation"
         ),
-      {
-        select: (data) => {
+      select: (data) => {
           data?.["ws-services-calculation"]?.PipeSize?.forEach(type => {
             type.i18nKey = type.size ? `${type.size} Inches` : "";
           })
           return data?.["ws-services-calculation"] ? data?.["ws-services-calculation"] : []
-        }
-      }
-    ),
+        },
+    }),
 };
 
 export default WSSearchMdmsTypes;

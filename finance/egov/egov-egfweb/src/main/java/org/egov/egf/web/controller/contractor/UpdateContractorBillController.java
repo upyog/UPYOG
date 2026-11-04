@@ -57,8 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
@@ -86,7 +86,7 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -191,7 +191,7 @@ public class UpdateContractorBillController extends BaseBillController {
     }
 
     @ModelAttribute(EG_BILLREGISTER)
-    public EgBillregister getEgBillregister(@PathVariable @SafeHtml String billId) {
+    public EgBillregister getEgBillregister(@PathVariable @SanitizeHtml String billId) {
         if (billId.contains("showMode")) {
             String[] billIds = billId.split("\\&");
             billId = billIds[0];
@@ -200,7 +200,7 @@ public class UpdateContractorBillController extends BaseBillController {
     }
 
     @GetMapping(value = "/update/{billId}")
-    public String updateForm(final Model model, @PathVariable @SafeHtml final String billId,
+    public String updateForm(final Model model, @PathVariable @SanitizeHtml final String billId,
             final HttpServletRequest request) throws ApplicationException {
     	final EgBillregister egBillregister = contractorBillService.getById(Long.parseLong(billId));
     	if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), egBillregister))
@@ -356,7 +356,7 @@ public class UpdateContractorBillController extends BaseBillController {
     @PostMapping(value = "/update/{billId}")
     public String update(@Valid @ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
-            final HttpServletRequest request, @RequestParam @SafeHtml final String workFlowAction)
+            final HttpServletRequest request, @RequestParam @SanitizeHtml final String workFlowAction)
             throws ApplicationException, IOException {
 
         String mode = "";
@@ -471,7 +471,7 @@ public class UpdateContractorBillController extends BaseBillController {
 	}
 
     @GetMapping(value = "/view/{billId}")
-    public String view(final Model model, @PathVariable @SafeHtml String billId,
+    public String view(final Model model, @PathVariable @SanitizeHtml String billId,
             final HttpServletRequest request) throws ApplicationException {
         if (billId.contains("showMode")) {
             String[] billIds = billId.split("\\&");

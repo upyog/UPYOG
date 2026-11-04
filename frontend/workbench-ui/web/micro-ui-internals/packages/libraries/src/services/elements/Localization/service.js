@@ -14,7 +14,6 @@ const TransformArrayToObj = (traslationList) => {
     (obj, item) => ((obj[item.code] = item.message), obj),
     {}
   );
-  // return trasformedTraslation;
 };
 
 const getUnique = (arr) => {

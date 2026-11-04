@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@upyog/digit-ui-react-components";
-import { FilterAction } from "@upyog/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components";
+import { FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import SearchApplication from "./search";
 import SortBy from "./SortBy";
 
@@ -81,11 +81,11 @@ export const ApplicationCard = ({
    */
   if (!data || data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="ew-ewdesktop-inbox-card">
         {t("CS_MYAPPLICATIONS_NO_APPLICATION")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="ew-ewdesktop-inbox-centered">
               {text}
             </p>
           ))}

@@ -74,13 +74,18 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.IOException;
@@ -146,7 +151,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+		persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
 		super.prepare();
 
 		addDropdownData("bankList", persistenceService.findAllBy("from Bank where isactive=true order by upper(name)"));
@@ -275,15 +280,15 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 			LOGGER.debug(" Seraching RTGS result for given criteria ");
 		final Entry<String, Map<String, Object>> entry = getQueryString().entrySet().iterator().next();
 
-		final Query query = persistenceService.getSession().createSQLQuery(entry.getKey())
-				.addScalar("ihId", BigDecimalType.INSTANCE).addScalar("rtgsNumber").addScalar("rtgsDate")
-				.addScalar("vhId", BigDecimalType.INSTANCE).addScalar("paymentNumber").addScalar("paymentDate")
+		final Query query = persistenceService.getSession().createNativeQuery(entry.getKey())
+				.addScalar("ihId", StandardBasicTypes.BIG_DECIMAL).addScalar("rtgsNumber").addScalar("rtgsDate")
+				.addScalar("vhId", StandardBasicTypes.BIG_DECIMAL).addScalar("paymentNumber").addScalar("paymentDate")
 				.addScalar("paymentAmount").addScalar("department").addScalar("status").addScalar("bank")
-				.addScalar("bankBranch").addScalar("dtId", BigDecimalType.INSTANCE)
-				.addScalar("dkId", BigDecimalType.INSTANCE).addScalar("accountNumber");
+				.addScalar("bankBranch").addScalar("dtId", StandardBasicTypes.BIG_DECIMAL)
+				.addScalar("dkId", StandardBasicTypes.BIG_DECIMAL).addScalar("accountNumber");
 		if (null == parameters.get("rtgsAssignedFromDate")[0]
 				|| parameters.get("rtgsAssignedFromDate")[0].isEmpty())
-			query.setDate("finStartDate", new java.sql.Date(fromDate.getTime()));
+			query.setParameter("finStartDate", new java.sql.Date(fromDate.getTime()));
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Search Query ------------>" + query);
 		persistenceService.populateQueryWithParams(query, entry.getValue());
@@ -431,7 +436,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 				simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
 
 				final WebApplicationContext wac = WebApplicationContextUtils
-						.getWebApplicationContext(ServletActionContext.getServletContext());
+						.getWebApplicationContext(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getServletContext());
 				final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
 				final List<Long> entityIds = new ArrayList<Long>(detailTypeMapForGetEntitys.get(keyGroup));
 				int size = entityIds.size();

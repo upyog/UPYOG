@@ -56,7 +56,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 
 @Repository
 public interface FileStoreMapperRepository extends JpaRepository<FileStoreMapper,Long>{

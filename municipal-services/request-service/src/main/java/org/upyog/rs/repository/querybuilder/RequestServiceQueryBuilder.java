@@ -3,21 +3,21 @@ package org.upyog.rs.repository.querybuilder;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingSearchCriteria;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RequestServiceQueryBuilder {
 
-    @Autowired
-    private RequestServiceConfiguration requestServiceConfiguration;
+    private final RequestServiceConfiguration requestServiceConfiguration;
 
     private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY_WITH_PROFILE = (
             "SELECT ursbd.booking_id, booking_no,applicant_uuid, mobile_number, locality_code, tanker_type, water_type, tanker_quantity, water_quantity, description, " +
@@ -61,17 +61,20 @@ public class RequestServiceQueryBuilder {
                     "INNER JOIN public.upyog_rs_mobile_toilet_address_details uraddr ON urad.applicant_id = uraddr.applicant_id"
     );
 
-    private final String paginationWrapper =
-            "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM ({}) result) result_offset " +
-                    "WHERE offset_ > ? AND offset_ <= ?";
+    private static final String PAGINATION_OFFSET_CLAUSE = "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String waterTankerBookingCount =
+    private static final String PAGINATION_WRAPPER =
+            "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM ({}) result) result_offset " +
+                    PAGINATION_OFFSET_CLAUSE;
+
+    private static final String WATER_TANKER_BOOKING_COUNT =
             "SELECT count(ursbd.booking_id) FROM upyog_rs_water_tanker_booking_details ursbd";
 
-    private static final String mobileToiletBookingCount =
+    private static final String MOBILE_TOILET_BOOKING_COUNT =
             "SELECT count(urmt.booking_id) FROM upyog_rs_mobile_toilet_booking_details urmt";
 
 
+    @SuppressWarnings("java:S5411")
     public String getWaterTankerQuery(WaterTankerBookingSearchCriteria criteria, List<Object> preparedStmtList) {
 
         StringBuilder query;
@@ -84,7 +87,7 @@ public class RequestServiceQueryBuilder {
                 query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY);
             }
         } else {
-            query = new StringBuilder(waterTankerBookingCount);
+            query = new StringBuilder(WATER_TANKER_BOOKING_COUNT);
         }
 
         if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
@@ -141,6 +144,7 @@ public class RequestServiceQueryBuilder {
 
     }
 
+    @SuppressWarnings("java:S5411")
     public String getMobileToiletQuery(MobileToiletBookingSearchCriteria criteria, List<Object> preparedStmtList) {
 
         StringBuilder query;
@@ -153,7 +157,7 @@ public class RequestServiceQueryBuilder {
                 query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY);
             }
         } else {
-            query = new StringBuilder(mobileToiletBookingCount);
+            query = new StringBuilder(MOBILE_TOILET_BOOKING_COUNT);
         }
 
         if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
@@ -226,7 +230,7 @@ public class RequestServiceQueryBuilder {
 
         int limit = requestServiceConfiguration.getDefaultLimit();
         int offset = requestServiceConfiguration.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
 
         if (criteria.getLimit() == null && criteria.getOffset() == null) {
             limit = requestServiceConfiguration.getMaxSearchLimit();
@@ -244,7 +248,7 @@ public class RequestServiceQueryBuilder {
             offset = criteria.getOffset();
 
         if (limit == -1) {
-            finalQuery = finalQuery.replace("WHERE offset_ > ? AND offset_ <= ?", "");
+            finalQuery = finalQuery.replace(PAGINATION_OFFSET_CLAUSE, "");
         } else {
             preparedStmtList.add(offset);
             preparedStmtList.add(offset+limit);
@@ -259,7 +263,7 @@ public class RequestServiceQueryBuilder {
 
         int limit = requestServiceConfiguration.getDefaultLimit();
         int offset = requestServiceConfiguration.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
 
         if (criteria.getLimit() == null && criteria.getOffset() == null) {
             limit = requestServiceConfiguration.getMaxSearchLimit();
@@ -277,7 +281,7 @@ public class RequestServiceQueryBuilder {
             offset = criteria.getOffset();
 
         if (limit == -1) {
-            finalQuery = finalQuery.replace("WHERE offset_ > ? AND offset_ <= ?", "");
+            finalQuery = finalQuery.replace(PAGINATION_OFFSET_CLAUSE, "");
         } else {
             preparedStmtList.add(offset);
             preparedStmtList.add(offset+limit);

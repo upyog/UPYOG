@@ -1,3 +1,4 @@
+// this file is not being used anywhere in the service
 import { Router } from 'express';
 
 export default ({ config, db }) => {

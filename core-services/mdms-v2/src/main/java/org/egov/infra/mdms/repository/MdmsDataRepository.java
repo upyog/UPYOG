@@ -13,7 +13,10 @@ public interface MdmsDataRepository {
 
     public void update(MdmsRequest mdmsRequest);
 
+    void delete(MdmsRequest mdmsRequest);
+
     public  List<Mdms> searchV2(MdmsCriteriaV2 mdmsCriteriaV2);
 
     public Map<String, Map<String, JSONArray>> search(MdmsCriteria mdmsCriteria);
+    Mdms getById(String tenantId, String id);
 }

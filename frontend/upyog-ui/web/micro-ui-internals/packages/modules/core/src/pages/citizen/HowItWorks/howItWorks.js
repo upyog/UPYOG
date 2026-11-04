@@ -1,4 +1,4 @@
-import { Header, CloseSvg, DownloadImgIcon, CustomButton, Loader, BackButton, PDFSvg, DownloadBtnCommon} from "@upyog/digit-ui-react-components";
+import { Header, CloseSvg, DownloadImgIcon, CustomButton, Loader, BackButton, PDFSvg, DownloadBtnCommon} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, Fragment }from "react";
 import { useTranslation } from "react-i18next";
 
@@ -9,12 +9,12 @@ const HowItWorks = ({module}) => {
   const tenantId = user?.info?.tenantId || Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const storeData = Digit.SessionStorage.get("initData");
-  const stateInfo = storeData.stateInfo;
+  const stateInfo = storeData?.stateInfo;
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
   const [selected, setselected] = useState(selectedLanguage);
   const handleChangeLanguage = (language) => {
     setselected(language.value);
-    Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
+    Digit.LocalizationService.changeLanguage(language.value, stateInfo?.code);
   };
   const [videoPlay, setVideoPlay] = useState(false);
   const [vidSrc, setVidSrc] = useState("");
@@ -48,7 +48,8 @@ const HowItWorks = ({module}) => {
   const { isLoading, data } = Digit.Hooks.useGetHowItWorksJSON(Digit.ULBService.getStateId());
 
 
-  const mdmsConfigResult = data?.MdmsRes["common-masters"]?.howItWorks[0]?.[`${module}`];
+  const mdmsConfigResult = data?.MdmsRes?.["common-masters"]?.howItWorks?.[0]?.[`${module}`];
+  const videosJson = mdmsConfigResult?.videosJson || [];
   const languages = 
   [
     {
@@ -67,11 +68,11 @@ const HowItWorks = ({module}) => {
   return (
     <Fragment>
     <div className="how-it-works-page">
-      <div style={{marginLeft: "-10px"}}><BackButton /></div>
+      <div className="core-how-it-works-spacing"><BackButton /></div>
         <div className="how-it-works-page-header">
-          <div style={{marginLeft:isMobile ? "-15px":""}}><Header>{t("HOW_IT_WORKS")}</Header></div>
+          <div className={isMobile ? "margin-left-pull-15" : ""}><Header>{t("HOW_IT_WORKS")}</Header></div>
         </div>
-        <div className="language-selector" style={{marginBottom: "10px"}}>
+        <div className="language-selector core-how-it-works-bottom-spacing">
           {languages.map((language, index) => (
             <div className="language-button-container" key={index}>
               <CustomButton
@@ -82,9 +83,9 @@ const HowItWorks = ({module}) => {
             </div>
           ))}
         </div>
-        {mdmsConfigResult.videosJson.map((videos, index) => (
-        <div >
-            <div className="WhatsNewCard" style={{float: "left", position: "relative", width: "100%", marginBottom: 10}}>
+        {videosJson.map((videos, index) => (
+        <div key={index}>
+            <div className="WhatsNewCard core-how-it-works-fullwidth">
             <div className="video-icon" onClick={() => onClickVideo(videos)}>
                 <div className="vid-svg">
                   <ViDSvg></ViDSvg>
@@ -98,15 +99,16 @@ const HowItWorks = ({module}) => {
         </div>
 
     ))}
-    <div className="WhatsNewCard" style={{ position: "relative", width: "100%", marginBottom: 10, display: "inline-block"}}>
+    {mdmsConfigResult?.pdfHeader && (
+    <div className="WhatsNewCard core-how-it-works-fullwidth-2">
       <div className="how-it-works-pdf-section">
         <div className="pdf-icon-header-desc">
         <div className="pdf-icon">
            <PDFSvg></PDFSvg>
         </div>
         <div className="pdf-header-desc">
-                <h2>{t(mdmsConfigResult.pdfHeader)}</h2>
-                <p>{t(mdmsConfigResult.pdfDesc)}</p>
+                <h2>{t(mdmsConfigResult?.pdfHeader)}</h2>
+                <p>{t(mdmsConfigResult?.pdfDesc)}</p>
           </div>
         </div>
         <div className="download-icon">
@@ -114,12 +116,13 @@ const HowItWorks = ({module}) => {
         </div>
       </div>
         </div>
+    )}
         { videoPlay && (
                 <div className="how-it-works-video-play">
-                  <div className="close-button" style={{position:"absolute", right:"15px",top:"10%", zIndex:"1"}}>
+                  <div className="close-button core-how-it-works-wrapper">
                         <CloseVidSvg onClick={onClose}></CloseVidSvg>
                         </div>
-                    <video width={500}  height={500} controls autoPlay muted style={{position:"fixed", top:"0",left:"0",minWidth:"100%",minHeight:"100%", backgroundColor: "rgba(0,0,0,0.5)"}}>
+                    <video width={500}  height={500} controls autoPlay muted className="core-how-it-works-wrapper-2">
                         <source src={vidSrc} type="video/mp4"></source>
                     </video>
                 </div>

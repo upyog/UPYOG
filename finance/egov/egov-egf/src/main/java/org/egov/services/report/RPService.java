@@ -61,7 +61,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.egf.model.Statement;
 import org.egov.egf.model.StatementResultObject;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,7 +79,7 @@ public class RPService extends ScheduleService {
 			LOGGER.info("Starting getReceiptScheduleNoAndName............");
 		final StringBuilder query = new StringBuilder();
 		query.append("select transaction_type from egf_rpreport_schedulemaster where schedule_no=:scheduleNo");
-		final List<Object> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getReceiptScheduleNoAndName..........." + query.toString());
@@ -95,7 +95,7 @@ public class RPService extends ScheduleService {
 				"select m.schedule_no as scheduleNumber, m.schedule_name as scheduleName,m.transaction_type as type")
 				.append(" from egf_rpreport_schedulemaster m where is_subschedule=0 order by m.transaction_type desc,m.id ");
 
-		final Query queryObj = persistenceService.getSession().createSQLQuery(query.toString())
+		final Query queryObj = persistenceService.getSession().createNativeQuery(query.toString())
 				.addScalar("scheduleNumber").addScalar("scheduleName").addScalar("type")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 
@@ -160,7 +160,7 @@ public class RPService extends ScheduleService {
 
 		params.put("finId", finId.getId());
 
-		final Query queryObjNG = persistenceService.getSession().createSQLQuery(queryNG.toString())
+		final Query queryObjNG = persistenceService.getSession().createNativeQuery(queryNG.toString())
 				.addScalar("scheduleNumber").addScalar("scheduleName").addScalar("amount").addScalar("type")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		params.entrySet().forEach(entry -> queryObjNG.setParameter(entry.getKey(), entry.getValue()));
@@ -177,7 +177,7 @@ public class RPService extends ScheduleService {
 				.append(" and vh.name = 'JVGeneral'")
 				.append(" group by rpm.schedule_no,rpm.transaction_type,rpm.schedule_name");
 
-		final Query queryObjG = persistenceService.getSession().createSQLQuery(queryG.toString())
+		final Query queryObjG = persistenceService.getSession().createNativeQuery(queryG.toString())
 				.addScalar("scheduleNumber").addScalar("scheduleName").addScalar("amount").addScalar("type")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 
@@ -236,7 +236,7 @@ public class RPService extends ScheduleService {
 
 		params.put("finId", finId.getId());
 
-		final Query queryObjNG = persistenceService.getSession().createSQLQuery(queryNG.toString())
+		final Query queryObjNG = persistenceService.getSession().createNativeQuery(queryNG.toString())
 				.addScalar("scheduleNumber").addScalar("amount").addScalar("fundCode").addScalar("scheduleName")
 				.addScalar("type").setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		params.entrySet().forEach(entry -> queryObjNG.setParameter(entry.getKey(), entry.getValue()));
@@ -254,7 +254,7 @@ public class RPService extends ScheduleService {
 				.append(" and vh.name = 'JVGeneral'")
 				.append(" group by rpm.schedule_no,rpmap.fund_Code,rpm.schedule_name,rpm.transaction_type");
 
-		final Query queryObjG = persistenceService.getSession().createSQLQuery(queryG.toString())
+		final Query queryObjG = persistenceService.getSession().createNativeQuery(queryG.toString())
 				.addScalar("scheduleNumber").addScalar("amount").addScalar("fundCode").addScalar("scheduleName")
 				.addScalar("type").setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		params.entrySet().forEach(entry -> queryObjG.setParameter(entry.getKey(), entry.getValue()));
@@ -290,7 +290,7 @@ public class RPService extends ScheduleService {
 				.append(" AND rpmap.fund_code = :fundCode and rpm2.schedule_no = :scheduleNo AND rpmap.is_consolidated=0 ")
 				.append("group by rpm1.schedule_no, rpm1.schedule_name, rpm1.id order by rpm1.id");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("fundCode", fundCode).setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getSubScheduleMaster..........." + query.toString());
@@ -309,7 +309,7 @@ public class RPService extends ScheduleService {
 				.append("and rpm2.schedule_no = :scheduleNo AND rpmap.is_consolidated=1 ")
 				.append("group by rpm1.schedule_no, rpm1.schedule_name, rpm1.id order by rpm1.id");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getSubScheduleMaster..........." + query.toString());
@@ -324,7 +324,7 @@ public class RPService extends ScheduleService {
 
 		query.append("select f.code, f.name from fund f order by code");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString()).list();
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString()).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getfundMaster..........." + query.toString());
 
@@ -341,7 +341,7 @@ public class RPService extends ScheduleService {
 				.append(" and rpmap.fund_code= :fundCode and coa.glcode=rpmap.glcode and  rpmap.is_consolidated=0")
 				.append(" and rpm.schedule_no=:scheduleNo and rpmap.subschedule_id is null  order by COA.glcode");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("fundCode", fundCode).setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getReceiptScheduleNoAndName..........." + query.toString());
@@ -359,7 +359,7 @@ public class RPService extends ScheduleService {
 				.append(" coa.glcode=rpmap.glcode and  rpmap.is_consolidated=1 and rpm.schedule_no=:scheduleNo")
 				.append(" and rpmap.subschedule_id is null  order by COA.glcode");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getReceiptScheduleNoAndName..........." + query.toString());
@@ -379,7 +379,7 @@ public class RPService extends ScheduleService {
 				.append(" AND rpmap.fund_code  = :fundCode ")
 				.append("AND rpmap.is_consolidated=0 AND rpm.schedule_no  =:scheduleNo ORDER BY rpmap.glcode");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("fundCode", fundCode).setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getDetailGlcodeSubSchedule..........." + query.toString());
@@ -398,7 +398,7 @@ public class RPService extends ScheduleService {
 				.append("WHERE rpm.id = rpmap.rpscheduleid and rpmss.id = rpmap.subschedule_id ")
 				.append("AND rpmap.is_consolidated=1 AND rpm.schedule_no = :scheduleNo ORDER BY rpmap.glcode");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getDetailGlcodeSubSchedule..........." + query.toString());
@@ -417,7 +417,7 @@ public class RPService extends ScheduleService {
 				.append(" coa.glcode=rpmap.glcode and  rpmap.is_consolidated=1 and rpm.schedule_no=:scheduleNo")
 				.append(" order by COA.glcode");
 
-		final List<Object[]> result = persistenceService.getSession().createSQLQuery(query.toString())
+		final List<Object[]> result = persistenceService.getSession().createNativeQuery(query.toString())
 				.setParameter("scheduleNo", scheduleNo).list();
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Finished getDetailGlcodeForConsolidatedReport..........." + query.toString());
@@ -467,7 +467,7 @@ public class RPService extends ScheduleService {
 		params.put("transactionType", transactionType);
 		params.put("scheduleNo", scheduleNo);
 
-		final Query detailQueryNG = persistenceService.getSession().createSQLQuery(queryNG.toString())
+		final Query detailQueryNG = persistenceService.getSession().createNativeQuery(queryNG.toString())
 				.addScalar("glCode").addScalar("amount").addScalar("fundCode").addScalar("type")
 				.addScalar("scheduleNumber")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
@@ -492,7 +492,7 @@ public class RPService extends ScheduleService {
 				.append(" group by rpmap.glcode, rpmap.fund_Code ,rpm.transaction_type, rpm.schedule_no")
 				.append(" ORDER BY  rpm.schedule_no ,rpmap.glcode");
 
-		final Query detailQueryG = persistenceService.getSession().createSQLQuery(queryG.toString()).addScalar("glCode")
+		final Query detailQueryG = persistenceService.getSession().createNativeQuery(queryG.toString()).addScalar("glCode")
 				.addScalar("amount").addScalar("fundCode").addScalar("type").addScalar("scheduleNumber")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		params.entrySet().forEach(entry -> detailQueryG.setParameter(entry.getKey(), entry.getValue()));
@@ -552,7 +552,7 @@ public class RPService extends ScheduleService {
 		params.put("finId", finId.getId());
 		params.put("transactionType", transactionType);
 
-		final Query detailQueryNG = persistenceService.getSession().createSQLQuery(queryNG.toString())
+		final Query detailQueryNG = persistenceService.getSession().createNativeQuery(queryNG.toString())
 				.addScalar("glCode").addScalar("amount").addScalar("fundCode").addScalar("type")
 				.addScalar("scheduleNumber")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
@@ -572,7 +572,7 @@ public class RPService extends ScheduleService {
 				.append(" and rpm.transaction_type=:transactionType and vh.name = 'JVGeneral'").append(dateCondition)
 				.append(" group by rpmap.glcode, rpmap.fund_Code ,rpm.transaction_type, rpm.schedule_no");
 
-		final Query detailQueryG = persistenceService.getSession().createSQLQuery(queryG.toString()).addScalar("glCode")
+		final Query detailQueryG = persistenceService.getSession().createNativeQuery(queryG.toString()).addScalar("glCode")
 				.addScalar("amount").addScalar("fundCode").addScalar("type").addScalar("scheduleNumber")
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		params.entrySet().forEach(entry -> detailQueryG.setParameter(entry.getKey(), entry.getValue()));

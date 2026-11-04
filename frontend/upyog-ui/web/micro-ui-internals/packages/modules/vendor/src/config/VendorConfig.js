@@ -1,6 +1,7 @@
 import React from "react";
 import { convertEpochToDate } from "../utils";
-const { DatePicker, Dropdown } = require("@upyog/digit-ui-react-components");
+// const { DatePicker, Dropdown } = require("@nudmcdgnpm/digit-ui-react-components");
+import {DatePicker} from "@nudmcdgnpm/digit-ui-react-components";
 
 const VendorConfig = (t, disabled = false) => {
   return [
@@ -206,7 +207,7 @@ const VendorConfig = (t, disabled = false) => {
           hideInEmployee: false,
           key: "serviceType",
           component: "SelectServiceType",
-          disable: disabled,
+          disable: false,
           texts: {
             headerCaption: "",
             header: "CS_COMMON_CHOOSE_GENDER",

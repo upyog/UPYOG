@@ -1,20 +1,21 @@
 import React from "react";
-import { useParams, useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Routes from "./routes";
 
 
 export const MyBills = ({ stateCode }) => {
   const { businessService } = useParams();
   const { tenantId: _tenantId, isDisoconnectFlow } = Digit.Hooks.useQueryParams();
+ // useCustomNavigate is custom hook which is used to navigate to different routes in the application.
+  const navigate = Digit.Hooks.useCustomNavigate();
 
-  const history = useHistory();
-  const { url } = useRouteMatch();
   const location = useLocation();
+  const url = location.pathname;
 
   const { tenantId } = Digit.UserService.getUser()?.info || location?.state || { tenantId: _tenantId } || {};
 
   if (!tenantId && !location?.state?.fromSearchResults) {
-    history.replace(`/sv-ui/citizen/login`, { from: url });
+    navigate(`/sv-ui/citizen/login`, { replace: true, state: { from: url } });
   }
 
   const { isLoading, data } = Digit.Hooks.useFetchCitizenBillsForBuissnessService(

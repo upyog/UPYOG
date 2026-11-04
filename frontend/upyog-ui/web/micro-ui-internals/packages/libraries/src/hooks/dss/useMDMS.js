@@ -1,20 +1,34 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
-const useDssMDMS = (tenantId, moduleCode, type, config) => {
-  const useDssDashboard = () => {
-    return useQuery("DSS_DASHBOARD", () => MdmsService.getDssDashboard(tenantId, moduleCode), config);
-  };
-  const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
-  };
-
-  switch (type) {
-    case "DssDashboard":
-      return useDssDashboard();
-    default:
-      return _default();
+/**
+ * Fetch DSS MDMS data.
+ */
+const useDssMDMS = (tenantId, moduleCode, type, config = {}) => {
+  if (type === "DssDashboard") {
+    return queryTemplate({
+      queryKey: ["DSS_MDMS_DASHBOARD", tenantId, moduleCode],
+      queryFn: () =>
+        MdmsService.getDssDashboard(tenantId, moduleCode),
+      config,
+    });
   }
+
+  return queryTemplate({
+    queryKey: [
+      "DSS_MDMS",
+      tenantId,
+      moduleCode,
+      type,
+    ],
+    queryFn: () =>
+      MdmsService.getMultipleTypes(
+        tenantId,
+        moduleCode,
+        type
+      ),
+    config,
+  });
 };
 
 export default useDssMDMS;

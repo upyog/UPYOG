@@ -3,12 +3,11 @@ import React, { useContext } from "react";
 /**
  * Custom hook which can gives the privacy functions to access
  *
- * @author jagankumar-egov
+ * @author NUMD Team
  *
  * Feature :: Privacy
  * 
  * @example
- *         const { privacy , updatePrivacy } = Digit.Hooks.usePrivacyContext()
  *
  * @returns {Object} Returns the object which contains privacy value and updatePrivacy method
  */

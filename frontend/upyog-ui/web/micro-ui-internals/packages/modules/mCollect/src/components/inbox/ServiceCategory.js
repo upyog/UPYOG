@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Loader, MultiSelectDropdown, RemoveableTag } from "@upyog/digit-ui-react-components";
+import { Loader, MultiSelectDropdown, RemoveableTag } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ServiceCategoryCount from "./ServiceCategoryCount";
 
@@ -52,7 +52,7 @@ const ServiceCategory = ({ onAssignmentChange, searchParams, selectedCategory,se
   // translateState(option)
   return (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label mc-service-category-text-style">
         {t("UC_SERVICE_CATEGORY_LABEL")}
       </div>
       <MultiSelectDropdown

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@nudmcdgnpm/digit-ui-react-components";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
-// import { TimerValues } from "../components/TimerValues";
+import { TimerValues } from "../components/TimerValues";
 
 
 /**
@@ -103,14 +103,14 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
       <Timeline currentStep={5} />
       <Card>
         <CardSubHeader>
-          <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+          <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-            {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue}  SlotSearchData={value?.Searchdata}/> */}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
@@ -248,14 +248,13 @@ function CHBSelectDocument({
   }, [isHidden]);
 
   return (
-    <div style={{ marginBottom: "24px" }}>
+    <div className="chb-chbdocument-details-bottom-spacing">
       {doc?.hasDropdown ? (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span className="check-page-link-button">*</span></CardLabel>
           <Dropdown
-            className="form-field"
+            className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`}
             selected={selectedDocument}
-            style={{width:user.type==="EMPLOYEE"?"50%":"100%"}}
             placeholder={"Select " + t("CHB_"+(doc?.code.replaceAll(".", "_"))) }
             option={dropDownData.map((e) => ({ ...e, i18nKey:"CHB_" + e.code?.replaceAll(".", "_") }))}
             select={handleCHBSelectDocument}

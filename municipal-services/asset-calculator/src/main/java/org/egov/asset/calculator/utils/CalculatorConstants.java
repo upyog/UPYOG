@@ -47,6 +47,8 @@ public class CalculatorConstants {
 	// Error messages in FSM Calculator
 	public static final String PARSING_ERROR = "PARSING ERROR";
 	public static final String PROCESSING_ERROR = "PROCESSING ERROR ";
+	public static final String DEPRECIATION_DATA_ERROR_KEY = "DEPRECIATION_DATA_ERROR";
+	public static final String DEPRECIATION_DATA_ERROR_MSG = "An unexpected error occurred while processing depreciation data.";
 
 	public static final String INVALID_PRICE = "INVALID PRICE";
 	public static final String INVALID_PRAMS = "INVALID PRICE";

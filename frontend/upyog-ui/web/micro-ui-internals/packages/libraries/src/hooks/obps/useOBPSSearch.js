@@ -1,4 +1,3 @@
-import { useQuery } from "react-query"
 import useEmpBPAREGSearch from "./useEmpBPAREGSearch";
 import useBPASearch from "./useBPASearch";
 

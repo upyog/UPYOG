@@ -1,8 +1,8 @@
 import React, { Fragment } from "react"
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 
-const SearchFields = ({ register, control, reset, tenantId, t,businessService }) => {
+const SearchFields = ({ register, control, reset, tenantId, t, businessService, onSubmit, onClearSearch }) => {
     const { isLoading: applicationTypesLoading, data: applicationTypes } = Digit.Hooks.ws.useWSMDMSWS.applicationTypes(Digit.ULBService.getStateId());
     const filterString = businessService==="WS" ? "WATER" : "SEWERAGE";
     const filteredApplicationTypes = applicationTypes?.filter(e => e?.code?.includes(filterString))
@@ -65,44 +65,86 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
     return <>
         <SearchField>
             <label>{t("WS_ACK_COMMON_APP_NO_LABEL")}</label>
-            <TextInput 
-                name="applicationNumber" 
-                inputRef={register()} 
-                {...(validation = {
-                    isRequired: false,
-                    pattern: "^[a-zA-Z0-9-_\/]*$",
-                    type: "text",
-                    title: t("ERR_INVALID_APPLICATION_NO"),
-                })}
+            <Controller
+                control={control}
+                name="applicationNumber"
+                rules={{
+                    required: false,
+                    pattern: {
+                        value: /^[a-zA-Z0-9-_\/]*$/,
+                        message: t("ERR_INVALID_APPLICATION_NO")
+                    }
+                }}
+                render={({ field }) => (
+                    <TextInput
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                    />
+                )}
             />
         </SearchField>
         <SearchField>
             <label>{t("WS_MYCONNECTIONS_CONSUMER_NO")}</label>
-            <TextInput 
-                name="connectionNumber" 
-                inputRef={register()} 
-                {...(validation = {
-                    isRequired: false,
-                    pattern:"^[a-zA-Z0-9\/-]*$",
-                    type: "text",
-                    title: t("ERR_INVALID_CONSUMER_NO"),
-                })}
+            <Controller
+                control={control}
+                name="connectionNumber"
+                rules={{
+                    required: false,
+                    pattern: {
+                        value: /^[a-zA-Z0-9\/-]*$/,
+                        message: t("ERR_INVALID_CONSUMER_NO")
+                    }
+                }}
+                render={({ field }) => (
+                    <TextInput
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                    />
+                )}
             />
         </SearchField>
         <SearchField>
             <label>{t("CONSUMER_MOBILE_NUMBER")}</label>
-            <MobileNumber name="mobileNumber" type="number" inputRef={register({})} {...propsForMobileNumber} />
+            <Controller
+                    control={control}
+                    name="mobileNumber"
+                    rules={{
+                        minLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        maxLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        pattern: {
+                            value: /[6789][0-9]{9}/,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                    }}
+                    render={({ field }) => (
+                        <MobileNumber
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputRef={field.ref}
+                        />
+                    )}
+                />
         </SearchField>
         {applicationTypesLoading ? <Loader /> : <SearchField>
             <label>{t("WS_APPLICATION_TYPE_LABEL")}</label>
             <Controller
                 control={control}
                 name="applicationType"
-                render={(props) => (
+                render={({ field }) => (
                     <Dropdown
-                        selected={props.value}
-                        select={props.onChange}
-                        onBlur={props.onBlur}
+                        selected={field.value}
+                        select={field.onChange}
+                        onBlur={field.onBlur}
                         option={filteredApplicationTypes}
                         optionKey="i18nKey"
                         t={t}
@@ -115,11 +157,11 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
             <Controller
                 control={control}
                 name="applicationStatus"
-                render={(props) => (
+                render={({ field }) => (
                     <Dropdown
-                        selected={props.value}
-                        select={props.onChange}
-                        onBlur={props.onBlur}
+                        selected={field.value}
+                        select={field.onChange}
+                        onBlur={field.onBlur}
                         option={applicationStatuses}
                         optionKey="i18nKey"
                         t={t}
@@ -130,7 +172,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
         <SearchField>
             <label>{t("WS_COMMON_FROM_DATE_LABEL")}</label>
             <Controller
-                render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
+                render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
                 name="fromDate"
                 control={control}
             />
@@ -138,7 +180,7 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
         <SearchField>
             <label>{t("WS_COMMON_TO_DATE_LABEL")}</label>
             <Controller
-                render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
+                render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
                 name="toDate"
                 control={control}
             />
@@ -146,19 +188,27 @@ const SearchFields = ({ register, control, reset, tenantId, t,businessService })
         <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
             <p onClick={() => {
-                reset({
+                const resetValues = {
                     applicationType: "",
                     fromDate: "",
                     toDate: "",
                     connectionNumber: "",
                     applicationStatus: "",
                     applicationNumber: "",
+                    mobileNumber: "",
                     tradeName: "",
                     offset: 0,
                     limit: 10,
                     sortBy: "commencementDate",
-                    sortOrder: "DESC"
-                });
+                    sortOrder: "DESC",
+                    isConnectionSearch: false
+                };
+                reset(resetValues);
+                if (onClearSearch) {
+                    onClearSearch();
+                } else {
+                    onSubmit(resetValues);
+                }
             }}>{t(`CS_COMMON_CLEAR_SEARCH`)}</p>
         </SearchField>
     </>

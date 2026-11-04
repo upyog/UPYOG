@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 
 const useWSDocumentSearch = ({ application }, config = {}, Code, index) => {
   const client = useQueryClient();
@@ -12,8 +13,8 @@ const useWSDocumentSearch = ({ application }, config = {}, Code, index) => {
     newDocs.push(ob);
   })
   const filesArray = newDocs.map((value) => value?.fileStoreId);
-  const { isLoading, error, data } = useQuery([`ptDocuments-${propertyId}`, filesArray], () => Digit.UploadServices.Filefetch(filesArray, tenant));
-  return { isLoading, error, data: { pdfFiles: data?.data }, revalidate: () => client.invalidateQueries([`ptDocuments-${propertyId}`, filesArray]) };
+  const { isLoading, error, data } = queryTemplate({ queryKey: [`ptDocuments-${propertyId}`, filesArray], queryFn: () => Digit.UploadServices.Filefetch(filesArray, tenant) });
+  return { isLoading, error, data: { pdfFiles: data?.data }, revalidate: () => client.invalidateQueries({ queryKey: [`ptDocuments-${propertyId}`, filesArray] }) };
 };
 
 export default useWSDocumentSearch;

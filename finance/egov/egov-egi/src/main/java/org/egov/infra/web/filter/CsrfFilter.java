@@ -52,10 +52,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -97,9 +97,9 @@ public final class CsrfFilter extends OncePerRequestFilter {
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * org.springframework.web.filter.OncePerRequestFilter#doFilterInternal(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
-	 * javax.servlet.FilterChain)
+	 * org.springframework.web.filter.OncePerRequestFilter#doFilterInternal(jakarta.servlet
+	 * .http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse,
+	 * jakarta.servlet.FilterChain)
 	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request,
@@ -187,7 +187,7 @@ public final class CsrfFilter extends OncePerRequestFilter {
 		 * (non-Javadoc)
 		 *
 		 * @see
-		 * org.springframework.security.web.util.matcher.RequestMatcher#matches(javax.
+		 * org.springframework.security.web.util.matcher.RequestMatcher#matches(jakarta.
 		 * servlet.http.HttpServletRequest)
 		 */
 		@Override

@@ -16,7 +16,6 @@ import org.egov.ewst.models.event.Source;
 import org.egov.ewst.repository.ServiceRequestRepository;
 import org.egov.ewst.util.EwasteConstants;
 import org.egov.ewst.util.NotificationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -32,12 +31,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class EwasteNotificationService {
-	@Autowired
-	private EwasteConfiguration config;
-	@Autowired
-	private NotificationUtil util;
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+
+	private final EwasteConfiguration config;
+	private final NotificationUtil util;
+	private final ServiceRequestRepository serviceRequestRepository;
+
+	public EwasteNotificationService(EwasteConfiguration config, NotificationUtil util,
+			ServiceRequestRepository serviceRequestRepository) {
+		this.config = config;
+		this.util = util;
+		this.serviceRequestRepository = serviceRequestRepository;
+	}
 
 	public void process(EwasteRegistrationRequest request) {
 		EventRequest eventRequest = getEventsForEW(request);
@@ -69,8 +73,7 @@ public class EwasteNotificationService {
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
 		String message = null;
-		message = util.getCustomizedMsg(request.getRequestInfo(), request.getEwasteApplication().get(0),
-				localizationMessages);
+		message = util.getCustomizedMsg(request.getEwasteApplication().get(0), localizationMessages);
 		log.info("Message for event in Ewaste:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in Ewaste:" + recepient.toString());
@@ -107,8 +110,6 @@ public class EwasteNotificationService {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 			log.info("User fetched in fetUserUUID method of Ewaste notfication consumer" + user.toString());
-//			if (null != user) {
-//				String uuid = JsonPath.read(user, "$.user[0].uuid");
 			if (user instanceof Optional) {
 				Optional<Object> optionalUser = (Optional<Object>) user;
 				if (optionalUser.isPresent()) {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import ComplaintsLink from "./inbox/ComplaintLinks";
 import ComplaintTable from "./inbox/ComplaintTable";
 import Filter from "./inbox/Filter";
@@ -77,11 +77,11 @@ const DesktopInbox = ({
     result = <Loader />;
   } else if (data && data.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="pgr-desktop-inbox-card">
         {t(LOCALE.NO_COMPLAINTS_EMPLOYEE)
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="pgr-desktop-inbox-centered">
               {text}
             </p>
           ))}
@@ -112,11 +112,11 @@ const DesktopInbox = ({
     );
   } else {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="pgr-desktop-inbox-card">
         {t(LOCALE.ERROR_LOADING_RESULTS)
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="pgr-desktop-inbox-centered">
               {text}
             </p>
           ))}
@@ -132,9 +132,9 @@ const DesktopInbox = ({
           <Filter complaints={data} onFilterChange={onFilterChange} type="desktop" searchParams={searchParams} />
         </div>
       </div>
-      <div style={{ flex: 1 }}>
-        <SearchComplaint onSearch={onSearch} type="desktop" />
-        <div style={{ marginTop: "24px", marginTop: "24px", marginLeft: "24px", flex: 1 }}>{result}</div>
+      <div className="pgr-desktop-inbox-wrapper">
+        <SearchComplaint onSearch={onSearch} type="desktop" searchParams={searchParams} />
+        <div className="pgr-desktop-inbox-top-spacing">{result}</div>
       </div>
     </div>
   );

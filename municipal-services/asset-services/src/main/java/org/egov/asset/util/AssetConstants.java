@@ -2,9 +2,12 @@ package org.egov.asset.util;
 
 public class AssetConstants {
 
+    private AssetConstants() {
+    }
+
     //Constants For MDMS
     public static final String ASSET_MODULE = "ASSET";
-    public static final String ASSET_BusinessService = "ASSET";
+    public static final String ASSET_BUSINESS_SERVICE = "ASSET";
     public static final String ASSET_MODULE_CODE = "ASSET";
     // mdms path codes
     public static final String ASSET_JSONPATH_CODE = "$.MdmsRes.ASSET";

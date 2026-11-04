@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { TypeSelectCard } from "@upyog/digit-ui-react-components";
-import { RadioOrSelect, RadioButtons } from "@upyog/digit-ui-react-components";
-import FormStep from "../../../../react-components/src/molecules/FormStep"
+import { TypeSelectCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { RadioOrSelect, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
+import {FormStep} from "@nudmcdgnpm/digit-ui-react-components"
 import Timeline from "../components/TLTimeline";
 
 const SelectAccessories = ({ t, config, onSelect, userType, formData }) => {

@@ -51,23 +51,43 @@ package org.egov.infra.web.filter;
 import org.apache.log4j.Logger;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.config.security.repository.ApplicationSecurityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static org.egov.infra.utils.ApplicationConstant.MS_TENANTID_KEY;
 import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
+/*
+ * Multi-Jurisdiction & Single-URL Architecture Tenant Resolution:
+ * -------------------------------------------------------------
+ * 1. Single URL Support: Eliminates legacy subdomain dependency (e.g. citya.egov.org -> niuatt.niua.in).
+ * 2. Dynamic Jurisdiction Switching:
+ *    - When a multi-jurisdiction employee switches cities in upyog-ui (e.g., City A -> City B), the incoming
+ *      entry request carries the target 'tenantId' as a request parameter.
+ *    - To prevent the user from being locked into the old tenant stored in the active HTTP/Redis session,
+ *      this filter gives highest priority to the incoming request parameter 'tenantId'.
+ *    - The filter immediately updates the HTTP/Redis session with the new tenant ID (session.setAttribute)
+ *      so that the active session is dynamically synchronized across the distributed cluster.
+ * 3. Session Fallback for Internal AJAX / Dropdown APIs:
+ *    - Legacy JSP/Struts/AJAX calls (like /designations, /departments, bill searches) do not explicitly send
+ *      'tenantId' in the request parameters.
+ *    - For these subsequent requests, the filter seamlessly falls back to reading 'ms_tenant_id' from the
+ *      active session, ensuring complete data isolation within the selected ULB's PostgreSQL schema.
+ * 4. Fallback to Default Schema: Unauthenticated public requests route to the default schema.
+ */
+
 public class ApplicationTenantResolverFilter implements Filter {
-	private static final Logger LOGGER = Logger.getLogger(ApplicationTenantResolverFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(ApplicationTenantResolverFilter.class);
 
     @Autowired
     private EnvironmentSettings environmentSettings;
@@ -75,17 +95,75 @@ public class ApplicationTenantResolverFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-    	
-        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpSession session = httpRequest.getSession(false);
+
+        String domainURL = extractRequestDomainURL(httpRequest, false);
         String domainName = extractRequestedDomainName(domainURL);
-        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
-        LOGGER.info(" *** Schema name  :"+environmentSettings.schemaName(domainName) );
-        LOGGER.info(" *** domainName  :"+domainName);
-        LOGGER.info(" *** domainURL  :"+domainURL);
+
+        String userTenantId = null;
+        String schemaName = null;
+
+        // Step 1: Check request parameters first (Handles UI entry, redirects, and Multi-Jurisdiction city switching)
+        String reqTenantId = httpRequest.getParameter("tenantId");
+        if (reqTenantId == null || reqTenantId.isEmpty()) {
+            reqTenantId = httpRequest.getParameter("tenant_id");
+        }
+
+        if (reqTenantId != null && !reqTenantId.isEmpty()) {
+            userTenantId = reqTenantId;
+            LOGGER.info(" *** User Tenant ID from request parameter: " + userTenantId);
+            
+            // Live Session Sync: Update the active HTTP/Redis session so subsequent internal AJAX calls inherit this tenant
+            if (session != null) {
+                session.setAttribute(MS_TENANTID_KEY, userTenantId);
+            }
+        } else if (session != null) {
+            // Step 2: Fallback to session for internal AJAX, bill registers, dropdown fetches, and static resources
+            userTenantId = (String) session.getAttribute(MS_TENANTID_KEY);
+            LOGGER.info(" *** User Tenant ID from session: " + userTenantId);
+        }
+
+        // Step 3: Determine schema based on resolved tenant ID (e.g., "pg.citya" -> schema "citya")
+        if (userTenantId != null && !userTenantId.isEmpty()) {
+            String cityCode = extractCityCodeFromTenantId(userTenantId);
+            schemaName = cityCode; // Use city code directly as schema name
+            LOGGER.info(" *** Schema resolved from user tenant: " + schemaName);
+        } else {
+            // Fallback to default schema for unauthenticated requests
+            schemaName = environmentSettings.defaultSchemaName();
+            LOGGER.info(" *** Using default schema (no user session): " + schemaName);
+        }
+
+        // Step 4: Bind resolved tenant context to ApplicationThreadLocals for Hibernate / DB DataSource routing
+        ApplicationThreadLocals.setTenantID(schemaName);
         ApplicationThreadLocals.setCollectionVersion(environmentSettings.collectionVersion());
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
+
+        LOGGER.info(" *** Schema name: " + schemaName);
+        LOGGER.info(" *** User Tenant ID: " + userTenantId);
+        LOGGER.info(" *** domainName: " + domainName);
+        LOGGER.info(" *** domainURL: " + domainURL);
+
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Extract city code from tenant ID
+     * Example: "pg.citya" -> "citya"
+     * Example: "citya" -> "citya"
+     */
+    private String extractCityCodeFromTenantId(String tenantId) {
+        if (tenantId == null || tenantId.isEmpty()) {
+            return null;
+        }
+        String[] parts = tenantId.split("\\.");
+        if (parts.length > 1) {
+            return parts[parts.length - 1]; // Return "citya" from "pg.citya"
+        }
+        return tenantId;
     }
 
     @Override
@@ -97,5 +175,4 @@ public class ApplicationTenantResolverFilter implements Filter {
     public void destroy() {
         //Nothing to be cleaned up
     }
-
 }

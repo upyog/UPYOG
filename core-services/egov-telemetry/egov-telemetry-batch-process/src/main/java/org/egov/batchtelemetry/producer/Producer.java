@@ -10,7 +10,8 @@ import java.util.Properties;
 
 public class Producer {
 
-    private KafkaProducer kafkaProducer;
+    /** Kafka 3.x clients: typed producer avoids raw types with modern javac (Java 17 build). */
+    private final KafkaProducer<String, JsonNode> kafkaProducer;
 
     private AppProperties appProperties;
 
@@ -23,7 +24,7 @@ public class Producer {
         configProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer");
         configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.connect.json.JsonSerializer");
 
-        kafkaProducer = new KafkaProducer(configProperties);
+        kafkaProducer = new KafkaProducer<>(configProperties);
     }
 
     public void push(String topic, String key, Long timestamp, JsonNode jsonNode) {

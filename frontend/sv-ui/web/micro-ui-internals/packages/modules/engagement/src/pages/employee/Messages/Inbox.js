@@ -131,7 +131,6 @@ const Inbox = ({ tenants, parentRoute }) => {
         onPrevPage={fetchPrevPage}
         onPageSizeChange={handlePageSizeChange}
         title={"EVENTS_PUBLIC_MESSAGE_NOTICE_HEADER"}
-        links={links}
         isLoading={isLoading}
       />
     </div>

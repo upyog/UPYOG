@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, RadioOrSelect, TextInput, OpenLinkContainer, BackButton } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, RadioOrSelect, TextInput, OpenLinkContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/Timeline";
@@ -64,7 +64,7 @@ const LicenseType = ({ t, config, onSelect, userType, formData }) => {
     <div>
       <div className={isopenlink ? "OpenlinkContainer" : ""}>
 
-        {isopenlink && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isopenlink && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Timeline currentStep={1} flow="STAKEHOLDER" />
         <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={LicenseType && LicenseType?.i18nKey.includes("ARCHITECT") ? !LicenseType || !ArchitectNo : !LicenseType}>
           <CardLabel>{t("BPA_LICENSE_TYPE")}*</CardLabel>

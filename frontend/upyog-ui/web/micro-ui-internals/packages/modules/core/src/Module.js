@@ -1,9 +1,10 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient as TanstackQueryClient, QueryClientProvider as TanstackQueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { getI18n } from "react-i18next";
-import { Body, Loader } from "@upyog/digit-ui-react-components";
+import { Body, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { DigitApp } from "./App";
 import SelectOtp from "./pages/citizen/Login/SelectOtp";
 import AcknowledgementCF from "./components/AcknowledgementCF";
@@ -29,9 +30,9 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
           <DigitApp
             initData={initData}
             stateCode={stateCode}
-            modules={initData?.modules}
-            appTenants={initData.tenants}
-            logoUrl={initData?.stateInfo?.logoUrl}
+            modules={initData?.modules || []}
+            appTenants={initData?.tenants || []}
+            logoUrl={initData?.stateInfo?.logoUrl || ""}
           />
         </Body>
       </Router>
@@ -48,10 +49,15 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
         cacheTime: 50 * 60 * 1000,
         retryDelay: (attemptIndex) => Infinity,
         retry: false,
-        /*
-          enable this to have auto retry incase of failure
-          retryDelay: attemptIndex => Math.min(1000 * 3 ** attemptIndex, 60000)
-         */
+      },
+    },
+  });
+  const tanstackQueryClient = new TanstackQueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 15 * 60 * 1000,
+        gcTime: 50 * 60 * 1000,
+        retry: false,
       },
     },
   });
@@ -66,6 +72,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
     <div>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
+          <TanstackQueryClientProvider client={tanstackQueryClient}>
           <ComponentProvider.Provider value={registry}>
             <PrivacyProvider.Provider
               value={{
@@ -104,6 +111,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
               <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />
             </PrivacyProvider.Provider>
           </ComponentProvider.Provider>
+          </TanstackQueryClientProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </div>

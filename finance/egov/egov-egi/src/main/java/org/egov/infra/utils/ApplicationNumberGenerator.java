@@ -48,9 +48,7 @@
 
 package org.egov.infra.utils;
 
-import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
-import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
-import org.hibernate.exception.SQLGrammarException;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +66,13 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
  * Sequence number, year and alphabets are separated by hyphen.<br/>
  * eg: 00010-2016-QX<br/>
  * Sequence number will be reset to 1 on every year
+ * <p>
+ * <b>LTS Migration Fix (Hibernate 6 + JTA):</b> do not call
+ * {@code DatabaseSequenceProvider.getNextSequence} and catch
+ * {@code SQLGrammarException} to create a missing yearly sequence. Hibernate 6
+ * marks that JTA transaction rollback-only (same failure as contra BTB
+ * {@code sq_*} sequences). Delegate to
+ * {@link GenericSequenceNumberGenerator}, which checks existence first.
  */
 @Service
 public class ApplicationNumberGenerator {
@@ -75,22 +80,13 @@ public class ApplicationNumberGenerator {
     private static final String APP_NUMBER_FORMAT = "%05d-%s-%s";
 
     @Autowired
-    private DatabaseSequenceCreator databaseSequenceCreator;
-
-    @Autowired
-    private DatabaseSequenceProvider databaseSequenceProvider;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Transactional
     public String generate() {
         String currentYear = DateUtils.currentYear();
         String sequenceName = format(APP_NUMBER_SEQ_PREFIX, currentYear);
-        Serializable sequenceNumber;
-        try {
-            sequenceNumber = databaseSequenceProvider.getNextSequence(sequenceName);
-        } catch (SQLGrammarException e) {
-            databaseSequenceCreator.createSequence(sequenceName);
-            sequenceNumber = databaseSequenceProvider.getNextSequence(sequenceName);
-        }
+        Serializable sequenceNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
         return format(APP_NUMBER_FORMAT, sequenceNumber, currentYear, upperCase(randomAlphabetic(2)));
     }
 

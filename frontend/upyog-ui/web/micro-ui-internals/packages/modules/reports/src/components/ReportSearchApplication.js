@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useCallback, useRef, useReducer } from 'react'
-import SearchFormFieldsComponent from './SearchFormFieldsComponent'
+import SearchFormFieldsComponent from '../../../reports/src/components/SearchFormFieldsComponent'
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +14,7 @@ import {
     Toast,
     MultiLink,
     Header
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 
 const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTableDataLoading, Count, searchData, reportName }) => {
@@ -37,11 +37,18 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
 
 
     const searchFormFieldsComponentProps = { formState, Controller, register, control, t, reset, data };
-    const rowData = tableData?.reportData;
+    // Deep clone to avoid mutating props and ensure fresh data for manipulation
+    const rowData = tableData?.reportData ? JSON.parse(JSON.stringify(tableData.reportData)) : [];
     if(rowData?.[0]?.[0]!=1){
         rowData?.map((row, index) => {
             row?.unshift(index + 1)
         })
+    }
+
+    if (rowData && rowData.length > 0 && rowData[rowData.length - 1][0] !== "Total") {
+        const totalRow = new Array(rowData[0].length).fill("");
+        totalRow[0] = "Total";
+        rowData.push(totalRow);
     }
     
 
@@ -77,16 +84,23 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
         return rowVal ? rowVal : "-"
     }
 
-    const columns = useMemo(() => {
-        const colArray = rowHeaders?.map((header, index) => {
-            return {
-                Header: t(header.label),
-                disableSortBy: true,
-                accessor: (row) => <span className="cell-text">{getCellValue(row, header, index)}</span>
-            }
-        })
-        return colArray
-    }, [rowHeaders])
+  const columns = useMemo(() => {
+    return rowHeaders
+        ?.map((header, originalIndex) => ({
+            ...header,
+            originalIndex
+        }))
+        .filter(header => header.showColumn !== false)
+        .map((header) => ({
+            Header: t(header.label),
+            disableSortBy: true,
+            accessor: (row) => (
+                <span className="cell-text">
+                    {getCellValue(row, header, header.originalIndex)}
+                </span>
+            )
+        }));
+}, [rowHeaders, t]);
     const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false)
     const downloadOptions = [
         {
@@ -112,9 +126,10 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                 //[t(columnheader)]:data to display
                 //here finalObj is each row
                 const finalObj = {}
-                columns?.map((col, index) => {
-                    finalObj[[t(`${col?.Header}`)]] = getCellValue(data, rowHeaders[index], index)
-                })
+                columns?.forEach((col) => {
+    finalObj[t(col.Header)] =
+        getCellValue(data, col, col.originalIndex);
+})
                 return finalObj;
             }),
         [rowData, isTableDataLoading]
@@ -195,12 +210,12 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                     </PopUp>
                 ) : null}
                 {!isTableDataLoading && tableData?.display ? (
-                    <Card style={{ marginTop: 20 }}>
+                    <Card className="rpt-report-search-application-card">
                         {
                             t(tableData?.display)
                                 .split("\\n")
                                 .map((text, index) => (
-                                    <p key={index} style={{ textAlign: "center" }}>
+                                    <p key={index} className="rpt-report-search-application-centered">
                                         {text}
                                     </p>
                                 ))
@@ -229,18 +244,32 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                 </SearchForm>}
 
             {!isTableDataLoading && tableData?.display ? (
-                <Card style={{ marginTop: 20 }}>
+                <Card className="rpt-report-search-application-card">
                     {
                         t(tableData?.display)
                             .split("\\n")
                             .map((text, index) => (
-                                <p key={index} style={{ textAlign: "center" }}>
+                                <p key={index} className="rpt-report-search-application-centered">
                                     {text}
                                 </p>
                             ))
                     }
                 </Card>
-            ) : !isTableDataLoading ? (<Table
+            ) : !isTableDataLoading ? (
+            <div className="rpt-report-search-application-flex-container">
+                <div className="rpt-report-search-application-bottom-spacing">
+                    <MultiLink
+                        className="multilinkWrapper"
+                        onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
+                        displayOptions={isDisplayDownloadMenu}
+                        options={downloadOptions}
+                        downloadBtnClassName={"reports-download-btn"}
+                        downloadOptionsClassName={"reports-options-download"}
+                        reportStyles={{"position":"relative"}}
+                    />
+                </div>
+            <div className="report-scroll-container rpt-report-search-application-fullwidth">
+                <Table
                 tableRef={tableRef}
                 t={t}
                 className={"table reports-table "}
@@ -252,30 +281,23 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                         style: {
                             padding: "20px 18px",
                             fontSize: "16px",
+                            whiteSpace: "nowrap",
                             // overflowWrap:"break-work",
                             //whiteSpace: 'pre-wrap',
                             wordBreak: cellInfo?.column?.Header === t("reports.hrms.role") ? "break-all" : null,
                             minWidth: cellInfo?.column?.Header === "#" ? "100px" : null,
-                            width: cellInfo?.column?.Header === "#" ? "100px" : null
+                            width: cellInfo?.column?.Header === "#" ? "100px" : null,
+                            fontWeight: cellInfo?.row?.original?.[0] === "Total" ? "bold" : "normal"
                             //whiteSpace:"break-space"
                         },
                     };
                 }}
                 manualPagination={false}
                 totalRecords={Count}
-                tableTopComponent={<MultiLink
-                    className="multilinkWrapper"
-                    // optionsStyle={{ "position": "relative" }}
-                    // style={{"position":"relative"}}
-                    onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
-                    displayOptions={isDisplayDownloadMenu}
-                    options={downloadOptions}
-                    downloadBtnClassName={"reports-download-btn"}
-                    downloadOptionsClassName={"reports-options-download"}
-                    reportStyles={{"position":"relative"}}
-                />}
                 isReportTable={true}
-            />) : <Loader />}
+            />
+            </div>
+            </div>) : <Loader />}
         </React.Fragment>
     )
 }

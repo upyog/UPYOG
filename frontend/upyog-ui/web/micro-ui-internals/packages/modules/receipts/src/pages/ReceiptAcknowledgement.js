@@ -1,5 +1,5 @@
 
-import { ActionBar, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -77,7 +77,7 @@ const ReceiptAcknowledgement = (props) => {
     }
   };
 
-  if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
+  if (mutation.isPending || (mutation.isIdle && !mutationHappened)) {
     return <Loader />;
   }
   const Payment = mutation?.data?.Payments[0] || successData?.Payments?.[0];
@@ -106,7 +106,7 @@ const ReceiptAcknowledgement = (props) => {
                 <span className="download-button">{t("COMMON_TABLE_PRINT")}</span>
               </div>
             }
-            style={{ width: "100px" }}
+            className="rcpt-receipt-acknowledgement-action-btn"
             onClick={() => { printReciept(Payment?.paymentDetails[0]?.businessService, Payment?.paymentDetails[0]?.bill?.consumerCode) }}
           />
         </CardText>)}

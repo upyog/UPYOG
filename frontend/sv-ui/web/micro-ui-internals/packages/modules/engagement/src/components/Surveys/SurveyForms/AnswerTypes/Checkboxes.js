@@ -2,7 +2,7 @@ import { CheckBox, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "../../../../hooks/useDebounce";
 
-const Checkboxes = ({ t, options = checkboxlist, updateOption, addOption, removeOption, isPartiallyEnabled, createNewSurvey, formDisabled, maxLength, titleHover,inputRef, labelstyle,isInputDisabled }) => {
+const Checkboxes = ({ t, options = checkboxlist, updateOption, addOption, removeOption, isPartiallyEnabled, createNewSurvey, formDisabled, maxLength, titleHover, inputRef, labelstyle, isInputDisabled }) => {
   return (
     <div className="options_checkboxes">
       {options.map((title, index) => (
@@ -19,12 +19,12 @@ const Checkboxes = ({ t, options = checkboxlist, updateOption, addOption, remove
 
 export default Checkboxes;
 
-const CheckBoxOption = ({ index, title, updateOption, removeOption,maxLength,titleHover,inputRef,labelstyle,isPartiallyEnabled, isInputDisabled, formDisabled }) => {
+const CheckBoxOption = ({ index, title, updateOption, removeOption, maxLength, titleHover, inputRef, labelstyle, isPartiallyEnabled, isInputDisabled, formDisabled }) => {
   const [optionTitle, setOptionTitle] = useState(title);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-      updateOption({ value: optionTitle, id: index });   
+    updateOption({ value: optionTitle, id: index });
   }, [optionTitle]);
 
   return (
@@ -40,11 +40,11 @@ const CheckBoxOption = ({ index, title, updateOption, removeOption,maxLength,tit
         className={isFocused ? "simple_editable-input" : "simple_readonly-input"}
         maxLength={maxLength}
         title={titleHover}
-        style={{...labelstyle}}
+        style={{ ...labelstyle }}
         disabled={isPartiallyEnabled ? !isPartiallyEnabled : formDisabled}
       />
-      <div className="pointer" onClick={()=> removeOption(index)}>
-        <CloseSvg/>
+      <div className="pointer" onClick={() => removeOption(index)}>
+        <CloseSvg />
       </div>
     </div>
   );

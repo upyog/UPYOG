@@ -10,7 +10,7 @@ import org.egov.auditservice.web.models.enums.OperationType;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;

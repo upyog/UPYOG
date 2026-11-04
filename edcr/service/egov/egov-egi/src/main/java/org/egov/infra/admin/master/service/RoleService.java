@@ -84,15 +84,15 @@ public class RoleService {
     }
 
     public List<Role> getAllRoles() {
-        return roleRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public List<Role> getNonInternalRoles() {
-        return roleRepository.findByInternalIsFalse(new Sort(Sort.Direction.ASC, "name"));
+        return roleRepository.findByInternalIsFalse(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Role getRoleById(final Long roleID) {
-        return roleRepository.findOne(roleID);
+        return roleRepository.findById(roleID).orElse(null);
     }
 
     public Role getRoleByName(final String name) {

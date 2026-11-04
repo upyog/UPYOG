@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-Challan.OffenceType",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"id\": \"OT1\", \"name\": \"Failure to segregate and store waste and handover segregated waste in accordance with the Rule (Residential)\", \"subCategoryId\": \"SC101\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT2\", \"name\": \"Failure to segregate and store waste and handover segregated waste in accordance with the Rule (Marriage/ Party Halls, Festival Halls, Party Lawns, Exhibition and fairs)\", \"subCategoryId\": \"SC101\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT3\", \"name\": \"Failure to segregate and store waste and handover segregated waste in accordance with the Rule (Clubs, Cinema Halls, Community Halls, Multiplexes and other such places)\", \"subCategoryId\": \"SC101\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT4\", \"name\": \"Failure to segregate and store waste and handover segregated waste in accordance with the Rule (other non-residential entities)\", \"subCategoryId\": \"SC101\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT5\", \"name\": \"Person littering waste on public places like road/ streets/ parks etc.\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT6\", \"name\": \"Waste dumping/ throwing/ littering in open areas by household owner/ occupier OR Person dumping/ throwing/ littering on his private open plots or allowing the other to do so\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT7\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by shop owner\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT8\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by hotel/ restaurant owner\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT9\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by industrial establishment (non hazardous)\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT10\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by educational establishments\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT11\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by health establishments (non hazardous)\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT12\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by anyone establishment/ organization not covered in above\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT13\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by sweet shops\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT14\", \"name\": \"Waste dumping/ throwing/ littering in open areas/ public places by chat seller, fast food seller, ice-cream seller, sugarcane juice seller, vegetable seller, fruit seller etc.\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT15\", \"name\": \"Owner/head of the establishment from occupation mentioned at serial numbers 3 to 10 above, establishment if did not keep the separate disposal Bins for compostable and non-biodegradable wastes at his business place and spreading garbage in the public place\", \"subCategoryId\": \"SC101\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT16\", \"name\": \"Spit,throw waste in public/ private roads from vehicles\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT17\", \"name\": \"Disposal of cow dung in public places\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT18\", \"name\": \"For small storing & delivering construction and demolition materials upto 1 ton on unauthorized sites including public land/ along the roads/ streets etc.\", \"subCategoryId\": \"SC105\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT19\", \"name\": \"Dumping of solid waste in water bodies/ sewerage\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT20\", \"name\": \"If the shopkeeper throws blood, bones, feather, skin, egg shells and the other remains of dead animals/ birds, in front of butcher's shop\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT21\", \"name\": \"If domestic animals like cow, buffalo, dog, pig etc - create wastes on public places like streets, parks etc.\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT22\", \"name\": \"Vegetable vendor/hawker without a container/waste basket\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT23\", \"name\": \"Throwing waste materials on roads by vegetable vendors\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT24\", \"name\": \"Throwing waste materials on roads by hair cutting salons\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT25\", \"name\": \"Littering road, public places, pathways, footpath etc. by hospitals, nursing homes, clinics, medical stores, laboratories etc. (non hazardous)\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT26\", \"name\": \"Open defecation/urination in each case\", \"subCategoryId\": \"SC102\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT27\", \"name\": \"Quantity found/impounded upto 100 gram\", \"subCategoryId\": \"SC103\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT1\"]}, {\"id\": \"OT28\", \"name\": \"Quantity found/impounded 101 - 500 gram\", \"subCategoryId\": \"SC103\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT2\"]}, {\"id\": \"OT29\", \"name\": \"Quantity found/impounded 501 gram - 1 kilogram\", \"subCategoryId\": \"SC103\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT2\"]}, {\"id\": \"OT30\", \"name\": \"Quantity found/impounded more than 1 Kg upto 5 kilogram\", \"subCategoryId\": \"SC103\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT2\"]}, {\"id\": \"OT31\", \"name\": \"Quantity found/impounded more than 5 kilogram\", \"subCategoryId\": \"SC103\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT2\"]}, {\"id\": \"OT32\", \"name\": \"To pay compensation in case of simple burning \", \"subCategoryId\": \"SC104\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT2\"]}, {\"id\": \"OT33\", \"name\": \"To pay compensation in case of bulk waste burning on dump sites or in secondary waste collection points or other\", \"subCategoryId\": \"SC104\", \"taxHeadCode\": \"CH.CHALLAN_FINE\", \"acts\": [\"ACT3\"]}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"Challan.OffenceType\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/Challan.OffenceType",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"Challan.OffenceType"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

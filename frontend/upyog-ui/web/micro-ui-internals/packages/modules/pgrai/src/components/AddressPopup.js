@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, AddressDetails } from "@upyog/digit-ui-react-components";
+import { Modal, AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 
 const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -70,7 +70,7 @@ const AddressPopup = ({ t, isOpen, onClose, onSubmit }) => {
         overflowY: "hidden",
       }}
     >
-      <div style={{ boxShadow: "none" }}>
+      <div className="pgrai-address-popup-wrapper">
         <AddressDetails t={t} formData={formData} onSelect={setFormData} />
       </div>
     </Modal>

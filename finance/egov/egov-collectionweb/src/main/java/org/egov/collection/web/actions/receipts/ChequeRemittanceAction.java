@@ -87,7 +87,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
@@ -192,8 +192,8 @@ public class ChequeRemittanceAction extends BaseFormAction {
         isListData = true;
         remitAccountNumber = "";
         if (accountNumberId != null) {
-            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(BANK_ACCOUNT_NUMBER_QUERY);
-            bankAccountQry.setString("accountNumberId", accountNumberId);
+            final Query bankAccountQry = persistenceService.getSession().createNativeQuery(BANK_ACCOUNT_NUMBER_QUERY);
+            bankAccountQry.setParameter("accountNumberId", accountNumberId);
             final Object bankAccountResult = bankAccountQry.uniqueResult();
             remitAccountNumber = (String) bankAccountResult;
         }
@@ -208,8 +208,8 @@ public class ChequeRemittanceAction extends BaseFormAction {
             for (BankAccountServiceMapping basm : mappings) {
                 serviceCodeList.add(basm.getBusinessDetails());
             }
-            final Query fundQuery = persistenceService.getSession().createSQLQuery(FUND_QUERY);
-            fundQuery.setString("accountNumberId", accountNumberId);
+            final Query fundQuery = persistenceService.getSession().createNativeQuery(FUND_QUERY);
+            fundQuery.setParameter("accountNumberId", accountNumberId);
             List<String> fundCodeList = fundQuery.list();
             final String fundCode = fundCodeList != null && !fundCodeList.isEmpty() ? fundCodeList.get(0).toString() : null;
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);

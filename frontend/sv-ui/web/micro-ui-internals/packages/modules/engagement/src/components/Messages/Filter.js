@@ -22,7 +22,7 @@ const Filter = ({ type = "desktop", onClose, onSearch, onFilterChange, searchPar
   };
   const handleChange = useCallback((data) => {
     setLocalSearchParams((prevLocalSearchParams) => ({ ...prevLocalSearchParams, ...data }));
-  },[])
+  }, [])
 
   const onStatusChange = (e, type) => {
     if (e.target.checked) handleChange({ eventStatus: [...(localSearchParams?.eventStatus || []), type] })

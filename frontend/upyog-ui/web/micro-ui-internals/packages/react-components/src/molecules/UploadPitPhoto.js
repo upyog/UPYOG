@@ -38,8 +38,8 @@ const UploadPitPhoto = (props) => {
             setError("FSM_MAXIMUM_PIT_UPLOAD_SIZE_EXCEEDED");
             setTimeout(() => {
                 setError(null);
-              }, 3000);
-            
+            }, 3000);
+
         } else {
             setImage(imageFile);
         }
@@ -66,7 +66,7 @@ const UploadPitPhoto = (props) => {
         if (uploadedImagesIds === null || uploadedImagesIds.length < 3) {
             const response = await Digit.UploadServices.Filestorage("FSM", image, props.tenantId);
             setUploadedImagesIds(addUploadedImageIds(response));
-        } 
+        }
     }, [addUploadedImageIds, image]);
 
     function addImageThumbnails(thumbnailsData) {
@@ -110,7 +110,7 @@ const UploadPitPhoto = (props) => {
     const handleUpload = (event) => {
         if (uploadedImagesIds === null || uploadedImagesIds.length < 3) {
             hiddenFileInput.current.click();
-        } 
+        }
     }
     const hiddenFileInput = React.useRef(null);
 
@@ -118,23 +118,12 @@ const UploadPitPhoto = (props) => {
     // and can view preview in pop down
     return (
         <div>
-            <div className="imageUploadWrapper" style={{ display: !imageFile ? "none" : "block", marginTop: "8px" }}>
+            <div className={`${!imageFile ? "image-upload-wrapper--hidden" : "image-upload-wrapper--visible"}`}>
                 <UploadImages onUpload={getImage} onDelete={deleteImage} thumbnails={uploadedImagesThumbs ? uploadedImagesThumbs.map((o) => o.image) : []} />
             </div>
-            <button onClick={handleUpload} style={{
-                width: "100%",
-                backgroundColor: "#d6d5d4",
-                borderStyle: "solid",
-                borderBottom: "1px solid #464646",
-                padding: "4px 40px",
-                margin: "8px 0px",
-                cursor: "pointer",
-                outline: "none",
-                display: "flex",
-                justifyContent: "center",
-            }}>
+            <button onClick={handleUpload} className="rc-upload-pit-photo-clickable">
                 <input
-                    style={{ display: "none" }}
+                    className="rc-upload-pit-photo-hidden"
                     type="file"
                     accept="image/*"
                     ref={hiddenFileInput}

@@ -79,9 +79,6 @@ public class ServiceRequestValidator {
 
         if(CollectionUtils.isEmpty(serviceWrappers))
             throw new CustomException("INVALID_UPDATE","The record that you are trying to update does not exists");
-
-        // TO DO
-
     }
 
     /**
@@ -92,17 +89,6 @@ public class ServiceRequestValidator {
     private void validateUserData(ServiceRequest request,Map<String, String> errorMap){
 
         RequestInfo requestInfo = request.getRequestInfo();
-        String accountId = request.getService().getAccountId();
-
-        /*if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_CITIZEN)
-            && StringUtils.isEmpty(accountId)){
-            errorMap.put("INVALID_REQUEST","AccountId cannot be null");
-        }
-        else if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_CITIZEN)
-                && !StringUtils.isEmpty(accountId)
-                && !accountId.equalsIgnoreCase(requestInfo.getUserInfo().getUuid())){
-            errorMap.put("INVALID_ACCOUNTID","The accountId is different from the user logged in");
-        }*/
 
         if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_EMPLOYEE)){
             User citizen = request.getService().getCitizen();
@@ -199,10 +185,9 @@ public class ServiceRequestValidator {
         RequestInfo requestInfo = request.getRequestInfo();
         Long lastModifiedTime = service.getAuditDetails().getLastModifiedTime();
 
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_CITIZEN)){
-            if(!requestInfo.getUserInfo().getUuid().equalsIgnoreCase(service.getAccountId()))
-                throw new CustomException("INVALID_ACTION","Not authorized to re-open the complain");
-        }
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_CITIZEN)
+                && !requestInfo.getUserInfo().getUuid().equalsIgnoreCase(service.getAccountId()))
+            throw new CustomException("INVALID_ACTION","Not authorized to re-open the complain");
 
         if(System.currentTimeMillis()-lastModifiedTime > config.getComplainMaxIdleTime())
             throw new CustomException("INVALID_ACTION","Complaint has crossed maximum idle days limit after getting resolved.Cannot be re opened ");
@@ -240,23 +225,35 @@ public class ServiceRequestValidator {
      */
     private void validateSearchParam(RequestInfo requestInfo, RequestSearchCriteria criteria){
 
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE" ) && criteria.isEmpty())
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_EMPLOYEE) && criteria.isEmpty())
             throw new CustomException("INVALID_SEARCH","Search without params is not allowed");
 
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE") && criteria.getTenantId().split("\\.").length == config.getStateLevelTenantIdLength()){
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_EMPLOYEE) && criteria.getTenantId().split("\\.").length == config.getStateLevelTenantIdLength()){
             throw new CustomException("INVALID_SEARCH", "Employees cannot perform state level searches.");
         }
 
         String allowedParamStr = null;
 
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN" ))
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_CITIZEN))
             allowedParamStr = config.getAllowedCitizenSearchParameters();
-        else if(requestInfo.getUserInfo().getType().equalsIgnoreCase("EMPLOYEE" ) || requestInfo.getUserInfo().getType().equalsIgnoreCase("SYSTEM") )
+        else if(requestInfo.getUserInfo().getType().equalsIgnoreCase(USERTYPE_EMPLOYEE) || requestInfo.getUserInfo().getType().equalsIgnoreCase("SYSTEM") )
             allowedParamStr = config.getAllowedEmployeeSearchParameters();
         else throw new CustomException("INVALID SEARCH","The userType: "+requestInfo.getUserInfo().getType()+
                     " does not have any search config");
 
         List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
+
+        validateAllowedSearchParams(criteria, allowedParams);
+
+    }
+
+    /**
+     * Validates that each populated search parameter is permitted for the resolved user type.
+     *
+     * @param criteria      The search criteria.
+     * @param allowedParams The list of search parameters allowed for the user type.
+     */
+    private void validateAllowedSearchParams(RequestSearchCriteria criteria, List<String> allowedParams){
 
         if(criteria.getServiceCode()!=null && !allowedParams.contains("serviceCode"))
             throw new CustomException("INVALID SEARCH","Search on serviceCode is not allowed");

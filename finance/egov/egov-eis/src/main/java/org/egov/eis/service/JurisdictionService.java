@@ -88,14 +88,14 @@ public class JurisdictionService {
     }
     
     public Jurisdiction getById(final Long id) {
-        return jurisdictionRepository.findOne(id);
+        return jurisdictionRepository.findById(id).orElse(null);
     }
     
     @Transactional
     public Employee removeDeletedJurisdictions(Employee employee,String removedJurisdictionIds) {
         if(null!=removedJurisdictionIds)
          for(String id : removedJurisdictionIds.split(",")){
-             employee.getJurisdictions().remove(jurisdictionRepository.findOne(Long.valueOf(id)));
+             employee.getJurisdictions().remove(jurisdictionRepository.findById(Long.valueOf(id)).orElse(null));
          }
          return employee;
      }

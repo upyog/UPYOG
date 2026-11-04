@@ -3,18 +3,27 @@ package org.egov.collection.service;
 
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.singleton;
-import static org.egov.collection.config.CollectionServiceConstants.*;
 import static org.egov.collection.config.CollectionServiceConstants.KEY_FILESTOREID;
+import static org.egov.collection.config.CollectionServiceConstants.KEY_ID;
 import static org.egov.collection.util.Utils.jsonMerge;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.config.ApplicationProperties;
+import org.egov.collection.consumer.PaymentRefundConsumer;
 import org.egov.collection.model.Payment;
+import org.egov.collection.model.PaymentRefund;
+import org.egov.collection.model.PaymentRefundResponse;
 import org.egov.collection.model.PaymentRequest;
+import org.egov.collection.model.PaymentResponse;
 import org.egov.collection.model.PaymentSearchCriteria;
 import org.egov.collection.model.enums.InstrumentStatusEnum;
 import org.egov.collection.model.enums.PaymentModeEnum;
@@ -25,14 +34,19 @@ import org.egov.collection.util.PaymentWorkflowValidator;
 import org.egov.collection.web.contract.Bill;
 import org.egov.collection.web.contract.PaymentWorkflow;
 import org.egov.collection.web.contract.PaymentWorkflowRequest;
+import org.egov.collection.web.contract.factory.ResponseInfoFactory;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.web.client.RestTemplate;
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -68,7 +82,7 @@ public class PaymentWorkflowService {
      * @return updated receipts
      */
     @Transactional
-    public List<Payment> performWorkflow(PaymentWorkflowRequest paymentWorkflowRequest){
+    public Object performWorkflow(PaymentWorkflowRequest paymentWorkflowRequest){
 
         // Basic validations
 
@@ -119,11 +133,54 @@ public class PaymentWorkflowService {
                 processedPayments = remit(workflowRequestByPaymentId, consumerCodes,
                         paymentWorkflowRequest.getRequestInfo(), tenantId);
                 break;
+        case REFUND:
+        	return refund(workflowRequestByPaymentId, consumerCodes,
+        			paymentWorkflowRequest.getRequestInfo(), tenantId);
         }
 
         return processedPayments;
     }
 
+
+
+    private PaymentRefundResponse refund(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
+			RequestInfo requestInfo, String tenantId) {
+         PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria
+                  .builder()
+                  .consumerCodes(consumerCodes)
+                  .tenantId(tenantId)
+                  .build();
+         PaymentRefundResponse paymentResponse = null;
+         List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
+         payments.sort(reverseOrder(Comparator.comparingLong(Payment::getTransactionDate)));
+          Payment latestPayment = payments.stream()
+                  .max(Comparator.comparingLong(Payment::getTransactionDate))
+                  .orElseThrow(() -> new CustomException("PAYMENT_NOT_FOUND", "No payments found for given consumer codes"));
+          
+          paymentWorkflowValidator.validateForRefund(new ArrayList<>(workflowRequestByPaymentId.values()), latestPayment);
+        
+         if("ONLINE".equalsIgnoreCase(latestPayment.getPaymentMode().toString())) {
+//          collectionProducer.producer(applicationProperties.getInitiateRefundTopic(),new PaymentRequest(requestInfo, latestPayment));
+        	 StringBuilder uri = new StringBuilder();
+        	 uri.append(applicationProperties.getPgServiceHost()).append(applicationProperties.getInitiateRefundEndPoint());
+        	 PaymentRequest paymentRequest = PaymentRequest.builder().payment(latestPayment).requestInfo(requestInfo).build();
+        	 String errorResponse = null;
+        	 String refundStatusCode = "OTS0000";
+        	 try {
+        		 paymentResponse = restTemplate.postForObject(uri.toString(), paymentRequest,PaymentRefundResponse.class);
+        		 if(!refundStatusCode.equalsIgnoreCase(paymentResponse.getPaymentRefund().getGatewayStatusCode())){
+        			 errorResponse = paymentResponse.getPaymentRefund().getGatewayStausMsg();
+          			throw new CustomException("INITIATE_REFUND_CODE","Error while initiating Refund");
+        		 }
+        		 
+        	 }catch(Exception ex) {
+        		 log.error("Error while initiating refund call: ", ex);
+     			throw new CustomException("INITIATE_REFUND_CODE", errorResponse != null ? errorResponse : "Error while initiating refund" );
+        	 }
+         }
+		return paymentResponse;
+	}	
+    
 
     private List<Payment> cancel(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
                                  RequestInfo requestInfo, String tenantId){

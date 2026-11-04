@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.adv.web.models.AuditDetails;
@@ -16,6 +15,7 @@ import org.upyog.adv.web.models.ResponseInfo.StatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 /**
  * Utility class for common operations in the Advertisement Booking Service.
@@ -38,9 +38,16 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
  * 
  * This class is designed to centralize reusable logic and reduce code duplication.
  */
+@Slf4j
 public class BookingUtil {
-	
-	public final static String DATE_FORMAT = "yyyy-MM-dd";
+
+	private static final ZoneId SYSTEM_ZONE = ZoneId.systemDefault();
+
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
+
+	private BookingUtil() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -51,107 +58,84 @@ public class BookingUtil {
 			ts = requestInfo.getTs();
 		final String msgId = requestInfo != null ? requestInfo.getMsgId() : StringUtils.EMPTY;
 
-		ResponseInfo responseInfo = ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
+		return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
 				.status(status).build();
-
-		return responseInfo;
 	}
 
 	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
 	}
-	
+
 	public static LocalDate getCurrentDate() {
-		return LocalDate.now();
+		return LocalDate.now(SYSTEM_ZONE);
 	}
 
-	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
+	public static AuditDetails getAuditDetails(String by, boolean isCreate) {
 		Long time = getCurrentTimestamp();
 		if (isCreate)
-			// TODO: check if we can set lastupdated details to empty
 			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
 					.build();
-		else
-			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
+		return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
-	
-	/*Commented and used Instant
-	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
-	 * }
-	 */
 
 	public static String getRandonUUID() {
-		return UUID.randomUUID().toString();
+		return java.util.UUID.randomUUID().toString();
 	}
 
 	public static LocalDate parseStringToLocalDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-		LocalDate localDate = LocalDate.parse(date, formatter);
-		return localDate;
+		return LocalDate.parse(date, formatter);
 	}
 
 	public static Long minusOneDay(LocalDate date) {
-		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		return date.atStartOfDay(SYSTEM_ZONE).toInstant().toEpochMilli();
 	}
-	
+
 	public static boolean isDateWithinRange(String startDate, String endDate, String bookingDate) {
-	    LocalDate start = LocalDate.parse(startDate);
-	    LocalDate end = LocalDate.parse(endDate);
-	    LocalDate booking = LocalDate.parse(bookingDate);
+		LocalDate start = LocalDate.parse(startDate);
+		LocalDate end = LocalDate.parse(endDate);
+		LocalDate booking = LocalDate.parse(bookingDate);
 
-	    return (booking.isEqual(start) || booking.isAfter(start)) &&
-	           (booking.isEqual(end) || booking.isBefore(end));
+		return (booking.isEqual(start) || booking.isAfter(start))
+				&& (booking.isEqual(end) || booking.isBefore(end));
 	}
-	
-	
-	public static boolean isDateRangeOverlap(String searchStart, String searchEnd, String bookedStart, String bookedEnd) {
-	    LocalDate searchStartDate = LocalDate.parse(searchStart);
-	    LocalDate searchEndDate = LocalDate.parse(searchEnd);
-	    LocalDate bookedStartDate = LocalDate.parse(bookedStart);
-	    LocalDate bookedEndDate = LocalDate.parse(bookedEnd);
 
-	    return !(searchStartDate.isAfter(bookedEndDate) || searchEndDate.isBefore(bookedStartDate));
+	public static boolean isDateRangeOverlap(String searchStart, String searchEnd, String bookedStart, String bookedEnd) {
+		LocalDate searchStartDate = LocalDate.parse(searchStart);
+		LocalDate searchEndDate = LocalDate.parse(searchEnd);
+		LocalDate bookedStartDate = LocalDate.parse(bookedStart);
+		LocalDate bookedEndDate = LocalDate.parse(bookedEnd);
+
+		return !(searchStartDate.isAfter(bookedEndDate) || searchEndDate.isBefore(bookedStartDate));
 	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
-		if(dateFormat == null) {
-			dateFormat = DATE_FORMAT;
-		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-		// Format the LocalDate
-		String formattedDate = date.format(formatter);
-		return formattedDate;
+		String pattern = dateFormat != null ? dateFormat : DATE_FORMAT;
+		return date.format(DateTimeFormatter.ofPattern(pattern));
 	}
 
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
-		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
+		return AuditDetails.builder().createdBy(rs.getString("createdBy"))
 				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
-		return auditdetails;
 	}
 
 	public static String beuatifyJson(Object result) {
 		ObjectMapper mapper = new ObjectMapper();
-		String data = null;
 		try {
-			data = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
+			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to beautify JSON payload", e);
 		}
-		return data;
+		return null;
 	}
 
 	public static String getTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
 	}
-	
+
 	public static LocalDate getMonthsAgo(int month) {
-		LocalDate currentDate = LocalDate.now();
-		// Calculate the date given months ago
-		LocalDate monthsAgo = currentDate.minusMonths(month);
-		
-        return monthsAgo;
+		return LocalDate.now(SYSTEM_ZONE).minusMonths(month);
 	}
 
 }

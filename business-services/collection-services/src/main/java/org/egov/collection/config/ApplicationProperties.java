@@ -261,5 +261,12 @@ public class ApplicationProperties {
     @Value("${egov.razorpay.url}")
     private String razorPayUrl;
 
+  // Refund    
+    
+    @Value("${egov.pg.service.hostname}")
+    private String pgServiceHost;
+    
+    @Value("${egov.refund.create.endpoint}")
+    private String initiateRefundEndPoint;
 
 }

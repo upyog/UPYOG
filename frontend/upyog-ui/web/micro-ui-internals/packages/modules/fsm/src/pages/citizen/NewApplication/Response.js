@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, CardText, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
-import { Link } from "react-router-dom";
+import { Card, Banner, CardText, SubmitBar, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import getPDFData from "../../../getPDFData";
 
 const GetActionMessage = () => {
@@ -21,20 +21,22 @@ const BannerPicker = (props) => {
   );
 };
 
-const Response = ({ data, onSuccess }) => {
+const Response = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.fsm.useDesludging(data?.address?.city ? data.address?.city?.code : tenantId);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("FSM_MUTATION_HAPPENED", false);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("FSM_ERROR_DATA", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("FSM_MUTATION_SUCCESS_DATA", false);
+  const { state } = useLocation();
   const [paymentPreference, setPaymentPreference] = useState(null);
   const [advancePay, setAdvancePay] = useState(null);
   const [zeroPay, setZeroPay] = useState(null);
 
-  const Data = mutation?.data || successData;
+  // Initial loading state
+  if (!state) {
+    return <Loader />;
+  }
+
+  const Data = state?.data;
   const localityCode = Data?.fsm?.[0].address?.locality?.code;
   const slumCode = Data?.fsm?.[0].address?.slumName;
   const slum = Digit.Hooks.fsm.useSlum(Data?.fsm?.[0].address?.tenantId, slumCode, localityCode, {
@@ -42,118 +44,14 @@ const Response = ({ data, onSuccess }) => {
     retry: slumCode ? true : false,
   });
 
-  const onError = (error, variables) => {
-    console.log("error",error)
-    setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
-    setMutationHappened(true);
-  };
   useEffect(() => {
-    if (mutation.data) setsuccessData(mutation.data);
-  }, [mutation.data]);
-
-  useEffect(() => {
-    if (!mutationHappened && !errorInfo) {
-      try {
-        const amount = Digit.SessionStorage.get("total_amount");
-        const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
-        const { subtype, propertyID, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
-        const {
-          city,
-          locality,
-          geoLocation,
-          pincode,
-          street,
-          doorNo,
-          landmark,
-          slum,
-          gramPanchayat,
-          village,
-          propertyLocation,
-          newLocality,
-          newGramPanchayat,
-          newVillage,
-        } = address;
-        setPaymentPreference(selectPaymentPreference?.code);
-        const advanceAmount = amount === 0 ? null : selectPaymentPreference?.advanceAmount;
-        amount === 0 ? setZeroPay(true) : setZeroPay(false);
-        advanceAmount === 0 ? setAdvancePay(true) : setAdvancePay(false);
-        const formdata = {
-          fsm: {
-            citizen: {
-              gender: selectGender?.code,
-            },
-            tenantId: city?.code,
-            propertyUsage: subtype?.code,
-            address: {
-              tenantId: city?.code,
-              additionalDetails: {
-                boundaryType: propertyLocation?.code === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
-                gramPanchayat: {
-                  code: gramPanchayat?.code,
-                  name: gramPanchayat?.name,
-                },
-                village: village?.code
-                  ? {
-                      code: village?.code ? village?.code : "",
-                      name: village?.name ? village?.name : "",
-                    }
-                  : newVillage,
-                newLocality: newLocality,
-                newGramPanchayat: newGramPanchayat,
-              },
-              street: street?.trim(),
-              doorNo: doorNo?.trim(),
-              landmark: landmark,
-              slumName: slum,
-              city: city?.name,
-              pincode,
-              locality: {
-                code: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.code : gramPanchayat?.code,
-                name: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.name : gramPanchayat?.name,
-              },
-              geoLocation: {
-                latitude: geoLocation?.latitude,
-                longitude: geoLocation?.longitude,
-                additionalDetails: {},
-              },
-            },
-            pitDetail: {
-              additionalDetails: {
-                fileStoreId: {
-                  CITIZEN: pitDetail?.images,
-                },
-              },
-            },
-            source,
-            sanitationtype: pitType?.code,
-            paymentPreference: amount === 0 ? null : selectPaymentPreference?.paymentType ? selectPaymentPreference?.paymentType?.code : null,
-            noOfTrips: selectTripNo ? selectTripNo?.tripNo?.code : 1,
-            vehicleCapacity: selectTripNo ? selectTripNo?.vehicleCapacity?.capacity : "",
-            additionalDetails: {
-              totalAmount: amount,
-              tripAmount: typeof amountPerTrip === "number" ? JSON.stringify(amountPerTrip) : amountPerTrip,
-              propertyID : propertyID?.propertyID,
-              distancefromroad : data?.roadWidth?.distancefromroad,
-              roadWidth: data?.roadWidth?.roadWidth,
-              propertyID : data?.cptId?.id
-            },
-            advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
-          },
-          workflow: null,
-        };
-        console.log("formdata212",formdata,address,data)
-        mutation.mutate(formdata, {
-          onError,
-          onSuccess: () => {
-            setMutationHappened(true);
-            onSuccess();
-          },
-        });
-        sessionStorage.removeItem("Digit.total_amount");
-        sessionStorage.removeItem("Digit.fsm.file.address.city");
-      } catch (err) {}
-    }
-  }, []);
+    const amount = Digit.SessionStorage.get("total_amount");
+    const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
+    setPaymentPreference(state?.formData?.selectPaymentPreference?.code);
+    const advanceAmount = amount === 0 ? null : state?.formData?.selectPaymentPreference?.advanceAmount;
+    amount === 0 ? setZeroPay(true) : setZeroPay(false);
+    advanceAmount === 0 ? setAdvancePay(true) : setAdvancePay(false);
+  }, [state]);
 
   const handleDownloadPdf = () => {
     const { fsm } = Data;
@@ -163,13 +61,13 @@ const Response = ({ data, onSuccess }) => {
     const data = getPDFData({ ...applicationDetails, slum }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
-  const isSuccess = !successData ? mutation?.isSuccess : true;
+  const isSuccess = state?.isSuccess;
 
-  return mutation.isLoading || (mutation.isIdle && !mutationHappened) ? (
+  return !state ? (
     <Loader />
   ) : (
     <Card>
-      <BannerPicker t={t} data={Data} isSuccess={isSuccess} isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading} />
+      <BannerPicker t={t} data={Data} isSuccess={isSuccess} />
       <CardText>
         {t(
           (paymentPreference && paymentPreference == "POST_PAY") || advancePay

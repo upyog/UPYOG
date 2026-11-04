@@ -25,8 +25,8 @@ const Placeholder = ({ className, onFilePicked, inputProps, hide }) => {
   return (
     <div className={`${className} upload-placeholder`} style={hide ? { visibility: "hidden" } : {}}>
       <FilePicker inputProps={{ ...inputProps, multiple: false }} handleimage={onFilePicked}>
-        <FloatingActionButton backgroundColor="#767676" iconStyle={{ height: "40px", width: "40px" }} style={{ boxShadow: 0, marginBottom: "4px" }}>
-          <Icon id="image-upload" name="add-a-photo" action="image" style={{ height: "20px", width: "20px" }} color={"#ffffff"} />
+        <FloatingActionButton backgroundColor="#767676" iconStyle={{ height: "40px", width: "40px" }} className="core-index-action-btn">
+          <Icon id="image-upload" name="add-a-photo" action="image" className="core-index-icon" color={"#ffffff"} />
         </FloatingActionButton>
         <Label label="CS_COMMON_UPLOAD_PHOTOS" labelStyle={labelStyle} fontSize="12px" />
       </FilePicker>
@@ -85,9 +85,9 @@ class ImageUpload extends Component {
             {images.map((image, index) => {
               return (
                 <div key={index} className="upload-image-cont">
-                  <Image source={image.imageUri} style={{ height: "100px" }} />
+                  <Image source={image.imageUri} className="core-index-wrapper" />
                   <div className="image-remove" onClick={() => removeImage(index)}>
-                    <Icon id="image-close-icon" action="navigation" name="close" color="#ffffff" style={{ width: "14px", height: "14px" }} />
+                    <Icon id="image-close-icon" action="navigation" name="close" color="#ffffff" className="core-index-icon-2" />
                   </div>
                 </div>
               );

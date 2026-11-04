@@ -27,7 +27,7 @@ const MobileInbox = ({ data, edcrData = [], t, statusMap, bparegData, title, ico
     })
   }
   return (
-    <div style={{ padding: 0 }}>
+    <div className="obps-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {/* {!isFstpOperator && !isSearch && <ApplicationLinks linkPrefix={parentRoute} isMobile={true} />} */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel,Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel,Toast, FormStep, LabelFieldPair, SubmitBar, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import UploadFile from "./UploadFile";
 import { styles } from "../utils/styles";
 
@@ -134,7 +134,7 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
         error={!uploadedFiles[index]}
       />
 
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div className="pgrai-document-flex-row">
         {uploadedFiles[index] && index === files.length - 1 && (
           <button 
             style={styles.addButton} 

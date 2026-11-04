@@ -3,7 +3,7 @@ package org.egov.infra.microservice.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,13 +13,13 @@ public class EmployeeInfo {
     @JsonProperty("user")
     User UserObject;
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String uuid;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
-    @SafeHtml
+    @SanitizeHtml
     private String employeeStatus;
-    @SafeHtml
+    @SanitizeHtml
     private String employeeType;
     private float dateOfAppointment;
     List < Assignment > assignments = new ArrayList < Assignment > ();

@@ -61,6 +61,16 @@ export const TPSearch = {
           { title: t("REASON_FOR_PRUNING"), value: t(response?.reasonForPruning) || t("CS_NA") },
           { title: t("LATITUDE_GEOTAG"), value: response?.latitude || t("CS_NA") },
           { title: t("LONGITUDE_GEOTAG"), value: response?.longitude  || t("CS_NA") },
+          {
+            title: t("DIGIPIN"),
+            value: response?.additionalDetails?.digipin || t("CS_NA"),
+            showDigipin: true,               // Enables rendering via GeoLocationWithDigipin component
+            showMapLink: false,              // Hides external MapMyIndia link (DiginpinMapPopup used instead)
+            digipinMapPopup: true,           // Enables "View on Map" button to open DiginpinMapPopup overlay
+            digipinLat: response?.latitude,  // Latitude passed to DiginpinMapPopup for map marker
+            digipinLng: response?.longitude, // Longitude passed to DiginpinMapPopup for map marker
+            digipin: response?.additionalDetails?.digipin, // Digipin code displayed in map marker popup
+          },
         ],
       },
       {

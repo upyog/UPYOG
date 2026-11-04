@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Toast, Header, InfoIcon } from "@upyog/digit-ui-react-components";
-import { useHistory, useParams } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { FormComposer, Loader, Toast, Header, InfoIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams, } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import VehicleConfig from "../../configs/VehicleConfig";
 
 const EditVehicle = ({ parentUrl, heading }) => {
@@ -70,16 +70,16 @@ const EditVehicle = ({ parentUrl, heading }) => {
   }, [vehicleData]);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const Config = VehicleConfig(t, true);
 
   Config[0].body.forEach((item) => {
     if (item.label === "ES_FSM_REGISTRY_VEHICLE_NUMBER") {
       item.labelChildren = (
-        <div className="tooltip" style={{ paddingLeft: "10px", marginBottom: "-3px" }}>
+        <div className="tooltip fsm-add-vehicle-bottom-spacing">
           <InfoIcon />
-          <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize: "14px" }}>
+          <span className="tooltiptext fsm-add-vehicle-text-style">
             {t(item.populators.validation.title)}
           </span>
         </div>
@@ -108,6 +108,11 @@ const EditVehicle = ({ parentUrl, heading }) => {
     const roadTax = data?.roadTax > 0 || data?.roadTax?.length > 0 ? new Date(`${data?.roadTax}`).getTime() : null;
     const fitnessValidity = data?.fitnessValidity > 0 || data?.fitnessValidity?.length > 0 ? new Date(`${data?.fitnessValidity}`).getTime() : null;
     const additionalDetails = data?.additionalDetails;
+    const ownerName = data?.ownerName;
+    const phone = data?.phone;
+    const gender = data?.selectGender?.code || data?.selectGender;
+    const emailId = data?.emailId;
+    const dob = data?.dob ? new Date(`${data.dob}`).getTime() || new Date(`1/1/1970`).getTime() : (vehicleDetails?.owner?.dob || new Date(`1/1/1970`).getTime());
     const formData = {
       vehicle: {
         ...vehicleDetails,
@@ -127,8 +132,8 @@ const EditVehicle = ({ parentUrl, heading }) => {
           gender: gender || vehicleDetails.owner?.gender || "OTHER",
           dob: dob,
           emailId: emailId || "abc@egov.com",
-          name: vehicleOwnerName,
-          mobileNumber: phone,
+          name: ownerName || vehicleDetails?.owner?.name,
+          mobileNumber: phone || vehicleDetails?.owner?.mobileNumber,
         },
       },
     };
@@ -143,7 +148,7 @@ const EditVehicle = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("DSO_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/fsm/registry/vehicle-details/${dsoId}`);
+          navigate(`/upyog-ui/employee/fsm/registry/vehicle-details/${dsoId}`);
         }, 5000);
       },
     });

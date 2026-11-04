@@ -4,19 +4,18 @@ package org.upyog.chb.service;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.repository.ServiceRequestRepository;
-import org.upyog.chb.web.models.CommunityHallBookingDetail;
-import org.upyog.chb.web.models.CommunityHallBookingRequest;
-import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.VenueBookingDetail;
+import org.upyog.chb.web.models.VenueBookingRequest;
+import org.upyog.chb.web.models.VenueBookingSearchCriteria;
 import org.upyog.chb.web.models.transaction.Transaction;
 import org.upyog.chb.web.models.transaction.TransactionRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
@@ -34,72 +33,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentNotificationService {
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+	private final CommunityHallBookingConfiguration configs;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final CommunityHallBookingService bookingService;
+	private final CommunityHallBookingRepository bookingRepository;
 
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
+	public PaymentNotificationService(ObjectMapper mapper,
+			CommunityHallBookingConfiguration configs,
+			ServiceRequestRepository serviceRequestRepository,
+			CommunityHallBookingService bookingService,
+			CommunityHallBookingRepository bookingRepository) {
+		this.mapper = mapper;
+		this.configs = configs;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.bookingService = bookingService;
+		this.bookingRepository = bookingRepository;
+	}
 
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsUrl;
-
-	@Autowired
-	private CommunityHallBookingConfiguration configs;
-
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private CommunityHallBookingService bookingService;
-	
-	@Autowired
-	private CommunityHallBookingRepository bookingRepository;
-
-	/**
-	 * This service class handles payment-related notifications in the
-	 * Community Hall Booking module.
-	 * 
-	 * Purpose:
-	 * - To send notifications to users based on payment events such as successful payments or failures.
-	 * - To update booking statuses based on payment outcomes.
-	 * 
-	 * Dependencies:
-	 * - CommunityHallBookingRepository: Handles database operations for bookings.
-	 * - ServiceRequestRepository: Sends HTTP requests to external services for payment updates.
-	 * - CommunityHallBookingConfiguration: Provides configuration properties for payment notifications.
-	 * - ObjectMapper: Serializes and deserializes JSON objects for requests and responses.
-	 * 
-	 * Features:
-	 * - Processes payment events and updates booking statuses accordingly.
-	 * - Sends notifications to users about payment success or failure.
-	 * - Fetches booking details and validates payment-related data.
-	 * - Logs payment processing and notification details for debugging and monitoring purposes.
-	 * 
-	 * Methods:
-	 * 1. processPaymentNotification:
-	 *    - Processes payment events and updates the booking status.
-	 *    - Sends notifications to users based on the payment outcome.
-	 * 
-	 * 2. updateBookingStatus:
-	 *    - Updates the booking status in the database based on the payment event.
-	 * 
-	 * 3. sendNotification:
-	 *    - Sends payment-related notifications to users via configured channels.
-	 * 
-	 * Usage:
-	 * - This class is automatically managed by Spring and injected wherever payment notification
-	 *   operations are required.
-	 * - It ensures consistent and reusable logic for handling payment notifications in the module.
-	 */
-	/**
-	 *
-	 * @param record
-	 * @param topic
-	 */
-	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
-		log.info(" Receipt consumer class entry " + record.toString());
+	public void process(Map<String, Object> paymentRecord, String topic) throws JsonProcessingException {
+		log.info(" Receipt consumer class entry " + paymentRecord.toString() + " on topic " + topic);
 		try {
-			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			PaymentRequest paymentRequest = mapper.convertValue(paymentRecord, PaymentRequest.class);
 			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in CHB method for businessService : " + businessService);
@@ -107,21 +62,14 @@ public class PaymentNotificationService {
 					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				String bookingNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
 				log.info("Updating payment status for CHB booking : " + bookingNo);
-				/**
-				 * Workflow will come into picture once hall location is changes or booking is
-				 * cancelled otherwise after payment booking will be auto approved
-				 * 
-				 */
 				
 				log.info("Reciept no of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptNumber());
 				log.info("Payment date of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptDate());
-				CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
+				VenueBookingDetail bookingDetail = VenueBookingDetail.builder().bookingNo(bookingNo)
 						.build();
-				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
-						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
+				VenueBookingRequest bookingRequest = VenueBookingRequest.builder()
+						.requestInfo(paymentRequest.getRequestInfo()).venueBookingApplication(bookingDetail).build();
 				
-				//now updating booking status directly using jdbc template
-				//deleting booking timer
 				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED,
 						true);
 				
@@ -163,32 +111,29 @@ public class PaymentNotificationService {
 
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 		log.info(" Workflow Request for CHB service for final step " + workflowReq.toString());
-		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
 		log.info(" URL for calling workflow service " + workflowReq.toString());
 		Object workflow = serviceRequestRepository.fetchResult(url, workflowReq);
-		response = mapper.convertValue(workflow, ProcessInstanceResponse.class);
+		ProcessInstanceResponse response = mapper.convertValue(workflow, ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
 	
 	
-   	public void processTransaction(HashMap<String, Object> record, String topic, BookingStatusEnum status){
+   	public void processTransaction(Map<String, Object> paymentRecord, String topic, BookingStatusEnum status){
 
-        TransactionRequest transactionRequest = mapper.convertValue(record, TransactionRequest.class);
+        TransactionRequest transactionRequest = mapper.convertValue(paymentRecord, TransactionRequest.class);
 
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
         Transaction transaction = transactionRequest.getTransaction();
         
-        log.info("Transaction in process transaction : " + transaction);
+        log.info("Transaction in process transaction : " + transaction + " on topic " + topic);
         
         Transaction.TxnStatusEnum transactionStatus = transaction.getTxnStatus();
         String bookingNo = transaction.getConsumerCode();
         
         String moduleName = transaction.getModule();
         
-        //Payment failure status JSON does not contain module name so added this condition
         if(null == moduleName && null != bookingNo) {
-        	//Update module name from consumer code
         	moduleName = bookingNo.startsWith("CHB") ? configs.getBusinessServiceName() : null;
         }
         
@@ -202,20 +147,19 @@ public class PaymentNotificationService {
         		status = BookingStatusEnum.PAYMENT_FAILED;
         	}
         	
-        	CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
+        	VenueBookingSearchCriteria bookingSearchCriteria = VenueBookingSearchCriteria.builder()
 					.bookingNo(bookingNo).build();
-			List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
-			if (bookingDetails.size() == 0) {
+			List<VenueBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+			if (bookingDetails.isEmpty()) {
 				throw new CustomException("INVALID_BOOKING_CODE",
 						"Booking no not valid. Failed to update booking status for : " + bookingNo);
 			}
-			CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
+			VenueBookingDetail bookingDetail = bookingDetails.get(0);
         	
         	log.info("For booking no : " + bookingNo + " transaction id : " + transaction.getTxnId());
         	
-        	
-			CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
-					.requestInfo(requestInfo).hallsBookingApplication(bookingDetail).build();
+			VenueBookingRequest bookingRequest = VenueBookingRequest.builder()
+					.requestInfo(requestInfo).venueBookingApplication(bookingDetail).build();
 			
 			
 			if(BookingStatusEnum.PAYMENT_FAILED.equals(status)) {
@@ -224,7 +168,6 @@ public class PaymentNotificationService {
 				bookingService.updateBookingSynchronously(bookingRequest, null, BookingStatusEnum.PENDING_FOR_PAYMENT, false);
 				bookingRepository.updateBookingTimer(bookingDetail.getBookingId());
 			}
-			
             
         }
     }

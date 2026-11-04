@@ -20,39 +20,43 @@ const EngagementCard = () => {
 
   if (!isEmployee) return null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement.useDocSearch(
-    { tenantIds: tenantId },
-    {
-      select: (data) => {
-        return data?.totalCount;
-      },
-    }
-  );
-  const { data: MessagesCount, isLoading: isLoadingMessages } = Digit.Hooks.events.useInbox(
-    tenantId,
-    {},
-    { status: "ACTIVE,INACTIVE", eventTypes: "BROADCAST" },
-    {
-      select: (data) => data?.totalCount,
-    }
-  );
+  const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement?.useDocSearch ?
+    Digit.Hooks.engagement.useDocSearch(
+      { tenantIds: tenantId },
+      {
+        select: (data) => {
+          return data?.totalCount;
+        },
+      }
+    ) : { data: 0, isLoading: false };
+  const { data: MessagesCount, isLoading: isLoadingMessages } = Digit.Hooks.events?.useInbox ?
+    Digit.Hooks.events.useInbox(
+      tenantId,
+      {},
+      { status: "ACTIVE,INACTIVE", eventTypes: "BROADCAST" },
+      {
+        select: (data) => data?.totalCount,
+      }
+    ) : { data: 0, isLoading: false };
 
-  const { data: totalEvents, isLoading: isLoadingEvents } = Digit.Hooks.events.useInbox(
-    tenantId,
-    {},
-    { eventTypes: "EVENTSONGROUND" },
-    {
-      select: (data) => data?.totalCount,
-    }
-  );
+  const { data: totalEvents, isLoading: isLoadingEvents } = Digit.Hooks.events?.useInbox ?
+    Digit.Hooks.events.useInbox(
+      tenantId,
+      {},
+      { eventTypes: "EVENTSONGROUND" },
+      {
+        select: (data) => data?.totalCount,
+      }
+    ) : { data: 0, isLoading: false };
 
-  const ServiceDefinitionCriteria =  {
+  const ServiceDefinitionCriteria = {
     "tenantId": tenantId,
     "code": [],
     "module": ["engagement"],
   }
 
-  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria});
+  const { data: surveysCount, isLoading: isLoadingSurveys } = Digit.Hooks.survey?.useCfdefinitionsearch ?
+    Digit.Hooks.survey.useCfdefinitionsearch({ ServiceDefinitionCriteria }) : { data: { TotalCount: 0 }, isLoading: false };
 
   const totalDocsCount = useMemo(() => (isLoadingDocs ? "-" : documentsCount), [isLoadingDocs, documentsCount]);
   const totalEventsCount = useMemo(() => (isLoadingEvents ? "-" : totalEvents), [isLoadingEvents, totalEvents]);

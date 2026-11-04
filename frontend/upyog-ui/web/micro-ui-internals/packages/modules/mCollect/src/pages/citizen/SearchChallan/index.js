@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { config } from "./config";
 import SearchChallanComponent from "./searchChallan";
 
 const SearchChallan = () => {
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
+  const { path } = Digit.Hooks.useModuleBasePath();
 
   const params = useMemo(() =>
     config.map(
@@ -22,11 +22,9 @@ const SearchChallan = () => {
   );
 
   return (
-    <Switch>
-      <Route path={`${path}`} exact>
-        <SearchChallanComponent config={params[0]} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="*" element={<SearchChallanComponent config={params[0]} />} />
+    </Routes>
   );
 };
 

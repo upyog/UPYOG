@@ -80,7 +80,7 @@ public class BoundaryTypeService {
     }
 
     public BoundaryType getBoundaryTypeById(final Long id) {
-        return boundaryTypeRepository.findOne(id);
+        return boundaryTypeRepository.findById(id).orElse(null);
     }
 
     public BoundaryType getBoundaryTypeByName(final String name) {

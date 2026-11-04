@@ -1,4 +1,4 @@
-import { Header, Loader } from "@egovernments/digit-ui-react-components";
+import { Header, Loader } from "@upyog/workbench-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -12,7 +12,7 @@ const IFrameInterface = (props) => {
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
 
-  const { data, isLoading } = Digit.Hooks.dss.useMDMS(stateCode, "common-masters", ["uiCommonConstants"], {
+  const { data, isLoading } = Digit.Hooks.useCustomMDMS(stateCode, "common-masters", [{name: "uiCommonConstants"}], {
     select: (data) => {
       let formattedResponse = data?.["common-masters"]?.["uiCommonConstants"]?.[0] || {};
       return formattedResponse;

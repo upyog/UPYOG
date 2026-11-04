@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Menu, ActionBar, SubmitBar, Modal, CardText } from "@nudmcdgnpm/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
@@ -29,12 +29,12 @@ const DocumentDetails = ({ t, data, documents, paymentDetails }) => {
     <Fragment>
       {data?.map((document, index) => (
         <Fragment>
-          <div style={{maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA", marginBottom: "32px"}}>
-            <div style={{fontSize: "16px", fontWeight: 700}}>{t(`BPA_${document?.documentType}`)}</div>
+          <div style={{ maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA", marginBottom: "32px" }}>
+            <div style={{ fontSize: "16px", fontWeight: 700 }}>{t(`BPA_${document?.documentType}`)}</div>
             <a target="_" href={documents[document.fileStoreId]?.split(",")[0]}>
               <PDFSvg />
             </a>
-            <span> {decodeURIComponent( documents[document.fileStoreId].split(",")[0].split("?")[0].split("/").pop().slice(13))} </span>
+            <span> {decodeURIComponent(documents[document.fileStoreId].split(",")[0].split("?")[0].split("/").pop().slice(13))} </span>
           </div>
         </Fragment>
       ))}
@@ -52,7 +52,7 @@ const DocumentDetails = ({ t, data, documents, paymentDetails }) => {
 const MessageDetails = () => {
   const { id } = useParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -83,7 +83,7 @@ const MessageDetails = () => {
   function onActionSelect(action) {
     // setSelectedAction(action);
     if (action === "EDIT") {
-      history.push(`/sv-ui/employee/engagement/messages/inbox/edit/${id}`)
+      navigate(`/sv-ui/employee/engagement/messages/inbox/edit/${id}`)
     }
     if (action === "DELETE") {
       setShowModal(true);
@@ -101,7 +101,7 @@ const MessageDetails = () => {
         },
       ],
     };
-    history.push("/sv-ui/employee/engagement/messages/response?delete=true", details);
+    navigate("/sv-ui/employee/engagement/messages/response?delete=true", details);
   };
 
   return (
@@ -113,12 +113,12 @@ const MessageDetails = () => {
         applicationDetails={data}
         isLoading={isLoading}
         isDataLoading={isLoading}
-        // workflowDetails={workflowDetails}
-        // businessService={
-        //   workflowDetails?.data?.applicationBusinessService
-        //     ? workflowDetails?.data?.applicationBusinessService
-        //     : data?.applicationData?.businessService
-        // }
+      // workflowDetails={workflowDetails}
+      // businessService={
+      //   workflowDetails?.data?.applicationBusinessService
+      //     ? workflowDetails?.data?.applicationBusinessService
+      //     : data?.applicationData?.businessService
+      // }
       />
       <ActionBar>
         {displayMenu ? (
@@ -133,12 +133,12 @@ const MessageDetails = () => {
       </ActionBar>
       {showModal &&
         <Modal
-        headerBarMain={<Heading label={t('PUBLIC_BRDCST_DELETE_POPUP_HEADER')} />}
-        headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-        actionCancelLabel={t("CS_COMMON_CANCEL")}
-        actionCancelOnSubmit={() => setShowModal(false)}
-        actionSaveLabel={t('PUBLIC_BRDCST_DELETE')}
-        actionSaveOnSubmit={handleDelete}
+          headerBarMain={<Heading label={t('PUBLIC_BRDCST_DELETE_POPUP_HEADER')} />}
+          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          actionCancelLabel={t("CS_COMMON_CANCEL")}
+          actionCancelOnSubmit={() => setShowModal(false)}
+          actionSaveLabel={t('PUBLIC_BRDCST_DELETE')}
+          actionSaveOnSubmit={handleDelete}
         >
           <Card style={{ boxShadow: "none" }}>
             <CardText>{t(`PUBLIC_BRDCST_DELETE_TEXT`)}</CardText>

@@ -18,7 +18,7 @@ export const FacilityCentreConfig =
                 "key": "wasteType",
                 "type": "component",
                 "texts": {
-                    "header": "CND_WASTE_TYPE",
+                    // "header": "CND_WASTE_TYPE",
                 }
             }
             // {

@@ -1,12 +1,12 @@
 {
-  "presets": ["es2015", "stage-0"],
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": { "node": "22" }
+    }]
+  ],
   "plugins": [
-    [
-      "transform-runtime",
-      {
-        "polyfill": false,
-        "regenerator": true
-      }
-    ]
+    ["@babel/plugin-transform-runtime", {
+      "regenerator": true
+    }]
   ]
 }

@@ -24,11 +24,7 @@ return checkBoxData
 const CheckBoxChart = (props) => {
   const datav1 = formObj(props.data);
   return (
-    <div style={{
-  "padding": "10px",
-  "width": "700px",
-  "height": "260px",
-  "backgroundColor": "#fafafa"}}>
+    <div className="eng-check-box-chart-container-padding">
     <ResponsiveContainer>
     	<BarChart 
             data={datav1}

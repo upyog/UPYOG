@@ -23,7 +23,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-utilities":"0.0.1",
+"@upyog/workbench-ui-module-utilities":"0.0.1",
 ```
 
 then navigate to App.js
@@ -35,7 +35,7 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
+import { initUtilitiesComponents } from "@upyog/workbench-ui-module-utilities";
 
 /** inside enabledModules add this new module key **/
 
@@ -52,7 +52,7 @@ const initDigitUI = () => {
 Add the Inbox /search config and use as mentioned below
 
 ```jsx
-    import { InboxSearchComposer } from "@egovernments/digit-ui-module-utilities";
+    import { InboxSearchComposer } from "@upyog/workbench-ui-module-utilities";
 
     <React.Fragment>
       <Header className="works-header-search">{t(updatedConfig?.label)}</Header>

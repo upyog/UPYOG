@@ -62,7 +62,8 @@
 			bootbox.alert("Select Financial Year");
 			return false;
 		}
-		document.transferClosingBalance.action = '/services/EGF/pea/transferClosingBalance-transfer.action';
+		// Spring 6 / Struts 7 migration note: use deployed context path instead of hard-coded /services/EGF prefix.
+		document.transferClosingBalance.action = '${pageContext.request.contextPath}/pea/transferClosingBalance-transfer.action';
 		jQuery(transferClosingBalance).append(
                 jQuery('<input>', {
                     type: 'hidden',
@@ -108,7 +109,8 @@
 						<td width="50%">
 							<table border="0" width="100%" cellspacing="0" cellpadding="0">
 								<tr>
-									<td class="greybox" ></td>
+									<%-- JSP migration cleanup: keep table cells well-formed; newer JSP rendering is less forgiving of invalid span/td nesting. --%>
+									<td class="greybox"></td>
 									<td class="greybox"></td>
 									<td class="greybox"><s:text name="financialyear" /> <span class="greybox"><span
 											class="mandatory1">*</span></span></td>
@@ -116,9 +118,7 @@
 											list="dropdownData.financialYearList" listKey="id" listValue="finYearRange"
 											headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
 											value="%{financialYear}" /></td>
-									<span class="greybox" colspan="2">
-										</td>
-										<td class="greybox"></td>
+									<td class="greybox"></td>
 								</tr>
 
 							</table>

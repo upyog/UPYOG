@@ -1,4 +1,4 @@
-import { Card, CHBIcon } from "@upyog/digit-ui-react-components";
+import { Card, CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -34,11 +34,11 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   );
 
   return (
-    // <Card style={{ paddingRight: 0, marginTop: 0 }} className="employeeCard filter inboxLinks">
+    // <Card className="custom-style" className="employeeCard filter inboxLinks">
     <Card className="employeeCard filter inboxLinks">
       <div className="complaint-links-container">
         {GetLogo()}
-        {/* <div style={{ marginLeft: "unset", paddingLeft: "0px" }} className="body"> */}
+        {/* <div className="custom-style" className="body"> */}
         <div className="body">
           {links.map(({ link, text, hyperlink = false, roles = [] }, index) => {
             return (

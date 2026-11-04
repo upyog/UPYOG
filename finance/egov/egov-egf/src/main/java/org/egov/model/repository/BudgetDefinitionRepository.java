@@ -80,10 +80,10 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
     @Query("select count(b) from Budget b where b.status.id =:statusId")
     Long countBudget(Integer statusId);
 
-    Long countByIdNotInAndStatusIdInAndFinancialYearIdIsAndIsbereIs(List<Long> budgetId, Integer statusId, Long financialYearId,
+    Long countByIdNotInAndStatusIdAndFinancialYearIdIsAndIsbereIs(List<Long> budgetId, Integer statusId, Long financialYearId,
             String bere);
 
-    Long countByStatusIdInAndFinancialYearIdIsAndIsbereIsAndIdIn(Integer statusId, Long financialYearId, String bere,
+    Long countByStatusIdAndFinancialYearIdIsAndIsbereIsAndIdIn(Integer statusId, Long financialYearId, String bere,
             List<Long> budgetId);
 
     Long countByIdNotInAndFinancialYearIdIs(List<Long> budgetId, Long financialYearId);
@@ -100,15 +100,15 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
 
     Long countByIdNotInAndFinancialYearIdIsAndIsbereIs(List<Long> budgetId, Long financialYearId, String bere);
 
-    @Query("select distinct bg.parent.id from Budget bg, Budget bd where  bg.parent=bd.id and (bg.parent is not null)")
+    @Query("select distinct bg.parent.id from Budget bg where bg.parent is not null")
     List<Long> findParentBudget();
 
     Budget findByReferenceBudgetId(final Long budgetId);
 
-    Long countByStatusIdNotInAndFinancialYearIdIsAndIsbereIsAndIdNotIn(Integer statusId, Long financialYearId, String bere,
+    Long countByStatusIdNotAndFinancialYearIdIsAndIsbereIsAndIdNotIn(Integer statusId, Long financialYearId, String bere,
             List<Long> budgetId);
 
-    @Query("select count(b) from Budget b  where b.materializedPath like :path||'%' and b.status.code not in ('Approved')")
+    @Query("select count(b) from Budget b  where b.materializedPath like concat(:path,'%') and b.status.code not in ('Approved')")
     Long countNotApprovedBudgetByMaterializedPath(@Param("path") String path);
 
     Budget findByMaterializedPath(final String path);

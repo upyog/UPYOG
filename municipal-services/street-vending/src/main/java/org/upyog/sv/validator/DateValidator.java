@@ -24,7 +24,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(StreetVendingUtil.DATE_FORMAT);
 
         try {
-            LocalDate date = LocalDate.parse(dateStr, formatter);
+            LocalDate.parse(dateStr, formatter);
             return true; // If parsing is successful, the date is valid
         } catch (DateTimeParseException e) {
             return false; // If parsing fails, the date is invalid

@@ -2,13 +2,13 @@ package org.egov.infra.microservice.models;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class MasterDetail implements Serializable{
     
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String filter;
 
     public MasterDetail(String name, String filter) {

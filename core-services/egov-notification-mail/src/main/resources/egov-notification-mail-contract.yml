@@ -1,0 +1,107 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Email Notification Service
+  description: |
+    Kafka consumer for email notification delivery in the UPYOG platform.
+
+    This service is event-driven and does not expose domain REST APIs. It consumes
+    notification events from Kafka topics, resolves localized message content, and
+    delivers email via configured SMTP settings.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /notification-mail
+x-api-id: org.egov.notification.mail
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Spring Actuator health endpoint for service liveness monitoring.
+      responses:
+        '200':
+          description: Service is healthy
+          schema:
+            $ref: '#/definitions/HealthResponse'
+      tags:
+        - Health
+  /info:
+    get:
+      summary: Service info
+      description: Returns build and application metadata from Spring Actuator.
+      responses:
+        '200':
+          description: Service metadata retrieved successfully
+          schema:
+            type: object
+      tags:
+        - Health
+definitions:
+  HealthResponse:
+    type: object
+    description: Standard Spring Actuator health response
+    properties:
+      status:
+        type: string
+        example: UP
+  EmailRequest:
+    type: object
+    description: |
+      Kafka message payload consumed from topic configured by
+      `kafka.topics.notification.mail.name` (default: ws-national-dashboard).
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      email:
+        $ref: '#/definitions/Email'
+    required:
+      - email
+  Email:
+    type: object
+    description: Email content to be delivered via SMTP
+    properties:
+      emailTo:
+        type: array
+        description: Recipient email addresses
+        items:
+          type: string
+      subject:
+        type: string
+        description: Email subject line
+      body:
+        type: string
+        description: Email body content
+      isHTML:
+        type: boolean
+        description: Whether the body should be rendered as HTML
+      attachments:
+        $ref: '#/definitions/Attachments'
+    required:
+      - emailTo
+      - subject
+      - body
+  Attachments:
+    type: object
+    description: Optional email attachment
+    properties:
+      fileName:
+        type: string
+      content:
+        type: string
+        format: byte
+      contentType:
+        type: string
+  SMSRequest:
+    type: object
+    description: |
+      Optional SMS notification payload consumed from topic configured by
+      `kafka.topics.notification.sms.topic.name` (default: egov.core.notification.sms).
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      sms:
+        type: object
+        description: SMS payload forwarded for delivery processing

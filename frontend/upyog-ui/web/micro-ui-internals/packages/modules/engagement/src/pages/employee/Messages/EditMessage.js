@@ -1,16 +1,19 @@
-import { FormComposer, Header, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from 'date-fns';
-import React, { Fragment, useEffect, useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { handleTodaysDate, isNestedArray, reduceDocsArray } from "../../../utils";
 import { config } from "../../../config/NewMessageConfig";
 
 const EditMessage = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { id: MessageId } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const queryClient = useQueryClient();
+  const updateEventMutation = Digit.Hooks.events.useUpdateEvent();
   const { isLoading, data } = Digit.Hooks.events.useInbox(tenantId, {},
     {
       eventTypes: "BROADCAST",
@@ -19,15 +22,6 @@ const EditMessage = () => {
     {
       select: (data) => data?.events?.[0]
     });
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_HAPPENED", false);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_ERROR_DATA", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MSG_MUTATION_SUCCESS_DATA", false);
-
-  useEffect(() => {
-    setMutationHappened(false);
-    clearSuccessData();
-    clearError();
-  }, []);
 
   const onSubmit = (formData) => {
     const { fromDate, toDate, description, name, documents } = formData;
@@ -53,7 +47,15 @@ const EditMessage = () => {
         }
       ]
     }
-    history.push("/upyog-ui/employee/engagement/messages/response?update=true", details)
+    updateEventMutation.mutate(details, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/messages/response?update=true", { state: { isSuccess: true, data: responseData } });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/messages/response?update=true", { state: { isSuccess: false, error } });
+      }
+    });
   }
 
   const defaultValues = useMemo(() => {
@@ -67,7 +69,7 @@ const EditMessage = () => {
     }
   }, [data])
 
-  if (isLoading) {
+  if (isLoading || updateEventMutation.isPending) {
     return (
       <Loader />
     );

@@ -434,16 +434,20 @@ public class NotificationUtil {
         List<Event> events = new ArrayList<>();
         Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
         Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
-
-        for(String mobileNumber:mobileNumbers) {
+        
+        for (String mobileNumber : mobileNumbers) {
             UserDetailResponse userDetailResponse = fetchUserByUUID(mobileNumber, requestInfo, property.getTenantId());
-            try
-            {
-                OwnerInfo user= (OwnerInfo) userDetailResponse.getUser().get(0);
-                mapOfPhnoAndUUIDs.put(user.getMobileNumber(),user.getUuid());
-            }
-            catch(Exception e) {
-                log.error("Exception while fetching user object: ",e);
+
+            if (userDetailResponse != null
+                    && userDetailResponse.getUser() != null
+                    && !userDetailResponse.getUser().isEmpty()
+                    && userDetailResponse.getUser().get(0) != null) {
+
+                OwnerInfo user = (OwnerInfo) userDetailResponse.getUser().get(0);
+                mapOfPhnoAndUUIDs.put(user.getMobileNumber(), user.getUuid());
+
+            } else {
+                log.warn("No user found for mobile number: {}", mobileNumber);
             }
         }
 

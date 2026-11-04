@@ -1,8 +1,8 @@
 import { PTService } from "../../services/elements/PT";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const usePropertyAssessment = (tenantId, config = {}) => {
-  return useMutation((data) => PTService.assessmentCreate(data, tenantId));
+  return mutationTemplate({ mutationFn: (data) => PTService.assessmentCreate(data, tenantId) });
 };
 
 export default usePropertyAssessment;

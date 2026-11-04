@@ -1,8 +1,5 @@
 package org.upyog.pgrai.util;
 
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -11,9 +8,10 @@ import java.util.List;
  * Constants used across the PGR (Public Grievance Redressal) system.
  * This class contains various static final fields for configuration, workflow states, and other constants.
  */
-@Component
-@NoArgsConstructor
 public class PGRConstants {
+
+    private PGRConstants() {
+    }
 
 
     public static final String PGR_BUSINESSSERVICE = "PGRAI";
@@ -149,7 +147,7 @@ public class PGRConstants {
 
     public static final String TENANTID_MDC_STRING = "TENANTID";
 
-    public static String SCHEMA_REPLACE_STRING = "{schema}";
+    public static final String SCHEMA_REPLACE_STRING = "{schema}";
 
     public static final String DESIGNATION = "designation";
 

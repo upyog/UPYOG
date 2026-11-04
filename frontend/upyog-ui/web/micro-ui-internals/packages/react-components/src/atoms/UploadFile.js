@@ -17,7 +17,7 @@ const getCitizenStyles = (value) => {
         width: "100%",
         overflow: "hidden",
         textOverflow: "ellipsis",
-        width: "80%"
+        // width: "80%"  why width is written twice please check and remove the duplicate one
       },
       tagStyles: {
         width: "90%",
@@ -88,7 +88,7 @@ const getCitizenStyles = (value) => {
         padding: "5px", 
         margin: 0,
         width: "100%",
-        margin: "5px"
+        // margin: "5px" why margin is written twice please check and remove the duplicate one
       },
       textStyles: {
         wordBreak: "break-word",
@@ -189,6 +189,19 @@ const UploadFile = (props) => {
 
   useEffect(() => handleChange(), [props.message]);
 
+  // Keep local upload UI in sync when the parent clears the file (e.g. Cancel reset).
+  useEffect(() => {
+    if (props.file?.name) {
+      setHasFile(true);
+      return;
+    }
+    setHasFile(false);
+    setprevSate(null);
+    if (inpRef.current) {
+      inpRef.current.value = "";
+    }
+  }, [props.file]);
+
   const showHint = props?.showHint || false;
 
   return (
@@ -199,7 +212,7 @@ const UploadFile = (props) => {
           <ButtonSelector
             theme="border"
             label={t("CS_COMMON_CHOOSE_FILE")}
-            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}) }}
+            className={props.disabled ? "display-none" : ""} style={extraStyles?.buttonStyles}
             textStyles={props?.textStyles}
             type={props.buttonType}
           />
@@ -241,7 +254,7 @@ const UploadFile = (props) => {
           }}
         />
       </div>
-      {props.iserror && <p style={{color: "red"}}>{props.iserror}</p>}
+      {props.iserror && <p className="rc-upload-file-required-asterisk">{props.iserror}</p>}
       {props?.showHintBelow && <p className="cell-text">{t(props?.hintText)}</p>}
     </Fragment>
   );

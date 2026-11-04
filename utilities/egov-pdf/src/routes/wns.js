@@ -4,7 +4,7 @@ var url = require("url");
 var config = require("../config");
 var producer = require("../producer").producer ;
 var logger = require("../logger").logger;
-const uuidv4 = require("uuid/v4");
+const { v4: uuidv4 } = require("uuid");
 const { Pool } = require('pg');
 
 const pool = new Pool({

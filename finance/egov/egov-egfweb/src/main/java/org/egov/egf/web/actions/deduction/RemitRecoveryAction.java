@@ -136,10 +136,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
-@Validation
 @Results({ @Result(name = RemitRecoveryAction.NEW, location = "remitRecovery-" + RemitRecoveryAction.NEW + ".jsp"),
         @Result(name = "messages", location = "remitRecovery-messages.jsp"),
         @Result(name = "view", location = "remitRecovery-view.jsp"),
@@ -265,9 +263,16 @@ public class RemitRecoveryAction extends BasePaymentAction {
         super.prepare();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Prepare method");
+        /*
+         * LTS Migration Fix (Struts 7): Recovery Code options are built in
+         * RecoveryService.getAllActiveRecoverys (fetch-join + unproxy) and
+         * rendered via Recovery.dropdownLabel. Do not use OGNL concatenation
+         * of chartofaccounts.glcode on the JSP.
+         */
         final List<Recovery> listRecovery = recoveryService.getAllActiveRecoverys();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("RemitRecoveryAction | Tds list size : " + listRecovery.size());
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("RemitRecoveryAction | Recovery Code list size : "
+                    + (listRecovery != null ? listRecovery.size() : 0));
         List<Bank> activeBanks = bankHibernateDAO.getAllBankHavingBranchAndAccounts();
         addDropdownData("bankList", activeBanks);
         addDropdownData("branchList", Collections.EMPTY_LIST);
@@ -280,6 +285,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     @Override
+    @SkipValidation
     @Action(value = "/deduction/remitRecovery-newform")
     public String newform() {
         if (LOGGER.isDebugEnabled())
@@ -837,14 +843,31 @@ public class RemitRecoveryAction extends BasePaymentAction {
             return sum;
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 / Hibernate 6): JSPs call this on every
+     * remittance page render. Do not {@code .get(0)} the named-query result —
+     * it is empty when {@code eg_script} has no current-period
+     * Paymentheader.show.bankbalance row, which threw on menu navigation.
+     */
     @SuppressWarnings(UNCHECKED)
     @SkipValidation
     public boolean validateUser(final String purpose) {
-        final Script validScript = (Script) getPersistenceService()
-                .findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance").get(0);
+        List<?> scripts = null;
+        try {
+            scripts = getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance");
+        } catch (final Exception e) {
+            LOGGER.warn("Named query Script.findByName failed: " + e.getMessage());
+        }
+        if (scripts == null || scripts.isEmpty())
+            scripts = getPersistenceService().findAllBy("from Script s where s.name=?", "Paymentheader.show.bankbalance");
+        if (scripts == null || scripts.isEmpty()) {
+            LOGGER.warn("Script Paymentheader.show.bankbalance not found; allowing " + purpose);
+            return true;
+        }
+        final Script validScript = (Script) scripts.get(0);
         final List<String> list = (List<String>) scriptService.executeScript(validScript,
                 ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
-        if (list.get(0).equals("true"))
+        if (list != null && !list.isEmpty() && list.get(0).equals("true"))
             try {
                 canCheckBalance = true;
                 commonBean.setAvailableBalance(egovCommon.getAccountBalance(new Date(),

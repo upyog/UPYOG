@@ -1,20 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 
+let radioGroupCounter = 0;
+
 const RadioButtons = (props) => {
   const { t } = useTranslation();
+  const defaultGroupNameRef = useRef(null);
+  if (!defaultGroupNameRef.current) {
+    radioGroupCounter += 1;
+    defaultGroupNameRef.current = `radio-buttons-group-${radioGroupCounter}`;
+  }
   var selected = props.selectedOption;
   function selectOption(value) {
     //selected = value;
     props.onSelect(value);
   }
 
+  const groupName = props.name || defaultGroupNameRef.current;
+
+  const isOptionChecked = (option) => {
+    if (selected === undefined || selected === null) return false;
+    if (props?.optionsKey) {
+      if (selected?.code !== undefined && option?.code !== undefined) {
+        if (String(selected.code) === String(option.code)) return true;
+      }
+      if (selected?.i18nKey !== undefined && option?.i18nKey !== undefined) {
+        if (selected.i18nKey === option.i18nKey) return true;
+      }
+      if (props.optionsKey && selected?.[props.optionsKey] !== undefined && option?.[props.optionsKey] !== undefined) {
+        if (selected[props.optionsKey] === option[props.optionsKey]) return true;
+      }
+      if (typeof selected === "string" || typeof selected === "number") {
+        if (String(selected) === String(option.code) || String(selected) === String(option[props.optionsKey])) return true;
+      }
+      return isEqual(selected, option);
+    }
+    return selected === option || isEqual(selected, option);
+  };
+
   return (
     <div style={props.style} className={`radio-wrap ${props?.additionalWrapperClass}`}>
       {props?.options?.map((option, ind) => {
         if (props?.optionsKey && !props?.isDependent) {
+          const checked = isOptionChecked(option);
           return (
             <div style={props.innerStyles} key={ind}>
               <span className="radio-btn-wrap">
@@ -22,10 +52,10 @@ const RadioButtons = (props) => {
                   className="radio-btn"
                   type="radio"
                   value={option}
-                  checked={(props.isPTFlow && selected?.code === option.code) || isEqual(selected, option) ? 1 : 0}
+                  checked={Boolean(checked)}
                   onChange={() => selectOption(option)}
                   disabled={props?.disabled}
-                  name={props.name}
+                  name={groupName}
                   ref={props.inputRef}
                 />
                 <span className="radio-btn-checkmark"></span>
@@ -34,6 +64,7 @@ const RadioButtons = (props) => {
             </div>
           );
         } else if (props?.optionsKey && props?.isDependent) {
+          const isDependentChecked = isOptionChecked(option);
           return (
             <div style={props.innerStyles} key={ind}>
               <span className="radio-btn-wrap">
@@ -41,10 +72,10 @@ const RadioButtons = (props) => {
                   className="radio-btn"
                   type="radio"
                   value={option}
-                  checked={props?.isTLFlow ? (selected?.code === option.code || selected?.i18nKey === option.i18nKey) : selected?.code === option.code ? 1 : 0}
+                  checked={Boolean(isDependentChecked)}
                   onChange={() => selectOption(option)}
                   disabled={props?.disabled}
-                  name={props.name}
+                  name={groupName}
                   ref={props.inputRef}
                 />
                 <span className="radio-btn-checkmark"></span>
@@ -53,6 +84,7 @@ const RadioButtons = (props) => {
             </div>
           );
         } else {
+          const isSimpleChecked = selected === option || isEqual(selected, option);
           return (
             <div style={props.innerStyles} key={ind}>
               <span className="radio-btn-wrap">
@@ -60,10 +92,10 @@ const RadioButtons = (props) => {
                   className="radio-btn"
                   type="radio"
                   value={option}
-                  checked={selected === option ? 1 : 0}
+                  checked={Boolean(isSimpleChecked)}
                   onChange={() => selectOption(option)}
                   disabled={props?.disabled}
-                  name={props.name}
+                  name={groupName}
                   ref={props.inputRef}
                 />
                 <span className="radio-btn-checkmark"></span>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import { RadioButtons } from "@upyog/digit-ui-react-components";
+import { RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -56,7 +56,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
                 <RadioButtons
                   selectedOption={paymentType}
                   onSelect={selectPaymentType}
-                  style={{ display: "flex", marginBottom: 0 }}
+                  className="fsm-fsmselect-address-flex-container"
                   innerStyles={{ marginLeft: "10px" }}
                   options={input.options}
                   optionsKey="i18nKey"

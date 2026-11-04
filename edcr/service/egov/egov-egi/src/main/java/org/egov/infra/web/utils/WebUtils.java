@@ -52,9 +52,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.COLON;
 import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.StringUtils;
@@ -134,6 +134,10 @@ public final class WebUtils {
             domainURL = withContext
                     ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + FORWARD_SLASH
                     : url.substring(0, url.length() - uri.length());
+        }
+        // @FIX: Replace http with https if the request protocol is https
+        if (StringUtils.isNotBlank(protocol) && "https".equalsIgnoreCase(protocol.split(",")[0].trim())) {
+            domainURL = domainURL.replaceFirst("^http://", "https://");
         }
         return domainURL;
     }

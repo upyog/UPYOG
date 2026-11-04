@@ -1,11 +1,13 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { format } from "date-fns";
 
 const useEventDetails = (tenantId, filters, config = {}) => {
+  // Updated: TanStack Query v5 requires useQuery to accept a single object instead of positional arguments.
+  // Updated: queryKey and queryFn are now explicit keys inside the object — positional args removed.
   return useQuery(
-    ['EVENT_DETAILS', tenantId, filters],
-    () => Digit.EventsServices.EventDetails(tenantId, filters),
     {
+      queryKey: ['EVENT_DETAILS', tenantId, filters],
+      queryFn: () => Digit.EventsServices.EventDetails(tenantId, filters),
       select: (data) => {
         const details = [{
           title:" ",

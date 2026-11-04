@@ -17,7 +17,7 @@ import {
   FinanceChartIcon,
   CollectionIcon,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import ReactTooltip from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import { useTranslation } from 'react-i18next';
 
 const resolveLinkPath = (childTo, parentTo) => `${parentTo}/${childTo}`;
@@ -47,38 +47,37 @@ const NavItemHeader = props => {
     collections: <CollectionIcon />,
   };
   const leftIconArray = icon?.split?.(":")?.[1];
-  const leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
-  const iconArr=item?.icon?.leftIcon?.split?.(":")|| item?.leftIcon?.split?.(":");
-  if(iconArr?.[0]=='dynamic'){
+  let leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
+  const iconArr = item?.icon?.leftIcon?.split?.(":") || item?.leftIcon?.split?.(":");
+  if (iconArr?.[0] == 'dynamic') {
     var IconComp = require("@nudmcdgnpm/digit-ui-react-components")?.[iconArr?.[1]];
-    leftIcon=IconComp?<IconComp/>:leftIcon;
+    leftIcon = IconComp ? <IconComp /> : leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();
   const appendTranslate = t(`ACTION_TEST_${getModuleName.toUpperCase()}`);
   const trimModuleName = t(appendTranslate?.length > 20 ? appendTranslate.substring(0, 20) + "..." : appendTranslate);
+  const tooltipId = `jk-side-${getModuleName}`;
 
   const onExpandChange = e => {
     e.preventDefault();
     setExpand(expanded => !expanded);
   };
-	
+
   return (
     <React.Fragment>
       <button
         className={`${"submenu-container"}`}
         onClick={onExpandChange}
-        style={item?.elementStyle ? {...item?.elementStyle,display:"flex"}:{display:"flex"}}
+        style={item?.elementStyle ? { ...item?.elementStyle, display: "flex" } : { display: "flex" }}
       >
-         <div className={`sidebar-link ${expanded ? "active": ""}`} style={{width:item?.nested ?"240px":"260px",overflow:"auto"}}>{!item?.nested && leftIcon}
-         <div className='actions' style={{padding:"0px",marginRight:"auto"}}>
-         <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-        <span style={{color:expanded ? "#a82227":""}}>{trimModuleName}</span>
-        {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
-                    {t(`ACTION_TEST_${getModuleName}`)}
-                  </ReactTooltip>}
-                </div>
-        </div>
-        <div>{children && expanded ? <ArrowVectorDown/> : children ? <ArrowForward /> : null}</div>
+        <div className={`sidebar-link ${expanded ? "active" : ""}`} style={{ width: item?.nested ? "240px" : "260px", overflow: "auto" }}>{!item?.nested && leftIcon}
+          <div className='actions' style={{ padding: "0px", marginRight: "auto" }}>
+            <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
+              <span style={{ color: expanded ? "#a82227" : "" }}>{trimModuleName}</span>
+              {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
+            </div>
+          </div>
+          <div>{children && expanded ? <ArrowVectorDown /> : children ? <ArrowForward /> : null}</div>
         </div>
       </button>
 
@@ -93,6 +92,7 @@ const NavItemHeader = props => {
             const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();
             const appendTranslate = t(`ACTION_TEST_${getModuleName.toUpperCase()}`);
             const trimModuleName = t(appendTranslate?.length > 20 ? appendTranslate.substring(0, 20) + "..." : appendTranslate);
+            const tooltipId = `jk-side-${getModuleName}`;
 
             if (children) {
               return (
@@ -102,7 +102,7 @@ const NavItemHeader = props => {
                       ...item,
                       nested: true,
                       to: resolveLinkPath(item.to, props.item.to),
-                      elementStyle:{marginLeft:"19px"}
+                      elementStyle: { marginLeft: "19px" }
                     }}
                   />
                 </div>
@@ -113,15 +113,12 @@ const NavItemHeader = props => {
               <NavLink
                 key={key}
                 to={item?.to?.includes("sv-ui") ? item?.to : "/employee/" + item?.to}
-                className="custom-link"
-                activeClassName="actions"
-                style={{marginLeft:"40px", marginTop:"10px"}}
+                className={({ isActive }) => isActive ? "custom-link actions" : "custom-link"}
+                style={{ marginLeft: "40px", marginTop: "10px" }}
               >
-                <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-                <span style={{fontSize:"14px"}}>{trimModuleName}</span>
-                {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
-                    {t(`ACTION_TEST_${getModuleName}`)}
-                  </ReactTooltip>}
+                <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
+                  <span style={{ fontSize: "14px" }}>{trimModuleName}</span>
+                  {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{ backgroundColor: "grey", color: "white" }} />}
                 </div>
               </NavLink>
             );

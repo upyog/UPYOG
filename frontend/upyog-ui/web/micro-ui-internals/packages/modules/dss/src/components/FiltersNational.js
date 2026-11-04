@@ -1,4 +1,4 @@
-import { CloseSvg, FilterIcon, MultiSelectDropdown, RefreshIcon } from "@upyog/digit-ui-react-components";
+import { CloseSvg, FilterIcon, MultiSelectDropdown, RefreshIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useContext, useEffect, useState } from "react";
 import DateRange from "./DateRange";
 import SelectCustomDateRange from "./CustomDateRange";
@@ -101,7 +101,7 @@ const Filters = ({
       </div>
 
       {showDenomination && (
-        <div className="filters-input" style={{ flexBasis: "16%" }}>
+        <div className="filters-input dss-filters-wrapper">
           <Switch onSelect={handleFilterChange} t={t} />
         </div>
       )}

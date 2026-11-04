@@ -1,57 +1,59 @@
 import { ASSETSearch } from "../../services/molecules/ASSET/Search";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useAssetApplicationDetail = (t, tenantId, applicationNo, config = {}, userType, args) => {
+const useAssetApplicationDetail = (
+  t,
+  tenantId,
+  applicationNo,
+  config = {},
+  userType,
+  args
+) => {
   const stateTenantId = Digit.ULBService.getStateId();
-  const defaultSelect = (data) => {
-     let applicationDetails = data.applicationDetails.map((obj) => {
-      return obj;
-    });    
 
-    return {
-      applicationData : data,
-      applicationDetails
-    }
-  };
+  const { data: cityResponseObject } =
+    Digit.Hooks.useEnabledMDMS(
+      stateTenantId,
+      "ASSETV2",
+      [{ name: "AssetParentCategoryFields" }],
+      {
+        select: (data) =>
+          data?.["ASSETV2"]?.["AssetParentCategoryFields"],
+      }
+    );
 
-  
-    const { data: cityResponseObject} =  Digit.Hooks.useCustomMDMSV2(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
-      select: (data) => {
-        
-        const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
-        return formattedData;
-      },
-    });
- 
-    const {data: stateResponseObject} =  Digit.Hooks.useCustomMDMSV2(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
-      select: (data) => {
-        const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
-        return formattedData;
-      },
-    });
-  
-    let combinedData;
+  const combinedData = cityResponseObject || [];
 
-    // if city level master is not available then fetch  from state-level
-    if (cityResponseObject) {
-      combinedData = cityResponseObject;
-    } else if (stateResponseObject) {
-      combinedData = stateResponseObject;
-    } else {
-      combinedData = [];
-    }
+  const queryKey = [
+    "ASSET_APPLICATION_DETAIL",
+    tenantId,
+    applicationNo,
+    userType,
+    JSON.stringify(combinedData),
+    JSON.stringify(args),
+  ];
 
-  //   const processDepreciation = async(assetId) => {
-     
-   
-  // }
+  const queryFn = () =>
+    ASSETSearch.applicationDetails(
+      t,
+      tenantId,
+      applicationNo,
+      userType,
+      combinedData,
+      args
+    );
 
-  return useQuery(
-    ["APPLICATION_SEARCH", "ASSET_SEARCH", applicationNo, userType, combinedData,  args],
-    () => ASSETSearch.applicationDetails(t, tenantId, applicationNo, userType, combinedData,  args),
-    { select: defaultSelect, ...config }
- 
-  );
+  const select = (data) => ({
+    applicationData: data,
+    applicationDetails: data?.applicationDetails,
+  });
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
+  });
 };
 
 export default useAssetApplicationDetail;

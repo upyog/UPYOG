@@ -2,7 +2,6 @@ import React from "react";
 import {PaymentModule} from "@upyog/digit-ui-module-common";
 import { CndUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
-import { initBillsComponents } from "@upyog/digit-ui-module-bills";
 import { CNDComponents, CNDLinks, CNDModule } from "@nudmcdgnpm/upyog-ui-module-cnd";
 
 
@@ -20,8 +19,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
   CNDModule
 });
 
-
-initBillsComponents();
 
 const moduleReducers = (initData) => ({
   // pgr: PGRReducers(initData),

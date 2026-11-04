@@ -33,7 +33,7 @@ const Filter = ({ type = "desktop", onClose, onSearch, onFilterChange, searchPar
       <Loader />
     );
   }
-  
+
   return (
     <div className="filter">
       <div className="filter-card">

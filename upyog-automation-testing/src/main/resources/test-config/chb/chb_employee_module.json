@@ -1,0 +1,125 @@
+{
+  "moduleName": "chb_employee_module",
+  "description": "CHB employee full workflow",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions": [
+
+    {
+      "stepName": "Enter Username",
+      "locatorStrategy": "NAME",
+      "locatorValue": "username",
+      "action": "TYPE",
+      "inputValue":"${selected.username}",
+      "dynamicSleep": 500
+    },
+
+    {
+      "stepName": "Enter Password",
+      "locatorStrategy": "NAME",
+      "locatorValue": "password",
+      "action": "TYPE",
+      "inputValue": "${selected.password}",
+      "dynamicSleep": 500
+    },
+
+    {
+      "stepName": "Select Mohali City",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:7",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Click Continue",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Continue']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Open CHB Search Bookings",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//span[text()='Community Hall Booking']/ancestor::div[contains(@class,'employeeCustomCard')]//*[normalize-space()='Search Application']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter Booking Number",
+      "locatorStrategy": "NAME",
+      "locatorValue": "bookingNo",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Search",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='Search']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Click TAKE ACTION",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='TAKE ACTION']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Click Cancel Booking",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Cancel Booking')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+
+
+
+
+
+    {
+      "stepName": "Accept Declaration Checkbox",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox']",
+      "action": "CHECK_LAST_CHECKBOX",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+
+
+
+
+
+    {
+      "stepName": "Click Final Cancel Booking",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='Cancel Booking']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+
+
+
+
+
+    {
+      "stepName": "Refresh Page",
+      "locatorStrategy": "TAGNAME",
+      "locatorValue": "body",
+      "action": "REFRESH_PAGE",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    }
+
+  ]
+}

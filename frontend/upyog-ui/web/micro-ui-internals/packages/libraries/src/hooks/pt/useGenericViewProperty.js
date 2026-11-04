@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { PTSearch } from "../../services/molecules/PT/Search";
 
 /**
@@ -6,7 +6,6 @@ import { PTSearch } from "../../services/molecules/PT/Search";
  * get the property search using property id and tenant id 
  * and return the property generic template to show employee and citizen view
  * 
- * @author jagankumar-egov
  * 
  * @example
  *  Digit.Hooks.pt.useGenericViewProperty(t,
@@ -26,9 +25,11 @@ const useGenericViewProperty = (t, tenantId, propertyIds, config = {}, userType)
     return { ...data };
   };
 
-  return useQuery(["VIEW_GENERIC_PROPERTY", propertyIds, tenantId], () => PTSearch.genericPropertyDetails(t, tenantId, propertyIds), {
+  return queryTemplate({
+    queryKey: ["VIEW_GENERIC_PROPERTY", propertyIds, tenantId],
+    queryFn: () => PTSearch.genericPropertyDetails(t, tenantId, propertyIds),
     select: defaultSelect,
-    ...config,
+    config,
   });
 };
 

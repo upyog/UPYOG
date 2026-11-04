@@ -54,21 +54,21 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -88,10 +88,10 @@ public class Budget extends StateAware {
 
     @Required(message = "Name should not be empty")
     @Length(max = 250, message = "Max 250 characters are allowed for description")
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 20)
     private String isbere;
 
@@ -105,7 +105,7 @@ public class Budget extends StateAware {
     private Budget parent;
 
     @Length(max = 250, message = "Max 250 characters are allowed for description")
-    @SafeHtml
+    @SanitizeHtml
     private String description;
 
     @Column(name = "AS_ON_DATE")
@@ -116,7 +116,7 @@ public class Budget extends StateAware {
     private boolean isPrimaryBudget;
 
     @Length(max = 10, message = "Max 10 characters are allowed for description")
-    @SafeHtml
+    @SanitizeHtml
     private String materializedPath;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -131,7 +131,7 @@ public class Budget extends StateAware {
     private EgwStatus status;
 
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String searchBere;
 
 

@@ -50,8 +50,8 @@ package org.egov.eis.web.controller.masters.designation;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;

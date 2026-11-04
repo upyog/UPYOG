@@ -10,7 +10,7 @@ a{
   display: inherit;
   padding-top: 1.5rem;
   .digit-form-composer-sub-header {
-    @extend .typography.text-heading-m;
+    @extend .typography, .text-heading-m;
     padding-left: 1rem;
     @media (max-width: theme(digitv2.screens.mobile)) {
       padding-left: 0;
@@ -71,7 +71,7 @@ a{
             display: inline-flex;
             /* align-self: center; */
             line-height: 3rem;
-            @extend .typography.text-heading-s;
+            @extend .typography, .text-heading-s;
             /* web view*/
             @apply w-1/3;
 
@@ -208,7 +208,7 @@ a{
               }
 
               .custom-checkbox-label {
-                @extend .typography.text-body-s;
+                @extend .typography, .text-body-s;
                 @apply pl-sm;
               }
             }

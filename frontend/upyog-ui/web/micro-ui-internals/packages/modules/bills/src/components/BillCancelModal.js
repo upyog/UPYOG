@@ -1,10 +1,10 @@
-import { FormComposer, Loader, Modal } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+
 import { configCancelConfig } from "./Modal/CancelConfig";
 
 const BillCancelModal = ({ t, action, tenantId, closeModal, submitAction, applicationData, billData }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [config, setConfig] = useState({});
   const [Reasons, setReasons] = useState([]);
   const [selectedReason, selecteReason] = useState("");
@@ -49,17 +49,20 @@ const BillCancelModal = ({ t, action, tenantId, closeModal, submitAction, applic
   }, [data]);
 
   function submit(data) {
-    history.replace("/upyog-ui/employee/receipts/response", {
-      paymentWorkflow: {
-        action: "CANCEL",
-        additionalDetails: { ...data.otherDetails, selectedReasonMessage: t(`CR_REASON_${selectedReason.code}`) },
-        paymentId: applicationData?.Payments[0]?.id,
-        reason: selectedReason.code,
-        tenantId: applicationData?.Payments[0]?.tenantId,
+    navigate("/upyog-ui/employee/receipts/response", {
+      replace: true,
+      state: {
+        paymentWorkflow: {
+          action: "CANCEL",
+          additionalDetails: { ...data.otherDetails, selectedReasonMessage: t(`CR_REASON_${selectedReason.code}`) },
+          paymentId: applicationData?.Payments[0]?.id,
+          reason: selectedReason.code,
+          tenantId: applicationData?.Payments[0]?.tenantId,
+        },
+        key: "UPDATE",
+        action: "CANCELLATION",
+        businessService: applicationData?.Payments[0]?.paymentDetails[0]?.businessService,
       },
-      key: "UPDATE",
-      action: "CANCELLATION",
-      businessService: applicationData?.Payments[0]?.paymentDetails[0]?.businessService,
     });
   }
   if (isLoading) {

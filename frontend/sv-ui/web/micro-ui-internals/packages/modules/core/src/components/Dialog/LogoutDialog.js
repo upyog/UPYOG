@@ -13,11 +13,11 @@ const Close = () => (
 );
 const CloseBtn = (props) => {
   return (
-    <div onClick={props?.onClick} style={ props?.isMobileView ? { padding: 5} : null}>
+    <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
       {
         props?.isMobileView
           ? (<CloseSvg />)
-          : (<div className={"icon-bg-secondary"} style={{ backgroundColor: '#505A5F'}}> <Close /> </div>)
+          : (<div className={"icon-bg-secondary"} style={{ backgroundColor: '#505A5F' }}> <Close /> </div>)
       }
     </div>
   )

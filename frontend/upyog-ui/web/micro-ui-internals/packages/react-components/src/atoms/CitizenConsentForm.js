@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Loader, Modal } from "..";
 
 const Heading = (props) => {
-    return <h1 style={{ marginLeft: "22px" }} className="heading-m BPAheading-m">{props.label}</h1>;
+    return <h1 className="heading-m BPAheading-m rc-citizen-consent-form-header">{props.label}</h1>;
 };
 
 const Close = () => (
@@ -13,7 +13,7 @@ const Close = () => (
 
 const CloseBtn = (props) => {
     return (
-        <div className="icon-bg-secondary" onClick={props.onClick} style={{ backgroundColor: "#FFFFFF" }}>
+        <div className="icon-bg-secondary rc-citizen-consent-form-wrapper" onClick={props.onClick}>
             <Close />
         </div>
     );
@@ -42,13 +42,13 @@ const CitizenConsentForm = ({ t, styles, mdmsConfig = "", setMdmsConfig, labels 
                 actionCancelOnSubmit={closeModal}
                 formId="modal-action"
                 popupStyles={{ width: "750px", overflow: "auto" }}
-                style={{ minHeight: "45px", height: "auto", width: "160px" }}
+                className="rc-citizen-consent-form-wrapper-2"
                 hideSubmit={true}
                 headerBarMainStyle={{ margin: "0px", height: "35px" }}
 
             >
                 {url ?
-                    <div style={{ width: "auto", height: "91vh", overflow: "hidden" }}>
+                    <div className="rc-citizen-consent-form-wrapper-3">
                         <iframe
                             // allowfullscreen="true"
                             scrollbar={"none"}
@@ -59,7 +59,7 @@ const CitizenConsentForm = ({ t, styles, mdmsConfig = "", setMdmsConfig, labels 
                             src={`${url}`}
                         ></iframe>
                     </div> : 
-                    <div style={{width: "100%", height: "100px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                    <div className="rc-citizen-consent-form-fullwidth">
                         {t("COMMON_URL_NOT_FOUND")}
                     </div>}
 

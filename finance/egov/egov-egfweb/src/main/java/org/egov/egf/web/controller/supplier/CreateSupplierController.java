@@ -50,7 +50,7 @@ package org.egov.egf.web.controller.supplier;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.commons.bank.service.CreateBankService;
@@ -59,7 +59,7 @@ import org.egov.egf.web.adaptor.SupplierJsonAdaptor;
 import org.egov.model.masters.Supplier;
 import org.egov.model.masters.SupplierSearchRequest;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -164,7 +164,7 @@ public class CreateSupplierController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final SupplierSearchRequest supplierSearchRequest = new SupplierSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(STR_SUPPLIER_SEARCH_REQUEST, supplierSearchRequest);
@@ -174,7 +174,7 @@ public class CreateSupplierController {
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final SupplierSearchRequest supplierSearchRequest) {
 		final List<Supplier> searchResultList = supplierService.search(supplierSearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
@@ -187,7 +187,7 @@ public class CreateSupplierController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SafeHtml final String mode,
+	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SanitizeHtml final String mode,
 			final Model model) {
 		final Supplier supplier = supplierService.getById(id);
 		model.addAttribute(STR_SUPPLIER, supplier);

@@ -8,7 +8,38 @@ export const NOCService = {
       useCache: false,
       method: "POST",
       auth: true,
-      userService: false,
+      userService: true,
+      setTimeParam: false,
       params: { tenantId, ...filters },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      url: Urls.firenoc.create,
+      useCache: false,
+      method: "POST",
+      data: data,
+      params: { tenantId },
+      auth: true,
+      userService: true,
+    }),
+  update: (data, tenantId) =>
+    Request({
+      url: Urls.firenoc.update,
+      useCache: false,
+      method: "POST",
+      data: data,
+      params: { tenantId },
+      auth: true,
+      userService: true,
+    }),
+  search: (tenantId, filters = {}) =>
+    Request({
+      url: Urls.firenoc.search,
+      useCache: false,
+      method: "POST",
+      params: { tenantId, ...filters },
+      auth: true,
+      userService: true,
+      setTimeParam: false,
     }),
 }

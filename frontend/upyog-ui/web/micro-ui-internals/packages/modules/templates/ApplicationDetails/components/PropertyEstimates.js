@@ -1,16 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StatusTable, Row, BreakLine } from "@upyog/digit-ui-react-components";
+import { StatusTable, Row, BreakLine } from "@nudmcdgnpm/digit-ui-react-components";
 
 function PropertyEstimates({ taxHeadEstimatesCalculation }) {
   const { taxHeadEstimates } = taxHeadEstimatesCalculation;
   const { t } = useTranslation();
 
   return (
-    <div style={{ marginTop: "40px" }}>
+    <div className="tmpl-property-estimates-top-spacing">
       <StatusTable>
         <Row label={t("ES_PT_TITLE_TAX_HEADS")} text={t("ES_PT_TITLE_AMOUNT")} className="border-none" textStyle={{ fontWeight: "bold" }} />
-        <BreakLine style={{ margin: "16px 0", width: "40%" }} />
+        <BreakLine className="tmpl-property-estimates-spacing" />
         {taxHeadEstimates?.map((estimate, index) => {
           return (
             <Row
@@ -24,7 +24,7 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
             />
           );
         })}
-        <BreakLine style={{ margin: "16px 0", width: "40%" }} />
+        <BreakLine className="tmpl-property-estimates-spacing" />
         <Row
           label={t("ES_PT_TITLE_TOTAL_DUE_AMOUNT")}
           text={`₹ ${taxHeadEstimatesCalculation?.totalAmount}` || "N/A"}

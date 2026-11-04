@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 //import RegisryInbox from "../../../components/RegistryInbox";
 import VendorInbox from "../../../components/VendorInbox";
-import { useHistory } from "react-router-dom";
+
 
 const SearchVendor = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [searchParams, setSearchParams] = useState({});
   const [sortParams, setSortParams] = useState([{ id: "createdTime", desc: true }]);
@@ -242,7 +242,7 @@ const SearchVendor = () => {
 
   const onTabChange = (tab) => {
   setTab(tab);
-  history.push(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=${tab}`);
+  navigate(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=${tab}`);
 };
 
   const refetchData = () => {

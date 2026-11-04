@@ -1,0 +1,24 @@
+{
+  "moduleName": "GARBAGE_COLLECTION",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "GARBAGE_COLLECTION"
+    },
+
+    {
+      "name": "Employee Flow",
+      "type": "EMPLOYEE",
+      "module": "GARBAGE_COLLECTION",
+      "role": "GC_CEMP"
+    },
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "GARBAGE_COLLECTION_PAYMENT"
+    }
+  ]
+}

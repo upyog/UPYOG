@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
+import { Header, CardSectionHeader, PDFSvg, StatusTable, Row, MultiLink, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { downloadAndPrintReciept } from "../../../utils";
 
@@ -51,10 +51,10 @@ const ApplicationDetail = () => {
 
   return (
     <div className={"employee-main-application-details"}>
-        <div  className={"employee-application-details"} style={{height:"auto !important", maxHeight:"none !important"}}>
+        <div  className={`${"employee-application-details"} obps-index-wrapper-8`}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
         <div>
-        <div style={{zIndex: "10",  position: "relative"}}>
+        <div className="obps-index-wrapper-9">
         {applicationDetails?.payments?.length > 0 && 
         <MultiLink
           className="multilinkWrapper"
@@ -66,7 +66,7 @@ const ApplicationDetail = () => {
         />}
         </div>
         {workflowDetails?.data?.timeline?.length>0 && (
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} className="obps-index-action-btn" onClick={handleViewTimeline}></LinkButton>
         )}
         </div>
         </div>

@@ -1,19 +1,15 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { Dropdown, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import Background from "../../../components/Background";
-import Header from "../../../components/Header";
 
-const ForgotPassword = ({ config: propsConfig, t }) => {
+const ForgotPassword = ({ layout, config: propsConfig, t, emp = {}, setEmp = () => {} }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const [user, setUser] = useState(null);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
-  const getUserType = () => Digit.UserService.getType();
-  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
+  const [mobileNumber, setMobileNumber] = useState(emp?.mobileNumber || "");
+  const [selectedCity, setSelectedCity] = useState(emp?.city || null);
+
   useEffect(() => {
     if (!user) {
       Digit.UserService.setType("employee");
@@ -21,122 +17,125 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
     }
     Digit.UserService.setUser(user);
     const redirectPath = location.state?.from || "/upyog-ui/employee";
-    history.replace(redirectPath);
+    navigate(redirectPath, { replace: true });
   }, [user]);
 
   const closeToast = () => {
     setShowToast(null);
   };
 
-  const onForgotPassword = async (data) => {
-    if (!data.city) {
-      alert("Please Select City!");
+  const isMobileValid = /^[6-9]\d{9}$/.test(mobileNumber);
+
+  const onForgotPassword = async (e) => {
+    e?.preventDefault?.();
+    if (!selectedCity) {
+      setShowToast(t("ERR_HRMS_INVALID_CITY") || "Please Select City!");
+      setTimeout(closeToast, 5000);
       return;
     }
-    const requestData = {
-      otp: {
-        mobileNumber: data.mobileNumber,
-        userType: "citizen",
-        type: "passwordreset",
-        tenantId: data.city.code,
-      },
-    };
-    try {
-      await Digit.UserService.sendOtp(requestData, data.city.code);
-      history.push(`/upyog-ui/employee/user/change-password?mobile_number=${data.mobileNumber}&tenantId=${data.city.code}`);
-    } catch (err) {
-      setShowToast(err?.response?.data?.error?.fields?.[0]?.message || "Invalid login credentials!");
+    if (!isMobileValid) {
+      setShowToast(t("ERR_HRMS_INVALID_MOBILE_NUMBER") || "Please enter a valid mobile number!");
       setTimeout(closeToast, 5000);
+      return;
     }
+    navigate(
+      `/upyog-ui/employee/user/change-password?mobile_number=${mobileNumber}&tenantId=${selectedCity?.city?.code || selectedCity?.code}`
+    );
   };
 
   const navigateToLogin = () => {
-    history.replace("/upyog-ui/employee/login");
+    navigate("/upyog-ui/employee/user/login", { replace: true });
   };
 
-  const [userId, city] = propsConfig.inputs;
-  const config = [
-    {
-      body: [
-        {
-          label: t(userId.label),
-          type: userId.type,
-          populators: {
-            name: userId.name,
-            componentInFront: "+91",
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                optionKey="name"
-                id={city.name}
-                className="login-city-dd"
-                select={(d) => {
-                  props.onChange(d);
-                }}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
-      ],
-    },
-  ];
+  const getLocalized = (key, fallback) => {
+    if (!key) return fallback;
+    const val = t(key);
+    return !val || val === key ? fallback : val;
+  };
 
   if (isLoading) {
     return <Loader />;
   }
 
+  const footer = showToast && <Toast error={true} label={showToast} onClose={closeToast} />;
+
   return (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" style={{ borderBottom: "none" }} />
+    <div className="login-mobile-step">
+      <div className="login-form-header">
+        <h2>{getLocalized(propsConfig?.texts?.header, "Forgot Password")}</h2>
+        <p>{getLocalized("ES_FORGOT_PASSWORD_DESC", "Enter your registered mobile number and city to reset your password.")}</p>
       </div>
-      <FormComposer
-        onSubmit={onForgotPassword}
-        noBoxShadow
-        inline
-        submitInForm
-        config={config}
-        label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
-        onSecondayActionClick={navigateToLogin}
-        heading={propsConfig.texts.header}
-        description={propsConfig.texts.description}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ maxWidth: "408px", margin: "auto" }}
-        className="employeeForgotPassword"
-      >
-        <Header />
-      </FormComposer>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
 
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
-
-        </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+      <form onSubmit={onForgotPassword} className="login-form-body">
+        {/* City Selection */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_COMMON_CITY", "City")}</label>
+          <div className="city-selection">
+            <span className="login-input-icon" aria-hidden="true">
+              <img src={"/upyog-ui/images/search.svg"} alt="search icon" />
+            </span>
+            <Dropdown
+              className="city-selection-dropdown"
+              selected={selectedCity}
+              select={(city) => {
+                setSelectedCity(city);
+                setEmp({ ...emp, city });
+              }}
+              option={cities}
+              optionKey="i18nKey"
+              t={t}
+              placeholder={getLocalized("SEARCH_YOUR_CITY", "Search your city...")}
+            />
           </div>
-      </div>
-    </Background>
+        </div>
+
+        {/* Mobile Number */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_COMMON_MOBILE_NUMBER", "Mobile Number")}</label>
+          <div className="login-input-wrap">
+            <input
+              type="tel"
+              name="mobileNumber"
+              autoComplete="tel"
+              inputMode="numeric"
+              maxLength={10}
+              value={mobileNumber}
+              placeholder={getLocalized("ENTER_MOBILE_NUMBER", "Enter Mobile Number")}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                setMobileNumber(value);
+                setEmp({ ...emp, mobileNumber: value });
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="login-actions">
+          <button type="submit" className="login-primary-button" disabled={!selectedCity || !isMobileValid}>
+            {getLocalized(propsConfig?.texts?.submitButtonLabel, "Continue")}
+          </button>
+
+          <div className="login-divider">OR</div>
+
+          <button type="button" className="login-secondary-button" onClick={navigateToLogin}>
+            <span className="login-secondary-button__content">
+              {getLocalized("CORE_COMMON_BACK_TO_LOGIN", "Back to Login")}
+            </span>
+          </button>
+        </div>
+
+        <p className="login-security">
+          <span className="login-security-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </span>
+          <span>{getLocalized("CORE_LOGIN_SECURITY_MSG", "Secure and encrypted official login portal")}</span>
+        </p>
+      </form>
+      {footer}
+    </div>
   );
 };
 

@@ -176,7 +176,7 @@ public class SalaryBillRegisterAction extends BaseFormAction {
                 "EGF",
                 "salaryBillDefaultPurposeId");
         final String cBillDefaulPurposeId = defaultConfigValuesByModuleAndKey.get(0).getValue();
-        final List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy(new StringBuilder("FROM CChartOfAccounts WHERE purposeid in (?) and isactiveforposting = true")
+        final List<CChartOfAccounts> salaryPayableCoa = persistenceService.findAllBy(new StringBuilder("FROM CChartOfAccounts WHERE purposeId in (?) and isActiveForPosting = true")
                 .append(" and classification=4").toString(), cBillDefaulPurposeId);
         
         for (final CChartOfAccounts chartOfAccounts : salaryPayableCoa) {

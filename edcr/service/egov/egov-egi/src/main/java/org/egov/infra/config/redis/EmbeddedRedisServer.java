@@ -69,23 +69,30 @@ public class EmbeddedRedisServer implements InitializingBean, DisposableBean, Be
     private RedisServer redisServer;
 
     @Override
-    public void afterPropertiesSet() {
-        try {
+    public void afterPropertiesSet() throws Exception {
+        /*
+         * NOTE:
+         * We are intentionally not using try-catch here.
+         *
+         * Reason:
+         * - This method is part of Spring's InitializingBean lifecycle.
+         * - If Redis fails to start (e.g., port already in use), we want the application
+         *   to fail fast during startup instead of silently continuing.
+         * - Earlier, exceptions were caught and only logged, which caused the application
+         *   to start successfully even when Redis was not running, leading to runtime failures.
+         *
+         * By allowing the exception to propagate:
+         * - Spring will stop application startup immediately.
+         * - The root cause becomes visible and easier to debug.
+         */
             redisServer = new RedisServer(Protocol.DEFAULT_PORT);
             redisServer.start();
-        } catch (IOException | URISyntaxException e) {
-            LOG.error("Error occurred when starting redis server", e);
-        }
     }
 
     @Override
     public void destroy() {
-            try {
                 if (redisServer != null)
                     redisServer.stop();
-            } catch (InterruptedException e) {
-                LOG.error("Error occurred when stoping redis server", e);
-            }
     }
 
     @Override

@@ -50,12 +50,12 @@ package org.egov.commons.dao;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.utils.DateUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -72,9 +72,10 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     }
 
     @Override
+    // Replaced removed setEntity and setDate methods with setParameter for Hibernate 6 query parameter binding
     public List<Installment> getInsatllmentByModule(final Module module) {
         final Query qry = getCurrentSession().createQuery("from Installment I where I.module=:module order by installmentYear desc");
-        qry.setEntity("module", module);
+        qry.setParameter("module", module);
 
         return qry.list();
     }
@@ -83,8 +84,8 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     public List getInsatllmentByModule(final Module module, final Date year) {
         final Query qry = getCurrentSession()
                 .createQuery("from Installment I where I.module=:module and I.installmentYear=:year");
-        qry.setEntity("module", module);
-        qry.setDate("year", year);
+        qry.setParameter("module", module);
+        qry.setParameter("year", year);
 
         return qry.list();
     }
@@ -93,9 +94,9 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     public Installment getInsatllmentByModule(final Module module, final Date year, final Integer installmentNumber) {
         final Query qry = getCurrentSession().createQuery(
                 "from Installment I where I.module=:module and I.installmentYear=:year and I.installmentNumber =:instNum");
-        qry.setEntity("module", module);
-        qry.setDate("year", year);
-        qry.setInteger("instNum", installmentNumber);
+        qry.setParameter("module", module);
+        qry.setParameter("year", year);
+        qry.setParameter("instNum", installmentNumber);
 
         return (Installment) qry.uniqueResult();
     }
@@ -104,9 +105,9 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     public Installment getInsatllmentByModuleForGivenDate(final Module module, final Date installmentDate) {
         final Query qry = getCurrentSession()
                 .createQuery("from Installment I where I.module=:module and (I.fromDate <= :fromYear and I.toDate >=:toYear)");
-        qry.setEntity("module", module);
-        qry.setDate("fromYear", installmentDate);
-        qry.setDate("toYear", installmentDate);
+        qry.setParameter("module", module);
+        qry.setParameter("fromYear", installmentDate);
+        qry.setParameter("toYear", installmentDate);
 
         return (Installment) qry.uniqueResult();
 
@@ -117,10 +118,10 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
                                                                       final Module mod) {
         final Query qry = getCurrentSession().createQuery(
                 "from org.egov.commons.Installment inst where  inst.toDate >= :dateToCompare and inst.toDate < :dateToComparemax   and inst.module=:module");
-        qry.setDate("dateToCompare", dateToCompare);
-        qry.setEntity("module", mod);
+        qry.setParameter("dateToCompare", dateToCompare);
+        qry.setParameter("module", mod);
         final Date dateToComparemax = DateUtils.add(dateToCompare, Calendar.MONTH, noOfMonths);
-        qry.setDate("dateToComparemax", dateToComparemax);
+        qry.setParameter("dateToComparemax", dateToComparemax);
 
         return qry.list();
     }
@@ -130,10 +131,10 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
                                                                             final String installmentType) {
         final Query qry = getCurrentSession().createQuery(
                 "from Installment I where I.module=:module and (I.fromDate <= :fromYear and I.toDate >=:toYear) and I.installmentType = :installmentType");
-        qry.setEntity("module", module);
-        qry.setDate("fromYear", installmentDate);
-        qry.setDate("toYear", installmentDate);
-        qry.setString("installmentType", installmentType);
+        qry.setParameter("module", module);
+        qry.setParameter("fromYear", installmentDate);
+        qry.setParameter("toYear", installmentDate);
+        qry.setParameter("installmentType", installmentType);
         return (Installment) qry.uniqueResult();
     }
     
@@ -142,10 +143,10 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
             final String installmentType) {
         final Query qry = getCurrentSession().createQuery(
                 "from Installment I where I.module=:module and I.toDate >=:fromDate and I.toDate<=:tillDate and I.installmentType = :installmentType");
-        qry.setEntity("module", module);
-        qry.setDate("fromDate", installmentDate);
-        qry.setDate("tillDate", new Date());
-        qry.setString("installmentType", installmentType);
+        qry.setParameter("module", module);
+        qry.setParameter("fromDate", installmentDate);
+        qry.setParameter("tillDate", new Date());
+        qry.setParameter("installmentType", installmentType);
         return qry.list();
     }
     
@@ -154,10 +155,10 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
             final Date fromDate, final Date toDate, final String installmentType) {
         final Query qry = getCurrentSession().createQuery(
                 "from Installment I where I.module=:module and I.toDate >=:fromDate and I.toDate<=:tillDate and I.installmentType = :installmentType");
-        qry.setEntity("module", module);
-        qry.setDate("fromDate", fromDate);
-        qry.setDate("tillDate", toDate);
-        qry.setString("installmentType", installmentType);
+        qry.setParameter("module", module);
+        qry.setParameter("fromDate", fromDate);
+        qry.setParameter("tillDate", toDate);
+        qry.setParameter("installmentType", installmentType);
         return qry.list();
     }
     
@@ -166,10 +167,10 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
             final Date fromDate, final Date currentDate, final String installmentType) {
         final Query qry = getCurrentSession().createQuery(
                 "from Installment I where I.module=:module and I.toDate >=:fromDate and I.fromDate<=:tillDate and I.installmentType = :installmentType");
-        qry.setEntity("module", module);
-        qry.setDate("fromDate", fromDate);
-        qry.setDate("tillDate", currentDate);
-        qry.setString("installmentType", installmentType);
+        qry.setParameter("module", module);
+        qry.setParameter("fromDate", fromDate);
+        qry.setParameter("tillDate", currentDate);
+        qry.setParameter("installmentType", installmentType);
         return qry.list();
     }
 
@@ -178,8 +179,8 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     public List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallmentToFetch) {
         final Query qry = getCurrentSession()
                 .createQuery("from Installment I where I.module=:module and I.installmentYear<=:installmentYear order by installmentYear desc");
-        qry.setEntity("module", module);
-        qry.setDate("installmentYear", toInstallmentDate);
+        qry.setParameter("module", module);
+        qry.setParameter("installmentYear", toInstallmentDate);
         qry.setMaxResults(noOfInstallmentToFetch);
         return qry.list();
     }
@@ -189,8 +190,8 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         final Query qry = getCurrentSession().createQuery(" select inst  from Installment inst,CFinancialYear finYear where inst.module=:module and inst.fromDate >= (select fromDate from Installment "
                 +" where module=:module and ((cast(:currDate as date)) between fromDate and toDate)) and cast(inst.toDate as date) <= cast(finYear.endingDate as date) "
                +"  and now() between finYear.startingDate and finYear.endingDate order by inst.fromDate");
-        qry.setLong("module", module.getId());
-        qry.setDate("currDate", currDate);
+        qry.setParameter("module", module.getId());
+        qry.setParameter("currDate", currDate);
         return qry.list();
     }
     
@@ -198,16 +199,16 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
 
     @Override
     public Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber) {
-        return (Installment)getCurrentSession()
-                .createQuery("from Installment I where I.module=:module and I.installmentNumber =:installmentNumber").
-                        setEntity("module", module).setInteger("installmentNumber", installmentNumber).uniqueResult();
+        return (Installment) getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.installmentNumber =:installmentNumber", Installment.class)
+                .setParameter("module", module).setParameter("installmentNumber", installmentNumber).uniqueResult();
     }
 
     @Override
     public Installment getInsatllmentByModuleAndDescription(Module module, String description) {
-        return (Installment)getCurrentSession()
-                .createQuery("from Installment I where I.module=:module and I.description =:description").
-                        setEntity("module", module).setString("description", description).uniqueResult();
+        return (Installment) getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.description =:description", Installment.class)
+                .setParameter("module", module).setParameter("description", description).uniqueResult();
     }
 
     public Installment findById(final int i, final boolean b) {
@@ -218,8 +219,8 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(final Module module, final Date installmentDate, final int noOfInstallmentToFetch) {
         final Query qry = getCurrentSession()
                 .createQuery("from Installment I where I.module=:module and I.toDate< :installmentDate order by fromDate desc");
-        qry.setEntity("module", module);
-        qry.setDate("installmentDate", installmentDate);
+        qry.setParameter("module", module);
+        qry.setParameter("installmentDate", installmentDate);
         qry.setMaxResults(noOfInstallmentToFetch);
         return qry.list();
     }
@@ -231,8 +232,8 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         final Query qry = getCurrentSession()
                 .createQuery(
                         "from Installment I where I.module=:module and I.fromDate>= :installmentDate order by fromDate desc");
-        qry.setEntity("module", module);
-        qry.setDate("installmentDate", date);
+        qry.setParameter("module", module);
+        qry.setParameter("installmentDate", date);
 
         return qry.list();
 
@@ -245,8 +246,8 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         final Query qry = getCurrentSession()
                 .createQuery(
                         "from Installment I where I.module=:module and extract(year from I.installmentYear)=:year order by installment_year desc");
-        qry.setEntity("module", module);
-        qry.setInteger("year", year);
+        qry.setParameter("module", module);
+        qry.setParameter("year", year);
 
         return qry.list();
 

@@ -55,6 +55,9 @@
             <column name="ID" precision="22" scale="0" />
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
             <param name="sequence_name">seq_fundsource</param>
+                <!-- Hibernate 6 migration:
+             Keep sequence allocation consistent with Fundsource.java -->
+                <param name="increment_size">1</param>
             </generator>
         </id>
         <many-to-one name="fundSourceId" class="org.egov.commons.Fundsource" fetch="select">

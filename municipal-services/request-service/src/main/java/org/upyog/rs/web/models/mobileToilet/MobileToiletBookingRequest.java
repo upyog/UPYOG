@@ -1,4 +1,4 @@
-package org.upyog.rs.web.models.mobileToilet;
+package org.upyog.rs.web.models.mobileToilet; // NOSONAR java:S120 - package name kept to preserve imports/API // NOSONAR
 
 
 import jakarta.validation.Valid;
@@ -28,6 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 
+@SuppressWarnings("java:S120")
 public class MobileToiletBookingRequest {
 	
 	@Valid
