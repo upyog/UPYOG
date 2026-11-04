@@ -111,9 +111,9 @@ public class ICICIGateway implements Gateway {
             log.info("ICICI request : {}", request);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
-
+            log.info("ICICI INITIATE_SALE_URL: {}", INITIATE_SALE_URL);
             ResponseEntity<Map> response = restTemplate.exchange(INITIATE_SALE_URL, HttpMethod.POST, entity, Map.class);
-
+            log.info("ICICI Response: {}", response);
             Map<String, Object> responseBody = response.getBody();
 
             log.info("ICICI initiate sale response : {}", responseBody);
