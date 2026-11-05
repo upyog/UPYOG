@@ -48,7 +48,6 @@
 
 
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ include file="account-details-header-style.jsp"%>
 <%@ page language="java"%>
 <html>
 
