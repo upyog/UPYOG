@@ -49,7 +49,6 @@
 
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ include file="account-details-header-style.jsp"%>
 <style>
   :focus { outline: 1px solid rgba(81, 203, 238, 1);
   box-shadow: 0 0 5px rgba(81, 203, 238, 1); }
