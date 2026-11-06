@@ -40,6 +40,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -113,6 +115,18 @@ public class EgovUserApplication {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    // v2 bulk-create dedicated pool for parallel BCrypt hashing.
+    // Runs alongside v1 code paths without touching them.
+    @Bean(name = "bcryptPool")
+    public ExecutorService bcryptPool(
+            @Value("${egov.user.bulk.bcrypt.threads:4}") int threads) {
+        return Executors.newFixedThreadPool(threads, r -> {
+            Thread t = new Thread(r, "bcrypt-worker");
+            t.setDaemon(true);
+            return t;
+        });
     }
 
     // REPLACE DEPRECATED TOKEN STORE WITH REDIS CONFIGURATION:
