@@ -37,6 +37,11 @@ public class UserSearchCriteria {
     private Boolean excludeAddressDetails = false; // This fields is added to exclude address details from user search response V2
     private String addressId; // This field is added to search user with particular address using addressId
     private String addressStatus; // This field is used to search address with particular status
+    
+    // Bulk criteria — when non-empty, produce SQL "IN (...)" and take
+    // precedence over the scalar userName/mobileNumber counterparts.
+    private List<String> userNames;
+    private List<String> mobileNumbers;
 
     public void validate(boolean isInterServiceCall) {
         if (validateIfEmptySearch(isInterServiceCall) || validateIfTenantIdExists(isInterServiceCall)) {
@@ -54,10 +59,12 @@ public class UserSearchCriteria {
          */
         if (isInterServiceCall)
             return isEmpty(userName) && isEmpty(name) && isEmpty(mobileNumber) && isEmpty(emailId) &&
-                    CollectionUtils.isEmpty(uuid) && CollectionUtils.isEmpty(id) && CollectionUtils.isEmpty(roleCodes);
+            		CollectionUtils.isEmpty(uuid) && CollectionUtils.isEmpty(id) && CollectionUtils.isEmpty(roleCodes) &&
+                    CollectionUtils.isEmpty(userNames) && CollectionUtils.isEmpty(mobileNumbers);
         else
             return isEmpty(userName) && isEmpty(name) && isEmpty(mobileNumber) && isEmpty(emailId) &&
-                    CollectionUtils.isEmpty(uuid);
+            		CollectionUtils.isEmpty(uuid) &&
+                    CollectionUtils.isEmpty(userNames) && CollectionUtils.isEmpty(mobileNumbers);
     }
 
     private boolean validateIfTenantIdExists(boolean isInterServiceCall) {
@@ -69,10 +76,12 @@ public class UserSearchCriteria {
          */
         if (isInterServiceCall)
             return (!isEmpty(userName) || !isEmpty(name) || !isEmpty(mobileNumber) ||
-                    !CollectionUtils.isEmpty(roleCodes))
+            		!CollectionUtils.isEmpty(roleCodes) ||
+                    !CollectionUtils.isEmpty(userNames) || !CollectionUtils.isEmpty(mobileNumbers))
                     && isEmpty(tenantId);
         else
-            return (!isEmpty(userName) || !isEmpty(name) || !isEmpty(mobileNumber))
+        	return (!isEmpty(userName) || !isEmpty(name) || !isEmpty(mobileNumber) ||
+                    !CollectionUtils.isEmpty(userNames) || !CollectionUtils.isEmpty(mobileNumbers))
                     && isEmpty(tenantId);
 
     }

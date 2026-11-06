@@ -8,6 +8,8 @@ import java.util.List;
 public class ActionFinderQueryBuilder implements BaseQueryBuilder {
 	private ActionSearchCriteria criteria;
 	private List<String> filters = new ArrayList<>();
+	private List<Object> parameters = new ArrayList<>();
+	
 	private String BASE_QUERY = "SELECT distinct a.id AS a_id, a.name AS a_name, a.url AS "
 			+ "a_url, a.servicecode AS a_servicecode, a.queryparams AS a_queryparams, a.parentmodule AS a_parentmodule, a.displayname AS a_displayname, a.enabled AS a_enabled, "
 			+ " a.createdby AS a_createdby, a.createddate AS a_createddate, a.lastmodifiedby"
@@ -25,10 +27,16 @@ public class ActionFinderQueryBuilder implements BaseQueryBuilder {
 		String filterQuery = filters.isEmpty() ? "" : " WHERE " + String.join(" AND ", filters);
 		return BASE_QUERY + filterQuery + " ORDER BY a.name";
 	}
+	
+	@Override
+	public Object[] getParameters() {
+		return parameters.toArray();
+	}
 
 	private void filterTenantId() {
 		if (shouldFilterTenantId()) {
-			filters.add(String.format("ra.tenantid = '%s'", criteria.getTenantId()));
+			filters.add("ra.tenantid = ?");
+			parameters.add(criteria.getTenantId());
 		}
 	}
 
@@ -42,11 +50,12 @@ public class ActionFinderQueryBuilder implements BaseQueryBuilder {
 
 	private void filterRoleCodes() {
 		if (shouldFilterRoleCodes()) {
-			List<String> sqlStringifiedCodes = new ArrayList<>();
+			List<String> placeholders = new ArrayList<>();
 			for (String roleName : criteria.getRoleCodes()) {
-				sqlStringifiedCodes.add(String.format("'%s'", roleName));
+				placeholders.add("?");
+				parameters.add(roleName);
 			}
-			filters.add("ra.rolecode in (" + String.join(",", sqlStringifiedCodes) + ")");
+			filters.add("ra.rolecode in (" + String.join(",", placeholders) + ")");
 		}
 	}
 }

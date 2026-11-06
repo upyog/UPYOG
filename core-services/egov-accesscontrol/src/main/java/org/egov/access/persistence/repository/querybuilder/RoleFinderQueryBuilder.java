@@ -8,6 +8,8 @@ import java.util.List;
 public class RoleFinderQueryBuilder implements BaseQueryBuilder {
 	private RoleSearchCriteria criteria;
 	private List<String> filters = new ArrayList<>();
+	private List<Object> parameters = new ArrayList<>();
+	
 	private String BASE_QUERY = "SELECT r.name as r_name,r.code as r_code, r.description as r_description from eg_ms_role r";
 
 	public RoleFinderQueryBuilder(RoleSearchCriteria criteria) {
@@ -20,6 +22,11 @@ public class RoleFinderQueryBuilder implements BaseQueryBuilder {
 		String filterQuery = shouldFilter() ? " WHERE " + String.join(" AND ", filters) : "";
 		return BASE_QUERY + filterQuery + " ORDER BY r_name";
 	}
+	
+	@Override
+	public Object[] getParameters() {
+		return parameters.toArray();
+	}
 
 	private boolean shouldFilter() {
 		return !filters.isEmpty();
@@ -31,11 +38,12 @@ public class RoleFinderQueryBuilder implements BaseQueryBuilder {
 
 	private void filterRoleCodes() {
 		if (shouldFilterCodes()) {
-			List<String> sqlStringifiedCodes = new ArrayList<>();
+			List<String> placeholders = new ArrayList<>();
 			for (String roleName : criteria.getCodes()) {
-				sqlStringifiedCodes.add(String.format("'%s'", roleName));
+				placeholders.add("?");
+				parameters.add(roleName);
 			}
-			filters.add("r.code in (" + String.join(",", sqlStringifiedCodes) + ")");
+			filters.add("r.code in (" + String.join(",", placeholders) + ")");
 		}
 	}
 }
