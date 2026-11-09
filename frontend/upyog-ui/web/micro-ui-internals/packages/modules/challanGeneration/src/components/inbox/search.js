@@ -67,8 +67,17 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className={`${isInboxPage ? "cg-result-margin-left" : ""}`}>
-          <div className="search-complaint-container">
+        <div className={`challan-search-card ${isInboxPage ? "cg-result-margin-left" : ""}`}>
+          <div className="search-complaint-container challan-search-container">
+            {type === "desktop" && !mobileView && (
+              <div className="challan-search-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>{t("ES_COMMON_SEARCH_BY")}</span>
+              </div>
+            )}
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
                 <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
@@ -77,12 +86,12 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "") + " cg-grid-full"}>
+            <div className={`complaint-input-container challan-search-row ${!isInboxPage ? "for-search" : ""}`}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
-                  <div key={input.name} className="input-fields">
-                    <span className={"mobile-input"}>
+                  <div key={input.name} className="input-fields challan-search-field">
+                    <span className="mobile-input challan-search-field-inner">
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
                       {!input.type ? (
                         <Controller
@@ -108,17 +117,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   </div>
                 ))}
 
-              {isInboxPage && (
-                <div className="search-action-wrapper cg-width-100">
-                  <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />
-                  <span className="clear-search cg-padding-top-9">{clearAll()}</span>
-                </div>
-              )}
-
-              {type === "desktop" && !mobileView && !isInboxPage && (
-                <div className="search-action-wrapper">
-                  <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />
-                  <div className="cg-clear-right">{clearAll()}</div>
+              {!mobileView && (
+                <div className="search-action-wrapper challan-search-actions-inline">
+                  <SubmitBar className="submit-bar-search challan-search-submit" label={t("ES_COMMON_SEARCH")} submit />
+                  <span className="clear-search challan-search-clear">{clearAll()}</span>
                 </div>
               )}
             </div>

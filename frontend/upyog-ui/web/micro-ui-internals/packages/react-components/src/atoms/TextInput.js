@@ -16,9 +16,12 @@ const TextInput = (props) => {
     setDate(getDDMMYYYY(value));
   };
 
+  const safeStyle = typeof props?.style === "object" && props?.style !== null ? props?.style : undefined;
+  const safeTextInputStyle = typeof props?.textInputStyle === "object" && props?.textInputStyle !== null ? { ...props.textInputStyle } : {};
+
   return (
     <React.Fragment>
-      <div className={`text-input ${user_type === "employee" ? "" :"text-input-width"} ${props.className}`} style={props?.textInputStyle ? { ...props.textInputStyle} : {}}>
+      <div className={`text-input ${user_type === "employee" ? "" :"text-input-width"} ${props.className}`} style={safeTextInputStyle}>
         {props.isMandatory ? (
           <input
             type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
@@ -36,7 +39,7 @@ const TextInput = (props) => {
             }}
             ref={props.inputRef}
             value={props.value}
-            style={props?.style}
+            style={safeStyle}
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}
@@ -69,7 +72,7 @@ const TextInput = (props) => {
             }}
             ref={props.inputRef}
             value={props.value}
-            style={props?.style}
+            style={safeStyle}
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}

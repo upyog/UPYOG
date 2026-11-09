@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
+    "@nudmcdgnpm/digit-ui-module-reports": "1.0.0",
     "date-fns": "2.28.0",
     "lodash": "4.17.21",
     "prop-types": "^15.8.1",

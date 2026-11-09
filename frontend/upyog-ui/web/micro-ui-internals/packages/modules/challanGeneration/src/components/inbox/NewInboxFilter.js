@@ -53,7 +53,7 @@ const Filter = ({ searchParams, onFilterChange, onRefresh, defaultSearchParams, 
   return (
     <React.Fragment>
       <div className="filter">
-        <div className="filter-card">
+        <div className="filter-card challan-filter-card">
           <div className="heading cg-align-center">
             <div className="filter-label cg-filter-label-flex">
               <span>
@@ -133,7 +133,7 @@ const Filter = ({ searchParams, onFilterChange, onRefresh, defaultSearchParams, 
               />
             </div>
 
-            <div>
+            <div className="challan-filter-submit-wrap">
               <SubmitBar
                 disabled={_.isEqual(_searchParams, searchParams)}
                 onSubmit={() => onFilterChange(_searchParams)}

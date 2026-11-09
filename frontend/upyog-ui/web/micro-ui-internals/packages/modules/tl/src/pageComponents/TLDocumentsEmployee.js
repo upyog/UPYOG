@@ -139,7 +139,7 @@ function SelectDocument({
     if (!isHidden) {
       const isRenewal = window.location.href.includes("renew-application-details");
       if (!isRenewal) {
-        if (!uploadedFile || !selectedDocument?.documentType) {
+        if ((!uploadedFile || !selectedDocument?.documentType) && config?.isMandatory) {
           addError();
         } else if (uploadedFile && selectedDocument?.documentType) {
           removeError();

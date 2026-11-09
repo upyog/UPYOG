@@ -12,13 +12,16 @@ const MobileNumber = (props) => {
     props?.onChange?.(val);
   };
 
+  const safeStyle = typeof props?.style === "object" && props?.style !== null ? props?.style : undefined;
+  const safeLabelStyle = typeof props?.labelStyle === "object" && props?.labelStyle !== null ? props?.labelStyle : undefined;
+
   return (
     <React.Fragment>
-      <div className={`field-container ${props.className || ""}`} style={props?.style}>
+      <div className={`field-container ${props.className || ""}`} style={safeStyle}>
         {props.componentInFront ? (
           typeof props.componentInFront === "string" ? (
             <span
-              style={props.labelStyle}
+              style={safeLabelStyle}
               className={`${user_type ? "employee-card-input employee-card-input--front" : "citizen-card-input citizen-card-input--front"}`}
             >
               {props.componentInFront}
@@ -28,7 +31,7 @@ const MobileNumber = (props) => {
           )
         ) : !props.hideSpan ? (
           <span
-            style={props.labelStyle}
+            style={safeLabelStyle}
             className={`${user_type ? "employee-card-input employee-card-input--front" : "citizen-card-input citizen-card-input--front"}`}
           >
             +91
