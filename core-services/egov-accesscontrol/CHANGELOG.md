@@ -3,6 +3,10 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 2.9.0-SNAPSHOT - 2026-11-09
+- **Security:** Fixed SQL injection in action search, role search and action validation.
+  All filter values (tenantId, role codes, role names, action URL) are now bound parameters.
+
 ## 1.1.4 - 2023-02-06
 - Transition from 1.1.4-beta version to 1.1.4 version
 
