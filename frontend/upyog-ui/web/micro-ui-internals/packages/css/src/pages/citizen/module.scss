@@ -7278,26 +7278,38 @@
   flex-wrap: wrap;
 }
 
+.employee-select-wrap .options-card.dss-custom-date-range-wrapper,
+.options-card.dss-custom-date-range-wrapper,
 .dss-custom-date-range-wrapper {
-  overflow: visible;
-  width: unset;
-  max-width: unset;
+  overflow: visible !important;
+  width: auto !important;
+  min-width: 580px !important;
+  max-width: fit-content !important;
+  max-height: 550px !important;
+  z-index: 1001 !important;
+  box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
 }
 
-.dss-custom-date-range-wrapper-2 {
-  width: 110px;
-}
 
 .dss-custom-date-range-wrapper-3 {
-  height: 30px;
+  height: 38px;
   line-height: 30px;
   color: #7d888d;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
 }
 
 .dss-custom-date-range-wrapper-4 {
   border-radius: 4px;
   box-shadow: 0 1px 2px 0 rgba(35, 57, 66, 0.21);
   border: none;
+  flex: 1;
+  margin: 0 4px;
+  text-align: center;
+  font-weight: 500;
+  color: #0b4b66;
 }
 
 .dss-custom-date-range-wrapper-5 {
@@ -7305,8 +7317,11 @@
 }
 
 .dss-custom-date-range-spacing {
-  height: 30px;
-  padding-top: 10;
+  height: 36px;
+  padding-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .dss-custom-pie-chart-flex-container {
@@ -7876,6 +7891,7 @@
 
 .chb-date-range-filter-wrapper {
   position: relative;
+
 }
 
 .chb-date-range-filter-clickable {
@@ -7883,7 +7899,7 @@
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  width: 50%;
+  width: 50% !important;
 }
 
 .chb-date-range-filter-wrapper-2 {
@@ -11294,7 +11310,7 @@
 
 .gc-application-details-flex-row {
   z-index: 10;
-  display: flex;
+
   flex-direction: row-reverse;
   align-items: center;
   margin-top: -45px;
@@ -12610,15 +12626,31 @@
   margin: 10px;
   line-height: 50px;
   text-align: center;
-  border: 1px solid;
+  border: 1px solid #d6d5d5;
   cursor: pointer;
   border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #f1f1f1;
+    border-color: #0b4b66;
+  }
 }
 
 .dss-range-box--selected {
-  background-color: rgb(61, 145, 255);
-  color: black;
+  background-color: #0b4b66 !important;
+  color: #ffffff !important;
+  border-color: #0b4b66 !important;
   font-weight: bold;
+
+  &:hover {
+    background-color: #08384d !important;
+    color: #ffffff !important;
+  }
 }
 
 .dss-range-box--unselected {

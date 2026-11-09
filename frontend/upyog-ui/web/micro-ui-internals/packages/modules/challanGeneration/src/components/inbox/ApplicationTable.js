@@ -23,27 +23,31 @@ const ApplicationTable = ({
   pageSizeLimit,
   sortParams,
   totalRecords,
-  isPaginationRequired
+  isPaginationRequired,
+  className,
 }) => {
   return (
-    <Table
-      t={t}
-      data={data}
-      currentPage={currentPage}
-      columns={columns}
-      getCellProps={getCellProps}
-      onNextPage={onNextPage}
-      onPrevPage={onPrevPage}
-      onLastPage={onLastPage}
-      onFirstPage={onFirstPage}
-      pageSizeLimit={pageSizeLimit}
-      disableSort={disableSort}
-      onPageSizeChange={onPageSizeChange}
-      onSort={onSort}
-      sortParams={sortParams}
-      totalRecords={totalRecords}
-      isPaginationRequired={isPaginationRequired}
-    />
+    <div className={`challan-table-container ${className || ""}`}>
+      <Table
+        t={t}
+        data={data}
+        currentPage={currentPage}
+        columns={columns}
+        getCellProps={getCellProps}
+        onNextPage={onNextPage}
+        onPrevPage={onPrevPage}
+        onLastPage={onLastPage}
+        onFirstPage={onFirstPage}
+        pageSizeLimit={pageSizeLimit}
+        disableSort={disableSort}
+        onPageSizeChange={onPageSizeChange}
+        onSort={onSort}
+        sortParams={sortParams}
+        totalRecords={totalRecords}
+        isPaginationRequired={isPaginationRequired}
+        className={className}
+      />
+    </div>
   );
 };
 

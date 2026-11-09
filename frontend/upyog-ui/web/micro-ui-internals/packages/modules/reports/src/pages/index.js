@@ -3,6 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 import Report from "./Report";
+import EnhancedReport from "../components/EnhancedReport";
 const EmployeeApp = ({ path, url, userType }) => {
     const { t } = useTranslation();
     const location = useLocation();
@@ -18,7 +19,10 @@ const EmployeeApp = ({ path, url, userType }) => {
                     / <span>{t("reports")}</span>
                 </p>
                 <Routes>
-                    <Route path={`/search/:moduleName/:reportName`} element={<PrivateRoute><Report /></PrivateRoute>} />
+                    <Route path={`/search/:moduleName/:reportName/*`} element={<PrivateRoute><EnhancedReport parentRoute={path} /></PrivateRoute>} />
+                    <Route path={`/search/:moduleName/:reportName`} element={<PrivateRoute><EnhancedReport parentRoute={path} /></PrivateRoute>} />
+                    <Route path={`/:moduleName/:reportName/*`} element={<PrivateRoute><EnhancedReport parentRoute={path} /></PrivateRoute>} />
+                    <Route path={`/:moduleName/:reportName`} element={<PrivateRoute><EnhancedReport parentRoute={path} /></PrivateRoute>} />
                 </Routes>
             </div>
         </React.Fragment>

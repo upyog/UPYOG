@@ -63,7 +63,7 @@ const FormComposer = (props) => {
 
   useEffect(() => {
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState);
-  }, [formData]);
+  }, [formData, errors]);
 
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;

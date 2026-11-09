@@ -41,6 +41,12 @@ const MonoUIRedirect = () => {
   return <Loader />;
 };
 
+const ReportRoute = ({ parentRoute }) => {
+  const EnhancedReportComponent = Digit.ComponentRegistryService.getComponent("EnhancedReport");
+  if (!EnhancedReportComponent) return <Loader />;
+  return <EnhancedReportComponent parentRoute={parentRoute} />;
+};
+
 export const AppModules = ({ stateCode, userType, modules, appTenants, emp, setEmp }) => {
   const ComponentProvider = Digit.Contexts.ComponentProvider;
   const { path } = Digit.Hooks.useModuleBasePath();
@@ -91,6 +97,12 @@ return (
           />
         </>
       )}
+      <Route path="report/:moduleName/:reportName/*" element={<ReportRoute parentRoute={path} />} />
+      <Route path="report/:moduleName/:reportName" element={<ReportRoute parentRoute={path} />} />
+      <Route path="reports/search/:moduleName/:reportName/*" element={<ReportRoute parentRoute={path} />} />
+      <Route path="reports/search/:moduleName/:reportName" element={<ReportRoute parentRoute={path} />} />
+      <Route path="reports/:moduleName/:reportName/*" element={<ReportRoute parentRoute={path} />} />
+      <Route path="reports/:moduleName/:reportName" element={<ReportRoute parentRoute={path} />} />
       <Route path="integration/dss/home" element={<Navigate to="/upyog-ui/employee/dss/landing/home" replace />} />
       <Route path="integration/dss/NURT_DASHBOARD" element={<Navigate to="/upyog-ui/employee/dss/landing/NURT_DASHBOARD" replace />} />
       <Route path="integration/dss/*" element={<DSSIntegrationRedirect />} />

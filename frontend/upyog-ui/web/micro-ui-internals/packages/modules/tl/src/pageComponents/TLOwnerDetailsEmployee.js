@@ -161,7 +161,7 @@ const OwnerForm = _props => {
       setError(config.key, {
         type: errors
       });
-    } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+    } else if (!Object.keys(errors).length && formState.errors[config.key]) {
       clearErrors(config.key);
     }
   }, [errors]);
@@ -433,7 +433,7 @@ const OwnerForm = _props => {
                             field.onBlur(e);
                           }}
                           disable={isSameAsPropertyOwner}
-                          style={isMulitpleOwners ? { background: "#FAFAFA" } : ""}
+                          style={isMulitpleOwners ? { background: "#FAFAFA" } : {}}
                         />
                       )}
                     />
@@ -464,7 +464,7 @@ const OwnerForm = _props => {
                           onBlur={field.onBlur}
                           disable={isSameAsPropertyOwner}
                           errorStyle={localFormState.touchedFields?.mobileNumber && errors?.mobileNumber?.message ? true : false}
-                          style={isMulitpleOwners ? { background: "#FAFAFA" } : ""}
+                          style={isMulitpleOwners ? { background: "#FAFAFA" } : {}}
                         />
                       )}
                     />
@@ -585,7 +585,7 @@ const OwnerForm = _props => {
                           labelStyle={{ marginTop: "unset" }}
                           onBlur={field.onBlur}
                           disable={isSameAsPropertyOwner}
-                          style={isMulitpleOwners ? { background: "#FAFAFA" } : ""}
+                          style={isMulitpleOwners ? { background: "#FAFAFA" } : {}}
                         />
                       )}
                     />
@@ -640,7 +640,7 @@ const OwnerForm = _props => {
                           }}
                           onBlur={field.onBlur}
                           disable={isSameAsPropertyOwner}
-                          style={isMulitpleOwners ? { background: "#FAFAFA" } : ""}
+                          style={isMulitpleOwners ? { background: "#FAFAFA" } : {}}
                         />
                       )}
                     />

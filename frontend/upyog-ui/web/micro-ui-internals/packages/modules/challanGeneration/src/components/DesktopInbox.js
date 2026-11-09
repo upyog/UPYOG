@@ -55,11 +55,11 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
       Header: t("UC_CHALLAN_NO"),
       Cell: ({ row }) => {
         return (
-          <div>
-            <span className="link">
-              <Link to={`${props.parentRoute}/application/${row.original?.challanNo}/${tenantId}`}>{row.original?.["challanNo"]}</Link>
-            </span>
-          </div>
+          <span className="challan-id-link">
+            <Link to={`${props.parentRoute}/application/${row.original?.challanNo}/${tenantId}`}>
+              {row.original?.["challanNo"]}
+            </Link>
+          </span>
         );
       },
       mobileCell: (original) => GetMobCell(original?.["challanNo"]),
@@ -67,54 +67,72 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
     {
       Header: t("UC_COMMON_TABLE_COL_PAYEE_NAME"),
       Cell: ({ row }) => {
-        return GetCell(`${row.original?.["name"]}`);
+        return <span className="challan-cell-payee">{row.original?.["name"] || "—"}</span>;
       },
       mobileCell: (original) => GetMobCell(original?.["name"]),
     },
     {
       Header: t("CHALLAN_OFFENCE_TYPE"),
       Cell: ({ row }) => {
-        return GetCell(`${row.original?.["offenceName"]}`);
+        return <span className="challan-cell-offence">{row.original?.["offenceName"] || "—"}</span>;
       },
       mobileCell: (original) => GetMobCell(original?.["offenceName"]),
     },
     {
       Header: t("UC_COMMON_TOTAL_AMT"),
       Cell: ({ row }) => {
-        const total = row.original?.totalAmount || 0;
-        const waiver = row.original?.feeWaiver || 0;
+        const total = Number(row.original?.totalAmount) || 0;
+        const waiver = Number(row.original?.feeWaiver) || 0;
         const finalAmount = total - waiver;
-
-        return GetCell(finalAmount);
+        return <span className="challan-amount-cell">₹ {finalAmount.toLocaleString("en-IN")}</span>;
       },
       mobileCell: (original) => GetMobCell(original?.["totalAmount"]),
     },
     {
       Header: t("UC_COMMON_TABLE_COL_STATUS"),
       Cell: ({ row }) => {
-        const wf = row.original?.challanStatus;
-        return GetCell(t(`${row.original?.challanStatus}`));
+        const status = row.original?.challanStatus || "";
+        const sUpper = status.toUpperCase();
+        let badgeModifier = "challan-status-active";
+        if (sUpper.includes("PAID")) {
+          badgeModifier = "challan-status-paid";
+        } else if (sUpper.includes("CANCEL") || sUpper.includes("EXPIRE") || sUpper.includes("REJECT")) {
+          badgeModifier = "challan-status-cancelled";
+        } else if (sUpper.includes("PENDING") || sUpper.includes("INITIATE")) {
+          badgeModifier = "challan-status-pending";
+        }
+        return <span className={`challan-status-badge ${badgeModifier}`}>{t(status) || status}</span>;
       },
       mobileCell: (original) => GetMobCell(original?.workflowData?.state?.["state"]),
     },
     {
       Header: t("WF_INBOX_HEADER_CREATED_DATE"),
-      Cell: ({ row }) => (row.original?.date ? GetCell(format(new Date(row.original?.date), "dd/MM/yyyy")) : ""),
+      Cell: ({ row }) => (
+        <span className="challan-date-cell">
+          {row.original?.date ? format(new Date(row.original?.date), "dd/MM/yyyy") : "—"}
+        </span>
+      ),
     },
   ];
 
   let result;
-    if (data?.length === 0) {
+  if (data?.length === 0) {
     result = (
-      <Card className="cg-card-margin-top">
-        {/* TODO Change localization key */}
-        {t("CS_MYAPPLICATIONS_NO_APPLICATION")
-          .split("\\n")
-          .map((text, index) => (
-            <p key={index} className="cg-text-center">
-              {text}
-            </p>
-          ))}
+      <Card className="challan-empty-card">
+        <div className="challan-empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <p className="challan-empty-title">{t("CS_MYAPPLICATIONS_NO_APPLICATION")}</p>
+          <p className="challan-empty-desc">{t("UC_NO_CHALLANS_MATCH_FILTER") || "No challans match the current filter or search criteria."}</p>
+          <Link to="/upyog-ui/employee/challangeneration/generate-challan" className="challan-empty-btn">
+            {t("UC_GENERATE_NEW_CHALLAN")}
+          </Link>
+        </div>
       </Card>
     );
   } else if (data?.length > 0) {
@@ -147,11 +165,11 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
   }
 
   return (
-    <div className="inbox-container cg-inbox-container-overflow">
+    <div className="inbox-container challan-inbox-container">
       {!props.isSearch && (
-        <div className="filters-container">
+        <div className="filters-container challan-filters-container">
           <InboxLinks parentRoute={props.parentRoute} businessService={props.businessService} />
-          <div>
+          <div className="challan-filter-box">
             <InboxFilter
               defaultSearchParams={props.defaultSearchParams}
               onFilterChange={props.onFilterChange}
@@ -162,7 +180,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
           </div>
         </div>
       )}
-      <div className="cg-flex-1">
+      <div className="challan-main-container">
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -171,7 +189,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, statutes, ...prop
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className={`result ${!props?.isSearch ? "cg-result-margin-left" : ""} cg-flex-1`}>
+        <div className="challan-table-result">
           {result}
         </div>
       </div>

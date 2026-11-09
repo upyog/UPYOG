@@ -62,16 +62,18 @@ const NewApplication = () => {
   useEffect(() => {
     setMutationHappened(false);
     clearSuccessData();
+    sessionStorage.removeItem("isBillingSlabError");
   }, []);
   function checkforownerPresent(formData) {
-    if (formData?.owners) {
-      formData?.owners?.map(ob => {
-        if (!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code || ob?.additionalDetails) {
-          return true;
+    if (formData?.owners && formData?.owners?.length > 0) {
+      return formData?.owners?.some(ob => {
+        if (formData?.ownershipCategory?.code?.includes("INSTITUTIONAL")) {
+          return !ob?.name || !ob?.mobileNumber || !ob?.instituionName;
         }
+        return !ob?.name || !ob?.mobileNumber || !ob?.fatherOrHusbandName || !(ob?.relationship?.code || ob?.relationship) || !(ob?.gender?.code || ob?.gender);
       });
-      return false;
     }
+    return true;
   }
   const onFormValueChange = (setValue, formData, formState) => {
     if (!_.isEqual(sessionFormData, formData)) {
@@ -80,22 +82,83 @@ const NewApplication = () => {
         ...formData
       });
     }
-    if (checkforownerPresent(formData)) {
+
+    if (sessionStorage.getItem("isBillingSlabError") === "true") {
       setSubmitValve(false);
-    } else if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState.errors["owners"] && Object.entries(formState.errors["owners"].type).filter(ob => ob?.[1].type === "required").length == 0) {
-      if (formData?.ownershipCategory?.code === "INDIVIDUAL.SINGLEOWNER" && formData?.owners.length == 1 || formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" && formData?.owners.length > 1) {
-        setSubmitValve(true);
-      }
-    } else {
-      setSubmitValve(!Object.keys(formState.errors).length);
+      return;
     }
-    if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") {
-      for (let i = 0; i < formData?.owners.length; i++) {
-        if (formData?.owners[i]?.gender.length === 0 || formData?.owners[i]?.fatherOrHusbandName.length === 0 || formData?.owners[i]?.name.length === 0 || formData?.owners[i]?.mobileNumber.length === 0 || formData?.owners[i]?.relationship.length === 0) {
-          setSubmitValve(false);
-        }
+
+    // Check Trade Details
+    const tradeDetail = Array.isArray(formData?.tradedetils) ? formData?.tradedetils?.[0] : formData?.tradedetils;
+    const isTradeDetailValid =
+      !!(tradeDetail?.financialYear &&
+      tradeDetail?.structureType &&
+      tradeDetail?.structureSubType &&
+      tradeDetail?.commencementDate &&
+      tradeDetail?.tradeName);
+
+    // Check Trade Units
+    const tradeUnit = Array.isArray(formData?.tradeUnits) ? formData?.tradeUnits?.[0] : formData?.tradeUnits;
+    const isTradeUnitValid =
+      !!(tradeUnit?.tradeCategory &&
+      tradeUnit?.tradeType &&
+      tradeUnit?.tradeSubType &&
+      (!tradeUnit?.tradeSubType?.uom || (tradeUnit?.uomValue && Number(tradeUnit.uomValue) > 0)));
+
+    // Check Ownership Category
+    const isOwnershipCategoryValid = !!formData?.ownershipCategory?.code;
+
+    // Check Owners
+    const isInstitutional = formData?.ownershipCategory?.code?.includes("INSTITUTIONAL");
+    const isMultipleOwners = formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS";
+    const owners = formData?.owners;
+
+    let isOwnersValid = false;
+    if (owners && owners.length > 0) {
+      if (isMultipleOwners && owners.length < 2) {
+        isOwnersValid = false;
+      } else {
+        isOwnersValid = !owners.some((ob) => {
+          if (isInstitutional) {
+            return !ob?.name || !ob?.mobileNumber || !ob?.instituionName;
+          }
+          return (
+            !ob?.name ||
+            !ob?.mobileNumber ||
+            !ob?.fatherOrHusbandName ||
+            !(ob?.relationship?.code || ob?.relationship) ||
+            !(ob?.gender?.code || ob?.gender)
+          );
+        });
       }
     }
+
+    // Check Address (locality required)
+    const isAddressValid =
+      !!(formData?.address?.locality || formData?.cpt?.details?.address?.locality);
+
+    // Filter blocking errors (excluding optional documents or stale errors where form data is valid)
+    const errors = formState?.errors || {};
+    const blockingErrorKeys = Object.keys(errors).filter((key) => {
+      if (key === "documents") return false;
+      if (key === "mulipleOwnerError") return isMultipleOwners && (!owners || owners.length < 2);
+      if (key === "owners") return !isOwnersValid;
+      if (key === "tradedetils") return !isTradeDetailValid;
+      if (key === "tradeUnits") return !isTradeUnitValid;
+      if (key === "ownershipCategory") return !isOwnershipCategoryValid;
+      if (key === "address") return !isAddressValid;
+      return true;
+    });
+
+    const canSubmitApp =
+      isTradeDetailValid &&
+      isTradeUnitValid &&
+      isOwnershipCategoryValid &&
+      isOwnersValid &&
+      isAddressValid &&
+      blockingErrorKeys.length === 0;
+
+    setSubmitValve(canSubmitApp);
   };
   const onSubmit = data => {
     let isSameAsPropertyOwner = sessionStorage.getItem("isSameAsPropertyOwner");

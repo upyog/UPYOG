@@ -6,14 +6,15 @@ import NewDashBoard from "./pages/NewDashboard";
 import Home from "./pages/Home";
 import { Route, Routes as RouterRoutes, useLocation, Navigate } from "react-router-dom";
 import Overview from "./pages/Overview";
-import {checkCurrentScreen, DSSCard,NDSSCard} from "./components/DSSCard";
+import { checkCurrentScreen, DSSCard, NDSSCard } from "./components/DSSCard";
 import DrillDown from "./pages/DrillDown";
 import FAQsSection from "./pages/FAQs/FAQs"
 import About from "./pages/About";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
 const DssBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
-  const {fromModule=false,title}= Digit.Hooks.useQueryParams();
-  const moduleName=Digit.Utils.dss.getCurrentModuleName();
+  const { fromModule = false, title } = Digit.Hooks.useQueryParams();
+  const moduleName = Digit.Utils.dss.getCurrentModuleName();
 
   const crumbs = [
     {
@@ -27,81 +28,82 @@ const DssBreadCrumb = ({ location }) => {
       show: true,
     },
     {
-      path: fromModule?`/upyog-ui/employee/dss/dashboard/${fromModule}`:`/upyog-ui/employee/dss/dashboard/${Digit.Utils.dss.getCurrentModuleName()}`,
-      content: t(`ES_COMMON_DSS_${Digit.Utils.locale.getTransformedLocale(fromModule?fromModule:moduleName)}`),
+      path: fromModule ? `/upyog-ui/employee/dss/dashboard/${fromModule}` : `/upyog-ui/employee/dss/dashboard/${Digit.Utils.dss.getCurrentModuleName()}`,
+      content: t(`ES_COMMON_DSS_${Digit.Utils.locale.getTransformedLocale(fromModule ? fromModule : moduleName)}`),
       show: location.pathname.includes("dashboard") ? true : false,
     },
     {
       path: "/upyog-ui/employee/dss/drilldown",
-      content:location.pathname.includes("drilldown")?t(title): t("ES_COMMON_DSS_DRILL"),
+      content: location.pathname.includes("drilldown") ? t(title) : t("ES_COMMON_DSS_DRILL"),
       show: location.pathname.includes("drilldown") ? true : false,
     },
     {
       path: "/upyog-ui/employee/dss/national-faqs",
       content: t("ES_COMMON_DSS_FAQS"),
       show: location.pathname.includes("national-faqs") ? true : false,
-    } ,
+    },
     {
       path: "/upyog-ui/employee/dss/national-about",
       content: t("ES_COMMON_DSS_ABOUT"),
       show: location.pathname.includes("national-about") ? true : false,
-    } 
+    }
   ];
 
-  return <BreadCrumb crumbs={crumbs?.filter(ele=>ele.show)} />;
+  return <BreadCrumb crumbs={crumbs?.filter(ele => ele.show)} />;
 };
 
 const Routes = ({ path, stateCode }) => {
   const location = useLocation();
   const isMobile = window.Digit.Utils.browser.isMobile();
 
-  const handClick =(e,module)=>{
-    e.stopPropagation() 
-    module === "home"?window.location.href=`/landing/NURT_DASHBOARD`:window.location.href=`/dashboard/${module}`
+  const handClick = (e, module) => {
+    e.stopPropagation()
+    module === "home" ? window.location.href = `/landing/NURT_DASHBOARD` : window.location.href = `/dashboard/${module}`
   }
   return (
     <div className="dss-module-flex-container">
       <div className={`chart-sidebar dss-chart-sidebar ${!window.location.href.includes("main-dashboard-landing") ? "display-none" : ""}`}>
-        <div  onClick = {(e)=>handClick(e,"home")}className="dashBoard dss-module-clickable">View dashboard</div>
-        <div className="dashBoard dss-module-clickable-2" onClick = {(e)=>handClick(e,"national-propertytax")}>
-Property Tax Assessment and Payment</div>
-        <div className="dashBoard dss-module-clickable-2"  onClick = {(e)=>handClick(e,"national-tradelicense")}>Trade License Issuance and Payment</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-pgr")}>Public Grievance Redressal</div>
-        <div className="dashBoard dss-module-clickable-2" onClick = {(e)=>handClick(e,"national-firenoc")}>No-Objection Certificate Issuance</div>
-        <div className="dashBoard dss-module-clickable-2" onClick = {(e)=>handClick(e,"national-ws")}>Water and Sewerage Connection Management</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"nss-obps")}>Building Plan Approval</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-mcollect")}>
-Miscellaneous Collections</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-fssm")}>
-Desludging Service</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-sv")}>Street Vending</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-ptr")}>Pet Registration</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-ewaste")}>E-Waste Management</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-echallan")}>E-Challan</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-adv")}>Advertisement</div>
-        <div className="dashBoard dss-module-clickable-3" onClick = {(e)=>handClick(e,"national-chb")}>Venue Bookings</div>
+        <div onClick={(e) => handClick(e, "home")} className="dashBoard dss-module-clickable">View dashboard</div>
+        <div className="dashBoard dss-module-clickable-2" onClick={(e) => handClick(e, "national-propertytax")}>
+          Property Tax Assessment and Payment</div>
+        <div className="dashBoard dss-module-clickable-2" onClick={(e) => handClick(e, "national-tradelicense")}>Trade License Issuance and Payment</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-pgr")}>Public Grievance Redressal</div>
+        <div className="dashBoard dss-module-clickable-2" onClick={(e) => handClick(e, "national-firenoc")}>No-Objection Certificate Issuance</div>
+        <div className="dashBoard dss-module-clickable-2" onClick={(e) => handClick(e, "national-ws")}>Water and Sewerage Connection Management</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "nss-obps")}>Building Plan Approval</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-mcollect")}>
+          Miscellaneous Collections</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-fssm")}>
+          Desludging Service</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-sv")}>Street Vending</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-ptr")}>Pet Registration</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-ewaste")}>E-Waste Management</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-echallan")}>E-Challan</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-adv")}>Advertisement</div>
+        <div className="dashBoard dss-module-clickable-3" onClick={(e) => handClick(e, "national-chb")}>Venue Bookings</div>
 
 
 
 
-      
+
       </div>
-      <div className="chart-wrapper" style={isMobile ? {marginTop:"unset"} : {width:"100%"}}>
-      <DssBreadCrumb location={location} />
-      <RouterRoutes>
-        <Route path={`/landing/:moduleCode`} element={<PrivateRoute><Home stateCode={stateCode} /></PrivateRoute>} />
-        <Route path={`/dashboard/:moduleCode`} element={<PrivateRoute><DashBoard stateCode={stateCode} /></PrivateRoute>} />
-        <Route path={`/home`} element={<Navigate to="/upyog-ui/employee/dss/landing/home" replace />} />
-        <Route path={`/NURT_DASHBOARD`} element={<Navigate to="/upyog-ui/employee/dss/landing/NURT_DASHBOARD" replace />} />
-        <Route path={`/main-dashboard-landing`} element={<PrivateRoute><NewDashBoard stateCode={stateCode} /></PrivateRoute>} />
-        <Route path={`/drilldown`} element={<PrivateRoute><DrillDown stateCode={stateCode} /></PrivateRoute>} />
-        <Route key={"national-faq"} path={`/national-faqs`} element={<FAQsSection />} />
-        <Route key={"national-about"} path={`/national-about`} element={<About />} />
-        <Route path={`/:moduleCode`} element={<PrivateRoute><DashBoard stateCode={stateCode} /></PrivateRoute>} />
-      </RouterRoutes>
+      <div className="chart-wrapper" style={isMobile ? { marginTop: "unset" } : { width: "100%" }}>
+        <DssBreadCrumb location={location} />
+        <RouterRoutes>
+          <Route path={`/landing/:moduleCode`} element={<PrivateRoute><Home stateCode={stateCode} /></PrivateRoute>} />
+          <Route path={`/dashboard/:moduleCode`} element={<PrivateRoute><DashBoard stateCode={stateCode} /></PrivateRoute>} />
+          <Route path={`/home`} element={<Navigate to="/upyog-ui/employee/dss/landing/home" replace />} />
+          <Route path={`/NURT_DASHBOARD`} element={<Navigate to="/upyog-ui/employee/dss/landing/NURT_DASHBOARD" replace />} />
+          <Route path={`/main-dashboard-landing`} element={<PrivateRoute><NewDashBoard stateCode={stateCode} /></PrivateRoute>} />
+          <Route path={`/drilldown`} element={<PrivateRoute><DrillDown stateCode={stateCode} /></PrivateRoute>} />
+          <Route key={"national-faq"} path={`/national-faqs`} element={<FAQsSection />} />
+          <Route key={"national-about"} path={`/national-about`} element={<About />} />
+          <Route path={`/MiscDashboardReport/*`} element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-uc" reportName="MiscDashboardReport" /></PrivateRoute>} />
+          <Route path={`/:moduleCode`} element={<PrivateRoute><DashBoard stateCode={stateCode} /></PrivateRoute>} />
+        </RouterRoutes>
+      </div>
     </div>
-    </div>
-   
+
   );
 };
 

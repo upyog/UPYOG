@@ -315,7 +315,7 @@ const OwnerForm1 = _props => {
       setError(config.key, {
         type: errors
       });
-    } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+    } else if (!Object.keys(errors).length && formState.errors[config.key]) {
       clearErrors(config.key);
     }
   }, [errors]);

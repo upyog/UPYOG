@@ -106,7 +106,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
     onSelect(config.key, { city: selectedCity, locality: selectedLocality });
   }
 
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
+  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, getValues, trigger } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
@@ -161,7 +161,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
       if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) {
         setError(config.key, { type: errors });
       }
-      else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
+      else if (!Object.keys(errors).length && formState.errors[config.key]) {
         clearErrors(config.key);
       }
     }

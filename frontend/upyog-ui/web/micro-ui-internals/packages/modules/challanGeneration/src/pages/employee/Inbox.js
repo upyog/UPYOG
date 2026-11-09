@@ -136,12 +136,14 @@ const Inbox = ({
     );
   } else {
     return (
-      <div>
+      <div className="challan-inbox-wrapper">
         {isInbox && (
-          <Header>
-            {t("ES_COMMON_INBOX")}
-            {data?.totalCount ? <p className="inbox-count">{data?.totalCount}</p> : null}
-          </Header>
+          <div className="challan-inbox-header">
+            <Header>
+              {t("ES_COMMON_INBOX")}
+              {data?.totalCount ? <span className="challan-inbox-count-badge">{data?.totalCount}</span> : null}
+            </Header>
+          </div>
         )}
         <DesktopInbox
           businessService={businessService}
