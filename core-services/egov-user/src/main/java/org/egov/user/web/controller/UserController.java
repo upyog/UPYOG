@@ -7,13 +7,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.*;
-
-import org.egov.user.domain.model.User;
-import org.egov.user.domain.model.UserDetail;
-import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
-import org.egov.user.web.contract.UserDetailResponseV2;
 import org.egov.user.web.contract.*;
 import org.egov.user.web.contract.auth.CustomUserDetails;
 import org.json.JSONObject;
@@ -384,6 +379,71 @@ public class UserController {
         userAddressList.add(userAddress);
         ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
         return new AddressResponse(responseInfo, userAddressList);
+    }
+
+    /**
+     * API endpoint to update user details along with address information (V2).
+     * <p>
+     * Process:
+     * - Converts the request DTO into a domain object.
+     * - Determines if mobile validation is required based on headers.
+     * - Calls the service layer to update user details.
+     * - Returns a response containing the updated user details.
+     * <p>
+     * Note: OTP validation is NOT required for this update process.
+     *
+     * @param createUserRequest the request payload containing updated user details
+     * @param headers           HTTP headers for additional request context
+     * @return the response object containing updated user details
+     */
+    @PostMapping("/users/v2/_update")
+    public UpdateResponse updateUserV2(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
+                                                @RequestHeader HttpHeaders headers) {
+
+        User user = createUserRequest.toDomain(false);
+        user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+
+        final User updatedUser = userService.updateUserV2(user, createUserRequest.getRequestInfo());
+
+        return createResponseforUpdate(updatedUser);
+    }
+
+    /**
+     * API endpoint to search users along with their address details (V2).
+     * <p>
+     * Process:
+     * - Converts the search request DTO into a domain object.
+     * - If the request is not an inter-service call:
+     * - Limits the search results if no specific user ID or UUID is provided.
+     * - Calls the service layer to fetch matching users based on search criteria.
+     * - Constructs the response with user details.
+     * <p>
+     * Note: If the `active` field is not specified in the request, both active
+     * and inactive users will be fetched.
+     *
+     * @param request the request payload containing search criteria
+     * @param headers HTTP headers for additional request context
+     * @return the response object containing matching user details
+     */
+    @PostMapping("/users/v2/_search")
+    public UserSearchResponse getUsersV2(@RequestBody UserSearchRequestV2 request, @RequestHeader HttpHeaders headers) {
+
+        UserSearchCriteria searchCriteria = request.toDomain();
+
+        if (!isInterServiceCall(headers)) {
+            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) &&
+                    (searchCriteria.getLimit() > defaultSearchSize || searchCriteria.getLimit() == 0)) {
+                searchCriteria.setLimit(defaultSearchSize);
+            }
+        }
+
+        List<User> userModels = userService.searchUsersV2(searchCriteria, isInterServiceCall(headers), request.getRequestInfo());
+        List<UserSearchResponseContent> userContracts = userModels.stream()
+                .map(UserSearchResponseContent::new)
+                .collect(Collectors.toList());
+        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+
+        return new UserSearchResponse(responseInfo, userContracts);
     }
 
 }
