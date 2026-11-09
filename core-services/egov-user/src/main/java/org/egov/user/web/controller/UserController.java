@@ -7,13 +7,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.*;
-
-import org.egov.user.domain.model.User;
-import org.egov.user.domain.model.UserDetail;
-import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
-import org.egov.user.web.contract.UserDetailResponseV2;
 import org.egov.user.web.contract.*;
 import org.egov.user.web.contract.auth.CustomUserDetails;
 import org.json.JSONObject;
@@ -387,33 +382,6 @@ public class UserController {
     }
 
     /**
-     * API endpoint to create a new user with address details (V2).
-     * <p>
-     * Process:
-     * - Converts the request DTO into a domain object.
-     * - Determines if mobile validation is required based on headers.
-     * - Calls the service layer to create a user.
-     * - Returns a response containing the newly created user.
-     *
-     * @param createUserRequest the request payload containing user details
-     * @param headers           HTTP headers for additional request context
-     * @return the response object containing the created user details
-     */
-    @PostMapping("/users/v2/_create")
-    public Object createUserWithAddress(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
-                                        @RequestHeader HttpHeaders headers) {
-        log.info("Received User Registration Request " + createUserRequest);
-
-        User user = createUserRequest.toDomain(true);
-        user.setMobileValidationMandatory(isMobileValidationRequired(headers));
-        user.setOtpValidationMandatory(false);
-
-        final User newUser = userService.createUserWithAddressV2(user, createUserRequest.getRequestInfo());
-
-        return createResponseV2(newUser);
-    }
-
-    /**
      * API endpoint to update user details along with address information (V2).
      * <p>
      * Process:
@@ -478,9 +446,4 @@ public class UserController {
         return new UserSearchResponse(responseInfo, userContracts);
     }
 
-    private UserDetailResponseV2 createResponseV2(User newUser) {
-        UserRequestV2 userRequestV2 = new UserRequestV2(newUser);
-        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
-        return new UserDetailResponseV2(responseInfo, Collections.singletonList(userRequestV2));
-    }
 }
