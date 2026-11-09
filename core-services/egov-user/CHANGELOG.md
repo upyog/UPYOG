@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 2.9.1-SNAPSHOT -- 2026-11-09
+- **Security:** Fixed SQL injection in fuzzy name search; `name` is now a bound parameter.
+- **Security:** User search `sort` now accepts only allowed columns with `asc`/`desc`.
+  Sensitive columns (password, PAN, Aadhaar, signature, photo) cannot be used for sorting.
+- Invalid `sort` values are ignored and results default to sort by name.
+- Version bumped to 2.9.1-SNAPSHOT.
+
 ## 2.0.0 - 2025-04-20
 - Added 3 Api endpoints V2 for new address fields to create, update and search users
 - Added new address fields in address model and table - address2, houseNumber,houseName, streetName, landmark, locality
@@ -62,3 +69,4 @@ All notable changes to this module will be documented in this file.
 ## 1.0.0
 
 - Base version
+
