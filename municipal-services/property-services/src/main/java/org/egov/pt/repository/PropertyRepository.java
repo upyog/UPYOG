@@ -310,11 +310,16 @@ public class PropertyRepository {
 
 	/** Method to find the total count of applications present in dB */
 	public Integer getTotalApplications(PropertyCriteria criteria) {
-		String query = queryBuilder.getTotalApplicationsCountQueryString(criteria);
-		if (query == null)
-			return 0;
-		Integer count = jdbcTemplate.queryForObject(query, Integer.class);
-		return count;
+
+	    String query = queryBuilder.getTotalApplicationsCountQueryString();
+
+	    Integer count = jdbcTemplate.queryForObject(
+	            query,
+	            new Object[]{criteria.getTenantId()},
+	            Integer.class
+	    );
+
+	    return count != null ? count : 0;
 	}
 
 	private String createQuery(Set<String> ids) {

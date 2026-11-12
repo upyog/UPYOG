@@ -55,66 +55,64 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaxPeriodQueryBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaxPeriodRepository.class);
+	private static final Logger logger = LoggerFactory.getLogger(TaxPeriodRepository.class);
 
-    private static final String BASE_QUERY = "SELECT * FROM EGBS_TAXPERIOD taxperiod ";
+	private static final String BASE_QUERY = "SELECT * FROM EGBS_TAXPERIOD taxperiod ";
 
-    public final String insertQuery = "INSERT INTO public.egbs_taxperiod(id, service, code, fromdate, todate,"
-    		+ " financialyear, createddate,lastmodifieddate, createdby, lastmodifiedby, tenantid, periodcycle)"
-    		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+	public final String insertQuery = "INSERT INTO public.egbs_taxperiod(id, service, code, fromdate, todate,"
+			+ " financialyear, createddate,lastmodifieddate, createdby, lastmodifiedby, tenantid, periodcycle)"
+			+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-    public final String updateQuery="UPDATE public.egbs_taxperiod SET service=?, code=?, fromdate=?, todate=?,"
-    		+ " financialyear=?, lastmodifieddate=?, lastmodifiedby=?, tenantid=?,"
-    		+ " periodcycle=? WHERE tenantid = ? and id = ? ";
-    
-    public final String PERIOD_VALIDATE_QUERY = "SELECT * FROM egbs_taxperiod WHERE tenantId= ? AND service= ?"
-    		+ " AND ( ? BETWEEN fromdate AND todate OR ? BETWEEN fromdate AND todate)"
-    		+ " OR (fromdate BETWEEN ? AND ? OR todate BETWEEN ? AND ?);";
-    
-    public String prepareSearchQuery(final TaxPeriodCriteria taxPeriodCriteria, final List preparedStatementValues) {
-        final StringBuilder selectQuery = new StringBuilder(BASE_QUERY);
-        logger.info("prepareSearchQuery --> ");
-        prepareWhereClause(selectQuery, preparedStatementValues, taxPeriodCriteria);
-        logger.info("Search tax periods query from TaxPeriodQueryBuilder -> " + selectQuery);
-        return selectQuery.toString();
-    }
+	public final String updateQuery = "UPDATE public.egbs_taxperiod SET service=?, code=?, fromdate=?, todate=?,"
+			+ " financialyear=?, lastmodifieddate=?, lastmodifiedby=?, tenantid=?,"
+			+ " periodcycle=? WHERE tenantid = ? and id = ? ";
+
+	public final String PERIOD_VALIDATE_QUERY = "SELECT * FROM egbs_taxperiod WHERE tenantId= ? AND service= ?"
+			+ " AND ( ? BETWEEN fromdate AND todate OR ? BETWEEN fromdate AND todate)"
+			+ " OR (fromdate BETWEEN ? AND ? OR todate BETWEEN ? AND ?);";
+
+	public String prepareSearchQuery(final TaxPeriodCriteria taxPeriodCriteria, final List preparedStatementValues) {
+		final StringBuilder selectQuery = new StringBuilder(BASE_QUERY);
+		logger.info("prepareSearchQuery --> ");
+		prepareWhereClause(selectQuery, preparedStatementValues, taxPeriodCriteria);
+		logger.info("Search tax periods query from TaxPeriodQueryBuilder -> " + selectQuery);
+		return selectQuery.toString();
+	}
 
 	private void prepareWhereClause(final StringBuilder selectQuery, final List<Object> preparedStatementValues,
-                                    final TaxPeriodCriteria taxPeriodCriteria) {
+			final TaxPeriodCriteria taxPeriodCriteria) {
 
 		String tenantId = taxPeriodCriteria.getTenantId();
 		selectQuery.append(" WHERE ");
 
-        if (StringUtils.isNotBlank(tenantId)) {
-            selectQuery.append(" taxperiod.tenantId = ? ");
-            preparedStatementValues.add(taxPeriodCriteria.getTenantId());
-        }
+		if (StringUtils.isNotBlank(tenantId)) {
+			selectQuery.append(" taxperiod.tenantId = ? ");
+			preparedStatementValues.add(taxPeriodCriteria.getTenantId());
+		}
 
-        Set<String> service = taxPeriodCriteria.getService(); 
-        if (service != null &&  !service.isEmpty()) {
-            selectQuery.append(" and taxperiod.service IN " + getQueryForCollection(service));
-        }
-        
-        PeriodCycle periodCycle = taxPeriodCriteria.getPeriodCycle();
-        if(periodCycle != null){
-        	 selectQuery.append(" and taxperiod.periodcycle = ? ");
-             preparedStatementValues.add(periodCycle.toString());
-        }
-        
+		Set<String> service = taxPeriodCriteria.getService();
+		if (service != null && !service.isEmpty()) {
+			selectQuery.append(" and taxperiod.service IN " + getQueryForCollection(service,preparedStatementValues));
+		}
+
+		PeriodCycle periodCycle = taxPeriodCriteria.getPeriodCycle();
+		if (periodCycle != null) {
+			selectQuery.append(" and taxperiod.periodcycle = ? ");
+			preparedStatementValues.add(periodCycle.toString());
+		}
+
 		if (taxPeriodCriteria.getFromDate() != null && taxPeriodCriteria.getToDate() != null) {
-			if (service != null && !service.isEmpty() && service.size() == 1 && periodCycle!=null) {
+			if (service != null && !service.isEmpty() && service.size() == 1 && periodCycle != null) {
 				selectQuery.append(
 						" AND (fromdate >=  CASE WHEN ((SELECT fromdate FROM egbs_taxperiod WHERE tenantId =? AND ( ? BETWEEN fromdate AND  todate)  "
-								+ " AND service IN " + getQueryForCollection(service) + " AND periodcycle=?) NOTNULL) "
+								+ " AND service IN " + getQueryForCollection(service,preparedStatementValues) + " AND periodcycle=?) NOTNULL) "
 								+ "THEN "
-								+ "( SELECT fromdate FROM egbs_taxperiod WHERE tenantId =? AND ( ? BETWEEN fromdate AND  todate)" 
-								+ " AND service IN "+ getQueryForCollection(service) + " AND periodcycle=?) "
-								+ "ELSE " 
-								+ "(SELECT min(fromdate) FROM egbs_taxperiod WHERE tenantId =?)"
-								+ " END"
+								+ "( SELECT fromdate FROM egbs_taxperiod WHERE tenantId =? AND ( ? BETWEEN fromdate AND  todate)"
+								+ " AND service IN " + getQueryForCollection(service,preparedStatementValues) + " AND periodcycle=?) " + "ELSE "
+								+ "(SELECT min(fromdate) FROM egbs_taxperiod WHERE tenantId =?)" + " END"
 								+ " AND todate <= ( SELECT todate FROM egbs_taxperiod WHERE tenantId = ? AND (? BETWEEN fromdate AND  todate) "
-								+ " AND service IN " + getQueryForCollection(service) + " AND periodcycle=?))");
-				
+								+ " AND service IN " + getQueryForCollection(service,preparedStatementValues) + " AND periodcycle=?))");
+
 				preparedStatementValues.add(tenantId);
 				preparedStatementValues.add(taxPeriodCriteria.getFromDate());
 				preparedStatementValues.add(periodCycle.toString());
@@ -137,65 +135,98 @@ public class TaxPeriodQueryBuilder {
 			}
 		}
 
-        if (StringUtils.isNotBlank(taxPeriodCriteria.getCode())) {
-            selectQuery.append(" and taxperiod.code = ? ");
-            preparedStatementValues.add(taxPeriodCriteria.getCode());
-        }
-
-        Set<String> ids = taxPeriodCriteria.getId();
-        if (ids != null && !ids.isEmpty())
-            selectQuery.append(" and taxperiod.id IN "+getQueryForCollection(ids));
-        
-        if(taxPeriodCriteria.getDate()!=null){
-        	selectQuery.append(" and taxperiod.fromdate <= ? and taxperiod.todate >= ? ");
-        	preparedStatementValues.add(taxPeriodCriteria.getDate());
-        	preparedStatementValues.add(taxPeriodCriteria.getDate());
-        }
-    }
-
-	public String prepareQueryForValidation(List<TaxPeriod> taxPeriodList, String mode) {
-		
-		String baseQuery = "select exists (select * from egbs_taxperiod taxperiod where ";
-		StringBuilder whereClause = new StringBuilder();
-		Long currDate = new Date().getTime();
-		int count = 0;
-		
-		for (TaxPeriod taxPeriod : taxPeriodList) {
-			
-			whereClause = whereClause.append(" ( ");
-		
-			if (StringUtils.isNotBlank(taxPeriod.getService()))
-				whereClause = whereClause.append(" taxperiod.service = '").append(taxPeriod.getService())
-						.append("' and ");
-			if (StringUtils.isNotBlank(taxPeriod.getCode()))
-				whereClause = whereClause.append(" taxperiod.code = '").append(taxPeriod.getCode()).append("' and ");
-			if ("edit".equalsIgnoreCase(mode))
-				whereClause = whereClause.append(" taxperiod.id != '").append(taxPeriod.getId()).append("' and ");
-			if (StringUtils.isNotBlank(taxPeriod.getTenantId()))
-				whereClause = whereClause.append(" taxperiod.tenantId = '").append(taxPeriod.getTenantId())
-						.append("' and (( ");
-			// from and to dates validation
-			if (StringUtils.isNotBlank(taxPeriod.getFromDate().toString())
-					&& StringUtils.isNotBlank(taxPeriod.getToDate().toString()))
-				whereClause.append(taxPeriod.getFromDate() + " BETWEEN fromdate AND todate OR " + taxPeriod.getToDate()+
-						" BETWEEN fromdate AND todate)" + " OR (fromdate BETWEEN " + taxPeriod.getFromDate() + 
-						" AND "+ taxPeriod.getToDate() + " OR todate BETWEEN " + taxPeriod.getFromDate() + 
-						" AND "+ taxPeriod.getToDate() + ")))");
-			count++;
-			if (taxPeriodList.size() > count)
-				whereClause = whereClause.append(" or ");
+		if (StringUtils.isNotBlank(taxPeriodCriteria.getCode())) {
+			selectQuery.append(" and taxperiod.code = ? ");
+			preparedStatementValues.add(taxPeriodCriteria.getCode());
 		}
-		return baseQuery.concat(whereClause.toString()).concat(" )");
+
+		Set<String> ids = taxPeriodCriteria.getId();
+		if (ids != null && !ids.isEmpty())
+			selectQuery.append(" and taxperiod.id IN " + getQueryForCollection(ids,preparedStatementValues));
+
+		if (taxPeriodCriteria.getDate() != null) {
+			selectQuery.append(" and taxperiod.fromdate <= ? and taxperiod.todate >= ? ");
+			preparedStatementValues.add(taxPeriodCriteria.getDate());
+			preparedStatementValues.add(taxPeriodCriteria.getDate());
+		}
 	}
 
-    private String getQueryForCollection(Set<String> values) {
-        StringBuilder query = new StringBuilder();
-        if (!values.isEmpty()) {
-            String[] list = values.toArray(new String[values.size()]);
-            query.append(" ('"+list[0]+"'");
-            for (int i = 1; i < values.size(); i++)
-                query.append("," + "'"+list[i]+"'");
-        }
-        return query.append(")").toString();
-    }
+	public String prepareQueryForValidation(List<TaxPeriod> taxPeriodList, String mode,
+			List<Object> preparedStatementValues) {
+
+		String baseQuery = "select exists (select * from egbs_taxperiod taxperiod where ";
+
+		StringBuilder whereClause = new StringBuilder();
+
+		int count = 0;
+
+		for (TaxPeriod taxPeriod : taxPeriodList) {
+
+			whereClause.append(" ( ");
+
+			if (StringUtils.isNotBlank(taxPeriod.getService())) {
+				whereClause.append(" taxperiod.service = ? AND ");
+				preparedStatementValues.add(taxPeriod.getService());
+			}
+
+			if (StringUtils.isNotBlank(taxPeriod.getCode())) {
+				whereClause.append(" taxperiod.code = ? AND ");
+				preparedStatementValues.add(taxPeriod.getCode());
+			}
+
+			if ("edit".equalsIgnoreCase(mode)) {
+				whereClause.append(" taxperiod.id != ? AND ");
+				preparedStatementValues.add(taxPeriod.getId());
+			}
+
+			if (StringUtils.isNotBlank(taxPeriod.getTenantId())) {
+				whereClause.append(" taxperiod.tenantId = ? AND ");
+				preparedStatementValues.add(taxPeriod.getTenantId());
+			}
+
+			if (taxPeriod.getFromDate() != null && taxPeriod.getToDate() != null) {
+
+				whereClause.append(" ( ? BETWEEN taxperiod.fromdate AND taxperiod.todate "
+						+ " OR ? BETWEEN taxperiod.fromdate AND taxperiod.todate "
+						+ " OR taxperiod.fromdate BETWEEN ? AND ? " + " OR taxperiod.todate BETWEEN ? AND ? ) ");
+
+				preparedStatementValues.add(taxPeriod.getFromDate());
+				preparedStatementValues.add(taxPeriod.getToDate());
+				preparedStatementValues.add(taxPeriod.getFromDate());
+				preparedStatementValues.add(taxPeriod.getToDate());
+				preparedStatementValues.add(taxPeriod.getFromDate());
+				preparedStatementValues.add(taxPeriod.getToDate());
+			}
+
+			whereClause.append(" ) ");
+
+			count++;
+
+			if (taxPeriodList.size() > count) {
+				whereClause.append(" OR ");
+			}
+		}
+
+		return baseQuery.concat(whereClause.toString()).concat(" )");
+	}
+	
+	
+	private String getQueryForCollection(Set<String> values, List<Object> preparedStatementValues) {
+
+		StringBuilder query = new StringBuilder("(");
+
+		int index = 0;
+
+		for (String value : values) {
+			if (index > 0) {
+				query.append(",");
+			}
+
+			query.append("?");
+			preparedStatementValues.add(value);
+			index++;
+		}
+
+		return query.append(")").toString();
+	}
 }

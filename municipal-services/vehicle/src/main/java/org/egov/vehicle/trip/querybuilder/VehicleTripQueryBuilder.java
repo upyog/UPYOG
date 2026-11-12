@@ -162,9 +162,15 @@ public class VehicleTripQueryBuilder {
 		return builder.toString();
 	}
 
-	public String getTripIdFromReferenceNosQuery(List<String> refernceNos) {
-		return String.format(QUERY_TRIP_FROM_REF, convertListToString(refernceNos));
+	public String getTripIdFromReferenceNosQuery(List<String> referenceNos, List<Object> preparedStmtList) {
+
+		String placeholders = String.join(",", java.util.Collections.nCopies(referenceNos.size(), "?"));
+
+		preparedStmtList.addAll(referenceNos);
+
+		return String.format(QUERY_TRIP_FROM_REF, placeholders);
 	}
+		
 
 	public String getTripDetailSarchQuery(String tripId, List<Object> preparedStmtList) {
 		preparedStmtList.add(tripId);

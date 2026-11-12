@@ -178,9 +178,17 @@ public class NdcQueryBuilder {
 		}
 	}
 
-	public String getExistingUuids(String tableName, List<String> uuids) {
-		return "SELECT uuid FROM " + tableName + " WHERE uuid IN ("
-				+ uuids.stream().map(uuid -> "'" + uuid + "'").collect(Collectors.joining(",")) + ")";
+	public String getExistingUuids(String tableName, List<String> uuids, List<Object> preparedStmtList) {
+
+		if (uuids == null || uuids.isEmpty()) {
+			return null;
+		}
+
+		String placeholders = String.join(",", Collections.nCopies(uuids.size(), "?"));
+
+		preparedStmtList.addAll(uuids);
+
+		return "SELECT uuid FROM " + tableName + " WHERE uuid IN (" + placeholders + ")";
 	}
 
 	public String checkApplicationExists() {
