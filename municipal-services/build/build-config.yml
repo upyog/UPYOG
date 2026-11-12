@@ -14,21 +14,7 @@ config:
         image-name: "egov-user-event"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "egov-user-event/src/main/resources/db"
-        image-name: "egov-user-event-db"
-
-  - name: "builds/upyog/municipal-services/works-management-calculator"
-    build:
-      - work-dir: "municipal-services/works-management-calculator"
-        image-name: "works-management-calculator"
-        dockerfile: "build/maven/Dockerfile
-
-  - name: "builds/upyog/municipal-services/works-management-service"
-    build:
-      - work-dir: "municipal-services/works-management-service"
-        image-name: "works-management-service"
-        dockerfile: "build/maven/Dockerfile"
-      - work-dir: "municipal-services/works-management-service/src/main/resources/db"
-        image-name: "works-management-service-db"      
+        image-name: "egov-user-event-db"      
 
   - name: "builds/municipal-services/pt-calculator-v2"
     build:
@@ -607,3 +593,18 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/ndc-calculator/src/main/resources/db"
         image-name: "ndc-calculator-db" 
+
+
+  - name: "builds/upyog/municipal-services/works-management-calculator"
+    build:
+      - work-dir: "municipal-services/works-management-calculator"
+        image-name: "works-management-calculator"
+        dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/upyog/municipal-services/works-management-service"
+    build:
+      - work-dir: "municipal-services/works-management-service"
+        image-name: "works-management-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/works-management-service/src/main/resources/db"
+        image-name: "works-management-service-db"       
