@@ -16,13 +16,13 @@ config:
       - work-dir: "egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"
 
-  - name: "builds/municipal-services/works-management-calculator"
+  - name: "builds/upyog/municipal-services/works-management-calculator"
     build:
       - work-dir: "municipal-services/works-management-calculator"
         image-name: "works-management-calculator"
         dockerfile: "build/maven/Dockerfile
 
-  - name: "builds/municipal-services/works-management-service"
+  - name: "builds/upyog/municipal-services/works-management-service"
     build:
       - work-dir: "municipal-services/works-management-service"
         image-name: "works-management-service"
