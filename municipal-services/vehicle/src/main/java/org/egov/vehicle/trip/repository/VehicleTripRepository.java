@@ -101,15 +101,20 @@ public class VehicleTripRepository {
 
 	public List<String> getTripFromRefrences(List<String> refernceNos) {
 
-		List<String> ids = null;
-		String query = queryBuilder.getTripIdFromReferenceNosQuery(refernceNos);
-		try {
-			ids = jdbcTemplate.queryForList(query, String.class);
-		} catch (Exception e) {
-			throw new CustomException("INVALID_TRIP_FROM_REFERENCES", "INVALID_TRIP_FROM_REFERENCES");
+		if (refernceNos == null || refernceNos.isEmpty()) {
+			return new ArrayList<>();
 		}
 
-		return ids;
+		List<Object> preparedStmtList = new ArrayList<>();
+
+		String query = queryBuilder.getTripIdFromReferenceNosQuery(refernceNos, preparedStmtList);
+
+		try {
+			return jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
+		} catch (Exception e) {
+			log.error("Error while fetching trip IDs from references", e);
+			throw new CustomException("INVALID_TRIP_FROM_REFERENCES", "INVALID_TRIP_FROM_REFERENCES");
+		}
 	}
 
 	public List<String> fetchVehicleTripIds(@Valid VehicleTripSearchCriteria criteria) {

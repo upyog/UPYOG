@@ -1,17 +1,19 @@
 package org.egov.ndc.repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.ndc.repository.builder.NdcQueryBuilder;
 import org.egov.ndc.repository.rowmapper.NdcRowMapper;
 import org.egov.ndc.web.model.ndc.Application;
 import org.egov.ndc.web.model.ndc.NdcApplicationSearchCriteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
@@ -28,8 +30,20 @@ public class NDCRepository {
 	}
 
 	public Set<String> getExistingUuids(String tableName, List<String> uuids) {
-		String sql = queryBuilder.getExistingUuids(tableName, uuids);
-		return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("uuid")).stream().collect(Collectors.toSet());
+
+		List<Object> preparedStmtList = new ArrayList<>();
+
+		String sql = queryBuilder.getExistingUuids(tableName, uuids, preparedStmtList);
+
+		if (sql == null) {
+			return Collections.emptySet();
+		}
+
+		return jdbcTemplate.query(sql, ps -> {
+			for (int i = 0; i < preparedStmtList.size(); i++) {
+				ps.setObject(i + 1, preparedStmtList.get(i));
+			}
+		}, (rs, rowNum) -> rs.getString("uuid")).stream().collect(Collectors.toSet());
 	}
 
 	public boolean checkApplicationExists(String uuid) {

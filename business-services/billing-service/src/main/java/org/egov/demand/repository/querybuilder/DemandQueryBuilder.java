@@ -54,11 +54,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class DemandQueryBuilder {
-	
 
 	public static final String PAYMENT_BACKUPDATE_AUDIT_INSERT_QUERY = "INSERT INTO egbs_payment_backupdate_audit (paymentid, isbackupdatesuccess, isreceiptcancellation, errorMessage)"
 			+ " VALUES (?,?,?,?);";
-	
+
 	public static final String PAYMENT_BACKUPDATE_AUDIT_SEARCH_QUERY = "SELECT paymentid FROM egbs_payment_backupdate_audit where paymentid=? AND isbackupdatesuccess=? AND isreceiptcancellation=?;";
 
 	public static final String BASE_DEMAND_QUERY = "SELECT dmd.id AS did,dmd.consumercode AS dconsumercode,"
@@ -74,8 +73,9 @@ public class DemandQueryBuilder {
 			+ "dmdl.taxamount AS dltaxamount,dmdl.collectionamount AS dlcollectionamount,"
 			+ "dmdl.createdby AS dlcreatedby,dmdl.lastModifiedby AS dllastModifiedby,"
 			+ "dmdl.createdtime AS dlcreatedtime,dmdl.lastModifiedtime AS dllastModifiedtime,"
-			+ "dmdl.tenantid AS dltenantid,dmdl.additionaldetails as detailadditionaldetails " + "FROM egbs_demand_v1 dmd "
-			+ "INNER JOIN egbs_demanddetail_v1 dmdl ON dmd.id=dmdl.demandid " + "AND dmd.tenantid=dmdl.tenantid WHERE ";
+			+ "dmdl.tenantid AS dltenantid,dmdl.additionaldetails as detailadditionaldetails "
+			+ "FROM egbs_demand_v1 dmd " + "INNER JOIN egbs_demanddetail_v1 dmdl ON dmd.id=dmdl.demandid "
+			+ "AND dmd.tenantid=dmdl.tenantid WHERE ";
 
 	public static final String BASE_DEMAND_DETAIL_QUERY = "SELECT "
 			+ "demanddetail.id AS dlid,demanddetail.demandid AS dldemandid,demanddetail.taxheadcode AS dltaxheadcode,"
@@ -83,8 +83,8 @@ public class DemandQueryBuilder {
 			+ "demanddetail.createdby AS dlcreatedby,demanddetail.lastModifiedby AS dllastModifiedby,"
 			+ "demanddetail.createdtime AS dlcreatedtime,demanddetail.lastModifiedtime AS dllastModifiedtime,"
 			+ "demanddetail.tenantid AS dltenantid " + " FROM egbs_demanddetail_v1 demanddetail "
-					+ "INNER JOIN egbs_demand demand ON demanddetail.demandid=demand.id AND "
-					+ "demanddetail.tenantid=demand.tenantid WHERE ";
+			+ "INNER JOIN egbs_demand demand ON demanddetail.demandid=demand.id AND "
+			+ "demanddetail.tenantid=demand.tenantid WHERE ";
 
 	public static final String DEMAND_QUERY_ORDER_BY_CLAUSE = "dmd.taxperiodfrom";
 
@@ -97,13 +97,13 @@ public class DemandQueryBuilder {
 
 	public static final String DEMAND_DETAIL_INSERT_QUERY = "INSERT INTO egbs_demanddetail_v1 "
 			+ "(id,demandid,taxHeadCode,taxamount,collectionamount,"
-			+ "createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid,additionaldetails)" 
+			+ "createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid,additionaldetails)"
 			+ " VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 
 	public static final String DEMAND_UPDATE_QUERY = "UPDATE egbs_demand_v1 SET " + "payer=?,taxPeriodFrom=?,"
 			+ "taxPeriodTo=?,minimumAmountPayable=?,lastModifiedby=?," + "lastModifiedtime=?,tenantid=?,"
 			+ " status=?,additionaldetails=?,billexpirytime=?,ispaymentcompleted=?, fixedBillExpiryDate=? WHERE id=? AND tenantid=?;";
-	
+
 	public static final String DEMAND_DETAIL_UPDATE_QUERY = "UPDATE egbs_demanddetail_v1 SET taxamount=?,collectionamount=?,"
 			+ "lastModifiedby=?,lastModifiedtime=?, additionaldetails=? WHERE id=? AND demandid=? AND tenantid=?;";
 
@@ -114,44 +114,50 @@ public class DemandQueryBuilder {
 
 	public static final String DEMAND_DETAIL_AUDIT_INSERT_QUERY = "INSERT INTO egbs_demanddetail_v1_audit "
 			+ "(demanddetailid,demandid,taxHeadCode,taxamount,collectionamount,"
-			+ "createdby,createdtime,tenantid,additionaldetails,id)" 
-			+ " VALUES (?,?,?,?,?,?,?,?,?,?);";
-	
-	public static final String DEMAND_UPDATE_CONSUMERCODE_QUERY="UPDATE egbs_demand_v1 SET consumercode=?, lastmodifiedby=?, lastmodifiedtime=? "
+			+ "createdby,createdtime,tenantid,additionaldetails,id)" + " VALUES (?,?,?,?,?,?,?,?,?,?);";
+
+	public static final String DEMAND_UPDATE_CONSUMERCODE_QUERY = "UPDATE egbs_demand_v1 SET consumercode=?, lastmodifiedby=?, lastmodifiedtime=? "
 			+ " WHERE tenantid=? AND id IN (";
+
 	
 
-	public String getDemandQueryForConsumerCodes(Map<String,Set<String>> businessConsumercodeMap,List<Object> preparedStmtList, String tenantId){
-		
+	public String getDemandQueryForConsumerCodes(Map<String, Set<String>> businessConsumercodeMap,
+			List<Object> preparedStmtList, String tenantId) {
+
 		StringBuilder query = new StringBuilder(BASE_DEMAND_QUERY);
-		
+
 		query.append("dmd.tenantid=? ");
 		preparedStmtList.add(tenantId);
-		
+
 		query.append("AND dmd.status='ACTIVE' ");
-		
+
 		boolean orFlag = false;
+
 		for (Entry<String, Set<String>> consumerCode : businessConsumercodeMap.entrySet()) {
-			
+
 			String businessService = consumerCode.getKey();
 			Set<String> consumerCodes = consumerCode.getValue();
-			
-			if(consumerCodes!=null && !consumerCodes.isEmpty()){
-				
-				if(orFlag)
-					query.append("OR");
+
+			if (consumerCodes != null && !consumerCodes.isEmpty()) {
+
+				if (orFlag)
+					query.append(" OR ");
 				else
-					query.append("AND");
-				
-				query.append(" dmd.businessservice='"+businessService+"' AND dmd.consumercode IN ("
-						+getIdQueryForStrings(consumerCodes)+")");
+					query.append(" AND ");
+
+				query.append(" dmd.businessservice=? AND dmd.consumercode IN (")
+						.append(getIdQueryForStrings(consumerCodes)).append(")");
+
+				// Add values in exactly the same order as SQL placeholders
+				preparedStmtList.add(businessService);
 				addToPreparedStatement(preparedStmtList, consumerCodes);
-				orFlag=true;
+
+				orFlag = true;
 			}
 		}
-		
+
 		return query.toString();
-				}
+	}
 
 	public String getDemandQuery(DemandCriteria demandCriteria, List<Object> preparedStatementValues) {
 
@@ -159,15 +165,14 @@ public class DemandQueryBuilder {
 
 		String tenantId = demandCriteria.getTenantId();
 		String[] tenantIdChunks = tenantId.split("\\.");
-		
-		if(tenantIdChunks.length == 1){
+
+		if (tenantIdChunks.length == 1) {
 			demandQuery.append(" dmd.tenantid LIKE ? ");
 			preparedStatementValues.add(demandCriteria.getTenantId() + '%');
-		}else{
+		} else {
 			demandQuery.append(" dmd.tenantid = ? ");
 			preparedStatementValues.add(demandCriteria.getTenantId());
 		}
-		
 
 		if (demandCriteria.getStatus() != null) {
 
@@ -175,7 +180,7 @@ public class DemandQueryBuilder {
 			demandQuery.append("dmd.status=?");
 			preparedStatementValues.add(demandCriteria.getStatus());
 		}
-		
+
 		if (demandCriteria.getDemandId() != null && !demandCriteria.getDemandId().isEmpty()) {
 			addAndClause(demandQuery);
 			demandQuery.append("dmd.id IN (" + getIdQueryForStrings(demandCriteria.getDemandId()) + ")");
@@ -191,29 +196,28 @@ public class DemandQueryBuilder {
 			demandQuery.append("dmd.businessservice=?");
 			preparedStatementValues.add(demandCriteria.getBusinessService());
 		}
-		
-		if(demandCriteria.getIsPaymentCompleted() != null){
+
+		if (demandCriteria.getIsPaymentCompleted() != null) {
 			addAndClause(demandQuery);
 			demandQuery.append("dmd.ispaymentcompleted = ?");
 			preparedStatementValues.add(demandCriteria.getIsPaymentCompleted());
 		}
-		
+
 		if (demandCriteria.getPeriodFrom() != null) {
 			addAndClause(demandQuery);
 			demandQuery.append("dmd.taxPeriodFrom >= ?");
 			preparedStatementValues.add(demandCriteria.getPeriodFrom());
 		}
-		
-		if(demandCriteria.getPeriodTo() != null){
+
+		if (demandCriteria.getPeriodTo() != null) {
 			addAndClause(demandQuery);
 			demandQuery.append("dmd.taxPeriodTo <= ?");
 			preparedStatementValues.add(demandCriteria.getPeriodTo());
 		}
-		
+
 		if (demandCriteria.getConsumerCode() != null && !demandCriteria.getConsumerCode().isEmpty()) {
 			addAndClause(demandQuery);
-			demandQuery.append("dmd.consumercode IN ("
-			+ getIdQueryForStrings(demandCriteria.getConsumerCode()) + ")");
+			demandQuery.append("dmd.consumercode IN (" + getIdQueryForStrings(demandCriteria.getConsumerCode()) + ")");
 			addToPreparedStatement(preparedStatementValues, demandCriteria.getConsumerCode());
 		}
 
@@ -223,8 +227,8 @@ public class DemandQueryBuilder {
 		log.info("the query String for demand : " + demandQuery.toString());
 		return demandQuery.toString();
 	}
-	
-	private static void addOrderByClause(StringBuilder demandQueryBuilder,String columnName) {
+
+	private static void addOrderByClause(StringBuilder demandQueryBuilder, String columnName) {
 		demandQueryBuilder.append(" ORDER BY " + columnName);
 	}
 
@@ -239,20 +243,22 @@ public class DemandQueryBuilder {
 		queryString.append(" AND ");
 		return true;
 	}
-	
+
 	private static String getIdQueryForStrings(Set<String> idList) {
 
 		StringBuilder builder = new StringBuilder();
 		int length = idList.size();
-		for( int i = 0; i< length; i++){
+		for (int i = 0; i < length; i++) {
 			builder.append(" ? ");
-			if(i != length -1) builder.append(",");
+			if (i != length - 1)
+				builder.append(",");
 		}
 		return builder.toString();
 	}
 
-	private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids)
-	{
-		ids.forEach(id ->{ preparedStmtList.add(id);});
+	private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
+		ids.forEach(id -> {
+			preparedStmtList.add(id);
+		});
 	}
 }

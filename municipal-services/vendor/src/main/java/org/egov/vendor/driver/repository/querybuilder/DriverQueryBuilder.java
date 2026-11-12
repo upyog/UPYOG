@@ -24,7 +24,8 @@ public class DriverQueryBuilder {
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY SORT_BY SORT_ORDER) offset_ FROM " + "({})"
 			+ " result) result_offset " + "limit ? offset ?";
 	private static final String DRIVER_NO_VENDOR_QUERY = " SELECT DISTINCT (driver.id) FROM EG_DRIVER driver LEFT JOIN eg_vendor_driver vendor_driver ON driver.id=vendor_driver.driver_id";
-	private static final String DRIVER_SEQ_MOBILE_NUMBER_QUERY = " SELECT nextval";
+	
+	private static final String DRIVER_SEQ_MOBILE_NUMBER_QUERY = "SELECT nextval(?::regclass)";
 
 	public String getDriverSearchQuery(DriverSearchCriteria criteria, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(QUERY);
@@ -167,9 +168,10 @@ public class DriverQueryBuilder {
 
 	public String getSeqDriverMobileNumber(String seqDriverMobileNumber, List<Object> preparedStmtList) {
 
-		StringBuilder builder = new StringBuilder(DRIVER_SEQ_MOBILE_NUMBER_QUERY);
-		builder.append("('" + seqDriverMobileNumber + "')");
-		return builder.toString();
+		preparedStmtList.add(seqDriverMobileNumber);
+		return DRIVER_SEQ_MOBILE_NUMBER_QUERY;
 	}
+	
+	
 
 }
