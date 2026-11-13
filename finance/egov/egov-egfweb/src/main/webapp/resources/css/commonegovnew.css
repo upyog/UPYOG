@@ -465,3 +465,12 @@ div.commontopbreadc {
 	.bold {
 	font-weight: bold;
 	}
+
+/* Global override: orange YUI DataTable headers should use white text */
+.yui-skin-sam .yui-dt th,
+.yui-skin-sam .yui-dt th a,
+.yui-skin-sam .yui-dt th .yui-dt-liner,
+.yui-skin-sam th.yui-dt-asc .yui-dt-liner,
+.yui-skin-sam th.yui-dt-desc .yui-dt-liner {
+	color: #ffffff !important;
+}
