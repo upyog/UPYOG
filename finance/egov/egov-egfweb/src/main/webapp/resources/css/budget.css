@@ -53,6 +53,11 @@
 	border-right-color: #CCCCCC;
     border-bottom-color: #CCCCCC;
     background-color: #f2851f;
+	color: #FFFFFF;
+}
+
+.page-container .main-content table th.bluebgheadtd a {
+	color: #FFFFFF;
 }
 
 div.topbar {
