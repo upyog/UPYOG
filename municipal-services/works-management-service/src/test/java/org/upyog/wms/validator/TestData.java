@@ -74,7 +74,8 @@ final class TestData {
                 .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder()
                         .purposeCode("DEVELOPMENT_WORK")
                         .startDate(1767225600000L).endDate(1798761600000L)
-                        .typeOfWork("ORIGINAL").workCategory("BUILDINGS").build())))
+                        .typeOfWork("ORIGINAL").workCategory("BUILDINGS")
+                        .components(components).build())))
                 .recommendations(new ArrayList<>(List.of(Recommendation.builder().recommendedBy("MLA").build())))
                 .locations(new ArrayList<>(List.of(Location.builder().stateCode("OD").districtCode("CUTTACK")
                         .mlaConstituency("Cuttack Sadar").build())))
@@ -86,7 +87,6 @@ final class TestData {
                 .fundDetails(new ArrayList<>(List.of(fund("GOVT_GRANT", "CENTRAL_GRANT", "60"),
                         fund("OSR", "PROPERTY_TAX", "40"))))
                 .totalComponents(3)
-                .components(components)
                 .documents(new ArrayList<>(List.of(doc("ACTION_PLAN"), doc("ADMIN_SANCTION"),
                         doc("TECHNICAL_SANCTION"))))
                 .declarationAccepted(true)

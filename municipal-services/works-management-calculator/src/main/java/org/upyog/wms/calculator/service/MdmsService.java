@@ -53,22 +53,26 @@ public class MdmsService {
         MdmsCriteriaReq request = MdmsCriteriaReq.builder()
                 .requestInfo(requestInfo)
                 .mdmsCriteria(MdmsCriteria.builder().tenantId(stateTenant)
-                        .moduleDetails(List.of(ModuleDetail.builder().moduleName(MDMS_MODULE)
-                                .masterDetails(List.of(MasterDetail.builder().name(MASTER_FEE_CONFIG).build(),
-                                        MasterDetail.builder().name(MASTER_FINANCIAL_YEAR).build()))
-                                .build()))
+                        .moduleDetails(List.of(ModuleDetail.builder().moduleName(MDMS_MODULE).masterDetails(List.of(MasterDetail.builder().name(MASTER_FEE_CONFIG).build()))
+                                        .build(),
+                                ModuleDetail.builder()
+                                        .moduleName("egf-master")
+                                        .masterDetails(List.of(MasterDetail.builder()
+                                                .name(MASTER_FINANCIAL_YEAR)
+                                                .build()))
+                                        .build()))
                         .build())
                 .build();
         JsonNode response = serviceRequestRepository.post(config.getMdmsHost() + config.getMdmsSearchPath(), request,
                 JsonNode.class);
-        return response == null ? null : response.path("MdmsRes").path(MDMS_MODULE);
+        return response == null ? null : response.path("MdmsRes");
     }
 
-    static CalculatorMdmsData parse(JsonNode module) {
+    static CalculatorMdmsData parse(JsonNode mdmsRes) {
         List<FeeConfig> fees = new ArrayList<>();
         Map<String, FinancialYearPeriod> years = new LinkedHashMap<>();
-        if (module != null) {
-            module.path(MASTER_FEE_CONFIG).forEach(f -> {
+        if (mdmsRes != null) {
+            mdmsRes.path(MDMS_MODULE).path(MASTER_FEE_CONFIG).forEach(f -> {
                 List<String> sources = new ArrayList<>();
                 f.path("applicableFundSources").forEach(s -> sources.add(s.asText()));
                 fees.add(new FeeConfig(f.path("code").asText(), f.path("businessService").asText(),
@@ -76,10 +80,16 @@ public class MdmsService {
                         decimal(f.get("value")), decimal(f.get("minAmount")), decimal(f.get("maxAmount")),
                         List.copyOf(sources), f.path("active").asBoolean(false)));
             });
-            module.path(MASTER_FINANCIAL_YEAR).forEach(y -> years.put(y.path("code").asText(),
-                    new FinancialYearPeriod(y.path("code").asText(),
-                            y.hasNonNull("startingDate") ? y.get("startingDate").asLong() : null,
-                            y.hasNonNull("endingDate") ? y.get("endingDate").asLong() : null)));
+            mdmsRes.path("egf-master").path(MASTER_FINANCIAL_YEAR).forEach(year -> {
+                if (MDMS_MODULE.equals(year.path("module").asText())
+                        && year.path("active").asBoolean(true)) {
+                    String code = year.path("code").asText();
+                    years.put(code, new FinancialYearPeriod(
+                            code,
+                            year.hasNonNull("startingDate") ? year.get("startingDate").asLong() : null,
+                            year.hasNonNull("endingDate") ? year.get("endingDate").asLong() : null));
+                }
+            });
         }
         return new CalculatorMdmsData(List.copyOf(fees), Map.copyOf(years));
     }

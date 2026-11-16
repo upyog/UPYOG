@@ -42,7 +42,7 @@ public class ActionPlan {
 
     private List<FundDetail> fundDetails;
 
-    private List<Component> components;
+    private List<ProjectDetail> projectDetails;
 
     private AuditDetails auditDetails;
 }

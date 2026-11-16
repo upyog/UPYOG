@@ -20,6 +20,7 @@ import org.upyog.wms.calculator.web.models.FinancialSummary.CategoryBreakup;
 import org.upyog.wms.calculator.web.models.FinancialSummary.ComponentBreakup;
 import org.upyog.wms.calculator.web.models.FinancialSummary.FundBreakup;
 import org.upyog.wms.calculator.web.models.FundDetail;
+import org.upyog.wms.calculator.web.models.ProjectDetail;
 import org.upyog.wms.calculator.web.models.TaxHeadEstimate;
 import org.upyog.wms.calculator.web.models.mdms.FeeConfig;
 
@@ -34,7 +35,7 @@ public class EstimationService {
 
     public FinancialSummary summarize(ActionPlan plan) {
         BigDecimal total = scale(plan.getApprovedAmount());
-        List<Component> active = list(plan.getComponents()).stream()
+        List<Component> active = components(plan).stream()
                 .filter(c -> !Boolean.FALSE.equals(c.getIsActive()) && !COMPONENT_INACTIVE.equals(c.getStatus()))
                 .toList();
 
@@ -143,6 +144,13 @@ public class EstimationService {
 
     private static <T> List<T> list(List<T> items) {
         return items == null ? List.of() : items;
+    }
+
+    private static List<Component> components(ActionPlan plan) {
+        return list(plan.getProjectDetails()).stream()
+                .filter(Objects::nonNull)
+                .flatMap(project -> list(project.getComponents()).stream())
+                .toList();
     }
 
     private static BigDecimal nz(BigDecimal value) {

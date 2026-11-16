@@ -4,6 +4,7 @@ import static org.upyog.wms.constants.ErrorCodes.*;
 import static org.upyog.wms.constants.WmsConstants.USER_TYPE_EMPLOYEE;
 import static org.upyog.wms.util.WmsUtil.isBlank;
 import static org.upyog.wms.util.WmsUtil.nn;
+import static org.upyog.wms.util.WmsUtil.projectComponents;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -88,14 +89,14 @@ public class ActionPlanValidator {
             errors.add(REVISION_NOT_ALLOWED, "projectId", "Project ID cannot be changed in a revision");
         }
         // Components carried into the revision must be components of the published version
-        Set<String> known = nn(published.get().getComponents()).stream()
+        Set<String> known = projectComponents(published.get()).stream()
                 .map(org.upyog.wms.web.models.Component::getComponentNumber)
                 .collect(Collectors.toSet());
-        List<org.upyog.wms.web.models.Component> components = nn(plan.getComponents());
+        List<org.upyog.wms.web.models.Component> components = projectComponents(plan);
         for (int i = 0; i < components.size(); i++) {
             String number = components.get(i).getComponentNumber();
             if (number != null && !known.contains(number)) {
-                errors.add(REVISION_NOT_ALLOWED, "components[" + i + "].componentNumber", "Component " + number
+                errors.add(REVISION_NOT_ALLOWED, "projectDetails[0].components[" + i + "].componentNumber", "Component " + number
                         + " is not part of Action Plan " + plan.getActionPlanNumber()
                         + "; leave the number empty for a new component");
             }
@@ -241,17 +242,18 @@ public class ActionPlanValidator {
         checkIds(plan.getFundDetails(), existing.getFundDetails(), f -> f.getId(), "fundDetails", errors);
         checkIds(plan.getBeneficiaries(), existing.getBeneficiaries(), b -> b.getId(), "beneficiaries", errors);
         checkIds(plan.getDocuments(), existing.getDocuments(), d -> d.getId(), "documents", errors);
-        checkIds(plan.getComponents(), existing.getComponents(), c -> c.getId(), "components", errors);
+        checkIds(projectComponents(plan), projectComponents(existing), c -> c.getId(),
+                "projectDetails[0].components", errors);
 
-        Map<String, org.upyog.wms.web.models.Component> existingComponents = nn(existing.getComponents()).stream()
+        Map<String, org.upyog.wms.web.models.Component> existingComponents = projectComponents(existing).stream()
                 .collect(Collectors.toMap(org.upyog.wms.web.models.Component::getId, Function.identity()));
         Map<String, org.upyog.wms.web.models.Recommendation> existingRecs = nn(existing.getRecommendations())
                 .stream().collect(Collectors.toMap(r -> r.getId(), Function.identity()));
-        List<org.upyog.wms.web.models.Component> components = nn(plan.getComponents());
+        List<org.upyog.wms.web.models.Component> components = projectComponents(plan);
         for (int i = 0; i < components.size(); i++) {
             var c = components.get(i);
             var old = c.getId() == null ? null : existingComponents.get(c.getId());
-            String p = "components[" + i + "].";
+            String p = "projectDetails[0].components[" + i + "].";
             checkIds(c.getFundDetails(), old == null ? null : old.getFundDetails(), f -> f.getId(), p + "fundDetails", errors);
             checkIds(c.getBeneficiaries(), old == null ? null : old.getBeneficiaries(), b -> b.getId(), p + "beneficiaries", errors);
             checkIds(c.getDocuments(), old == null ? null : old.getDocuments(), d -> d.getId(), p + "documents", errors);

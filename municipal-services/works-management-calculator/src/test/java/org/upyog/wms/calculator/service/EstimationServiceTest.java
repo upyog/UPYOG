@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.upyog.wms.calculator.web.models.ActionPlan;
 import org.upyog.wms.calculator.web.models.Component;
 import org.upyog.wms.calculator.web.models.FinancialSummary;
 import org.upyog.wms.calculator.web.models.FundDetail;
+import org.upyog.wms.calculator.web.models.ProjectDetail;
 import org.upyog.wms.calculator.web.models.TaxHeadEstimate;
 import org.upyog.wms.calculator.web.models.mdms.FeeConfig;
 
@@ -32,10 +34,11 @@ class EstimationServiceTest {
         return ActionPlan.builder().tenantId("od.cuttack").applicationNumber("WMS-AP-1")
                 .approvedAmount(new BigDecimal("100")).fundSource("PARTIAL")
                 .fundDetails(List.of(fund("GOVT_GRANT", "CENTRAL_GRANT", "60"), fund("OSR", "PROPERTY_TAX", "40")))
-                .components(List.of(
+                .projectDetails(List.of(ProjectDetail.builder().components(List.of(
                         component("C-1", "MANPOWER", "20", fund("GOVT_GRANT", "CENTRAL_GRANT", "20")),
                         component("C-2", "GOODS", "40", fund("GOVT_GRANT", "CENTRAL_GRANT", "40")),
                         component("C-3", "SERVICES", "40", fund("OSR", "PROPERTY_TAX", "40"))))
+                        .build()))
                 .build();
     }
 
@@ -67,8 +70,9 @@ class EstimationServiceTest {
         ActionPlan plan = frsExample();
         Component removed = component("C-4", "GOODS", "500", fund("GOVT_GRANT", "CENTRAL_GRANT", "500"));
         removed.setStatus("INACTIVE");
-        plan.setComponents(new java.util.ArrayList<>(plan.getComponents()));
-        plan.getComponents().add(removed);
+        ProjectDetail project = plan.getProjectDetails().get(0);
+        project.setComponents(new java.util.ArrayList<>(project.getComponents()));
+        project.getComponents().add(removed);
         assertTrue(service.summarize(plan).balanced());
     }
 

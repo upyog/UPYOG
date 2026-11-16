@@ -4,6 +4,8 @@ import static org.upyog.wms.constants.WmsConstants.COMPONENT_ACTIVE;
 import static org.upyog.wms.constants.WmsConstants.COMPONENT_INACTIVE;
 import static org.upyog.wms.util.WmsUtil.isTrue;
 import static org.upyog.wms.util.WmsUtil.nn;
+import static org.upyog.wms.util.WmsUtil.projectComponents;
+import static org.upyog.wms.util.WmsUtil.setProjectComponents;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -119,7 +121,7 @@ public class EnrichmentService {
             plan.setVersion(1);
             plan.setIsLatestVersion(true);
             plan.setActionPlanNumber(null);
-            nn(plan.getComponents()).forEach(c -> c.setComponentNumber(null));
+            projectComponents(plan).forEach(c -> c.setComponentNumber(null));
         }
 
         // Every row of a new version is a new row: ignore ids sent by the client
@@ -130,8 +132,8 @@ public class EnrichmentService {
         plan.setFundDetails(fresh(plan.getFundDetails(), FUND, ctx));
         plan.setBeneficiaries(fresh(plan.getBeneficiaries(), BENEFICIARY, ctx));
         plan.setDocuments(fresh(plan.getDocuments(), DOCUMENT, ctx));
-        plan.setComponents(fresh(plan.getComponents(), COMPONENT, ctx));
-        plan.getComponents().forEach(c -> freshComponentChildren(c, ctx));
+        setProjectComponents(plan, fresh(projectComponents(plan), COMPONENT, ctx));
+        projectComponents(plan).forEach(c -> freshComponentChildren(c, ctx));
 
         if (published != null) {
             carryRemovedComponents(plan, published, ctx);
@@ -146,9 +148,9 @@ public class EnrichmentService {
 
     /** FR-AP-10: a component dropped in a revision stays in history, marked INACTIVE (never deleted). */
     private void carryRemovedComponents(ActionPlan plan, ActionPlan published, Ctx ctx) {
-        Set<String> kept = plan.getComponents().stream().map(Component::getComponentNumber)
+        Set<String> kept = projectComponents(plan).stream().map(Component::getComponentNumber)
                 .filter(Objects::nonNull).collect(Collectors.toSet());
-        nn(published.getComponents()).stream()
+        projectComponents(published).stream()
                 .filter(c -> COMPONENT_ACTIVE.equals(c.getStatus()) && !kept.contains(c.getComponentNumber()))
                 .map(c -> Component.builder()
                         .id(UUID.randomUUID().toString())
@@ -166,7 +168,7 @@ public class EnrichmentService {
                         .documents(new ArrayList<>())
                         .auditDetails(ctx.fresh())
                         .build())
-                .forEach(plan.getComponents()::add);
+                .forEach(projectComponents(plan)::add);
     }
 
     public void enrichUpdate(ActionPlanRequest request, ActionPlan existing) {
@@ -203,9 +205,9 @@ public class EnrichmentService {
         plan.setBeneficiaries(merge(plan.getBeneficiaries(), existing.getBeneficiaries(), BENEFICIARY, ctx));
         plan.setDocuments(merge(plan.getDocuments(), existing.getDocuments(), DOCUMENT, ctx));
 
-        Map<String, Component> oldComps = byId(existing.getComponents(), Component::getId);
-        plan.setComponents(merge(plan.getComponents(), existing.getComponents(), COMPONENT, ctx));
-        for (Component c : plan.getComponents()) {
+        Map<String, Component> oldComps = byId(projectComponents(existing), Component::getId);
+        setProjectComponents(plan, merge(projectComponents(plan), projectComponents(existing), COMPONENT, ctx));
+        for (Component c : projectComponents(plan)) {
             Component old = oldComps.get(c.getId());
             if (old != null) {
                 c.setComponentNumber(old.getComponentNumber());   // business id never changes
@@ -268,7 +270,7 @@ public class EnrichmentService {
 
     /** One idgen call for all components that do not have a number yet (kept in entry order). */
     private void generateComponentNumbers(RequestInfo requestInfo, ActionPlan plan) {
-        List<Component> missing = plan.getComponents().stream()
+        List<Component> missing = projectComponents(plan).stream()
                 .filter(c -> c.getComponentNumber() == null)
                 .toList();
         Iterator<String> numbers = idGenService.generate(requestInfo, plan.getTenantId(),
@@ -286,7 +288,7 @@ public class EnrichmentService {
             b.setActionPlanId(plan.getId());
             b.setComponentId(null);
         });
-        plan.getComponents().forEach(c -> {
+        projectComponents(plan).forEach(c -> {
             c.getFundDetails().forEach(f -> {
                 f.setActionPlanId(plan.getId());
                 f.setComponentId(c.getId());

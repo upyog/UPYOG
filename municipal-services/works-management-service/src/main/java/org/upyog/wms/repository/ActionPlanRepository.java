@@ -25,6 +25,7 @@ import org.upyog.wms.web.models.FundDetail;
 import org.upyog.wms.web.models.Location;
 import org.upyog.wms.web.models.ProjectDetail;
 import org.upyog.wms.web.models.Recommendation;
+import org.upyog.wms.util.WmsUtil;
 
 /**
  * Read side of the service (writes go through Kafka to egov-persister).
@@ -125,7 +126,7 @@ public class ActionPlanRepository {
                 c.setBeneficiaries(componentBeneficiaries.getOrDefault(c.getId(), List.of()));
                 c.setDocuments(componentDocs.getOrDefault(c.getId(), List.of()));
             });
-            plan.setComponents(comps);
+            WmsUtil.setProjectComponents(plan, comps);
         }
     }
 
