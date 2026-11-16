@@ -3,6 +3,7 @@ package org.upyog.wms.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.upyog.wms.util.WmsUtil.projectComponents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,8 +56,8 @@ class EnrichmentServiceTest {
     private ActionPlan created() {
         ActionPlan plan = ActionPlan.builder().tenantId("od.cuttack").projectId("P1").projectName("Drain")
                 .financialYear("2026-27")
-                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().purposeCode("DEVELOPMENT_WORK").build())))
-                .components(new ArrayList<>(List.of(component("A"), component("B"))))
+                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().purposeCode("DEVELOPMENT_WORK")
+                        .components(new ArrayList<>(List.of(component("A"), component("B")))).build())))
                 .build();
         ActionPlanRequest request = ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(plan).build();
         service.enrichCreate(request, null, 1);
@@ -70,8 +71,8 @@ class EnrichmentServiceTest {
         assertEquals(1, plan.getVersion());
         assertTrue(plan.getIsLatestVersion());
         assertEquals("INITIATE", plan.getWorkflow().getAction());
-        assertEquals(List.of("ID-2", "ID-3"), plan.getComponents().stream().map(Component::getComponentNumber).toList());
-        Component a = plan.getComponents().get(0);
+        assertEquals(List.of("ID-2", "ID-3"), projectComponents(plan).stream().map(Component::getComponentNumber).toList());
+        Component a = projectComponents(plan).get(0);
         assertEquals(a.getId(), a.getFundDetails().get(0).getComponentId());
         assertEquals(plan.getId(), a.getFundDetails().get(0).getActionPlanId());
         assertEquals("ACTIVE", a.getStatus());
@@ -83,8 +84,8 @@ class EnrichmentServiceTest {
     void updateSoftDeletesRemovedRowsAndKeepsBusinessIds() {
         ActionPlan existing = created();
         existing.setStatus("INITIATED");
-        String keptId = existing.getComponents().get(0).getId();
-        String droppedId = existing.getComponents().get(1).getId();
+        String keptId = projectComponents(existing).get(0).getId();
+        String droppedId = projectComponents(existing).get(1).getId();
         String detailId = existing.getProjectDetails().get(0).getId();
 
         Component kept = component("A renamed");
@@ -92,13 +93,13 @@ class EnrichmentServiceTest {
         kept.setComponentNumber("SPOOFED");
         ActionPlan edit = ActionPlan.builder().id(existing.getId()).tenantId("od.cuttack").projectId("P1")
                 .projectName("Drain").financialYear("2026-27")
-                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().purposeCode("OTHERS").build())))
-                .components(new ArrayList<>(List.of(kept, component("C"))))
+                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().purposeCode("OTHERS")
+                        .components(new ArrayList<>(List.of(kept, component("C")))).build())))
                 .build();
         ActionPlanRequest request = ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(edit).build();
         service.enrichUpdate(request, existing);
 
-        List<Component> result = edit.getComponents();
+        List<Component> result = projectComponents(edit);
         assertEquals(3, result.size());
         assertEquals(droppedId, result.get(0).getId());
         assertFalse(result.get(0).getIsActive());
@@ -116,18 +117,21 @@ class EnrichmentServiceTest {
         ActionPlan published = created();
         published.setActionPlanNumber("APN-1");
         Component keep = component("A");
-        keep.setComponentNumber(published.getComponents().get(0).getComponentNumber());
+        keep.setComponentNumber(projectComponents(published).get(0).getComponentNumber());
         ActionPlan revision = ActionPlan.builder().tenantId("od.cuttack").actionPlanNumber("APN-1").projectName("Drain")
-                .financialYear("2026-27").components(new ArrayList<>(List.of(keep))).build();
+                .financialYear("2026-27")
+                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder()
+                        .components(new ArrayList<>(List.of(keep))).build())))
+                .build();
         service.enrichCreate(ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(revision).build(),
                 published, 2);
 
         assertEquals(2, revision.getVersion());
         assertFalse(revision.getIsLatestVersion());
         assertEquals("P1", revision.getProjectId());
-        assertEquals(2, revision.getComponents().size());
-        Component carried = revision.getComponents().get(1);
+        assertEquals(2, projectComponents(revision).size());
+        Component carried = projectComponents(revision).get(1);
         assertEquals("INACTIVE", carried.getStatus());
-        assertEquals(published.getComponents().get(1).getComponentNumber(), carried.getComponentNumber());
+        assertEquals(projectComponents(published).get(1).getComponentNumber(), carried.getComponentNumber());
     }
 }

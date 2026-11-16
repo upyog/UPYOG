@@ -1,12 +1,13 @@
 package org.upyog.wms.web.models;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** Section 1 project details. Kept as a list item on ActionPlan so 1:1 can become 1:many later. */
 @Data
 @Builder
 @NoArgsConstructor
@@ -38,6 +39,9 @@ public class ProjectDetail {
     private Boolean isActive;
 
     private Object additionalDetails;
+
+    @Valid
+    private List<Component> components;
 
     private AuditDetails auditDetails;
 }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.upyog.wms.validator.TestData.TODAY;
 import static org.upyog.wms.validator.TestData.ZONE;
+import static org.upyog.wms.util.WmsUtil.projectComponents;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,8 +38,8 @@ class SubmissionRulesTest {
     @Test
     void componentTotalMustMatchApprovedAmount() {
         ActionPlan plan = TestData.validPlan();
-        plan.getComponents().get(2).setApprovedAmount(new BigDecimal("30"));
-        plan.getComponents().get(2).getFundDetails().get(0).setAmount(new BigDecimal("30"));
+        projectComponents(plan).get(2).setApprovedAmount(new BigDecimal("30"));
+        projectComponents(plan).get(2).getFundDetails().get(0).setAmount(new BigDecimal("30"));
         ValidationErrors errors = run(plan);
         assertTrue(errors.containsRule(ErrorCodes.COMPONENT_TOTAL_MISMATCH), errors.asMap()::toString);
         assertTrue(errors.containsRule(ErrorCodes.FUND_TOTAL_MISMATCH), errors.asMap()::toString);
@@ -48,12 +49,12 @@ class SubmissionRulesTest {
     void underAllocationAllowedWhenFullAllocationIsOff() {
         ActionPlanConfig cfg = new ActionPlanConfig(true, Set.of("GOVT_GRANT", "PARTIAL"), true, false, true, true, 5, null);
         ActionPlan plan = TestData.validPlan();
-        plan.getComponents().get(2).setApprovedAmount(new BigDecimal("30"));
-        plan.getComponents().get(2).getFundDetails().get(0).setAmount(new BigDecimal("30"));
+        projectComponents(plan).get(2).setApprovedAmount(new BigDecimal("30"));
+        projectComponents(plan).get(2).getFundDetails().get(0).setAmount(new BigDecimal("30"));
         assertTrue(run(plan, TestData.mdms(cfg)).isEmpty());
 
-        plan.getComponents().get(2).setApprovedAmount(new BigDecimal("50"));
-        plan.getComponents().get(2).getFundDetails().get(0).setAmount(new BigDecimal("50"));
+        projectComponents(plan).get(2).setApprovedAmount(new BigDecimal("50"));
+        projectComponents(plan).get(2).getFundDetails().get(0).setAmount(new BigDecimal("50"));
         assertTrue(run(plan, TestData.mdms(cfg)).containsRule(ErrorCodes.COMPONENT_OVER_ALLOCATED));
     }
 
@@ -68,7 +69,7 @@ class SubmissionRulesTest {
     @Test
     void osrRowIsRejectedForGovernmentGrantComponent() {
         ActionPlan plan = TestData.validPlan();
-        plan.getComponents().get(0).getFundDetails().get(0).setFundType("OSR");
+        projectComponents(plan).get(0).getFundDetails().get(0).setFundType("OSR");
         ValidationErrors errors = run(plan);
         assertTrue(errors.containsRule(ErrorCodes.FUND_SOURCE_CONFLICT), errors.asMap()::toString);
     }
@@ -78,7 +79,8 @@ class SubmissionRulesTest {
         ActionPlan plan = TestData.validPlan();
         plan.setFundSource("GOVT_GRANT");
         ValidationErrors errors = run(plan);
-        assertTrue(errors.asMap().containsKey(ErrorCodes.FUND_SOURCE_CONFLICT + ":components[2].fundSource"),
+        assertTrue(errors.asMap().containsKey(ErrorCodes.FUND_SOURCE_CONFLICT
+                        + ":projectDetails[0].components[2].fundSource"),
                 errors.asMap()::toString);
     }
 
@@ -130,25 +132,26 @@ class SubmissionRulesTest {
     void zeroAmountAndCountMismatchAreReported() {
         ActionPlan plan = TestData.validPlan();
         plan.setTotalComponents(4);
-        plan.getComponents().get(0).setApprovedAmount(BigDecimal.ZERO);
+        projectComponents(plan).get(0).setApprovedAmount(BigDecimal.ZERO);
         ValidationErrors errors = run(plan);
         assertTrue(errors.containsRule(ErrorCodes.COMPONENT_COUNT_MISMATCH));
-        assertTrue(errors.asMap().containsKey(ErrorCodes.INVALID_AMOUNT + ":components[0].approvedAmount"));
+        assertTrue(errors.asMap().containsKey(ErrorCodes.INVALID_AMOUNT
+                + ":projectDetails[0].components[0].approvedAmount"));
     }
 
     @Test
     void inactiveComponentsAreIgnoredInTotals() {
         ActionPlan plan = TestData.validPlan();
-        plan.getComponents().add(TestData.component("C-9", "Old item", "GOODS", "GOVT_GRANT", "999",
+        projectComponents(plan).add(TestData.component("C-9", "Old item", "GOODS", "GOVT_GRANT", "999",
                 TestData.fund("GOVT_GRANT", "CENTRAL_GRANT", "999")));
-        plan.getComponents().get(3).setStatus("INACTIVE");
+        projectComponents(plan).get(3).setStatus("INACTIVE");
         assertTrue(run(plan).isEmpty());
     }
 
     @Test
     void sameComponentNameIsOnlyAWarning() {
         ActionPlan plan = TestData.validPlan();
-        plan.getComponents().get(1).setComponentName("  manpower   FOR drainage ");
+        projectComponents(plan).get(1).setComponentName("  manpower   FOR drainage ");
         ValidationErrors errors = new ValidationErrors();
         List<ValidationWarning> warnings = new SubmissionRules(TestData.mdms(), ZONE, TODAY).validate(plan, errors);
         assertTrue(errors.isEmpty(), errors.asMap()::toString);

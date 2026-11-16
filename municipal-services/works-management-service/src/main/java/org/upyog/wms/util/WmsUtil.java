@@ -7,6 +7,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.upyog.wms.web.models.ActionPlan;
+import org.upyog.wms.web.models.Component;
+import org.upyog.wms.web.models.ProjectDetail;
 
 /** Small null-safe helpers used across the service. */
 public final class WmsUtil {
@@ -17,6 +20,24 @@ public final class WmsUtil {
     /** Null-safe list: never returns null. */
     public static <T> List<T> nn(List<T> list) {
         return list == null ? List.of() : list;
+    }
+
+    /** Components belong to the plan's single project-detail section. */
+    public static List<Component> projectComponents(ActionPlan plan) {
+        return nn(plan == null ? null : plan.getProjectDetails()).stream()
+                .filter(Objects::nonNull)
+                .map(ProjectDetail::getComponents)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(List::of);
+    }
+
+    /** Replaces the components of the plan's single project-detail section. */
+    public static void setProjectComponents(ActionPlan plan, List<Component> components) {
+        nn(plan == null ? null : plan.getProjectDetails()).stream()
+                .filter(Objects::nonNull)
+                .findFirst()
+                .ifPresent(project -> project.setComponents(components));
     }
 
     public static boolean isBlank(String value) {

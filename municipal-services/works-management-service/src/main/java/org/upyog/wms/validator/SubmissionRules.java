@@ -180,7 +180,7 @@ public final class SubmissionRules {
     private void components(ActionPlan plan, ValidationErrors errors, List<ValidationWarning> warnings) {
         List<Component> active = activeComponents(plan);
         if (active.isEmpty()) {
-            errors.add(REQUIRED, "components", "At least one Component is required");
+            errors.add(REQUIRED, "projectDetails[0].components", "At least one Component is required");
             return;
         }
         if (cfg.enforceComponentCount() && plan.getTotalComponents() != null
@@ -194,7 +194,7 @@ public final class SubmissionRules {
 
         for (int i = 0; i < active.size(); i++) {
             Component c = active.get(i);
-            String p = "components[" + i + "].";
+            String p = "projectDetails[0].components[" + i + "].";
             plainText(c.getComponentName(), true, p + "componentName", "Component Name", errors);
             requiredMaster(c.getCategory(), mdms.componentCategories().keySet(), p + "category", "Category", errors);
             if (!isBlank(c.getSubCategory())) {
@@ -268,11 +268,11 @@ public final class SubmissionRules {
         BigDecimal componentTotal = WmsUtil.sum(active, Component::getApprovedAmount);
         int cmp = componentTotal.compareTo(approved);
         if (cfg.fullAllocationRequired() && cmp != 0) {
-            errors.add(COMPONENT_TOTAL_MISMATCH, "components", "Total of Components Approved Amount ("
+            errors.add(COMPONENT_TOTAL_MISMATCH, "projectDetails[0].components", "Total of Components Approved Amount ("
                     + plain(componentTotal) + ") should match the Approved Project Amount (" + plain(approved)
                     + "). Unallocated balance: " + plain(approved.subtract(componentTotal)));
         } else if (!cfg.fullAllocationRequired() && cmp > 0) {
-            errors.add(COMPONENT_OVER_ALLOCATED, "components", "Total of Components Approved Amount ("
+            errors.add(COMPONENT_OVER_ALLOCATED, "projectDetails[0].components", "Total of Components Approved Amount ("
                     + plain(componentTotal) + ") exceeds the Approved Project Amount (" + plain(approved) + ")");
         }
 
@@ -376,7 +376,7 @@ public final class SubmissionRules {
     }
 
     private static List<Component> activeComponents(ActionPlan plan) {
-        return nn(plan.getComponents()).stream()
+        return WmsUtil.projectComponents(plan).stream()
                 .filter(c -> isLive(c.getIsActive()) && !COMPONENT_INACTIVE.equals(c.getStatus()))
                 .toList();
     }

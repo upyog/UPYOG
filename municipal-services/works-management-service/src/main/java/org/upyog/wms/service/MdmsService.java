@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,10 +37,10 @@ import org.upyog.wms.web.models.mdms.ModuleDetail;
 public class MdmsService {
 
     private static final List<String> MASTERS = List.of(
-            MASTER_FINANCIAL_YEAR, MASTER_PURPOSE, MASTER_TYPE_OF_WORK, MASTER_WORK_CATEGORY,
-            MASTER_RECOMMENDED_BY, MASTER_SCHEME, MASTER_GOVERNMENT_GRANT, MASTER_OWN_SOURCE_REVENUE,
-            MASTER_COMPONENT_CATEGORY, MASTER_DOCUMENT_TYPE, MASTER_APPROVING_DEPARTMENT, MASTER_STATE,
-            MASTER_DISTRICT, MASTER_ACTION_PLAN_CONFIG);
+            MASTER_PURPOSE, MASTER_TYPE_OF_WORK, MASTER_WORK_CATEGORY,
+            MASTER_RECOMMENDED_BY, MASTER_GOVERNMENT_GRANT, MASTER_OWN_SOURCE_REVENUE,
+            MASTER_COMPONENT_CATEGORY, MASTER_DOCUMENT_TYPE, MASTER_APPROVING_DEPARTMENT,
+            MASTER_ACTION_PLAN_CONFIG, MASTER_SCHEME, MASTER_DISTRICT);
 
     private record CacheEntry(MdmsData data, long expiresAt) {
         boolean isValid(long now) {
@@ -66,75 +67,104 @@ public class MdmsService {
                 return entry.data();
             }
         }
-        MdmsData data = parse(fetch(requestInfo, stateTenant));
+        MdmsData data = parse(fetch(requestInfo, stateTenant), stateTenant);
         if (ttlMillis > 0) {
             cache.put(stateTenant, new CacheEntry(data, now + ttlMillis));
         }
         return data;
     }
 
-    /** Lets operations refresh masters without a restart (e.g. from a future admin endpoint). */
     public void evict(String tenantId) {
         cache.remove(WmsUtil.stateLevelTenant(tenantId));
     }
 
     private JsonNode fetch(RequestInfo requestInfo, String stateTenant) {
-        List<MasterDetail> masterDetails = MASTERS.stream()
-                .map(name -> MasterDetail.builder().name(name).build())
-                .toList();
         MdmsCriteriaReq request = MdmsCriteriaReq.builder()
                 .requestInfo(requestInfo)
                 .mdmsCriteria(MdmsCriteria.builder()
                         .tenantId(stateTenant)
-                        .moduleDetails(List.of(ModuleDetail.builder()
-                                .moduleName(MDMS_MODULE)
-                                .masterDetails(masterDetails)
-                                .build()))
+                        .moduleDetails(List.of(
+                                moduleDetail(MDMS_MODULE, MASTERS),
+                                moduleDetail(EGF_MASTER_MODULE, List.of(MASTER_FINANCIAL_YEAR)),
+                                moduleDetail(TENANT_MODULE, List.of(MASTER_TENANTS))))
                         .build())
                 .build();
         JsonNode response = serviceRequestRepository.post(config.getMdmsHost() + config.getMdmsSearchPath(),
                 request, JsonNode.class);
-        JsonNode module = response == null ? null : response.path("MdmsRes").path(MDMS_MODULE);
-        if (module == null || module.isMissingNode() || module.isEmpty()) {
+        JsonNode mdmsRes = response == null ? null : response.path("MdmsRes");
+        JsonNode works = mdmsRes == null ? null : mdmsRes.path(MDMS_MODULE);
+        if (works == null || works.isMissingNode() || works.isEmpty()) {
             throw new CustomException(ErrorCodes.CONFIG_MISSING,
                     "MDMS module " + MDMS_MODULE + " is not configured for tenant " + stateTenant);
         }
-        return module;
+        return mdmsRes;
     }
 
-    MdmsData parse(JsonNode module) {
+    private static ModuleDetail moduleDetail(String moduleName, List<String> masterNames) {
+        return ModuleDetail.builder()
+                .moduleName(moduleName)
+                .masterDetails(masterNames.stream()
+                        .map(name -> MasterDetail.builder().name(name).build())
+                        .toList())
+                .build();
+    }
+
+    MdmsData parse(JsonNode mdmsRes, String stateTenant) {
+        JsonNode works = mdmsRes.path(MDMS_MODULE);
+        JsonNode tenant = mdmsRes.path(TENANT_MODULE);
+
+        Set<String> financialYears = new HashSet<>();
+        active(mdmsRes.path(EGF_MASTER_MODULE).path(MASTER_FINANCIAL_YEAR)).stream()
+                .filter(year -> MDMS_MODULE.equals(year.path("module").asText()))
+                .forEach(year -> financialYears.add(year.path("code").asText()));
+
         Map<String, Set<String>> schemes = new LinkedHashMap<>();
-        active(module.path(MASTER_SCHEME)).forEach(s -> schemes.put(s.path("code").asText(),
-                codes(s.path("subSchemes"))));
+        active(works.path(MASTER_SCHEME))
+                .forEach(scheme -> schemes.put(scheme.path("code").asText(),
+                        codes(scheme.path("subSchemes"))));
 
         Map<String, Set<String>> categories = new LinkedHashMap<>();
-        active(module.path(MASTER_COMPONENT_CATEGORY)).forEach(c -> categories.put(c.path("code").asText(),
-                codes(c.path("subCategories"))));
+        active(works.path(MASTER_COMPONENT_CATEGORY))
+                .forEach(category -> categories.put(category.path("code").asText(),
+                        codes(category.path("subCategories"))));
 
         Map<String, DocumentTypeConfig> documentTypes = new LinkedHashMap<>();
-        active(module.path(MASTER_DOCUMENT_TYPE)).forEach(d -> documentTypes.put(d.path("code").asText(),
-                new DocumentTypeConfig(d.path("code").asText(), d.path("owner").asText(DOC_OWNER_ACTION_PLAN),
-                        d.path("required").asBoolean(false), d.path("supporting").asBoolean(false))));
+        active(works.path(MASTER_DOCUMENT_TYPE)).forEach(document ->
+                documentTypes.put(document.path("code").asText(),
+                        new DocumentTypeConfig(
+                                document.path("code").asText(),
+                                document.path("owner").asText(DOC_OWNER_ACTION_PLAN),
+                                document.path("required").asBoolean(false),
+                                document.path("supporting").asBoolean(false))));
+
+        Set<String> states = new HashSet<>();
+        active(tenant.path(MASTER_TENANTS)).forEach(entry -> {
+            String code = entry.path("code").asText();
+            if (stateTenant.equalsIgnoreCase(code)) {
+                states.add(code.toUpperCase(Locale.ROOT));
+            }
+        });
 
         Map<String, String> districts = new LinkedHashMap<>();
-        active(module.path(MASTER_DISTRICT)).forEach(d -> districts.put(d.path("code").asText(),
-                d.path("stateCode").asText()));
+        active(works.path(MASTER_DISTRICT))
+                .forEach(district -> districts.put(district.path("code").asText(),
+                        district.path("stateCode").asText()));
 
         return new MdmsData(
-                codes(module.path(MASTER_FINANCIAL_YEAR)),
-                codes(module.path(MASTER_PURPOSE)),
-                codes(module.path(MASTER_TYPE_OF_WORK)),
-                codes(module.path(MASTER_WORK_CATEGORY)),
-                codes(module.path(MASTER_RECOMMENDED_BY)),
+                Set.copyOf(financialYears),
+                codes(works.path(MASTER_PURPOSE)),
+                codes(works.path(MASTER_TYPE_OF_WORK)),
+                codes(works.path(MASTER_WORK_CATEGORY)),
+                codes(works.path(MASTER_RECOMMENDED_BY)),
                 Map.copyOf(schemes),
-                codes(module.path(MASTER_GOVERNMENT_GRANT)),
-                codes(module.path(MASTER_OWN_SOURCE_REVENUE)),
+                codes(works.path(MASTER_GOVERNMENT_GRANT)),
+                codes(works.path(MASTER_OWN_SOURCE_REVENUE)),
                 Map.copyOf(categories),
                 Map.copyOf(documentTypes),
-                codes(module.path(MASTER_APPROVING_DEPARTMENT)),
-                codes(module.path(MASTER_STATE)),
+                codes(works.path(MASTER_APPROVING_DEPARTMENT)),
+                Set.copyOf(states),
                 Map.copyOf(districts),
-                parseConfig(module.path(MASTER_ACTION_PLAN_CONFIG)));
+                parseConfig(works.path(MASTER_ACTION_PLAN_CONFIG)));
     }
 
     private ActionPlanConfig parseConfig(JsonNode node) {

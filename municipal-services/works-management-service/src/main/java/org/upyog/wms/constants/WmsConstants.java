@@ -22,6 +22,10 @@ public final class WmsConstants {
     public static final String MASTER_STATE = "State";
     public static final String MASTER_DISTRICT = "District";
     public static final String MASTER_ACTION_PLAN_CONFIG = "ActionPlanConfig";
+    public static final String EGF_MASTER_MODULE = "egf-master";
+    public static final String FINANCE_MODULE = "FinanceService";
+    public static final String TENANT_MODULE = "tenant";
+    public static final String MASTER_TENANTS = "tenants";
 
     // Special master codes
     public static final String CODE_OTHERS = "OTHERS";

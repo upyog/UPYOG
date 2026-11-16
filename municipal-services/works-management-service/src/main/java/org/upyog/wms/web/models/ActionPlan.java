@@ -95,9 +95,6 @@ public class ActionPlan {
     private Integer totalComponents;
 
     @Valid
-    private List<Component> components;
-
-    @Valid
     private List<Document> documents;
 
     private Boolean declarationAccepted;
