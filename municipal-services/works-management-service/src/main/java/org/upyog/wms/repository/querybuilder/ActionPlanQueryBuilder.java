@@ -43,7 +43,10 @@ public class ActionPlanQueryBuilder {
         StringBuilder sql = new StringBuilder(BASE_QUERY);
         addFilters(criteria, sql, params);
 
-        String column = SORT_COLUMNS.getOrDefault(criteria.getSortBy(), "ap.createdtime");
+        String sortBy = criteria.getSortBy();
+        String column = sortBy == null
+                ? "ap.createdtime"
+                : SORT_COLUMNS.getOrDefault(sortBy, "ap.createdtime");
         String order = "ASC".equalsIgnoreCase(criteria.getSortOrder()) ? "ASC" : "DESC";
         sql.append(" ORDER BY ").append(column).append(' ').append(order).append(" NULLS LAST, ap.id");
 
