@@ -69,7 +69,7 @@ public class DriverRepository {
 		String query = driverQueryBuilder.getSeqDriverMobileNumber(seqDriverMobileNumber, preparedStmtList);
 
 		return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), String.class);
-
+	
 	}
 
 }

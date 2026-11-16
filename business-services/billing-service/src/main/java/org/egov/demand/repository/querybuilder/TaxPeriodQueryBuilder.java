@@ -92,7 +92,7 @@ public class TaxPeriodQueryBuilder {
 
         Set<String> service = taxPeriodCriteria.getService(); 
         if (service != null &&  !service.isEmpty()) {
-            selectQuery.append(" and taxperiod.service IN " + getQueryForCollection(service));
+            selectQuery.append(" and taxperiod.service IN " + getQueryForCollection(service,preparedStatementValues));
         }
         
         PeriodCycle periodCycle = taxPeriodCriteria.getPeriodCycle();
@@ -105,15 +105,15 @@ public class TaxPeriodQueryBuilder {
 			if (service != null && !service.isEmpty() && service.size() == 1 && periodCycle!=null) {
 				selectQuery.append(
 						" AND (fromdate >=  CASE WHEN ((SELECT fromdate FROM egbs_taxperiod WHERE tenantId =? AND ( ? BETWEEN fromdate AND  todate)  "
-								+ " AND service IN " + getQueryForCollection(service) + " AND periodcycle=?) NOTNULL) "
+								+ " AND service IN " + getQueryForCollection(service,preparedStatementValues) + " AND periodcycle=?) NOTNULL) "
 								+ "THEN "
 								+ "( SELECT fromdate FROM egbs_taxperiod WHERE tenantId =? AND ( ? BETWEEN fromdate AND  todate)" 
-								+ " AND service IN "+ getQueryForCollection(service) + " AND periodcycle=?) "
+								+ " AND service IN "+ getQueryForCollection(service,preparedStatementValues) + " AND periodcycle=?) "
 								+ "ELSE " 
 								+ "(SELECT min(fromdate) FROM egbs_taxperiod WHERE tenantId =?)"
 								+ " END"
 								+ " AND todate <= ( SELECT todate FROM egbs_taxperiod WHERE tenantId = ? AND (? BETWEEN fromdate AND  todate) "
-								+ " AND service IN " + getQueryForCollection(service) + " AND periodcycle=?))");
+								+ " AND service IN " + getQueryForCollection(service,preparedStatementValues) + " AND periodcycle=?))");
 				
 				preparedStatementValues.add(tenantId);
 				preparedStatementValues.add(taxPeriodCriteria.getFromDate());
@@ -144,7 +144,7 @@ public class TaxPeriodQueryBuilder {
 
         Set<String> ids = taxPeriodCriteria.getId();
         if (ids != null && !ids.isEmpty())
-            selectQuery.append(" and taxperiod.id IN "+getQueryForCollection(ids));
+            selectQuery.append(" and taxperiod.id IN "+getQueryForCollection(ids,preparedStatementValues));
         
         if(taxPeriodCriteria.getDate()!=null){
         	selectQuery.append(" and taxperiod.fromdate <= ? and taxperiod.todate >= ? ");
@@ -188,14 +188,17 @@ public class TaxPeriodQueryBuilder {
 		return baseQuery.concat(whereClause.toString()).concat(" )");
 	}
 
-    private String getQueryForCollection(Set<String> values) {
-        StringBuilder query = new StringBuilder();
-        if (!values.isEmpty()) {
-            String[] list = values.toArray(new String[values.size()]);
-            query.append(" ('"+list[0]+"'");
-            for (int i = 1; i < values.size(); i++)
-                query.append("," + "'"+list[i]+"'");
-        }
-        return query.append(")").toString();
-    }
+	private String getQueryForCollection(Set<String> values, List<Object> preparedStatementValues) {
+		StringBuilder query = new StringBuilder("(");
+		int index = 0;
+		for (String value : values) {
+			if (index > 0) {
+				query.append(",");
+			}
+			query.append("?");
+			preparedStatementValues.add(value);
+			index++;
+		}
+		return query.append(")").toString();
+	}
 }

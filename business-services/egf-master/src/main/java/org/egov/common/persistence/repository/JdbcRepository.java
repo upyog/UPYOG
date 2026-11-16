@@ -44,9 +44,7 @@ public abstract class JdbcRepository {
         List<String> updateFields = new ArrayList<>();
         List<String> uniqueFields = new ArrayList<>();
 
-        String insertQuery = "";
         String updateQuery = "";
-        String searchQuery = "";
 
         try {
 
@@ -287,27 +285,35 @@ public abstract class JdbcRepository {
     }
 
     @Transactional
-    public void delete(String tableName, String id) {
-        String delQuery = "delete from " + tableName + " where id = '" + id + "'";
-        jdbcTemplate.execute(delQuery);
-    }
+	public void delete(String tableName, String id) {
+    	 validateTableName(tableName);
+    	 String sql = "DELETE FROM " + tableName + " WHERE id = ?";
+
+		jdbcTemplate.update(sql, id);
+	}
     
-    @Transactional
-    public void delete(final String tableName, final String tenantId, final String fieldName, final String fieldValue) {
+	@Transactional
+	public void delete(final String tableName,final String tenantId,final String fieldName,final String fieldValue) {
+		validateTableName(tableName);
+		validateColumnName(fieldName);
+		
+		String sql = "DELETE FROM " + tableName + " WHERE tenantId = ? AND " + fieldName + " = ?";
 
-        final String delQuery = "delete from " + tableName + " where tenantId = '" + tenantId + "' and " + fieldName + " = '"
-                + fieldValue + "'";
-        System.out.println("Delete query" + "----" + delQuery);
-        jdbcTemplate.execute(delQuery);
-    }
+		jdbcTemplate.update(sql, tenantId, fieldValue);
+	}
 
-    public String getSequence(String seqName) {
-        String seqQuery = "select nextval('" + seqName + "')";
-        return String.valueOf(jdbcTemplate.queryForObject(seqQuery, Long.class) + 1);
-    }
+	public String getSequence(String seqName) {
+
+		String sql = "SELECT nextval(?)";
+
+		Long sequenceValue = jdbcTemplate.queryForObject(sql, Long.class, seqName);
+
+		return String.valueOf(sequenceValue + 1);
+	}
 
     @Transactional
     public void createSequence(String seqName) {
+    	validateSequenceName(seqName);
         String seqQuery = "create sequence " + seqName + "";
         jdbcTemplate.execute(seqQuery);
     }
@@ -369,88 +375,124 @@ public abstract class JdbcRepository {
     }
 
     public Boolean uniqueCheck(String fieldName, Object ob) {
-        LOG.info("Unique Checking for field " + fieldName);
 
-        String obName = ob.getClass().getSimpleName();
-        List<String> identifierFields = allIdentitiferFields.get(obName);
-        List<Map<String, Object>> batchValues = new ArrayList<>();
+		LOG.info("Unique checking for field {}", fieldName);
 
-        // batchValues.get(0).putAll(paramValues(ob, allIdentitiferFields.get(obName)));
-        Map<String, Object> paramValues = new HashMap<>();
-        String table = "";
-        try {
-            table = FieldUtils.readDeclaredField(ob, "TABLE_NAME").toString();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Not able to get Table_name from entity" + obName);
-        }
-        StringBuffer uniqueQuery = new StringBuffer(
-                "select count(*) as count from " + table + " where " + fieldName + "=:fieldValue");
-        paramValues.put("fieldValue", getValue(getField(ob, fieldName), ob));
-        int i = 0;
-        for (String s : identifierFields) {
+		String obName = ob.getClass().getSimpleName();
 
-            if (s.equalsIgnoreCase("tenantId")) {
-                uniqueQuery.append(" and ");
-                uniqueQuery.append(s).append("=").append(":").append(s);
-                // implement fallback here
-                paramValues.put(s, getValue(getField(ob, s), ob));
-                continue;
-            }
-            if (getValue(getField(ob, s), ob) != null) {
-                uniqueQuery.append(" and ");
-                uniqueQuery.append(s).append("!=").append(":").append(s);
-                paramValues.put(s, getValue(getField(ob, s), ob));
-            }
-        }
+		List<String> identifierFields = allIdentitiferFields.get(obName);
 
-        Long count = namedParameterJdbcTemplate.queryForObject(uniqueQuery.toString(), paramValues, Long.class);
-        LOG.info("Record Count for  field " + count);
-        return count >= 1 ? false : true;
+		if (identifierFields == null) {
+			throw new IllegalArgumentException("Identifier fields not configured for " + obName);
+		}
 
-    }
+		String table;
 
-    public Boolean uniqueCheck(String firstFieldName, String secondFieldName, Object ob) {
-        LOG.info("Unique Checking for combination of fields " + firstFieldName + " & " + secondFieldName);
+		try {
+			table = FieldUtils.readDeclaredField(ob, "TABLE_NAME").toString();
+		} catch (IllegalAccessException | NullPointerException e) {
+			throw new RuntimeException("Unable to get table name from entity " + obName, e);
+		}
+		
+		validateTableName(table);
+		validateColumnName(fieldName);
 
-        String obName = ob.getClass().getSimpleName();
-        List<String> identifierFields = allIdentitiferFields.get(obName);
-        List<Map<String, Object>> batchValues = new ArrayList<>();
+		StringBuilder sql = new StringBuilder(
+				"SELECT COUNT(*) FROM " + table + " WHERE " + fieldName + " = :fieldValue");
 
-        // batchValues.get(0).putAll(paramValues(ob, allIdentitiferFields.get(obName)));
-        Map<String, Object> paramValues = new HashMap<>();
-        String table = "";
-        try {
-            table = FieldUtils.readDeclaredField(ob, "TABLE_NAME").toString();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Not able to get Table_name from entity" + obName);
-        }
-        StringBuffer uniqueQuery = new StringBuffer("select count(*) as count from " + table + " where " + firstFieldName
-                + "=:firstFieldValue" + " and " + secondFieldName + "=:secondFieldValue");
-        paramValues.put("firstFieldValue", getValue(getField(ob, firstFieldName), ob));
-        paramValues.put("secondFieldValue", getValue(getField(ob, secondFieldName), ob));
-        int i = 0;
-        for (String s : identifierFields) {
+		Map<String, Object> params = new HashMap<>();
 
-            if (s.equalsIgnoreCase("tenantId")) {
-                uniqueQuery.append(" and ");
-                uniqueQuery.append(s).append("=").append(":").append(s);
-                // implement fallback here
-                paramValues.put(s, getValue(getField(ob, s), ob));
-                continue;
-            }
-            if (getValue(getField(ob, s), ob) != null) {
-                uniqueQuery.append(" and ");
-                uniqueQuery.append(s).append("!=").append(":").append(s);
-                paramValues.put(s, getValue(getField(ob, s), ob));
-            }
-        }
+		params.put("fieldValue", getValue(getField(ob, fieldName), ob));
 
-        Long count = namedParameterJdbcTemplate.queryForObject(uniqueQuery.toString(), paramValues, Long.class);
-        LOG.info("Record Count for combination of fields " + count);
-        return count >= 1 ? false : true;
+		for (String field : identifierFields) {
 
-    }
+			Field declaredField = getField(ob, field);
 
+			if (declaredField == null) {
+				throw new IllegalArgumentException("Invalid entity field: " + field);
+			}
+
+			Object value = getValue(declaredField, ob);
+
+			if ("tenantId".equalsIgnoreCase(field)) {
+
+				sql.append(" AND ").append(field).append(" = :").append(field);
+
+				params.put(field, value);
+
+			} else if (value != null) {
+
+				sql.append(" AND ").append(field).append(" != :").append(field);
+
+				params.put(field, value);
+			}
+		}
+
+		Long count = namedParameterJdbcTemplate.queryForObject(sql.toString(), params, Long.class);
+
+		LOG.info("Record count for field {}: {}", fieldName, count);
+
+		return count == null || count == 0;
+	}
+	
+	public Boolean uniqueCheck(String firstFieldName, String secondFieldName, Object ob) {
+
+		LOG.info("Unique Checking for combination of fields {} & {}", firstFieldName, secondFieldName);
+
+		String obName = ob.getClass().getSimpleName();
+
+		List<String> identifierFields = allIdentitiferFields.get(obName);
+
+		if (identifierFields == null || identifierFields.isEmpty()) {
+			throw new IllegalArgumentException("Identifier fields not configured for " + obName);
+		}
+
+		String table;
+
+		try {
+			table = FieldUtils.readDeclaredField(ob, "TABLE_NAME").toString();
+		} catch (IllegalAccessException | NullPointerException e) {
+			throw new RuntimeException("Not able to get Table_name from entity " + obName, e);
+		}
+
+		validateTableName(table);
+		validateColumnName(firstFieldName);
+		validateColumnName(secondFieldName);
+		
+		StringBuilder uniqueQuery = new StringBuilder("SELECT COUNT(*) FROM " + table + " WHERE " + firstFieldName
+				+ " = :firstFieldValue" + " AND " + secondFieldName + " = :secondFieldValue");
+
+		Map<String, Object> params = new HashMap<>();
+
+		params.put("firstFieldValue", getValue(getField(ob, firstFieldName), ob));
+
+		params.put("secondFieldValue", getValue(getField(ob, secondFieldName), ob));
+
+		for (String field : identifierFields) {
+
+			Object value = getValue(getField(ob, field), ob);
+
+			if ("tenantId".equalsIgnoreCase(field)) {
+
+				uniqueQuery.append(" AND ").append(field).append(" = :").append(field);
+
+				params.put(field, value);
+
+			} else if (value != null) {
+
+				uniqueQuery.append(" AND ").append(field).append(" != :").append(field);
+
+				params.put(field, value);
+			}
+		}
+
+		Long count = namedParameterJdbcTemplate.queryForObject(uniqueQuery.toString(), params, Long.class);
+
+		LOG.info("Record Count for combination of fields {}", count);
+
+		return count == null || count == 0;
+	}
+	
     public void delete(Object entity, String reason) {
 
         String backupTable = "egf_deletedtxn";
@@ -511,5 +553,28 @@ public abstract class JdbcRepository {
         // paramValues.put("fieldValue", getValue(getField(ob,fieldName ), ob));
 
     }
+    
+    private void validateTableName(String tableName) {
 
+        if (tableName == null ||
+                !tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throw new IllegalArgumentException("Invalid table name");
+        }
+    }
+
+    private void validateColumnName(String columnName) {
+
+        if (columnName == null ||
+                !columnName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throw new IllegalArgumentException("Invalid column name");
+        }
+    }
+
+    private void validateSequenceName(String sequenceName) {
+
+        if (sequenceName == null ||
+                !sequenceName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throw new IllegalArgumentException("Invalid sequence name");
+        }
+    }
 }

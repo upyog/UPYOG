@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.egov.pgr.contract.ReportRequest;
 import org.egov.pgr.utils.ReportConstants;
+import org.egov.pgr.utils.ReportQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,21 +25,24 @@ public class ReportRepository {
 	private JdbcTemplate jdbcTemplate;
 	
 	public List<Map<String, Object>> getDataFromDb(ReportRequest reportRequest) {
-		String query = null;
+		ReportQuery reportQuery = null;
 		List<Map<String, Object>> result = new ArrayList<>();
 		if(reportRequest.getReportName().equalsIgnoreCase(ReportConstants.COMPLAINT_TYPE_REPORT)) {
-			query = reportQueryBuilder.getComplaintWiseReportQuery(reportRequest);
+			reportQuery = reportQueryBuilder.getComplaintWiseReportQuery(reportRequest);
 		}else if(reportRequest.getReportName().equalsIgnoreCase(ReportConstants.AO_REPORT)) {
-			query = reportQueryBuilder.getAOWiseReportQuery(reportRequest);
+			reportQuery = reportQueryBuilder.getAOWiseReportQuery(reportRequest);
 		}else if(reportRequest.getReportName().equalsIgnoreCase(ReportConstants.DEPARTMENT_REPORT)) {
-			query = reportQueryBuilder.getDepartmentWiseReportQuery(reportRequest);
+			reportQuery = reportQueryBuilder.getDepartmentWiseReportQuery(reportRequest);
 		}else if(reportRequest.getReportName().equalsIgnoreCase(ReportConstants.SOURCE_REPORT)) {
-			query = reportQueryBuilder.getSourceWiseReportQuery(reportRequest);
+			reportQuery = reportQueryBuilder.getSourceWiseReportQuery(reportRequest);
 		}else if(reportRequest.getReportName().equalsIgnoreCase(ReportConstants.ULBEMPLOYEE_REPORT)) {
-			query = reportQueryBuilder.getFunctionaryWiseReportQuert(reportRequest);
+			reportQuery = reportQueryBuilder.getFunctionaryWiseReportQuert(reportRequest);
 		}
 		try {
-			result = jdbcTemplate.queryForList(query);
+			result = jdbcTemplate.queryForList(
+			        reportQuery.getQuery(),
+			        reportQuery.getParams().toArray()
+			);
 		}catch(Exception e) {
 			log.error("Exception while executing query: "+e);
 		}
