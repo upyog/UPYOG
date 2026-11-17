@@ -77,11 +77,6 @@ public final class SubmissionRules {
 
     private void planDetails(ActionPlan plan, ValidationErrors errors) {
         requiredMaster(plan.getFinancialYear(), mdms.financialYears(), "financialYear", "Financial Year", errors);
-        if (isBlank(plan.getProjectId())) {
-            errors.add(REQUIRED, "projectId", "Project ID is mandatory");
-        }
-        plainText(plan.getProjectName(), true, "projectName", "Project Name", errors);
-
         List<ProjectDetail> details = live(plan.getProjectDetails(), ProjectDetail::getIsActive);
         if (details.size() != 1) {
             errors.add(REQUIRED, "projectDetails", "Exactly one set of project details is required");
@@ -89,6 +84,10 @@ public final class SubmissionRules {
         for (int i = 0; i < details.size(); i++) {
             ProjectDetail d = details.get(i);
             String p = "projectDetails[" + i + "].";
+            if (isBlank(d.getProjectId())) {
+                errors.add(REQUIRED, p + "projectId", "Project ID is mandatory");
+            }
+            plainText(d.getProjectName(), true, p + "projectName", "Project Name", errors);
             requiredMaster(d.getPurposeCode(), mdms.purposes(), p + "purposeCode", "Purpose of Project", errors);
             if (CODE_OTHERS.equals(d.getPurposeCode())) {
                 alphabetic(d.getPurposeOther(), true, p + "purposeOther", "Specify Purpose", errors);

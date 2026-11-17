@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -30,6 +31,22 @@ public final class WmsUtil {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseGet(List::of);
+    }
+
+    /** The first active project-detail row; submission rules enforce that exactly one exists. */
+    public static Optional<ProjectDetail> projectDetail(ActionPlan plan) {
+        return nn(plan == null ? null : plan.getProjectDetails()).stream()
+                .filter(Objects::nonNull)
+                .filter(detail -> isLive(detail.getIsActive()))
+                .findFirst();
+    }
+
+    public static String projectId(ActionPlan plan) {
+        return projectDetail(plan).map(ProjectDetail::getProjectId).orElse(null);
+    }
+
+    public static String projectName(ActionPlan plan) {
+        return projectDetail(plan).map(ProjectDetail::getProjectName).orElse(null);
     }
 
     /** Replaces the components of the plan's single project-detail section. */

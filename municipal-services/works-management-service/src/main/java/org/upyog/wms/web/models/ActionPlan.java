@@ -5,7 +5,6 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
@@ -44,12 +43,6 @@ public class ActionPlan {
 
     @Size(max = 16)
     private String financialYear;
-
-    @Pattern(regexp = "^[A-Za-z0-9]{1,12}$", message = "projectId must be alphanumeric, up to 12 characters")
-    private String projectId;
-
-    @Size(max = 256)
-    private String projectName;
 
     private Boolean adminSanction;
 

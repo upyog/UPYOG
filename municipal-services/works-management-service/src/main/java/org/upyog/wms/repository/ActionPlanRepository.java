@@ -25,7 +25,6 @@ import org.upyog.wms.web.models.FundDetail;
 import org.upyog.wms.web.models.Location;
 import org.upyog.wms.web.models.ProjectDetail;
 import org.upyog.wms.web.models.Recommendation;
-import org.upyog.wms.util.WmsUtil;
 
 /**
  * Read side of the service (writes go through Kafka to egov-persister).
@@ -107,6 +106,9 @@ public class ActionPlanRepository {
                 .filter(b -> b.getComponentId() == null).collect(groupingBy(Beneficiary::getActionPlanId));
         Map<String, List<Beneficiary>> componentBeneficiaries = beneficiaries.stream()
                 .filter(b -> b.getComponentId() != null).collect(groupingBy(Beneficiary::getComponentId));
+        Map<String, List<Component>> componentsByProjectDetail = components.values().stream()
+                .flatMap(Collection::stream)
+                .collect(groupingBy(Component::getProjectDetailId));
 
         for (ActionPlan plan : plans) {
             String id = plan.getId();
@@ -126,7 +128,8 @@ public class ActionPlanRepository {
                 c.setBeneficiaries(componentBeneficiaries.getOrDefault(c.getId(), List.of()));
                 c.setDocuments(componentDocs.getOrDefault(c.getId(), List.of()));
             });
-            WmsUtil.setProjectComponents(plan, comps);
+            plan.getProjectDetails().forEach(detail -> detail.setComponents(
+                    componentsByProjectDetail.getOrDefault(detail.getId(), List.of())));
         }
     }
 

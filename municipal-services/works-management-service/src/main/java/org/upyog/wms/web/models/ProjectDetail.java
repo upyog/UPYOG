@@ -1,6 +1,8 @@
 package org.upyog.wms.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,16 @@ public class ProjectDetail {
 
     @Size(max = 64)
     private String tenantId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Size(max = 64)
+    private String actionPlanId;
+
+    @Pattern(regexp = "^[A-Za-z0-9]{1,12}$", message = "projectId must be alphanumeric, up to 12 characters")
+    private String projectId;
+
+    @Size(max = 256)
+    private String projectName;
 
     @Size(max = 64)
     private String purposeCode;

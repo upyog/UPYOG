@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.upyog.wms.util.WmsUtil.projectComponents;
+import static org.upyog.wms.util.WmsUtil.projectId;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -54,9 +55,10 @@ class EnrichmentServiceTest {
     }
 
     private ActionPlan created() {
-        ActionPlan plan = ActionPlan.builder().tenantId("od.cuttack").projectId("P1").projectName("Drain")
+        ActionPlan plan = ActionPlan.builder().tenantId("od.cuttack")
                 .financialYear("2026-27")
-                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().purposeCode("DEVELOPMENT_WORK")
+                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().projectId("P1").projectName("Drain")
+                        .purposeCode("DEVELOPMENT_WORK")
                         .components(new ArrayList<>(List.of(component("A"), component("B")))).build())))
                 .build();
         ActionPlanRequest request = ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(plan).build();
@@ -71,8 +73,10 @@ class EnrichmentServiceTest {
         assertEquals(1, plan.getVersion());
         assertTrue(plan.getIsLatestVersion());
         assertEquals("INITIATE", plan.getWorkflow().getAction());
+        assertEquals(plan.getId(), plan.getProjectDetails().get(0).getActionPlanId());
         assertEquals(List.of("ID-2", "ID-3"), projectComponents(plan).stream().map(Component::getComponentNumber).toList());
         Component a = projectComponents(plan).get(0);
+        assertEquals(plan.getProjectDetails().get(0).getId(), a.getProjectDetailId());
         assertEquals(a.getId(), a.getFundDetails().get(0).getComponentId());
         assertEquals(plan.getId(), a.getFundDetails().get(0).getActionPlanId());
         assertEquals("ACTIVE", a.getStatus());
@@ -91,9 +95,10 @@ class EnrichmentServiceTest {
         Component kept = component("A renamed");
         kept.setId(keptId);
         kept.setComponentNumber("SPOOFED");
-        ActionPlan edit = ActionPlan.builder().id(existing.getId()).tenantId("od.cuttack").projectId("P1")
-                .projectName("Drain").financialYear("2026-27")
-                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().purposeCode("OTHERS")
+        ActionPlan edit = ActionPlan.builder().id(existing.getId()).tenantId("od.cuttack")
+                .financialYear("2026-27")
+                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().projectId("P1").projectName("Drain")
+                        .purposeCode("OTHERS")
                         .components(new ArrayList<>(List.of(kept, component("C")))).build())))
                 .build();
         ActionPlanRequest request = ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(edit).build();
@@ -118,9 +123,9 @@ class EnrichmentServiceTest {
         published.setActionPlanNumber("APN-1");
         Component keep = component("A");
         keep.setComponentNumber(projectComponents(published).get(0).getComponentNumber());
-        ActionPlan revision = ActionPlan.builder().tenantId("od.cuttack").actionPlanNumber("APN-1").projectName("Drain")
+        ActionPlan revision = ActionPlan.builder().tenantId("od.cuttack").actionPlanNumber("APN-1")
                 .financialYear("2026-27")
-                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder()
+                .projectDetails(new ArrayList<>(List.of(ProjectDetail.builder().projectName("Drain")
                         .components(new ArrayList<>(List.of(keep))).build())))
                 .build();
         service.enrichCreate(ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(revision).build(),
@@ -128,7 +133,7 @@ class EnrichmentServiceTest {
 
         assertEquals(2, revision.getVersion());
         assertFalse(revision.getIsLatestVersion());
-        assertEquals("P1", revision.getProjectId());
+        assertEquals("P1", projectId(revision));
         assertEquals(2, projectComponents(revision).size());
         Component carried = projectComponents(revision).get(1);
         assertEquals("INACTIVE", carried.getStatus());
