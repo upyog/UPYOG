@@ -27,9 +27,9 @@ public final class WmsUtil {
     public static List<Component> projectComponents(ActionPlan plan) {
         return nn(plan == null ? null : plan.getProjectDetails()).stream()
                 .filter(Objects::nonNull)
-                .map(ProjectDetail::getComponents)
-                .filter(Objects::nonNull)
+                .filter(detail -> isLive(detail.getIsActive()))
                 .findFirst()
+                .map(detail -> nn(detail.getComponents()))
                 .orElseGet(List::of);
     }
 
@@ -53,8 +53,9 @@ public final class WmsUtil {
     public static void setProjectComponents(ActionPlan plan, List<Component> components) {
         nn(plan == null ? null : plan.getProjectDetails()).stream()
                 .filter(Objects::nonNull)
+                .filter(detail -> isLive(detail.getIsActive()))
                 .findFirst()
-                .ifPresent(project -> project.setComponents(components));
+                .ifPresent(detail -> detail.setComponents(components));
     }
 
     public static boolean isBlank(String value) {
