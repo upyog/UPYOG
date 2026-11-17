@@ -1,14 +1,14 @@
 package org.egov.pgr.repository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.contract.ParamValue;
 import org.egov.pgr.contract.ReportRequest;
 import org.egov.pgr.service.NotificationService;
 import org.egov.pgr.utils.ReportConstants;
+import org.egov.pgr.utils.ReportQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -78,7 +78,7 @@ public class ReportQueryBuilder {
 		return query;
 	}*/
 
-	public String getComplaintWiseReportQuery(ReportRequest reportRequest) {
+	public ReportQuery getComplaintWiseReportQuery(ReportRequest reportRequest) {
 		String query = "SELECT servicecode as complaint_type,          \n"
 				+ "       sum(case when tenantId NOTNULL then 1 else 0 end) as total_complaints,\n"
 				// + " sum(case when status IN ('closed','resolved','rejected') then 1 else 0
@@ -90,13 +90,13 @@ public class ReportQueryBuilder {
 				+ "  from eg_pgr_service INNER JOIN slaservicerequestidview ON servicerequestid = businesskey $where\n"
 				+ "  group by servicecode";
 
-		query = addWhereClause(query, reportRequest);
+		ReportQuery  reportQuery  = addWhereClause(query, reportRequest);
 		log.info("Complaint Type wise report query: " + query);
-		return query;
+		return reportQuery ;
 
 	}
 
-	public String getAOWiseReportQuery(ReportRequest reportRequest) {
+	public ReportQuery getAOWiseReportQuery(ReportRequest reportRequest) {
 		String query = "SELECT by as ao_name,          \n"
 				+ "       (select count(*) from eg_pgr_service $subwhere) as total_complaints_received,\n"
 				+ "       sum(case when action = 'assign' OR action = 'requestforreassign' then 1 else 0 end) as complaints_assigned,\n"
@@ -104,13 +104,13 @@ public class ReportQueryBuilder {
 				+ "  FROM eg_pgr_service INNER JOIN eg_pgr_action ON eg_pgr_service.servicerequestid = eg_pgr_action.businesskey $where\n"
 				+ "  GROUP BY by";
 
-		query = addWhereClause(query, reportRequest);
+		ReportQuery  reportQuery = addWhereClause(query, reportRequest);
 		log.info("AO wise report query: " + query);
-		return query;
+		return reportQuery;
 
 	}
 
-	public String getDepartmentWiseReportQuery(ReportRequest reportRequest) {
+	public ReportQuery getDepartmentWiseReportQuery(ReportRequest reportRequest) {
 		String query = "SELECT servicecode as department_name,          \n"
 				+ "       sum(case when tenantId NOTNULL then 1 else 0 end) as total_complaints,\n"
 				+ "       sum(case when status IN ('open','assigned') then 1 else 0 end) as total_open_complaints,\n"
@@ -119,24 +119,24 @@ public class ReportQueryBuilder {
 				+ "  from eg_pgr_service INNER JOIN slaservicerequestidview ON servicerequestid = businesskey $where\n"
 				+ "  group by servicecode";
 
-		query = addWhereClause(query, reportRequest);
+		ReportQuery  reportQuery = addWhereClause(query, reportRequest);
 		log.info("Department name wise report query: " + query);
-		return query;
+		return  reportQuery;
 
 	}
 
-	public String getSourceWiseReportQuery(ReportRequest reportRequest) {
+	public ReportQuery  getSourceWiseReportQuery(ReportRequest reportRequest) {
 		String query = "SELECT sum(case when source = 'mobileapp' then 1 else 0 end) as citizen_mobile_app,\n"
 				+ "       sum(case when source = 'web' then 1 else 0 end) as citizen_web_app,\n"
 				+ "       sum(case when source = 'ivr' then 1 else 0 end) as customer_service_desk\n"
 				+ "FROM eg_pgr_service $where";
 
-		query = addWhereClause(query, reportRequest);
+		ReportQuery  reportQuery = addWhereClause(query, reportRequest);
 		log.info("Source wise report query: " + query);
-		return query;
+		return reportQuery;
 	}
 
-	public String getFunctionaryWiseReportQuert(ReportRequest reportRequest) {
+	public ReportQuery getFunctionaryWiseReportQuert(ReportRequest reportRequest) {
 		String query = "select \n" + 
 				"(SELECT (CASE WHEN assignee IN (select distinct assignee from eg_pgr_action where action = 'assign' and \"when\" = (select max(\"when\") from eg_pgr_action action where action.businesskey =  eg_pgr_action.businesskey and action = 'assign')) THEN CONCAT(assignee,'') END) as employee_name), \n" + 
 				"sum(case when eg_pgr_action.businesskey IN (select DISTINCT businesskey from eg_pgr_action where \"when\" IN (select max(\"when\") from eg_pgr_action where status = 'assigned' group by businesskey)) then 1 else 0 end) as total_complaints_received, \n" + 
@@ -146,39 +146,63 @@ public class ReportQueryBuilder {
 				"from eg_pgr_service INNER JOIN eg_pgr_action ON servicerequestid = eg_pgr_action.businesskey INNER JOIN slaservicerequestidview ON servicerequestid = slaservicerequestidview.businesskey \n" + 
 				"where eg_pgr_action.assignee NOTNULL $where group by eg_pgr_action.assignee";
 
-		query = addWhereClause(query, reportRequest);
+		ReportQuery  reportQuery = addWhereClause(query, reportRequest);
 		log.info("Functionary Wise report query: " + query);
-		return query;
+		return reportQuery;
 	}
 
-	public String addWhereClause(String query, ReportRequest reportRequest) {
+	public ReportQuery addWhereClause(String query, ReportRequest reportRequest) {
+
+		List<Object> params = new ArrayList<>();
 		List<ParamValue> searchParams = reportRequest.getSearchParams();
-		StringBuilder queryBuilder = new StringBuilder();
+
+		StringBuilder whereBuilder = new StringBuilder();
+
 		if (reportRequest.getReportName().equalsIgnoreCase(ReportConstants.ULBEMPLOYEE_REPORT)) {
-			queryBuilder.append(" AND eg_pgr_service.tenantid = ").append("'" + reportRequest.getTenantId() + "'");
+
+			whereBuilder.append(" AND eg_pgr_service.tenantid = ?");
 		} else {
-			queryBuilder.append("WHERE eg_pgr_service.tenantid = ").append("'" + reportRequest.getTenantId() + "'");
+			whereBuilder.append(" WHERE eg_pgr_service.tenantid = ?");
 		}
+
+		// AO subquery appears before the outer WHERE in SQL.
 		if (reportRequest.getReportName().equalsIgnoreCase(ReportConstants.AO_REPORT)) {
-			queryBuilder.append(" AND (by LIKE '%Grievance Routing Officer' OR by LIKE '%Employee') ");
-			query = query.replace("$subwhere", "WHERE tenantid = '" + reportRequest.getTenantId() + "'");
+
+			query = query.replace("$subwhere", "WHERE tenantid = ?");
+
+			params.add(reportRequest.getTenantId());
+
+			whereBuilder.append(" AND (by LIKE '%Grievance Routing Officer' OR by LIKE '%Employee')");
 		}
+
+		params.add(reportRequest.getTenantId());
+
 		if (!CollectionUtils.isEmpty(searchParams)) {
+
 			for (ParamValue param : searchParams) {
-				if (param.getName().equalsIgnoreCase("fromDate")) {
-					if (!StringUtils.isEmpty(param.getInput().toString())) {
-						queryBuilder.append(" AND createdtime >= ").append(param.getInput());
-					}
-				} else if (param.getName().equalsIgnoreCase("toDate")) {
-					if (!StringUtils.isEmpty(param.getInput().toString())) {
-						queryBuilder.append(" AND createdtime <= ").append(param.getInput());
-					}
+
+				if (param.getInput() == null) {
+					continue;
+				}
+
+				if ("fromDate".equalsIgnoreCase(param.getName())) {
+
+					whereBuilder.append(" AND createdtime >= ?");
+					params.add(param.getInput());
+
+				} else if ("toDate".equalsIgnoreCase(param.getName())) {
+
+					whereBuilder.append(" AND createdtime <= ?");
+					params.add(param.getInput());
 				}
 			}
 		}
-		queryBuilder.append(" AND eg_pgr_service.active = true");
-		query = query.replace("$where", queryBuilder.toString());
-		return query;
+
+		whereBuilder.append(" AND eg_pgr_service.active = true");
+
+		query = query.replace("$where", whereBuilder.toString());
+
+		return new ReportQuery(query, params);
 	}
 
 }

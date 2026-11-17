@@ -35,7 +35,7 @@ public class PropertyQueryBuilder {
 			+ " INNER JOIN (select consumercode,sum(taxdue) as taxDue,STRING_AGG(year || '(Rs.' || taxdue || ')',',')  as taxDueYear from ( select d.consumercode, (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) as year ,  sum(dd.taxamount)-sum(dd.collectionamount) as taxdue from egbs_demanddetail_v1 dd, egbs_demand_v1 d "
 			+ " where dd.demandid=d.id and d.status!='CANCELLED' and dd.tenantid=? and d.tenantid=? and (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) != ? group by d.consumercode,(to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY'))) tax where taxDue>0 group by tax.consumercode) as taxdata on propertydata.propertyid=taxdata.consumercode";
 	
-	private static String PROEPRTY_AUDIT_QUERY = "select property from {schema}.eg_pt_property_audit where propertyid=?";
+	private static final String PROEPRTY_AUDIT_QUERY = "select property from {schema}.eg_pt_property_audit where propertyid=?";
 
 	private static String PROEPRTY_ID_QUERY = "select propertyid from {schema}.eg_pt_property where id in (select propertyid from {schema}.eg_pt_owner where userid IN {replace} AND status='ACTIVE')";
 
@@ -63,7 +63,7 @@ public class PropertyQueryBuilder {
 
 	private static String UnitSelectValues = "unit.id as unitid, unit.tenantid as unittenantid, unit.propertyid as unitpid, floorno, unittype, unit.usagecategory as unitusagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, unit.superbuiltuparea as unitspba, arv, constructiontype, constructiondate, dimensions, unit.active as isunitactive, unit.createdby as unitcreatedby, unit.createdtime as unitcreatedtime, unit.lastmodifiedby as unitlastmodifiedby, unit.lastmodifiedtime as unitlastmodifiedtime ";
 
-	private static final String TOTAL_APPLICATIONS_COUNT_QUERY = "select count(*) from eg_pt_property where tenantid = '{}';";
+	private static final String TOTAL_APPLICATIONS_COUNT_QUERY = "select count(*) from eg_pt_property where tenantid = ?";
 
 	private static final String QUERY = SELECT
 
@@ -490,8 +490,8 @@ public class PropertyQueryBuilder {
 		return PROEPRTY_AUDIT_QUERY;
 	}
 
-	public String getTotalApplicationsCountQueryString(PropertyCriteria criteria) {
-		return TOTAL_APPLICATIONS_COUNT_QUERY.replace("{}",criteria.getTenantId());
+	public String getTotalApplicationsCountQueryString() {
+		return TOTAL_APPLICATIONS_COUNT_QUERY;
 	}
 
 	public String getLastExecutionDetail(PropertyCriteria criteria, List<Object> preparedStatement) {
