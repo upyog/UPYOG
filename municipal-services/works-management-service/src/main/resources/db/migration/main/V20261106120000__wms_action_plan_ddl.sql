@@ -9,8 +9,8 @@
 -- Workflow : egov-workflow-v2 (BusinessService "WMS_ACTION_PLAN")
 -- IDs      : egov-idgen      Files : egov-filestore
 --
--- Versioning : every revision = new row, same projectid / actionplannumber,
---              version + 1. Previous version = (tenantid, projectid, version - 1).
+-- Versioning : every revision = new row with the same actionplannumber and
+--              project identity in its project-detail row, version + 1.
 -- 1:1 child tables : FK lives in the child; 1:1 enforced only by a partial
 --              UNIQUE index (uk_..._one). Drop the index to allow 1:many.
 -- =====================================================================
@@ -29,8 +29,6 @@ CREATE TABLE IF NOT EXISTS eg_wms_action_plan (
     islatestversion         BOOLEAN       NOT NULL DEFAULT TRUE,
 
     financialyear           VARCHAR(16)   NOT NULL,             -- MDMS
-    projectid               VARCHAR(12)   NOT NULL,
-    projectname             VARCHAR(256)  NOT NULL,
 
     -- scheme (Section 2)
     schemecode              VARCHAR(64),                        -- MDMS
@@ -64,7 +62,6 @@ CREATE TABLE IF NOT EXISTS eg_wms_action_plan (
 
     CONSTRAINT pk_eg_wms_action_plan PRIMARY KEY (id),
     CONSTRAINT uk_eg_wms_ap_appno UNIQUE (tenantid, applicationnumber),
-    CONSTRAINT uk_eg_wms_ap_project_version UNIQUE (tenantid, projectid, version),
     CONSTRAINT chk_eg_wms_ap_amount CHECK (approvedamount IS NULL OR approvedamount >= 0)
 );
 
@@ -87,6 +84,8 @@ CREATE TABLE IF NOT EXISTS eg_wms_ap_project_detail (
     id                      VARCHAR(64)   NOT NULL,
     tenantid                VARCHAR(64)   NOT NULL,
     actionplanid            VARCHAR(64)   NOT NULL,
+    projectid               VARCHAR(12)   NOT NULL,
+    projectname             VARCHAR(256)  NOT NULL,
     purposecode             VARCHAR(64),                        -- MDMS
     purposeother            VARCHAR(256),                       -- when purpose = OTHERS
     startdate               BIGINT,
@@ -107,6 +106,8 @@ CREATE TABLE IF NOT EXISTS eg_wms_ap_project_detail (
 
 CREATE UNIQUE INDEX IF NOT EXISTS uk_eg_wms_ap_pd_one
     ON eg_wms_ap_project_detail (actionplanid) WHERE isactive = TRUE;
+CREATE INDEX IF NOT EXISTS idx_eg_wms_ap_pd_tenant_project
+    ON eg_wms_ap_project_detail (tenantid, projectid) WHERE isactive = TRUE;
 
 
 -- ---------------------------------------------------------------------
@@ -168,6 +169,7 @@ CREATE TABLE IF NOT EXISTS eg_wms_ap_component (
     id                      VARCHAR(64)   NOT NULL,             -- row id (per version)
     tenantid                VARCHAR(64)   NOT NULL,
     actionplanid            VARCHAR(64)   NOT NULL,
+    projectdetailid         VARCHAR(64)   NOT NULL,
     componentnumber         VARCHAR(64)   NOT NULL,             -- STABLE id across versions
     componentname           VARCHAR(256)  NOT NULL,
     category                VARCHAR(64),                        -- MDMS
@@ -184,11 +186,14 @@ CREATE TABLE IF NOT EXISTS eg_wms_ap_component (
 
     CONSTRAINT pk_eg_wms_ap_component PRIMARY KEY (id),
     CONSTRAINT fk_eg_wms_ap_component_ap FOREIGN KEY (actionplanid) REFERENCES eg_wms_action_plan (id),
+    CONSTRAINT fk_eg_wms_ap_component_project_detail FOREIGN KEY (projectdetailid)
+        REFERENCES eg_wms_ap_project_detail (id),
     CONSTRAINT uk_eg_wms_ap_component_no UNIQUE (actionplanid, componentnumber),
     CONSTRAINT chk_eg_wms_ap_component_amount CHECK (approvedamount IS NULL OR approvedamount >= 0)
 );
 
 CREATE INDEX IF NOT EXISTS idx_eg_wms_ap_component_ap ON eg_wms_ap_component (actionplanid);
+CREATE INDEX IF NOT EXISTS idx_eg_wms_ap_component_project_detail ON eg_wms_ap_component (projectdetailid);
 CREATE INDEX IF NOT EXISTS idx_eg_wms_ap_component_no ON eg_wms_ap_component (tenantid, componentnumber);
 
 
