@@ -1,0 +1,362 @@
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute, AdvertisementModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Route, Routes, Link, useLocation } from "react-router-dom";
+import ErrorBoundary from "../../components/ErrorBoundaries";
+import Footer from "../../components/Footer";
+import { AppHome, processLinkData } from "../../components/Home";
+import TopBarSideBar from "../../components/TopBarSideBar";
+import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
+import CitizenHome from "./Home";
+import LanguageSelection from "./Home/LanguageSelection";
+import LocationSelection from "./Home/LocationSelection";
+import Login from "./Login";
+import UserProfile from "./Home/UserProfile";
+import ErrorComponent from "../../components/ErrorComponent";
+import FAQsSection from "./FAQs/FAQs";
+import HowItWorks from "./HowItWorks/howItWorks";
+import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
+import AcknowledgementCF from "../../components/AcknowledgementCF";
+import CitizenFeedback from "../../components/CitizenFeedback";
+import Search from "./SearchApp";
+import QRCode from "./QRCode";
+import VSearchCertificate from "./CMSearchCertificate";
+import AssetsQRCode from "./AssetsQRCode";
+import ChallanQRCode from "./ChallanQRCode";
+import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
+import CreateAnonymousEDCR from "./Home/EDCR";
+import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
+import appContent from "../../config/appContent.json";
+const layout = appContent.citizen8.layout;
+
+const sidebarHiddenFor = [
+  "/works-ui/citizen/register/name",
+  "/works-ui/citizen/select-language",
+  "/works-ui/citizen/select-location",
+  "/works-ui/citizen/login",
+  "/works-ui/citizen/register/otp",
+];
+
+import { APPLICATION_PATH } from "./Home/EDCR/utils";
+
+const getTenants = (codes, tenants) => {
+  return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
+};
+
+const Home = (props) => {
+  const {
+    stateInfo,
+    userDetails,
+    CITIZEN,
+    cityDetails,
+    mobileView,
+    handleUserDropdownSelection,
+    logoUrl,
+    DSO,
+    stateCode,
+    modules,
+    appTenants,
+    sourceUrl,
+    pathname,
+    initData,
+  } = props;
+
+  const { isLoading: islinkDataLoading, data: linkData, isFetched: isLinkDataFetched } =
+    Digit.Hooks.useCustomMDMS(
+      Digit.ULBService.getStateId(),
+      "ACCESSCONTROL-ACTIONS-TEST",
+      [
+        {
+          name: "actions-test",
+          filter: "[?(@.url == 'digit-ui-card')]",
+        },
+      ],
+      {
+        select: (data) => {
+          const formattedData = data?.["ACCESSCONTROL-ACTIONS-TEST"]?.["actions-test"]
+            ?.filter((el) => el.enabled === true)
+            .reduce((a, b) => {
+              a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
+              return a;
+            }, {});
+          return formattedData;
+        },
+      }
+    );
+
+  const isMobile = window.Digit.Utils.browser.isMobile();
+  const classname = Digit.Hooks.useRouteSubscription(pathname);
+  const { t } = useTranslation();
+
+  // replacing useRouteMatch
+  const path = "/works-ui/citizen";
+  const location = useLocation();
+
+  const isLoginPage =
+    location?.pathname?.includes("/login") ||
+    location?.pathname?.includes("/register") ||
+    location?.pathname?.includes("/select-language") ||
+    location?.pathname?.includes("/select-location") ||
+    window.location.href.includes("/citizen/login") ||
+    window.location.href.includes("/citizen/register") ||
+    window.location.href.includes("/citizen/select-language") ||
+    window.location.href.includes("/citizen/select-location");
+
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const handleClickOnWhatsApp = (obj) => {
+    window.open(obj);
+  };
+
+  const stateId = Digit.ULBService.getStateId();
+  let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
+  newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
+
+  const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
+  const toggleSidebarWidth = () => {
+    if (window.innerWidth <= 780 || window.Digit.Utils.browser.isMobile()) {
+      setIsMobileSidebarOpen((prev) => !prev);
+    } else {
+      setIsSidebarCollapsed((prev) => !prev);
+    }
+  };
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false);
+  };
+
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [pathname]);
+
+  const appRoutes = modules.map(({ code, tenants }, index) => {
+    const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
+    return Module ? (
+      <Route
+        key={index}
+        path={`${code.toLowerCase()}/*`}
+        element={
+          <Module
+            stateCode={stateCode}
+            moduleCode={code}
+            userType="citizen"
+            tenants={getTenants(tenants, appTenants)}
+          />
+        }
+      />
+    ) : null;
+  });
+
+  const { data: advertisement } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "Advertisement",
+    [{ name: "Unipole_12_8" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
+          return {
+            imageSrc: `${details.imageSrc}`,
+            light: `${details.light}`,
+            title: `${details.title}`,
+            location: `${details.location}`,
+            poleNo: `${details.poleNo}`,
+            price: `${details.price}`,
+            adtype: `${details.adtype}`,
+            faceArea: `${details.faceArea}`,
+          };
+        });
+        return formattedData;
+      },
+    }
+  );
+
+  const Advertisement = advertisement || [];
+
+  const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
+    let mdmsDataObj = isLinkDataFetched ? processLinkData(linkData, code, t) : undefined;
+    mdmsDataObj?.links && mdmsDataObj?.links.sort((a, b) => a.orderNumber - b.orderNumber);
+
+    return (
+      <React.Fragment key={index}>
+        <Route
+          path={`${code.toLowerCase()}-home`}
+          element={
+            <div className="moduleLinkHomePage">
+              <img src={"/works-ui/images/dashboard-banner.jpg"} alt="noimagefound" />
+              <BackButton className="moduleLinkHomePageBackButton" />
+              {isMobile ? <h4 className="moduleLinkHomePageTitleMob">{t("MODULE_" + code.toUpperCase())}</h4> : <h1>{t("MODULE_" + code.toUpperCase())}</h1>}
+              <div className="moduleLinkHomePageModuleLinks">
+                {mdmsDataObj && (
+                  <CitizenHomeCard
+                    header={t(mdmsDataObj?.header)}
+                    links={mdmsDataObj?.links}
+                    Icon={() => <span />}
+                    Info={code === "OBPS" ? () => (
+                      <CitizenInfoLabel
+                        className="citizen-info-label-flush"
+                        info={t("CS_FILE_APPLICATION_INFO_LABEL")}
+                        text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
+                      />
+                    ) : null}
+                    isInfo={code === "OBPS" ? true : false}
+                  />
+                )}
+              </div>
+              {code?.toUpperCase() === "ADS" && (
+                <div className="ads-module-card-grid">
+                  {Advertisement.map((ad, index) => (
+                    <AdvertisementModuleCard
+                      key={ad?.poleNo || ad?.title || index}
+                      imageSrc={ad.imageSrc}
+                      poleNo={ad.poleNo}
+                      light={ad.light}
+                      title={ad.title}
+                      location={ad.location}
+                      price={ad.price}
+                      path={`/works-ui/citizen/${code.toLowerCase()}/`}
+                      adType={ad.adtype}
+                      faceArea={ad.faceArea}
+                    />
+                  ))}
+                </div>
+              )}
+              <StaticDynamicCard moduleCode={code?.toUpperCase()} />
+            </div>
+          }
+        />
+        <Route path={`${code.toLowerCase()}-faq`} element={<FAQsSection module={code?.toUpperCase()} />} />
+        <Route path={`${code.toLowerCase()}-how-it-works`} element={<HowItWorks module={code?.toUpperCase()} />} />
+      </React.Fragment>
+    );
+  });
+
+  useEffect(() => {
+    const { commonConfig = {} } = layout
+    const vars = {
+      "--app-btn-primary-gradient": commonConfig?.gradient,
+      "--app-layout-primary-background": commonConfig?.commonBackground,
+      "--app-layout-primary-color": commonConfig?.commonColor,
+    };
+
+    Object.entries(vars).forEach(([k, v]) => {
+      if (v) document.documentElement.style.setProperty(k, v);
+    });
+
+    return () => {
+      Object.keys(vars).forEach((k) => document.documentElement.style.removeProperty(k));
+    };
+  }, [layout?.commonConfig]);
+
+  return (
+    <div className={classname}>
+      {hideSidebar ? null : (
+        <React.Fragment>
+          <div className={`SideBarStatic ${isSidebarCollapsed ? "SideBarStatic--collapsed" : ""} ${isMobileSidebarOpen ? "SideBarStatic--mobile-open" : ""}`}>
+            <StaticCitizenSideBar
+              linkData={linkData}
+              islinkDataLoading={islinkDataLoading}
+              isSidebarCollapsed={isSidebarCollapsed}
+              closeMobileSidebar={closeMobileSidebar}
+            />
+          </div>
+          {isMobileSidebarOpen && (
+            <div className="sidebar-mobile-backdrop" onClick={closeMobileSidebar} />
+          )}
+        </React.Fragment>
+      )}
+      {!hideSidebar && (
+        <TopBarSideBar
+          t={t}
+          stateInfo={stateInfo}
+          userDetails={userDetails}
+          CITIZEN={CITIZEN}
+          cityDetails={cityDetails}
+          mobileView={mobileView}
+          handleUserDropdownSelection={handleUserDropdownSelection}
+          logoUrl={logoUrl}
+          showSidebar={true}
+          linkData={linkData}
+          islinkDataLoading={islinkDataLoading}
+          toggleSidebarWidth={toggleSidebarWidth}
+          isSidebarCollapsed={isSidebarCollapsed}
+        />
+      )}
+      <div className={`main center-container citizen-home-container ${isSidebarCollapsed ? "citizen-home-container--collapsed" : ""} ${hideSidebar ? "citizen-home-container--no-sidebar" : ""}`}>
+        <div className={`main-body ${hideSidebar ? "body-topBar" : ""}`}>
+          <Routes>
+            {/* <Route path={path} element={<CitizenHome />} />
+
+            <Route path={`/feedback`} element={<PrivateRoute><CitizenFeedback /></PrivateRoute>} />
+            <Route path={`/feedback-acknowledgement`} element={<PrivateRoute><AcknowledgementCF /></PrivateRoute>} />
+
+            <Route path={`/select-language`} element={<LanguageSelection />} />
+            <Route path={`/select-location`} element={<LocationSelection />} />
+
+            <Route path={`/error`} element={<ErrorComponent initData={initData} />} />
+
+            <Route path={`/all-services`} element={<AppHome />} />
+
+            <Route path={`/login/*`} element={<Login stateCode={stateCode} />} />
+            <Route path={`/register/*`} element={<Login stateCode={stateCode} isUserRegistered={false} />} />
+
+
+            <Route path={`/user/profile`} element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+
+            <Route path={`/Audit`} element={<Search />} />
+            <Route path={`/payment/verification`} element={<QRCode />} /> */}
+
+            <Route path="*" element={<CitizenHome onToggleSidebarWidth={toggleSidebarWidth} layout={layout} isSidebarCollapsed={isSidebarCollapsed} />} />
+            <Route path="login/*" element={<Login stateCode={stateCode} layout={layout} />} />
+            <Route path="register/*" element={<Login stateCode={stateCode} isUserRegistered={false} layout={layout} />} />
+            <Route path="select-language" element={<LanguageSelection />} />
+            <Route path="select-location" element={<LocationSelection />} />
+            <Route path="error" element={<ErrorComponent initData={initData} goToHome={() => navigate("/works-ui/citizen")} />} />
+            <Route path="all-services" element={
+              <AppHome
+                userType="citizen"
+                modules={modules}
+                getCitizenMenu={linkData}
+                fetchedCitizen={isLinkDataFetched}
+                isLoading={islinkDataLoading}
+              />} />
+            <Route path="feedback" element={<PrivateRoute><CitizenFeedback /></PrivateRoute>} />
+            <Route path="feedback-acknowledgement" element={<PrivateRoute><AcknowledgementCF /></PrivateRoute>} />
+            <Route path="user/profile" element={<PrivateRoute><UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} /></PrivateRoute>} />
+            <Route path="verificationsearch-home" element={<VSearchCertificate />} />
+            <Route path="assets/services" element={<AssetsQRCode />} />
+            <Route path="challan/details" element={<ChallanQRCode />} />
+            <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`} element={<CreateAnonymousEDCR />} />
+            <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`} element={<EDCRAcknowledgement />} />
+            <Route path="Audit" element={<Search />} />
+            <Route path="payment/verification" element={<QRCode />} />
+            {Digit?.ComponentRegistryService?.getComponent("PTCitizenHomeScreen") && (
+              <Route
+                path="pt-home"
+                element={React.createElement(Digit.ComponentRegistryService.getComponent("PTCitizenHomeScreen"))}
+              />
+            )}
+            {Digit?.ComponentRegistryService?.getComponent("TLCitizenHomeScreen") && (
+              <Route
+                path="tl-home"
+                element={React.createElement(Digit.ComponentRegistryService.getComponent("TLCitizenHomeScreen"))}
+              />
+            )}
+            {Digit?.ComponentRegistryService?.getComponent("WSCitizenHomeScreen") && (
+              <Route
+                path="ws-home"
+                element={React.createElement(Digit.ComponentRegistryService.getComponent("WSCitizenHomeScreen"))}
+              />
+            )}
+
+            {appRoutes}
+            {ModuleLevelLinkHomePages}
+          </Routes>
+        </div>
+        {!isLoginPage && <Footer isEmployee={false} />}
+      </div>
+    </div>
+  );
+};
+
+export default Home;

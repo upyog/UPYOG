@@ -1,0 +1,232 @@
+import { Loader, RemoveableTag } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useContext, useMemo, useState, Fragment, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import FilterContext from "./FilterContext";
+import NoData from "./NoData";
+// ["#048BD0", "#FBC02D", "#8E29BF","#EA8A3B","#0BABDE","#6E8459"]
+const COLORS = ["#048BD0", "#FBC02D", "#8E29BF", "#EA8A3B", "#0BABDE", "#6E8459", "#D4351C", "#0CF7E4", "#F80BF4", "#22F80B"];
+const mobileView = innerWidth <= 640;
+
+const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleCode }) => {
+  const { id } = data;
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { t } = useTranslation();
+  const { value } = useContext(FilterContext);
+  const [isPieClicked, setIsPieClicked] = useState(false);
+  const [pieSelected, setPieSelected] = useState(null);
+  const [drillDownId, setdrillDownId] = useState(null);
+  const { isLoading, data: response } = Digit.Hooks.dss.useGetChart({
+    key: isPieClicked ? drillDownId : id,
+    type: "metric",
+    tenantId,
+    requestDate: { ...value?.requestDate, startDate: value?.range?.startDate?.getTime(), endDate: value?.range?.endDate?.getTime() },
+    filters: isPieClicked ? { ...value?.filters, selectedType: pieSelected } : value?.filters,
+    moduleLevel: value?.moduleLevel || moduleCode,
+  });
+
+  const chartData = useMemo(() => {
+    if (!response) return null;
+    const compareFn = (a, b) => b.value - a.value;
+    return drillDownId === "deathByCategoryDrilldownAge" || response?.responseData?.visualizationCode === "nssNumberOfDeathsByAge" // || drillDownId === "nssDeathByCategoryDrillDownAge")
+      ? response?.responseData?.data?.[0]?.plots.reduce((acc, plot, index) => {
+          acc = acc.concat(plot);
+          return acc;
+        }, [])
+      : response?.responseData?.data?.[0]?.plots.sort(compareFn).reduce((acc, plot, index) => {
+          // if (index < 4) acc = acc.concat(plot);
+          //else if (index === 4) acc = acc.concat({ label: null, name: "DSS.OTHERS", value: plot?.value, symbol: "amount" });
+          // else acc[3].value += plot?.value;
+          /* Commnted logic of pie chart which hides more that 4 and show max of 4*/
+          acc = acc.concat(plot);
+          return acc;
+        }, []);
+  }, [response, drillDownId]);
+
+  useEffect(() => {
+    if (chartData && response?.responseData?.data?.[0]?.headerSymbol) {
+      setChartDenomination(response.responseData.data[0].headerSymbol);
+    }
+  }, [chartData, response, setChartDenomination]);
+  const totalValue= useMemo(()=>{
+    if(chartData){
+      return chartData.reduce((total, entry)=> total+entry.value,0);
+    }
+    return 0;
+  }, [chartData])
+
+  const renderLegend = (value) => (
+    <span className="dss-custom-area-chart-text-style">{t(`COMMON_MASTERS_${value && Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
+  );
+
+  const renderCustomLabel = (args) => {
+    const { value, endAngle, startAngle, x, cx, y, cy, percent, name } = args;
+    const diffAngle = endAngle - startAngle;
+    if (diffAngle > 1.5 && diffAngle < 7) {
+      return (
+        <text
+          x={x}
+          cx={cx}
+          y={y}
+          cy={cy}
+          percent={percent}
+          name={name}
+          fill="#505A5F"
+          alignmentBaseline="middle"
+          className="recharts-pie-label-text"
+          fontSize="14px"
+          textAnchor={x > cx ? "start" : "end"}
+        >
+          {`${(percent * 100).toFixed(0)}%`}
+        </text>
+      );
+    } else if (diffAngle < 1.5) {
+      return null;
+    }
+    return (
+      <text
+        x={x}
+        cx={cx}
+        y={y}
+        cy={cy}
+        percent={percent}
+        name={name}
+        fill="#505A5F"
+        alignmentBaseline="middle"
+        className="recharts-pie-label-text"
+        fontSize="14px"
+        textAnchor={x > cx ? "start" : "end"}
+      >
+        {`${(percent * 100).toFixed(0)}% ${name}`}
+      </text>
+    );
+  };
+
+  const renderTooltip = ({ payload, label }) => {
+    return (
+      <div
+        className="dss-custom-area-chart-container-padding"
+      >
+        <p className="recharts-tooltip-label">{`${t(
+          `COMMON_MASTERS_${payload?.[0]?.name && Digit.Utils.locale.getTransformedLocale(payload?.[0]?.name)}`
+        )}: ${Digit.Utils.dss.formatter(payload?.[0]?.value, payload?.[0]?.payload?.payload?.symbol, value?.denomination, true, t)}`}</p>
+        <p>{`(${Number((payload?.[0]?.value / response?.responseData?.data?.[0]?.headerValue) * 100).toFixed(1)}%)`}</p>
+      </div>
+    );
+  };
+
+  ///chartIDArray : Array of id's which are placed in a row of 2 charts
+  const chartIDArray = [
+    "mcCollectionByPaymentModev2",
+    "mcRceiptsByPaymentModev2",
+    "nssWsCollectionByChannel",
+    "nssWsCollectionByUsage",
+    "nssOBPSPermitIssuedByOccupancyType",
+    "nssOBPSPermitIssuedByRiskType",
+    "mcCollectionByPaymentType",
+    "mcReceiptsByPaymentMode",
+    "wscollectionByUsage",
+    "wscollectionByChannel",
+    "permitIssuedByOccupancyType",
+    "permitIssuedByRiskType",
+  ];
+
+  ///checkChartID: This function will check if the id is of chartIDArray
+  const checkChartID = (chartID) => {
+    return chartIDArray.includes(chartID);
+  };
+
+  const onPieClick = ({ payload }) => {
+    setIsPieClicked(true);
+    setdrillDownId(response?.responseData?.drillDownChartId);
+    setPieSelected(payload.name);
+  };
+
+  const removeFilter = () => {
+    setIsPieClicked(false);
+  };
+
+  useEffect(() => {
+    setIsPieClicked(false);
+    setdrillDownId(null);
+    setPieSelected(null);
+  }, [id]);
+  const CustomLegend=({payload, totalValue})=>{
+    return (
+      <div className="dss-custom-pie-chart-flex-container">
+        {payload.map((entry, index)=>(
+          <div key={`legend-${index}`} className="dss-custom-pie-chart-flex-row">
+            <div style={entry?.color ? { backgroundColor: entry.color } : undefined} className="dss-pie-legend-box"/>
+            <span className="dss-custom-pie-chart-spacing">
+              {`${entry.value}:${(entry?.payload?.percent  * 100).toFixed(1)}% (${Digit.Utils.dss.formatter(entry?.payload?.value, entry?.payload?.payload?.symbol, value?.denomination, true, t)} )`}
+            </span>
+            </div>
+        ))}
+     </div>
+    );
+  };
+  if (isLoading) {
+    return <Loader />;
+  }
+  return (
+    <Fragment>
+      {id === "deathByCategory" && ( //|| id === "nssNumberOfDeathsByCategory") && (
+        <span className={`${"dss-pie-subheader"} dss-custom-pie-chart-wrapper`}>
+          {t("DSS_CMN_PIE_INFO")}
+        </span>
+      )}
+      {isPieClicked && (
+        <div>
+          <div className="tag-container dss-custom-pie-chart-bottom-spacing">
+            <span className="dss-custom-pie-chart-top-spacing">{t("DSS_FILTERS_APPLIED")}: </span>
+            <RemoveableTag key={id} text={`${t("COMMON_MASTERS_" + Digit.Utils.locale.getTransformedLocale(pieSelected))}`} onClick={removeFilter} />
+          </div>
+          {/* <div className="tag-container" className="custom-style">
+            <span >{t("DSS_FILTERS_APPLIED")}: </span>
+            <RemoveableTag extraStyles={{tagStyles:{ marginTop: "unset" }}} key={id} text={`${t("COMMON_MASTERS_" + Digit.Utils.locale.getTransformedLocale(pieSelected))}`} onClick={removeFilter} />
+          </div> */}
+        </div>
+      )}
+      {chartData?.length === 0 || !chartData ? (
+        <NoData t={t} />
+      ) : (
+        <ResponsiveContainer width="99%" height={440}>
+          <PieChart cy={100}>
+            <Pie
+              data={chartData}
+              dataKey={dataKey}
+              cx="50%"
+              cy="50%"
+              className={response?.responseData?.drillDownChartId !== "none" ? "cursor-pointer" : "cursor-default"}
+              innerRadius={checkChartID(id) && !mobileView ? 90 : 70} ///Charts in rows(which contains 2 charts) are little bigger in size than charts in rows(which contains 3 charts) charts
+              outerRadius={checkChartID(id) && !mobileView ? 110 : 90}
+              margin={{ top: isPieClicked ? 0 : 5 }}
+              fill="#8884d8"
+              //label={renderCustomLabel}
+
+              labelLine={false}
+              isAnimationActive={false}
+              onClick={response?.responseData?.drillDownChartId !== "none" ? onPieClick : null}
+            >
+              {response?.responseData?.data?.[0]?.plots.map((entry, index) => (
+                <Cell key={`cell-`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip content={renderTooltip} />
+            <Legend content={CustomLegend}/>
+           
+          </PieChart>
+        </ResponsiveContainer>
+      )}
+      {isPieClicked && (
+        <div
+          className="dss-custom-pie-chart-centered"
+        >
+          {t(Digit.Utils.locale.getTransformedLocale(`${response?.responseData?.data?.[0]?.headerName}_${pieSelected}`))}
+        </div>
+      )}
+    </Fragment>
+  );
+};
+
+export default CustomPieChart;

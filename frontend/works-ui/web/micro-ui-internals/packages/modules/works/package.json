@@ -1,0 +1,14 @@
+{
+    "name": "@nudmcdgnpm/upyog-ui-module-works",
+    "version": "0.1.0",
+    "main": "src/index.js",
+    "source": "src/index.js",
+    "license": "MIT",
+    "peerDependencies": {
+        "react": "19.2.0",
+        "react-dom": "19.2.0",
+        "react-router-dom": "^6.23.0",
+        "react-i18next": "^14.0.0",
+        "@tanstack/react-query": "^5.0.0"
+    }
+}

@@ -1,0 +1,551 @@
+/* Citizen Privacy Audit Report Modern Styles */
+
+.citizen-audit-page {
+  padding: 8px 16px 48px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  .citizen-audit-top-nav {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .back-btn2,
+    .back-btn {
+      margin: 0 !important;
+    }
+  }
+
+  /* Header Section */
+  .citizen-audit-header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .citizen-audit-title-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+
+      .citizen-audit-header-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
+        color: #a82227;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+          width: 22px;
+          height: 22px;
+          stroke: #a82227;
+        }
+      }
+
+      .citizen-audit-title-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .citizen-audit-title-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .citizen-audit-title,
+        .header {
+          font-size: 26px !important;
+          font-weight: 700 !important;
+          color: #1e293b !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          letter-spacing: -0.02em;
+          line-height: 1.25 !important;
+        }
+
+        .citizen-audit-count-badge {
+          font-size: 12.5px;
+          font-weight: 700;
+          color: #a82227;
+          background: #fff1f2;
+          border: 1px solid #fecaca;
+          padding: 3px 12px;
+          border-radius: 9999px;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+
+  /* Search / Filter Card */
+  .citizen-audit-search-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #a82227, #f97316);
+    }
+
+    .citizen-audit-search-form,
+    .search-form-wrapper.citizen-audit-search-form {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(220px, 1fr)) auto !important;
+      gap: 20px !important;
+      align-items: end !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      box-sizing: border-box !important;
+
+      .form-field,
+      .input-fields,
+      .citizen-audit-field {
+        width: 100% !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        box-sizing: border-box !important;
+
+        label,
+        .citizen-audit-field-label {
+          font-size: 13.5px !important;
+          font-weight: 600 !important;
+          color: #334155 !important;
+          margin-bottom: 8px !important;
+          line-height: 1.4 !important;
+          display: block !important;
+        }
+
+        .pos-relative.width-full {
+          max-width: 100% !important;
+          width: 100% !important;
+        }
+
+        input[type="date"],
+        .employee-card-input,
+        .rc-date-picker-wrapper {
+          width: 100% !important;
+          height: 44px !important;
+          padding: 0 14px !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          color: #0f172a !important;
+          background-color: #f8fafc !important;
+          border: 1px solid #cbd5e1 !important;
+          border-radius: 10px !important;
+          margin: 0 !important;
+          box-sizing: border-box !important;
+          transition: all 0.2s ease !important;
+          outline: none !important;
+
+          &:hover {
+            border-color: #94a3b8 !important;
+            background-color: #ffffff !important;
+          }
+
+          &:focus {
+            border-color: #a82227 !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(168, 34, 39, 0.12) !important;
+          }
+        }
+      }
+
+      .citizen-audit-actions-field {
+        width: auto !important;
+        min-width: 240px;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 12px !important;
+
+        .citizen-audit-action-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+        }
+
+        .search-fields-submit-bar,
+        .submit-bar {
+          flex: 1;
+          min-width: 130px;
+          height: 44px !important;
+          padding: 0 22px !important;
+          border-radius: 10px !important;
+          font-size: 14px !important;
+          font-weight: 600 !important;
+          background: #a82227 !important;
+          color: #ffffff !important;
+          border: none !important;
+          cursor: pointer !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          box-shadow: 0 2px 8px rgba(168, 34, 39, 0.25) !important;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          margin: 0 !important;
+
+          &:hover {
+            background: #8e1c21 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(168, 34, 39, 0.35) !important;
+          }
+
+          header {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #ffffff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+          }
+        }
+
+        .citizen-audit-clear-btn {
+          height: 44px;
+          padding: 0 18px;
+          border-radius: 10px;
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #475569;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+
+          &:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
+          }
+        }
+      }
+    }
+  }
+
+  /* Results Section */
+  .citizen-audit-results-section {
+    width: 100%;
+  }
+
+  /* Loader State */
+  .citizen-audit-loader-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 56px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Empty / No Data State */
+  .citizen-audit-empty-card {
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 52px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.03);
+
+    .citizen-audit-empty-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: #64748b;
+
+      svg {
+        width: 30px;
+        height: 30px;
+        stroke: #64748b;
+      }
+    }
+
+    .citizen-audit-empty-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #334155;
+      margin: 0 0 6px 0;
+      line-height: 1.5;
+    }
+  }
+
+  /* Table Results Card */
+  .citizen-audit-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    margin-bottom: 24px;
+
+    .citizen-audit-table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px 24px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+
+      .citizen-audit-toolbar-meta {
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .citizen-audit-download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+        &:hover {
+          border-color: #a82227;
+          background: #fff1f2;
+          transform: translateY(-1px);
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    .citizen-audit-table-responsive {
+      width: 100%;
+      overflow-x: auto;
+
+      .table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin: 0 !important;
+        background: #ffffff !important;
+
+        thead {
+          background: #f8fafc !important;
+          border-bottom: 1px solid #e2e8f0 !important;
+
+          tr th,
+          .rc-table-table-cell {
+            padding: 14px 20px !important;
+            font-size: 12.5px !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            text-align: left !important;
+            background: #f8fafc !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            white-space: nowrap;
+          }
+        }
+
+        tbody {
+          tr {
+            border-bottom: 1px solid #f1f5f9 !important;
+            transition: background-color 0.15s ease;
+
+            &:hover {
+              background-color: #f8fafc !important;
+            }
+
+            &:last-child {
+              border-bottom: none !important;
+            }
+
+            td,
+            .audit-table-cell {
+              padding: 16px 20px !important;
+              font-size: 14px !important;
+              color: #1e293b !important;
+              vertical-align: middle !important;
+              line-height: 1.5 !important;
+            }
+
+            .audit-table-cell--app-no {
+              min-width: 240px;
+            }
+          }
+        }
+      }
+
+      .cell-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e293b;
+        word-break: break-word;
+      }
+
+      .pagination {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 12px !important;
+        padding: 14px 24px !important;
+        background: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        font-size: 13.5px !important;
+        color: #475569 !important;
+        margin: 0 !important;
+
+        select {
+          padding: 4px 8px;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          background: #f8fafc;
+          color: #1e293b;
+          font-weight: 600;
+          outline: none;
+        }
+      }
+    }
+  }
+
+  /* Mobile Search & Cards */
+  .citizen-audit-mobile-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .searchBox {
+      flex: 1;
+      margin: 0 !important;
+    }
+
+    .citizen-audit-download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Mobile Load More Footer */
+  .citizen-audit-load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 36px;
+
+    .citizen-audit-load-more-btn,
+    .link a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      background: #ffffff;
+      color: #a82227;
+      border: 1.5px solid #a82227;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(168, 34, 39, 0.1);
+
+      &:hover {
+        background: #a82227;
+        color: #ffffff;
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    .citizen-audit-search-card {
+      padding: 20px;
+
+      .citizen-audit-search-form,
+      .search-form-wrapper.citizen-audit-search-form {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+
+        .citizen-audit-actions-field {
+          width: 100% !important;
+          min-width: 0;
+          margin-top: 4px !important;
+
+          .citizen-audit-action-group {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 4px 12px 32px;
+
+    .citizen-audit-header-wrap {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .citizen-audit-title-block .citizen-audit-title-text .citizen-audit-title {
+        font-size: 22px !important;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,14 @@
+.flex-fit{
+    @apply flex w-full border-b border-solid border-border;
+    border-bottom: 0px !important;
+    padding-top: 5px
+}
+.card-count{
+    @apply pr-xl;
+    div{
+        @apply text-link;
+        span{
+            @apply text-link font-bold;
+        }
+    }
+}

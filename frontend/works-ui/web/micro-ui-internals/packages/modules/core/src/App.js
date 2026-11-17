@@ -1,0 +1,85 @@
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import EmployeeApp from "./pages/employee";
+import CitizenApp from "./pages/citizen";
+
+export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => {
+  const location = useLocation();
+  const { pathname } = location;
+
+  const innerWidth = window.innerWidth;
+  const cityDetails = Digit.ULBService.getCurrentUlb();
+  const userDetails = Digit.UserService.getUser();
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { stateInfo } = storeData || {};
+  const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
+  let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
+  // console.log("DigitAppDigitAppDigitApp",stateCode, modules, appTenants, logoUrl, initData)
+  if (window.location.pathname.split("/").includes("employee")) CITIZEN = false;
+
+  useEffect(() => {
+    // 🔹 scroll to top on route change (replaces history.listen)
+    window?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
+    if (!pathname?.includes("application-details")) {
+      if (!pathname?.includes("inbox")) {
+        Digit.SessionStorage.del("fsm/inbox/searchParams");
+      }
+      if (pathname?.includes("search")) {
+        Digit.SessionStorage.del("fsm/search/searchParams");
+      }
+    }
+    if (!pathname?.includes("dss")) {
+      Digit.SessionStorage.del("DSS_FILTERS");
+    }
+    if (!pathname?.includes("landing")) {
+      Digit.SessionStorage.del("DSS_FILTERS_CUMILATIVETRANSACTIONS");
+    }
+    if (pathname?.toString() === "/works-ui/employee") {
+      Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
+      Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
+    }
+    if (pathname?.toString() === "/works-ui/citizen" || pathname?.toString() === "/works-ui/employee") {
+      Digit.SessionStorage.del("WS_DISCONNECTION");
+    }
+  }, [pathname]);
+
+  const handleUserDropdownSelection = (option) => {
+    option.func();
+  };
+
+  const mobileView = innerWidth <= 640;
+  let sourceUrl = `${window.location.origin}/citizen`;
+  const commonProps = {
+    stateInfo,
+    userDetails,
+    CITIZEN,
+    cityDetails,
+    mobileView,
+    handleUserDropdownSelection,
+    logoUrl,
+    DSO,
+    stateCode,
+    modules,
+    appTenants,
+    sourceUrl,
+    pathname,
+    initData,
+  };
+  return (
+    <Routes>
+      <Route
+        path="/works-ui/employee/*"
+        element={<EmployeeApp {...commonProps} />}
+      />
+      <Route
+        path="/works-ui/citizen/*"
+        element={<CitizenApp {...commonProps} />}
+      />
+      <Route
+        path="*"
+        element={<Navigate to="/works-ui/citizen" />}
+      />
+    </Routes>
+  );
+};

@@ -1,0 +1,162 @@
+import { Banner, Card, CardText, LinkButton, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
+import { Link,  } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { APPLICATION_PATH } from "./utils";
+
+/*
+  This file defines the EDCRAcknowledgement component, which displays an acknowledgment page for EDCR submissions.
+  It handles both success and error scenarios, showing appropriate messages and actions for the user.
+*/
+const EDCRAcknowledgement = (props) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    if (props?.data?.type == "ERROR" && !showToast) setShowToast(true);
+  }, [props?.data?.data]);
+
+  /*
+    Handling the error case:
+    - Displays an error message to inform the user that the application failed.
+    - Provides a button to navigate back to the home screen.
+    - Shows a toast notification with the error message received.
+  */
+  if (props?.data?.type == "ERROR") {
+    return (
+      <Card className="core-nav-item-container-padding">
+        <Banner
+          message={t("CS_BPA_APPLICATION_FAILED")}
+          applicationNumber={""}
+          info={""}
+          successful={false}
+          infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
+          applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
+          className="core-edcracknowledgement-fullwidth"
+        />
+        <div className="core-edcracknowledgement-container-padding">
+        <Link to={`${APPLICATION_PATH}/citizen`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+          </Link>
+        </div>
+        {showToast ? <Toast error={"error"} label={t(props?.data?.data)} onClose={() => setShowToast(null)} isDleteBtn={true} /> : null}
+      </Card>
+    );
+  }
+
+  sessionStorage.setItem("isPermitApplication", true);
+  sessionStorage.setItem("isEDCRDisable", JSON.stringify(true));
+  const edcrData = props?.data?.[0];
+  const [bpaLinks, setBpaLinks] = useState({});
+  const state = Digit.ULBService.getStateId();
+  const isMobile = window.Digit.Utils.browser.isMobile();
+  const { data: homePageUrlLinks, isLoading: homePageUrlLinksLoading } = Digit.Hooks.obps.useMDMS(state, "BPA", ["homePageUrlLinks"]);
+  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["RiskTypeComputation"]);
+
+  //  Once the homepage URL links are loaded, update the BPA links based on the application type and subtype.
+  useEffect(() => {
+    if (!homePageUrlLinksLoading && homePageUrlLinks?.BPA?.homePageUrlLinks?.length > 0) {
+      let uniqueLinks = [];
+      homePageUrlLinks?.BPA?.homePageUrlLinks?.map((linkData) => {
+        if (linkData?.applicationType === edcrData?.appliactionType && linkData?.serviceType === edcrData?.applicationSubType) {
+          setBpaLinks({
+            linkData: linkData,
+            edcrNumber: edcrData?.edcrNumber,
+          });
+        }
+      });
+    }
+  }, [!homePageUrlLinksLoading]);
+
+  const printReciept = async () => {
+    var win = window.open(edcrData.planReport, "_blank");
+    if (win) {
+      win.focus();
+    }
+  };
+
+  const routeToBPAScreen = async () => {
+    navigate(
+      `${APPLICATION_PATH}/citizen/obps/bpa/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
+      { edcrNumber: edcrData?.edcrNumber }
+    );
+};
+
+
+  return (
+    <div>
+      {edcrData.status == "Accepted" ? (
+        <Card className="core-nav-item-container-padding">
+          <Banner
+            message={t("EDCR_ACKNOWLEDGEMENT_SUCCESS_MESSAGE_LABEL")}
+            applicationNumber={edcrData?.edcrNumber}
+            info={t("EDCR_SCRUTINY_NUMBER_LABEL")}
+            successful={true}
+            infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
+            applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
+            className="core-edcracknowledgement-fullwidth"
+          />
+          <CardText className="core-edcracknowledgement-card">{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${
+            edcrData?.applicationNumber
+          }`}</CardText>
+          <div className="primary-label-btn d-grid core-edcracknowledgement-bottom-spacing" onClick={printReciept}>
+            <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
+            </svg>
+            {t("EDCR_DOWNLOAD_SCRUTINY_REPORT_LABEL")}
+          </div>
+          <div className="core-edcracknowledgement-container-padding-2">
+            <Link
+             to={{
+              pathname: `${APPLICATION_PATH}/citizen/obps/${bpaLinks?.linkData?.flow?.toLowerCase()}/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
+              state: bpaLinks,
+            }}            
+              replace
+            >
+              <SubmitBar label={t("BPA_APPLY_FOR_BPA_LABEL")} onSubmit={() => sessionStorage.setItem("clickOnBPAApplyAfterEDCR", true)} />
+              <CardText
+                className="button-sub-text core-edcracknowledgement-centered"
+              >
+                {t("BPA_FOR_NEW_CONSTRUCTION_LABEL")}
+              </CardText>
+            </Link>
+            <div className="core-edcracknowledgement-top-spacing">
+            <Link to={`${APPLICATION_PATH}/citizen`}>
+                <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+              </Link>
+            </div>
+          </div>
+        </Card>
+      ) : (
+        <Card className="core-nav-item-container-padding">
+          <Banner
+            message={t("EDCR_ACKNOWLEDGEMENT_REJECTED_MESSAGE_LABEL")}
+            applicationNumber={""}
+            info={""}
+            successful={false}
+            infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
+            applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
+            className="core-edcracknowledgement-fullwidth"
+          />
+          <CardText className="core-edcracknowledgement-card">{t("EDCR_ACKNOWLEDGEMENT_REJECTED_MESSAGE_TEXT_LABEL")}</CardText>
+          <CardText className="core-edcracknowledgement-card">{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${
+            edcrData?.applicationNumber
+          }`}</CardText>
+          <div className="primary-label-btn d-grid core-edcracknowledgement-bottom-spacing" onClick={printReciept}>
+            <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
+            </svg>
+            {t("EDCR_DOWNLOAD_SCRUTINY_REPORT_LABEL")}
+          </div>
+          <div className="core-edcracknowledgement-container-padding">
+          <Link to={`${APPLICATION_PATH}/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+            </Link>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+};
+export default EDCRAcknowledgement;

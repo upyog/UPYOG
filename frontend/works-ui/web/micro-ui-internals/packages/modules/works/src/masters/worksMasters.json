@@ -1,0 +1,326 @@
+{
+    "FinancialYear": [
+        {
+            "code": "2024-25",
+            "name": "2024-25"
+        },
+        {
+            "code": "2025-26",
+            "name": "2025-26"
+        },
+        {
+            "code": "2026-27",
+            "name": "2026-27"
+        }
+    ],
+    "State": [
+        {
+            "code": "PB",
+            "name": "Punjab"
+        },
+        {
+            "code": "HR",
+            "name": "Haryana"
+        }
+    ],
+    "District": [
+        {
+            "code": "LDH",
+            "name": "Ludhiana",
+            "parent": "PB"
+        },
+        {
+            "code": "ASR",
+            "name": "Amritsar",
+            "parent": "PB"
+        },
+        {
+            "code": "JAL",
+            "name": "Jalandhar",
+            "parent": "PB"
+        },
+        {
+            "code": "GGN",
+            "name": "Gurugram",
+            "parent": "HR"
+        },
+        {
+            "code": "FBD",
+            "name": "Faridabad",
+            "parent": "HR"
+        }
+    ],
+    "RecommendedBy": [
+        {
+            "code": "ULB",
+            "name": "ULB Initiative"
+        },
+        {
+            "code": "MP",
+            "name": "MP"
+        },
+        {
+            "code": "MLA",
+            "name": "MLA"
+        },
+        {
+            "code": "OTHERS",
+            "name": "Others"
+        }
+    ],
+    "Scheme": [
+        {
+            "code": "FC",
+            "name": "Finance Commission"
+        },
+        {
+            "code": "MW",
+            "name": "Municipal Works"
+        },
+        {
+            "code": "FC15",
+            "name": "15th Finance Commission"
+        },
+        {
+            "code": "NHS",
+            "name": "National Health Scheme"
+        },
+        {
+            "code": "NSDP",
+            "name": "National Slum Development Program (NSDP)"
+        },
+        {
+            "code": "PMAY",
+            "name": "Pradhan Mantri Awas Yojana (PMAY)"
+        },
+        {
+            "code": "SBM",
+            "name": "Swachh Bharat Mission (SBM)"
+        }
+    ],
+    "SubScheme": [
+        {
+            "code": "STREET_LIGHTS",
+            "name": "Street Lights",
+            "parent": "FC"
+        },
+        {
+            "code": "MUNICIPAL_ROAD_WORKS",
+            "name": "Municipal Road Works",
+            "parent": "MW"
+        },
+        {
+            "code": "GENERAL_FC15",
+            "name": "General",
+            "parent": "FC15"
+        },
+        {
+            "code": "GENERAL_NHS",
+            "name": "General",
+            "parent": "NHS"
+        },
+        {
+            "code": "GENERAL_NSDP",
+            "name": "General",
+            "parent": "NSDP"
+        },
+        {
+            "code": "GENERAL_PMAY",
+            "name": "General",
+            "parent": "PMAY"
+        },
+        {
+            "code": "GENERAL_SBM",
+            "name": "General",
+            "parent": "SBM"
+        }
+    ],
+    "PurposeOfProject": [
+        {
+            "code": "DEVELOPMENT_WORK",
+            "name": "Development Work"
+        },
+        {
+            "code": "MANPOWER_SERVICES",
+            "name": "Man Power Services"
+        },
+        {
+            "code": "PROCUREMENT_MATERIALS",
+            "name": "Procurement of Materials"
+        },
+        {
+            "code": "PROCUREMENT_MACHINERIES",
+            "name": "Procurement of Machineries"
+        },
+        {
+            "code": "PROCUREMENT_VEHICLES",
+            "name": "Procurement of Vehicles"
+        },
+        {
+            "code": "OTHERS",
+            "name": "Others"
+        }
+    ],
+    "TypeOfWork": [
+        {
+            "code": "ORIGINAL",
+            "name": "Original"
+        },
+        {
+            "code": "IMPROVEMENT_UPGRADATION",
+            "name": "Improvements / Upgradation"
+        },
+        {
+            "code": "MAINTENANCE",
+            "name": "Maintenance (Annual / Routine)"
+        },
+        {
+            "code": "RESTORATION",
+            "name": "Restoration"
+        },
+        {
+            "code": "SPECIAL_REPAIRS",
+            "name": "Special Repairs"
+        },
+        {
+            "code": "CLOSURE_PERIOD_WORKS",
+            "name": "Closure Period Works"
+        },
+        {
+            "code": "REPAIRS",
+            "name": "Repairs"
+        },
+        {
+            "code": "LABOUR_CONTRACT_WORKS",
+            "name": "Labour Contract works"
+        }
+    ],
+    "WorkCategory": [
+        {
+            "code": "BUILDINGS",
+            "name": "Buildings"
+        },
+        {
+            "code": "FLYOVERS",
+            "name": "Flyovers"
+        },
+        {
+            "code": "BRIDGES",
+            "name": "Bridges"
+        },
+        {
+            "code": "CANALS",
+            "name": "Canals (including Linings and Structures)"
+        },
+        {
+            "code": "DAMS",
+            "name": "Dams & Allied Works"
+        },
+        {
+            "code": "WATER_SEWAGE_LINES",
+            "name": "Water supply / Sewage lines"
+        },
+        {
+            "code": "POWER_STATIONS",
+            "name": "Power Stations"
+        },
+        {
+            "code": "TREATMENT_TANKS",
+            "name": "Water / sewage treatment tanks"
+        }
+    ],
+    "ComponentCategory": [
+        {
+            "code": "MANPOWER",
+            "name": "Manpower"
+        },
+        {
+            "code": "GOODS",
+            "name": "Goods"
+        },
+        {
+            "code": "SERVICES",
+            "name": "Services"
+        },
+        {
+            "code": "BOTH",
+            "name": "Both"
+        }
+    ],
+    "ComponentSubCategory": [
+        {
+            "code": "ELECTRONIC_GADGETS",
+            "name": "Electronic Gadgets",
+            "parent": "GOODS"
+        },
+        {
+            "code": "FURNITURE",
+            "name": "Furniture",
+            "parent": "GOODS"
+        },
+        {
+            "code": "BUILDING_MATERIALS",
+            "name": "Building Materials",
+            "parent": "GOODS"
+        },
+        {
+            "code": "CLOUD",
+            "name": "Cloud",
+            "parent": "SERVICES"
+        }
+    ],
+    "FundSource": [
+        {
+            "code": "GRANT",
+            "name": "Government Grant"
+        },
+        {
+            "code": "OSR",
+            "name": "Own Source Fund"
+        },
+        {
+            "code": "PARTIAL",
+            "name": "Partial (Grant + OSR)"
+        }
+    ],
+    "GrantType": [
+        {
+            "code": "CENTRAL",
+            "name": "Central Grant"
+        },
+        {
+            "code": "STATE",
+            "name": "State Government Grant"
+        },
+        {
+            "code": "OTHER_AGENCIES",
+            "name": "Other Government Agencies"
+        },
+        {
+            "code": "WELFARE_BODIES",
+            "name": "Welfare Bodies"
+        },
+        {
+            "code": "OTHERS",
+            "name": "Others"
+        }
+    ],
+    "OsrSource": [
+        {
+            "code": "PROPERTY_TAX",
+            "name": "Property Tax"
+        },
+        {
+            "code": "WATER_CHARGES",
+            "name": "Water Charges"
+        },
+        {
+            "code": "TRADE_LICENCE",
+            "name": "Trade Licence Fees"
+        },
+        {
+            "code": "OTHER_OSR",
+            "name": "Other Own Source"
+        }
+    ]
+}

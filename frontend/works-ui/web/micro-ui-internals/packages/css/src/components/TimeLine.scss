@@ -1,0 +1,119 @@
+.timeline-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 0px 8px 24px;
+  width: 100%;
+  position: relative;
+
+  .timeline-checkpoint {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+
+    &:last-child .line {
+      display: none;
+    }
+  }
+
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    span {
+      text-align: center;
+    }
+
+    .secondary-color {
+      color: #1e293b;
+      padding: 6px 4px 0;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: center;
+      word-break: break-word;
+      max-width: 120px;
+    }
+  }
+
+  .circle {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    background-color: #cbd5e1;
+    color: #ffffff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    box-sizing: border-box;
+    z-index: 2;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      fill: #ffffff;
+    }
+
+    &.active {
+      background-color: #a82227;
+      border-color: #a82227;
+      box-shadow: 0 0 0 3px #fee2e2;
+    }
+  }
+
+  .line {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #e2e8f0;
+    z-index: 1;
+    transform: translateY(-50%);
+
+    &.active {
+      background-color: #a82227;
+    }
+  }
+} 
+
+.TLComments {
+  max-width: 360px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+
+  h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    font-size: 13.5px;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.45;
+  }
+}
+
+@screen dt {
+  .TLComments {
+    width: 360px;
+  }
+}
