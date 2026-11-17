@@ -52,18 +52,20 @@ const getSearchField = (field, formState, Controller, register, control, t) => {
             </SearchField>
             )
         case "multivaluelist":
-            var optionsArr = Object.values(field.defaultValue).map(el => t(el))
-            optionsArr.unshift(t('ALL'))
-            const optionsObjArr = optionsArr.map((option)=> {
-                return {
-                    name: field.islocalisationRequired ? t(`${field.localisationPrefix}${option}`):option
-                }
-            })
-            optionsArr.unshift(t('ALL'))
-           const selectMulti = (listOfSelections, controllerField) => {
-    const res = listOfSelections.map((item) => item[1]);
-    controllerField.onChange(res);
-};
+            const optionsObjArr = [
+                { name: t("ALL"), code: "All" },
+                ...Object.entries(field.defaultValue || {}).map(([key, val]) => {
+                    const translatedVal = t(val);
+                    return {
+                        code: key,
+                        name: field.islocalisationRequired && field.localisationPrefix ? t(`${field.localisationPrefix}${val}`) : translatedVal
+                    };
+                })
+            ];
+            const selectMulti = (listOfSelections, controllerField) => {
+                const res = listOfSelections.map((item) => item[1]);
+                controllerField.onChange(res);
+            };
             return (
             <SearchField>
                 <label>{t(`${field.label}${field.isMandatory ? "*" : ""}`)}</label>

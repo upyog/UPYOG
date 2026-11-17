@@ -58,6 +58,8 @@ const NewChallan = ({ ChallanData }) => {
 
   const stateId = Digit.ULBService.getStateId();
   const { data: newConfig } = Digit.Hooks.mcollect.useMcollectFormConfig.getFormConfig(stateId, {});
+  const queryResult = Digit.Hooks.mcollect.useMCollectCategory(tenantId, "[?(@.type=='Adhoc' && @.isActive==true)]");
+  const categoriesandTypes = queryResult?.data?.data;
 
   const lastModTime = ChallanData ? ChallanData[0].auditDetails.lastModifiedTime : null;
   const { data: fetchBillData } = ChallanData
@@ -78,43 +80,69 @@ const NewChallan = ({ ChallanData }) => {
   useEffect(() => {
     setMutationHappened(false);
     clearSuccessData();
-    return () => sessionStorage.removeItem("mcollectFormData");
   }, []);
+
+  window.onunload = function () {
+    sessionStorage.removeItem("mcollectFormData");
+  };
 
   const onFormValueChange = (setValue, formData, formState) => {
     setSubmitValve(!Object.keys(formState.errors).length);
   };
 
   const onSubmit = (data) => {
-    const mcollectFormValue = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
-    const rhfFlat = {
-      ...data?.consomerDetails1?.[0],
-      ...data?.addressDetails?.[0],
-      city:         data?.serviceDetails?.[0]?.city,
-      category:     data?.serviceDetails?.[0]?.category,
-      categoryType: data?.serviceDetails?.[0]?.categoryType,
-      fromDate:     data?.serviceDetails?.[0]?.fromDate,
-      toDate:       data?.serviceDetails?.[0]?.toDate,
-      comments:     data?.serviceDetails?.[0]?.comments,
-      ...Object.fromEntries(
-        Object.entries(data?.serviceDetails?.[0] || {}).filter(([k]) =>
-          !["city","category","categoryType","fromDate","toDate","comments",
-            "mohalla","doorNo","building","streetName","pincode",
-            "ConsumerName","mobileNumber","emailId"].includes(k)
-        )
-      ),
+    let mcollectFormValue = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+    const formData = {
+      ...(data?.consomerDetails1?.[0] || {}),
+      ...(data?.addressDetails?.[0] || {}),
+      ...(data?.serviceDetails?.[0] || {}),
+      ...mcollectFormValue,
     };
-    const merged = { ...mcollectFormValue, ...rhfFlat };
 
-    const categoryPrefix = merged?.category?.code?.split(".")[0];
-    const amountArray = Object.entries(merged)
-      .filter(([key]) => categoryPrefix && key.startsWith(`${categoryPrefix}_`) &&
-        !["category","categoryType","fromDate","toDate","city","ConsumerName",
-          "mobileNumber","emailId","doorNo","building","streetName","pincode","mohalla","comments"].includes(key))
-      .map(([key, val]) => ({
-        taxHeadCode: key.replace("_", "."),
-        amount: val ? Math.round(val) : 0,
+    const categoryCode = typeof formData?.category === "string" ? formData.category : formData?.category?.code;
+    const categoryTypeCode = typeof formData?.categoryType === "string" ? formData.categoryType : formData?.categoryType?.code;
+    const prefix = categoryCode?.split(".")[0] || categoryTypeCode?.split(".")[0] || ChallanData?.[0]?.businessService?.split(".")[0];
+    const bService = categoryTypeCode || ChallanData?.[0]?.businessService;
+
+    const nestedTaxObj = mcollectFormValue?.[prefix] || formData?.[prefix] || data?.serviceDetails?.[0]?.[prefix] || {};
+    const taxHeadAmounts = mcollectFormValue?.taxHeadAmounts || formData?.taxHeadAmounts || {};
+    const allTaxHeads = categoriesandTypes?.MdmsRes?.BillingService?.TaxHeadMaster || [];
+    const relevantTaxHeads = allTaxHeads.filter((ob) => ob.service === bService);
+
+    let amountArray = [];
+    if (relevantTaxHeads.length > 0) {
+      amountArray = relevantTaxHeads.map((tax) => {
+        const keySuffix = tax.code.includes(".") ? tax.code.split(".").slice(1).join(".") : tax.code;
+        const safeKey = tax.code.replace(/\./g, "_");
+        const rawVal =
+          taxHeadAmounts?.[tax.code] ??
+          nestedTaxObj?.[keySuffix] ??
+          nestedTaxObj?.[tax.code] ??
+          mcollectFormValue?.[tax.code] ??
+          mcollectFormValue?.[safeKey] ??
+          formData?.[tax.code] ??
+          formData?.[safeKey] ??
+          data?.serviceDetails?.[0]?.[tax.code] ??
+          data?.serviceDetails?.[0]?.[safeKey] ??
+          0;
+        return {
+          taxHeadCode: tax.code,
+          amount: rawVal ? Math.round(Number(rawVal)) : 0,
+        };
+      });
+    } else if (Object.keys(taxHeadAmounts).length > 0) {
+      amountArray = Object.entries(taxHeadAmounts).map(([code, val]) => ({
+        taxHeadCode: code.includes(".") ? code : `${prefix}.${code}`,
+        amount: val ? Math.round(Number(val)) : 0,
       }));
+    } else if (nestedTaxObj && Object.keys(nestedTaxObj).length > 0) {
+      let TaxHeadMasterKeys = Object.keys(nestedTaxObj);
+      let TaxHeadMasterValues = Object.values(nestedTaxObj);
+      amountArray = TaxHeadMasterKeys.map((ele, index) => ({
+        taxHeadCode: ele.includes(".") ? ele : `${prefix}.${ele}`,
+        amount: TaxHeadMasterValues[index] ? Math.round(Number(TaxHeadMasterValues[index])) : 0,
+      }));
+    }
 
     const Challan = isEdit
       ? {
@@ -125,28 +153,28 @@ const NewChallan = ({ ChallanData }) => {
           id: ChallanData[0].id,
           businessService: ChallanData[0].businessService,
           challanNo: ChallanData[0].challanNo,
-          consumerType: merged?.category?.code,
-          description: merged.comments,
-          taxPeriodFrom: Date.parse(merged.fromDate),
-          taxPeriodTo: Date.parse(merged.toDate),
+          consumerType: formData?.category?.code,
+          description: formData.comments,
+          taxPeriodFrom: Date.parse(formData.fromDate),
+          taxPeriodTo: Date.parse(formData.toDate),
           tenantId,
           address: ChallanData[0].address,
           amount: amountArray,
         }
       : {
-          citizen: { name: merged.ConsumerName, mobileNumber: merged.mobileNumber, emailId: merged.emailId },
-          businessService: merged?.categoryType?.code,
-          consumerType: merged?.category?.code?.split(".")[0],
-          description: merged?.comments,
-          taxPeriodFrom: Date.parse(merged?.fromDate),
-          taxPeriodTo: Date.parse(merged?.toDate),
+          citizen: { name: formData.ConsumerName, mobileNumber: formData.mobileNumber, emailId: formData.emailId },
+          businessService: formData?.categoryType?.code,
+          consumerType: formData?.category?.code?.split(".")[0],
+          description: formData?.comments,
+          taxPeriodFrom: Date.parse(formData?.fromDate),
+          taxPeriodTo: Date.parse(formData?.toDate),
           tenantId,
           address: {
-            buildingName: merged.building,
-            doorNo: merged.doorNo,
-            street: merged.streetName,
-            locality: { code: merged?.mohalla?.code },
-            pincode: merged.pincode,
+            buildingName: formData.building,
+            doorNo: formData.doorNo,
+            street: formData.streetName,
+            locality: { code: formData?.mohalla?.code },
+            pincode: formData.pincode,
           },
           amount: amountArray,
         };
@@ -168,7 +196,7 @@ const NewChallan = ({ ChallanData }) => {
             });
           }
         })
-        .catch((e) => setShowToast({ key: "error", label: e?.response?.data?.Errors[0].message }));
+        .catch((e) => setShowToast({ key: "error", label: e?.response?.data?.Errors?.[0]?.message || e?.response?.data?.Errors?.[0]?.code || e?.message || "Error creating challan" }));
     } else {
       Digit.MCollectService.create({ Challan }, tenantId)
         .then((result) => {
@@ -185,7 +213,7 @@ const NewChallan = ({ ChallanData }) => {
             });
           }
         })
-        .catch((e) => setShowToast({ key: "error", label: e?.response?.data?.Errors[0].message }));
+        .catch((e) => setShowToast({ key: "error", label: e?.response?.data?.Errors?.[0]?.message || e?.response?.data?.Errors?.[0]?.code || e?.message || "Error creating challan" }));
     }
   };
 

@@ -54,7 +54,7 @@ const Home = ({ layout }) => {
 
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({
     tenantId,
-    variant: "whats-new",
+    variant: "notifications",
     config: {
       enabled: conditionsToDisableNotificationCountTrigger(),
     },
@@ -68,9 +68,7 @@ const Home = ({ layout }) => {
   useEffect(() => {
     if (
       location.pathname.includes("/citizen/login") ||
-      location.pathname.includes("/citizen/register") ||
-      location.pathname.includes("/citizen/select-language") ||
-      location.pathname.includes("/citizen/select-location")
+      location.pathname.includes("/citizen/register")
     ) {
       return;
     }
@@ -78,13 +76,9 @@ const Home = ({ layout }) => {
     const currentUser = Digit.UserService.getUser();
     const currentLanguage = Digit.StoreData.getCurrentLanguage();
 
-    if (!tenantId || !currentUser?.access_token) {
+    if (!tenantId || !currentUser?.access_token || !currentLanguage) {
       navigate("/upyog-ui/citizen/login", { replace: true, state: { from: location.pathname + location.search } });
       return;
-    }
-
-    if (!currentLanguage) {
-      navigate("/upyog-ui/citizen/select-language", { replace: true, state: { from: location.pathname + location.search } });
     }
   }, [tenantId, location.pathname, location.search, navigate]);
 
@@ -453,6 +447,46 @@ const getNotificationTypeMeta = (notif = {}, t) => {
   };
 };
 
+const getTransformedLocale = (label) => {
+  if (typeof label === "number") return label;
+  label = label?.trim();
+  return label && label.toUpperCase().replace(/[.:-\s/]/g, "_");
+};
+
+const inferNotificationHeading = (notif = {}, matchedEvent = {}, t) => {
+  const src = { ...matchedEvent, ...notif };
+  const rawHeader =
+    src?.header ||
+    (src?.eventType === "SYSTEMGENERATED" && src?.name ? getTransformedLocale(src.name) : src?.name) ||
+    src?.title ||
+    src?.eventCategory ||
+    src?.businessService ||
+    "";
+
+  if (rawHeader) {
+    const transformed = getTransformedLocale(rawHeader);
+    const directTranslation = t(rawHeader);
+    if (directTranslation && directTranslation !== rawHeader) return directTranslation;
+    if (transformed) {
+      const transformedTranslation = t(transformed);
+      if (transformedTranslation && transformedTranslation !== transformed) return transformedTranslation;
+    }
+    return rawHeader;
+  }
+
+  const desc = (src?.description || src?.eventNotificationText || src?.message || src?.text || "").toLowerCase();
+  if (desc.includes("property") || desc.includes("pt-") || desc.includes("assessment")) return t("ACTION_TEST_PROPERTY_TAX", "Property Tax");
+  if (desc.includes("trade") || desc.includes("tl-") || desc.includes("license")) return t("ACTION_TEST_TRADE_LICENSE", "Trade License");
+  if (desc.includes("water") || desc.includes("ws/") || desc.includes("sewerage") || desc.includes("sw/")) return t("ACTION_TEST_WATER_AND_SEWERAGE", "Water & Sewerage");
+  if (desc.includes("challan") || desc.includes("pg-ch")) return t("UC_COMMON_HEADER_SEARCH", "mCollect Challan");
+  if (desc.includes("hall") || desc.includes("chb")) return t("CHB_COMMUNITY_HALL_BOOKING", "Community Hall Booking");
+  if (desc.includes("pet") || desc.includes("ptr")) return t("PTR_PET_REGISTRATION", "Pet Registration");
+  if (desc.includes("complaint") || desc.includes("grievance") || desc.includes("pgr")) return t("ES_PGR_HEADER_COMPLAINT", "Public Grievance");
+  if (desc.includes("bpa") || desc.includes("building") || desc.includes("permit")) return t("ACTION_TEST_OBPS", "Building Plan Approval");
+
+  return t("Notice");
+};
+
 const buildNotificationItems = (aggregateData, eventsData = [], t, navigate, tenantId, handlers = {}) => {
   const responses = aggregateData?.responses || {};
   const notifsRaw = responses?.["notifications"]?.data?.notifications || responses?.["notifications"]?.data || [];
@@ -465,27 +499,37 @@ const buildNotificationItems = (aggregateData, eventsData = [], t, navigate, ten
   const recentAppsRaw = responses?.["recent-applications"]?.data?.applications || responses?.["recent-applications"]?.data || [];
   const recentApps = Array.isArray(recentAppsRaw) ? recentAppsRaw : [];
 
-  const sourceList = apiNotifs.length > 0 ? apiNotifs : liveEvents;
+  // Prefer liveEvents (from useEvents({ variant: "notifications" })) so headings match /citizen/engagement/notifications
+  const sourceList = liveEvents.length > 0 ? liveEvents : apiNotifs;
 
   if (sourceList.length > 0) {
     return sourceList.slice(0, 4).map((notif) => {
-      const typeMeta = getNotificationTypeMeta(notif, t);
-      const rawTitle = notif?.title || notif?.header || notif?.name || notif?.businessService || "";
-      const title = rawTitle
-        ? getLabel(t, rawTitle, rawTitle)
-        : getLabel(t, "NOTIFICATION", "Notification");
+      const matchedEvent =
+        liveEvents.find(
+          (ev) =>
+            (ev?.id && notif?.id && ev.id === notif.id) ||
+            (ev?.uuid && notif?.uuid && ev.uuid === notif.uuid) ||
+            (ev?.description && (notif?.description || notif?.message) && ev.description === (notif.description || notif.message))
+        ) || {};
+      const mergedNotif = { ...matchedEvent, ...notif };
+      const typeMeta = getNotificationTypeMeta(mergedNotif, t);
+      const title = inferNotificationHeading(notif, matchedEvent, t);
 
       const rawDesc =
-        notif?.description ||
-        notif?.eventNotificationText ||
-        notif?.subTitle ||
-        notif?.message ||
-        notif?.summary ||
-        notif?.text ||
-        notif?.eventDetails?.address ||
+        mergedNotif?.description ||
+        mergedNotif?.eventNotificationText ||
+        mergedNotif?.subTitle ||
+        mergedNotif?.message ||
+        mergedNotif?.summary ||
+        mergedNotif?.text ||
+        mergedNotif?.eventDetails?.address ||
         "";
       const translatedDesc = rawDesc ? getLabel(t, rawDesc, rawDesc) : "";
-      const ts = notif?.auditDetails?.lastModifiedTime || notif?.auditDetails?.createdTime || notif?.createdTime || notif?.date;
+      const ts =
+        mergedNotif?.auditDetails?.lastModifiedTime ||
+        mergedNotif?.auditDetails?.createdTime ||
+        mergedNotif?.createdTime ||
+        mergedNotif?.date;
       const dateStr = ts ? new Date(ts).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "";
 
       const baseOneLiner = formatNotifOneLiner(translatedDesc, typeMeta.defaultLine);
@@ -496,11 +540,17 @@ const buildNotificationItems = (aggregateData, eventsData = [], t, navigate, ten
         subTitle,
         status: typeMeta.status,
         statusVariant: typeMeta.statusVariant,
-        icon: notif?.businessService ? getModuleIcon(notif.businessService) : typeMeta.icon,
+        icon: mergedNotif?.businessService ? getModuleIcon(mergedNotif.businessService) : getModuleIcon(title) !== "📋" ? getModuleIcon(title) : typeMeta.icon,
         onClick: () => {
-          if (notif?.redirectUrl) navigate(notif.redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
-          else if (notif?.actions?.[0]?.actionUrl) navigate(notif.actions[0].actionUrl.replace("/digit-ui/", "/upyog-ui/"));
-          else navigate("/upyog-ui/citizen/engagement/notifications");
+          if (mergedNotif?.eventType === "EVENTSONGROUND" && mergedNotif?.id) {
+            navigate(`/upyog-ui/citizen/engagement/events/details/${mergedNotif.id}`);
+          } else if (mergedNotif?.redirectUrl) {
+            navigate(mergedNotif.redirectUrl.replace("/digit-ui/", "/upyog-ui/"));
+          } else if (mergedNotif?.actions?.[0]?.actionUrl) {
+            navigate(mergedNotif.actions[0].actionUrl.replace("/digit-ui/", "/upyog-ui/"));
+          } else {
+            navigate("/upyog-ui/citizen/engagement/notifications");
+          }
         },
       };
     });

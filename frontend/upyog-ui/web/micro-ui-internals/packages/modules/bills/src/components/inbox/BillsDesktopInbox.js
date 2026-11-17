@@ -143,9 +143,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           <div>
             <span className="link">
               <Link
-                to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
-                }}
+                to={`/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`}
               >
                 {t(`${"ABG_COLLECT"}`)}{" "}
               </Link>
@@ -158,9 +156,7 @@ const BillsDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           <div>
             <span className="link">
               <Link
-                to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
-                }}
+                to={`/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["consumerCode"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`}
               >
                 {t(`${"ABG_GENERATE_NEW_BILL"}`)}
               </Link>

@@ -96,7 +96,7 @@ const OwnerForm1 = (_props) => {
   } = _props;
 
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
-  const formValue = watch();
+  const formValue = useWatch({ control });
   const { errors, touchedFields } = localFormState;
   // console.log("errorssssss", errors)
   const isMobile = window.Digit.Utils.browser.isMobile();

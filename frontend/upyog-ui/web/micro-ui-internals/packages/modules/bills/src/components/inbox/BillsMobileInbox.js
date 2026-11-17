@@ -46,9 +46,7 @@ const BillsMobileInbox = ({
           <div>
             <span className="link">
               <Link
-                to={{
-                  pathname: `/upyog-ui/citizen/payment/collect/${original?.["businessService"]}/${original?.["consumerCode"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`,
-                }}
+                to={`/upyog-ui/citizen/payment/collect/${original?.["businessService"]}/${original?.["consumerCode"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`}
               >
                 {t(`${"ABG_COLLECT"}`)}
               </Link>
@@ -60,9 +58,7 @@ const BillsMobileInbox = ({
           <div>
             <span className="link">
               <Link
-                to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${original?.["businessService"]}/${original?.["consumerCode"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`,
-                }}
+                to={`/upyog-ui/employee/payment/collect/${original?.["businessService"]}/${original?.["consumerCode"]}/tenantId=${original?.["tenantId"]}?workflow=mcollect`}
               >
                 {t(`${"ABG_GENERATE_NEW_BILL"}`)}
               </Link>

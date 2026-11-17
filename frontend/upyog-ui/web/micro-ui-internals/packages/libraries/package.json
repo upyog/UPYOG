@@ -29,7 +29,7 @@
     "html2canvas": "1.4.1",
     "dom-to-image": "2.6.0",
     "jspdf": "2.5.1",
-    "pdfmake": "0.1.72",
+    "pdfmake": "0.2.12",
     "react-i18next": "^14.0.0",
     "redux": "4.1.2",
     "xlsx": "0.17.5"

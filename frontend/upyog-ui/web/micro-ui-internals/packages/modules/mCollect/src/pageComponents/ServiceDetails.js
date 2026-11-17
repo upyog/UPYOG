@@ -146,7 +146,7 @@ const OwnerForm1 = (_props) => {
   } = _props;
 
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
-  const formValue = watch();
+  const formValue = useWatch({ control });
   const { errors } = localFormState;
   const isMobile = window.Digit.Utils.browser.isMobile();
 
@@ -157,28 +157,25 @@ const OwnerForm1 = (_props) => {
   const TaxHeadMasterFields = Digit.Hooks.mcollect.useMCollectTaxHeads(selectedCategoryType, categoriesandTypes);
 
   useEffect(() => {
-    if (!isEdit && getValues("categoryType") !== "")
-      setValue("categoryType", "");
-  }, [selectedCategory?.code])
-
-  useEffect(() => {
     if (isEdit && getValues("city") !== selectedCity)
       setValue("city", selectedCity);
   }, [selectedCity]);
 
-  // useEffect(() => {
-  //   if(!isEdit)
-  //   TaxHeadMasterFields && TaxHeadMasterFields.length>0 && TaxHeadMasterFields?.map((ob) => {
-  //     consumerdetail[ob.code] = "";
-  //   })
-  // },[TaxHeadMasterFields])
-
   useEffect(() => {
     if (isEdit && TaxHeadMasterFields && !(formValue[`${formValue?.categoryType?.code?.split(".")[0]}`])) {
-      let cdTax = JSON.parse(sessionStorage.getItem("InitialTaxFeilds"));
+      let cdTax = JSON.parse(sessionStorage.getItem("InitialTaxFeilds")) || {};
+      let stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+      stored.taxHeadAmounts = stored.taxHeadAmounts || {};
       TaxHeadMasterFields && TaxHeadMasterFields.length > 0 && TaxHeadMasterFields?.map((ob) => {
-        setValue(ob.code.replace(/\./g, "_"), cdTax[`${ob.code.split(".")[1]}`]);
-      })
+        const prefix = ob.code.split(".")[0];
+        const suffix = ob.code.split(".")[1];
+        const val = cdTax[suffix] || "";
+        setValue(ob.code, val);
+        if (!stored[prefix]) stored[prefix] = {};
+        stored[prefix][suffix] = val;
+        stored.taxHeadAmounts[ob.code] = val;
+      });
+      sessionStorage.setItem("mcollectFormData", JSON.stringify(stored));
     }
   }, [TaxHeadMasterFields])
 
@@ -215,15 +212,20 @@ const OwnerForm1 = (_props) => {
             setIsErrors(true);
           }
         });
-        let ob = [{ ...formValue }];
-        let mcollectFormValue = JSON.parse(sessionStorage.getItem("mcollectFormData"));
-        mcollectFormValue = { ...mcollectFormValue, ...ob[0] }
+        let mcollectFormValue = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+        const prefix = formValue?.category?.code?.split(".")[0] || formValue?.categoryType?.code?.split(".")[0];
+        const mergedPrefixObj = prefix ? { ...(mcollectFormValue[prefix] || {}), ...(formValue[prefix] || {}) } : undefined;
+        let ob = [{
+          ...formValue,
+          ...(prefix && mergedPrefixObj ? { [prefix]: mergedPrefixObj } : {}),
+          taxHeadAmounts: mcollectFormValue.taxHeadAmounts || {},
+        }];
+        mcollectFormValue = { ...mcollectFormValue, ...ob[0] };
         sessionStorage.setItem("mcollectFormData", JSON.stringify(mcollectFormValue));
         setconsumerDetails(ob);
-        trigger();
       }
     }
-  }, [formValue]);
+  }, [JSON.stringify(formValue)]);
 
 
   useEffect(() => {
@@ -350,6 +352,8 @@ const OwnerForm1 = (_props) => {
             </div>
           </LabelFieldPair>
           {TaxHeadMasterFields && TaxHeadMasterFields.length > 0 && TaxHeadMasterFields.map((tax) => {
+            const prefix = tax?.code?.split(".")[0];
+            const suffix = tax?.code?.split(".")[1];
             const safeName = tax?.code?.replace(/\./g, "_");
             return (
               <div key={tax?.code}>
@@ -358,24 +362,33 @@ const OwnerForm1 = (_props) => {
                   <div className="field">
                     <Controller
                       control={control}
-                      name={safeName}
-                      defaultValue={consumerdetail[safeName] || consumerdetail[tax?.code]}
+                      name={tax?.code}
+                      defaultValue={
+                        consumerdetail?.[prefix]?.[suffix] ||
+                        consumerdetail?.[tax?.code] ||
+                        consumerdetail?.[safeName] ||
+                        ""
+                      }
                       isMandatory={tax.isRequired}
                       rules={tax.isRequired ? { required: t("REQUIRED_FIELD") } : ""}
                       render={({ field }) => (
                         <div className="mc-service-details-flex-container">
                           <div className="employee-card-input employee-card-input--front">₹</div>
                           <TextInput
-                            value={field.value}
-                            autoFocus={focusIndex.index === consumerdetail?.key && focusIndex.type === "name"}
+                            value={field.value !== undefined && field.value !== null ? field.value : ""}
                             onChange={(e) => {
-                              field.onChange(e.target.value);
-                              setFocusIndex({ index: consumerdetail.key, type: tax?.code });
+                              const val = e.target.value;
+                              field.onChange(val);
+                              let stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+                              if (prefix && suffix) {
+                                stored[prefix] = { ...(stored[prefix] || {}), [suffix]: val };
+                              }
+                              stored[tax.code] = val;
+                              stored[safeName] = val;
+                              stored.taxHeadAmounts = { ...(stored.taxHeadAmounts || {}), [tax.code]: val };
+                              sessionStorage.setItem("mcollectFormData", JSON.stringify(stored));
                             }}
-                            onBlur={(e) => {
-                              setFocusIndex({ index: -1 });
-                              field.onBlur(e);
-                            }}
+                            onBlur={field.onBlur}
                           />
                         </div>
                       )}

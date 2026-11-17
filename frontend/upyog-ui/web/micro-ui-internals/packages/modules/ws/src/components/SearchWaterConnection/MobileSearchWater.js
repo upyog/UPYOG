@@ -96,9 +96,7 @@ const MobileSearchWater = ({
       case "Active":
         return <div>
           <span className="link">
-            <Link to={{
-              pathname: `/upyog-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(data?.["connectionNo"])}/${data?.["tenantId"]}?tenantId=${data?.["tenantId"]}&ISWSCON`
-            }}>
+            <Link to={`/upyog-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(data?.["connectionNo"])}/${data?.["tenantId"]}?tenantId=${data?.["tenantId"]}&workflow=${data?.["service"] == "WATER" ? "WS" : "SW"}&ISWSCON`}>
               {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
             </Link>
           </span>
