@@ -1,0 +1,17 @@
+.popupModalHeading{
+    @apply flex mb-lg;
+    gap: 12px;
+    .headingIconAndLabel{
+        @apply flex items-center;
+        gap: 12px;
+        svg{
+            @apply w-6 h-4;
+        }
+        h3{
+            @apply text-heading-l font-bold;
+        }
+    }
+    .popupResetFormButton{
+        @apply p-sm border border-solid border-text-primary border-opacity-25 self-center;
+    }
+}

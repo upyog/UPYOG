@@ -1,0 +1,41 @@
+import Urls from "../atoms/urls";
+import { Request } from "../atoms/Utils/Request";
+
+
+export const EmployeeDashboardService = {
+  search: ({ tenantId, moduleName, auth }) =>
+    Request({
+      url: Urls.employeeDashboardSearch,
+      useCache: false,
+      method: "POST",
+      auth: auth !== false,
+      userService: auth !== false,
+      data: { tenantId, moduleName }
+    }),
+
+  roleBaseSearch: ({ tenantId, auth }) =>
+    Request({
+      url: Urls.employeeRoleBaseDashboardSearch,
+      useCache: false,
+      method: "POST",
+      auth: auth !== false,
+      userService: auth !== false,
+      data: { tenantId }
+    }),
+
+  aggregate: ({ tenantId, requestId, workflow, inbox, auth }) =>
+    Request({
+      url: Urls.employeeAggregate,
+      useCache: false,
+      method: "POST",
+      auth: auth !== false,
+      userService: auth !== false,
+      data: {
+        tenantId,
+        requestId: requestId || `${new Date().getTime()}`,
+        ...(workflow ? { workflow } : {}),
+        ...(inbox ? { inbox } : {}),
+      },
+    }),
+
+};

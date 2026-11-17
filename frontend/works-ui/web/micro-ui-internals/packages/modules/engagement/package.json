@@ -1,0 +1,21 @@
+{
+    "name": "@upyog/digit-ui-module-engagement",
+    "version": "3.10.0",
+    "license": "MIT",
+    "main": "src/Module.js",
+    "source": "src/Module.js",
+
+    "peerDependencies": {
+        "react": "^19.0.0",
+        "react-router-dom": "^6.23.0",
+        "react-dom": "^19.0.0",
+        "react-i18next": "14.0.0",
+        "@tanstack/react-query": "^5.0.0"
+    },
+    "dependencies": {
+        "@nudmcdgnpm/digit-ui-react-components": "4.0.5",
+        "react-hook-form": "^7.51.0",
+        "react-time-picker": "4.2.1",
+        "recharts": "^2.10.0"
+    }
+}

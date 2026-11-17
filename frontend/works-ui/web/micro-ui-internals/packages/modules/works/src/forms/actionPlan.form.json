@@ -1,0 +1,602 @@
+{
+    "id": "actionPlan",
+    "title": "WORKS_AP_TITLE",
+    "sections": [
+        {
+            "id": "planDetails",
+            "title": "WORKS_AP_SEC_PLAN_DETAILS",
+            "columns": 2,
+            "fields": [
+                {
+                    "name": "financialYear",
+                    "label": "WORKS_AP_FINANCIAL_YEAR",
+                    "type": "select",
+                    "required": true,
+                    "options": {
+                        "source": "mdms",
+                        "master": "FinancialYear"
+                    }
+                },
+                {
+                    "name": "ulb",
+                    "label": "WORKS_AP_ULB",
+                    "type": "text",
+                    "readOnly": true
+                },
+                {
+                    "name": "state",
+                    "label": "WORKS_AP_STATE",
+                    "type": "select",
+                    "required": true,
+                    "options": {
+                        "source": "mdms",
+                        "master": "State",
+                        "labelPrefix": "WORKS_STATE"
+                    }
+                },
+                {
+                    "name": "district",
+                    "label": "WORKS_AP_DISTRICT",
+                    "type": "select",
+                    "required": true,
+                    "dependsOn": "state",
+                    "options": {
+                        "source": "mdms",
+                        "master": "District",
+                        "labelPrefix": "WORKS_DISTRICT"
+                    }
+                },
+                {
+                    "name": "mlaConstituency",
+                    "label": "WORKS_AP_MLA_CONSTITUENCY",
+                    "type": "text",
+                    "pattern": "^[A-Za-z .]+$",
+                    "patternMessage": "WORKS_AP_ERR_LETTERS_ONLY"
+                },
+                {
+                    "name": "mpConstituency",
+                    "label": "WORKS_AP_MP_CONSTITUENCY",
+                    "type": "text",
+                    "pattern": "^[A-Za-z .]+$",
+                    "patternMessage": "WORKS_AP_ERR_LETTERS_ONLY"
+                },
+                {
+                    "name": "administrativeSanction",
+                    "label": "WORKS_AP_ADMIN_SANCTION",
+                    "type": "checkbox",
+                    "mustBeTrue": true,
+                    "span": 2
+                },
+                {
+                    "name": "technicalSanction",
+                    "label": "WORKS_AP_TECH_SANCTION",
+                    "type": "radio",
+                    "required": true,
+                    "options": [
+                        {
+                            "value": "YES",
+                            "label": "FB_YES"
+                        },
+                        {
+                            "value": "NO",
+                            "label": "FB_NO"
+                        }
+                    ]
+                },
+                {
+                    "name": "technicalSanctionDoc",
+                    "label": "WORKS_AP_TECH_SANCTION_DOC",
+                    "type": "file",
+                    "fileTypes": [
+                        "pdf"
+                    ],
+                    "maxSizeMB": 5,
+                    "visibleWhen": {
+                        "field": "technicalSanction",
+                        "equals": "YES"
+                    },
+                    "requiredWhen": {
+                        "field": "technicalSanction",
+                        "equals": "YES"
+                    }
+                },
+                {
+                    "name": "recommendedBy",
+                    "label": "WORKS_AP_RECOMMENDED_BY",
+                    "type": "select",
+                    "required": true,
+                    "options": {
+                        "source": "mdms",
+                        "master": "RecommendedBy",
+                        "labelPrefix": "WORKS_RECOMMENDED_BY"
+                    }
+                },
+                {
+                    "name": "recommendedByName",
+                    "label": "WORKS_AP_RECOMMENDED_BY_NAME",
+                    "type": "text",
+                    "pattern": "^[A-Za-z .]+$",
+                    "patternMessage": "WORKS_AP_ERR_LETTERS_ONLY",
+                    "visibleWhen": {
+                        "field": "recommendedBy",
+                        "equals": "OTHERS"
+                    },
+                    "requiredWhen": {
+                        "field": "recommendedBy",
+                        "equals": "OTHERS"
+                    }
+                },
+                {
+                    "name": "recommendationDoc",
+                    "label": "WORKS_AP_RECOMMENDATION_DOC",
+                    "type": "file",
+                    "fileTypes": [
+                        "pdf"
+                    ],
+                    "maxSizeMB": 5
+                }
+            ]
+        },
+        {
+            "id": "approvalDetails",
+            "title": "WORKS_AP_SEC_APPROVAL",
+            "columns": 2,
+            "fields": [
+                {
+                    "name": "approvalDate",
+                    "label": "WORKS_AP_APPROVAL_DATE",
+                    "type": "date",
+                    "required": true,
+                    "maxDate": "today"
+                },
+                {
+                    "name": "approvedBy",
+                    "label": "WORKS_AP_APPROVED_BY",
+                    "type": "text",
+                    "required": true,
+                    "pattern": "^[A-Za-z .]+$",
+                    "patternMessage": "WORKS_AP_ERR_LETTERS_ONLY"
+                },
+                {
+                    "name": "scheme",
+                    "label": "WORKS_AP_SCHEME",
+                    "type": "select",
+                    "required": true,
+                    "options": {
+                        "source": "mdms",
+                        "master": "Scheme",
+                        "labelPrefix": "WORKS_SCHEME"
+                    }
+                },
+                {
+                    "name": "subScheme",
+                    "label": "WORKS_AP_SUB_SCHEME",
+                    "type": "select",
+                    "required": true,
+                    "dependsOn": "scheme",
+                    "options": {
+                        "source": "mdms",
+                        "master": "SubScheme",
+                        "labelPrefix": "WORKS_SUB_SCHEME"
+                    }
+                },
+                {
+                    "name": "approvedAmount",
+                    "label": "WORKS_AP_APPROVED_AMOUNT",
+                    "type": "amount",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "projects",
+            "title": "WORKS_AP_SEC_PROJECTS",
+            "fields": [
+                {
+                    "name": "projects",
+                    "type": "repeat",
+                    "min": 1,
+                    "max": 20,
+                    "columns": 2,
+                    "itemLabel": "WORKS_AP_ITEM_PROJECT",
+                    "itemTitle": "WORKS_AP_ITEM_TITLE_PROJECT",
+                    "addLabel": "WORKS_AP_ADD_PROJECT",
+                    "fields": [
+                        {
+                            "name": "projectId",
+                            "label": "WORKS_AP_PROJECT_ID",
+                            "type": "text",
+                            "required": true,
+                            "maxLength": 12,
+                            "pattern": "^[A-Za-z0-9]{12}$",
+                            "patternMessage": "WORKS_AP_ERR_PROJECT_ID_FORMAT"
+                        },
+                        {
+                            "name": "projectName",
+                            "label": "WORKS_AP_PROJECT_NAME",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "name": "purpose",
+                            "label": "WORKS_AP_PURPOSE",
+                            "type": "select",
+                            "required": true,
+                            "options": {
+                                "source": "mdms",
+                                "master": "PurposeOfProject",
+                                "labelPrefix": "WORKS_PURPOSE"
+                            }
+                        },
+                        {
+                            "name": "specifyPurpose",
+                            "label": "WORKS_AP_SPECIFY_PURPOSE",
+                            "type": "text",
+                            "visibleWhen": {
+                                "field": "purpose",
+                                "equals": "OTHERS"
+                            },
+                            "requiredWhen": {
+                                "field": "purpose",
+                                "equals": "OTHERS"
+                            }
+                        },
+                        {
+                            "name": "timeRange",
+                            "label": "WORKS_AP_TIME_RANGE",
+                            "type": "dateRange",
+                            "required": true
+                        },
+                        {
+                            "name": "typeOfWork",
+                            "label": "WORKS_AP_TYPE_OF_WORK",
+                            "type": "select",
+                            "required": true,
+                            "options": {
+                                "source": "mdms",
+                                "master": "TypeOfWork",
+                                "labelPrefix": "WORKS_TYPE_OF_WORK"
+                            }
+                        },
+                        {
+                            "name": "workCategory",
+                            "label": "WORKS_AP_WORK_CATEGORY",
+                            "type": "select",
+                            "required": true,
+                            "options": {
+                                "source": "mdms",
+                                "master": "WorkCategory",
+                                "labelPrefix": "WORKS_WORK_CATEGORY"
+                            }
+                        },
+                        {
+                            "name": "declaredComponentCount",
+                            "label": "WORKS_AP_DECLARED_COMPONENT_COUNT",
+                            "type": "integer",
+                            "required": true,
+                            "min": 1
+                        },
+                        {
+                            "name": "components",
+                            "type": "repeat",
+                            "min": 1,
+                            "columns": 2,
+                            "itemLabel": "WORKS_AP_ITEM_COMPONENT",
+                            "itemTitle": "WORKS_AP_ITEM_TITLE_COMPONENT",
+                            "addLabel": "WORKS_AP_ADD_COMPONENT",
+                            "fields": [
+                                {
+                                    "name": "componentName",
+                                    "label": "WORKS_AP_COMPONENT_NAME",
+                                    "type": "text",
+                                    "required": true
+                                },
+                                {
+                                    "name": "category",
+                                    "label": "WORKS_AP_CATEGORY",
+                                    "type": "select",
+                                    "required": true,
+                                    "options": {
+                                        "source": "mdms",
+                                        "master": "ComponentCategory",
+                                        "labelPrefix": "WORKS_COMPONENT_CATEGORY"
+                                    }
+                                },
+                                {
+                                    "name": "subCategory",
+                                    "label": "WORKS_AP_SUB_CATEGORY",
+                                    "type": "select",
+                                    "dependsOn": "category",
+                                    "options": {
+                                        "source": "mdms",
+                                        "master": "ComponentSubCategory",
+                                        "labelPrefix": "WORKS_COMPONENT_SUB_CATEGORY"
+                                    }
+                                },
+                                {
+                                    "name": "componentAmount",
+                                    "label": "WORKS_AP_COMPONENT_AMOUNT",
+                                    "type": "amount",
+                                    "required": true
+                                },
+                                {
+                                    "name": "fundSource",
+                                    "label": "WORKS_AP_FUND_SOURCE",
+                                    "type": "select",
+                                    "required": true,
+                                    "options": {
+                                        "source": "mdms",
+                                        "master": "FundSource",
+                                        "labelPrefix": "WORKS_AP_FUND"
+                                    }
+                                },
+                                {
+                                    "name": "grantType",
+                                    "label": "WORKS_AP_GRANT_TYPE",
+                                    "type": "select",
+                                    "options": {
+                                        "source": "mdms",
+                                        "master": "GrantType",
+                                        "labelPrefix": "WORKS_GRANT_TYPE"
+                                    },
+                                    "visibleWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "GRANT",
+                                            "PARTIAL"
+                                        ]
+                                    },
+                                    "requiredWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "GRANT",
+                                            "PARTIAL"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "grantName",
+                                    "label": "WORKS_AP_GRANT_NAME",
+                                    "type": "text",
+                                    "visibleWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "GRANT",
+                                            "PARTIAL"
+                                        ]
+                                    },
+                                    "requiredWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "GRANT",
+                                            "PARTIAL"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "grantAmount",
+                                    "label": "WORKS_AP_GRANT_AMOUNT",
+                                    "type": "amount",
+                                    "visibleWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "GRANT",
+                                            "PARTIAL"
+                                        ]
+                                    },
+                                    "requiredWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "GRANT",
+                                            "PARTIAL"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "osrSource",
+                                    "label": "WORKS_AP_OSR_SOURCE",
+                                    "type": "select",
+                                    "options": {
+                                        "source": "mdms",
+                                        "master": "OsrSource",
+                                        "labelPrefix": "WORKS_OSR_SOURCE"
+                                    },
+                                    "visibleWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "OSR",
+                                            "PARTIAL"
+                                        ]
+                                    },
+                                    "requiredWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "OSR",
+                                            "PARTIAL"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "osrName",
+                                    "label": "WORKS_AP_OSR_NAME",
+                                    "type": "text",
+                                    "visibleWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "OSR",
+                                            "PARTIAL"
+                                        ]
+                                    },
+                                    "requiredWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "OSR",
+                                            "PARTIAL"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "osrAmount",
+                                    "label": "WORKS_AP_OSR_AMOUNT",
+                                    "type": "amount",
+                                    "visibleWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "OSR",
+                                            "PARTIAL"
+                                        ]
+                                    },
+                                    "requiredWhen": {
+                                        "field": "fundSource",
+                                        "in": [
+                                            "OSR",
+                                            "PARTIAL"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "name": "beneficiary",
+                                    "label": "WORKS_AP_BENEFICIARY",
+                                    "type": "radio",
+                                    "required": true,
+                                    "options": [
+                                        {
+                                            "value": "YES",
+                                            "label": "FB_YES"
+                                        },
+                                        {
+                                            "value": "NO",
+                                            "label": "FB_NO"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "beneficiaryName",
+                                    "label": "WORKS_AP_BENEFICIARY_NAME",
+                                    "type": "text",
+                                    "visibleWhen": {
+                                        "field": "beneficiary",
+                                        "equals": "YES"
+                                    },
+                                    "requiredWhen": {
+                                        "field": "beneficiary",
+                                        "equals": "YES"
+                                    }
+                                },
+                                {
+                                    "name": "beneficiaryRemark",
+                                    "label": "WORKS_AP_BENEFICIARY_REMARK",
+                                    "type": "text",
+                                    "visibleWhen": {
+                                        "field": "beneficiary",
+                                        "equals": "YES"
+                                    }
+                                },
+                                {
+                                    "name": "supportingDoc",
+                                    "label": "WORKS_AP_SUPPORTING_DOC",
+                                    "type": "file",
+                                    "fileTypes": [
+                                        "pdf"
+                                    ],
+                                    "maxSizeMB": 5
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "documents",
+            "title": "WORKS_AP_SEC_DOCUMENTS",
+            "fields": [
+                {
+                    "name": "documents",
+                    "label": "WORKS_AP_DOCUMENTS",
+                    "type": "fileList",
+                    "fileTypes": [
+                        "pdf"
+                    ],
+                    "maxSizeMB": 20,
+                    "maxFiles": 5,
+                    "span": 2
+                }
+            ]
+        },
+        {
+            "id": "financialSummary",
+            "title": "WORKS_AP_SEC_SUMMARY",
+            "columns": 2,
+            "fields": [
+                {
+                    "name": "totalAllocated",
+                    "label": "WORKS_AP_TOTAL_ALLOCATED",
+                    "type": "computed",
+                    "sum": "projects[].components[].componentAmount",
+                    "format": "currency"
+                },
+                {
+                    "name": "unallocated",
+                    "label": "WORKS_AP_UNALLOCATED",
+                    "type": "computed",
+                    "diff": [
+                        "approvedAmount",
+                        "totalAllocated"
+                    ],
+                    "format": "currency",
+                    "warnIfNotZero": true
+                },
+                {
+                    "name": "grantTotal",
+                    "label": "WORKS_AP_GRANT_TOTAL",
+                    "type": "computed",
+                    "sum": "projects[].components[].grantAmount",
+                    "format": "currency"
+                },
+                {
+                    "name": "osrTotal",
+                    "label": "WORKS_AP_OSR_TOTAL",
+                    "type": "computed",
+                    "sum": "projects[].components[].osrAmount",
+                    "format": "currency"
+                },
+                {
+                    "name": "breakup",
+                    "label": "WORKS_AP_BREAKUP",
+                    "type": "summaryTable",
+                    "span": 2,
+                    "rows": "projects[].components[]",
+                    "columns": [
+                        {
+                            "label": "WORKS_AP_COL_COMPONENT",
+                            "field": "componentName"
+                        },
+                        {
+                            "label": "WORKS_AP_COL_AMOUNT",
+                            "field": "componentAmount",
+                            "format": "currency"
+                        },
+                        {
+                            "label": "WORKS_AP_COL_PERCENT",
+                            "field": "componentAmount",
+                            "percentOf": "approvedAmount"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "declaration",
+            "title": "WORKS_AP_SEC_DECLARATION",
+            "fields": [
+                {
+                    "name": "declaration",
+                    "label": "WORKS_AP_DECLARATION_TEXT",
+                    "type": "checkbox",
+                    "mustBeTrue": true
+                }
+            ]
+        }
+    ]
+}

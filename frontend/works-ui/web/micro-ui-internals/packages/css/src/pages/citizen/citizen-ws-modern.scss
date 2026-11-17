@@ -1,0 +1,897 @@
+/* Citizen Water & Sewerage (WS) Modern SCSS */
+
+.ws-citizen-container {
+  padding: 8px 16px 48px;
+
+  /* Header Wrap */
+  .ws-citizen-header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .ws-citizen-title-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .ws-citizen-page-title {
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin: 0 !important;
+        letter-spacing: -0.02em;
+      }
+
+      .ws-citizen-count-badge {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0284c7;
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        padding: 4px 12px;
+        border-radius: 9999px;
+      }
+    }
+
+    .ws-citizen-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  }
+
+  /* Cards Grid */
+  .ws-citizen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+    margin-bottom: 28px;
+  }
+
+  /* Individual Card */
+  .ws-citizen-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, #0284c7, #06b6d4);
+      opacity: 0.9;
+    }
+
+    &:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+      transform: translateY(-2px);
+    }
+
+    .ws-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f1f5f9;
+
+      .ws-card-id-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        .ws-card-id-label {
+          font-size: 11.5px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #64748b;
+        }
+
+        .ws-card-id-value {
+          font-size: 16px;
+          font-weight: 700;
+          color: #0f172a;
+          letter-spacing: -0.01em;
+          word-break: break-all;
+        }
+      }
+
+      .ws-status-badge {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        white-space: nowrap;
+        text-transform: capitalize;
+
+        &.status-active,
+        &.status-connected,
+        &.status-approved,
+        &.status-paid {
+          background: #ecfdf5;
+          color: #059669;
+          border: 1px solid #a7f3d0;
+        }
+
+        &.status-pending,
+        &.status-initiated,
+        &.status-submitted,
+        &.status-inprogress {
+          background: #fffbeb;
+          color: #d97706;
+          border: 1px solid #fde68a;
+        }
+
+        &.status-rejected,
+        &.status-disconnected,
+        &.status-inactive {
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
+        }
+
+        &.status-default {
+          background: #f1f5f9;
+          color: #475569;
+          border: 1px solid #e2e8f0;
+        }
+      }
+    }
+
+    .ws-card-body {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 16px;
+      margin-bottom: 18px;
+
+      .ws-card-field {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        &.full-width {
+          grid-column: span 2;
+        }
+
+        .ws-field-label {
+          font-size: 11.5px;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .ws-field-value {
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #1e293b;
+          word-break: break-word;
+        }
+      }
+    }
+
+    .ws-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+
+      a {
+        text-decoration: none !important;
+        flex: 1;
+      }
+
+      .ws-btn-view-details {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 9px 16px;
+        background: #f8fafc;
+        color: #0284c7;
+        border: 1px solid #bae6fd;
+        border-radius: 9px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #0284c7;
+          color: #ffffff;
+          border-color: #0284c7;
+        }
+      }
+
+      .ws-btn-pay-now {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 9px 16px;
+        background: #a82227;
+        color: #ffffff;
+        border: none;
+        border-radius: 9px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(168, 34, 39, 0.2);
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #8e1c21;
+          box-shadow: 0 4px 12px rgba(168, 34, 39, 0.3);
+        }
+      }
+    }
+  }
+
+  /* Empty State */
+  .ws-empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    margin: 24px 0;
+
+    .ws-empty-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      background: #f0f9ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0284c7;
+    }
+
+    .ws-empty-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+
+    .ws-empty-subtitle {
+      font-size: 13.5px;
+      color: #64748b;
+    }
+  }
+}
+
+/* WS Citizen Details (Connection Details & Application Details) */
+.ws-details-page-container {
+  padding: 8px 16px 48px;
+
+  .ws-details-header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .ws-details-title-block {
+      .ws-details-page-title {
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin: 0 !important;
+        letter-spacing: -0.02em;
+      }
+    }
+
+    .ws-details-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .ws-btn-timeline {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px;
+        padding: 8px 16px !important;
+        background: #f8fafc !important;
+        color: #334155 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+
+        &:hover {
+          background: #f1f5f9 !important;
+          color: #0f172a !important;
+          border-color: #94a3b8 !important;
+        }
+      }
+
+      .multilinkWrapper {
+        position: relative;
+
+        .multiLinkHeader {
+          padding: 8px 16px;
+          border-radius: 8px;
+          background: #0284c7;
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+
+          &:hover {
+            background: #0369a1;
+          }
+        }
+      }
+    }
+  }
+
+  /* 1. Hero Overview Card */
+  .ws-app-hero-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0284c7, #06b6d4);
+    }
+
+    .ws-app-hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eef2f6;
+
+      .ws-app-id-section {
+        .ws-app-id-label {
+          font-size: 11.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #64748b;
+          margin-bottom: 4px;
+        }
+
+        .ws-app-id-value {
+          font-size: 20px;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -0.01em;
+          font-family: monospace, sans-serif;
+        }
+
+        .ws-app-sub-id {
+          font-size: 13px;
+          font-weight: 600;
+          color: #64748b;
+          margin-top: 4px;
+        }
+      }
+
+      .ws-app-status-badge {
+        font-size: 13px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-transform: capitalize;
+
+        &.status-active,
+        &.status-connected,
+        &.status-approved,
+        &.status-paid {
+          background: #ecfdf5;
+          color: #059669;
+          border: 1px solid #a7f3d0;
+        }
+
+        &.status-pending,
+        &.status-initiated,
+        &.status-submitted,
+        &.status-inprogress {
+          background: #fffbeb;
+          color: #d97706;
+          border: 1px solid #fde68a;
+        }
+
+        &.status-rejected,
+        &.status-disconnected,
+        &.status-inactive {
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
+        }
+
+        &.status-default {
+          background: #f1f5f9;
+          color: #475569;
+          border: 1px solid #e2e8f0;
+        }
+      }
+    }
+
+    .ws-app-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px 24px;
+
+      .ws-app-summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .ws-app-summary-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .ws-app-summary-val {
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #1e293b;
+          word-break: break-word;
+
+          &.due-val {
+            color: #b91c1c;
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  /* 2. Standard Section Card */
+  .ws-details-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    .ws-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid #f1f5f9;
+
+      .ws-section-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        svg {
+          stroke: #0284c7;
+        }
+      }
+    }
+
+    /* Grid for Key-Value pairs & StatusTable */
+    .status-table,
+    .ws-details-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 16px 28px !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+
+      > div {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 28px;
+      }
+
+      .row {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 4px !important;
+        padding: 0 !important;
+        border-bottom: none !important;
+        background: transparent !important;
+        width: 100% !important;
+
+        &.full-width {
+          grid-column: 1 / -1 !important;
+        }
+
+        h2 {
+          font-size: 12px !important;
+          font-weight: 600 !important;
+          color: #64748b !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.03em !important;
+          margin: 0 !important;
+          line-height: 1.3 !important;
+          width: 100% !important;
+          text-align: left !important;
+        }
+
+        .value,
+        p {
+          font-size: 14.5px !important;
+          font-weight: 600 !important;
+          color: #0f172a !important;
+          line-height: 1.4 !important;
+          margin: 0 !important;
+          word-break: break-word !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 6px !important;
+          width: 100% !important;
+          text-align: left !important;
+          margin-left: 0 !important;
+        }
+      }
+
+      .ws-details-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .ws-item-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        .ws-item-value {
+          font-size: 14.5px;
+          font-weight: 600;
+          color: #1e293b;
+          word-break: break-word;
+
+          &.highlight-due {
+            color: #b91c1c;
+            font-size: 16px;
+            font-weight: 700;
+          }
+
+          &.highlight-paid {
+            color: #059669;
+            font-size: 15px;
+            font-weight: 700;
+          }
+        }
+      }
+
+      a {
+        grid-column: 1 / -1;
+        margin-top: 4px;
+        text-decoration: none !important;
+
+        .link-button,
+        .ws-application-details-btn-2,
+        .ws-connection-details-btn-mb-sm {
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 6px !important;
+          padding: 8px 16px !important;
+          background: #f8fafc !important;
+          border: 1px solid #bae6fd !important;
+          color: #0284c7 !important;
+          border-radius: 8px !important;
+          font-size: 13px !important;
+          font-weight: 600 !important;
+          cursor: pointer !important;
+          width: fit-content !important;
+          transition: all 0.2s ease !important;
+
+          &:hover {
+            background: #0284c7 !important;
+            color: #ffffff !important;
+          }
+        }
+      }
+    }
+
+    /* Fee Breakdown Table */
+    .ws-fee-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+
+      tr {
+        border-bottom: 1px dashed #e2e8f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        td {
+          padding: 10px 0;
+          font-size: 14px;
+          color: #334155;
+
+          &.fee-label {
+            font-weight: 500;
+          }
+
+          &.fee-val {
+            text-align: right;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: #0f172a;
+          }
+        }
+
+        &.total-row {
+          border-top: 1.5px solid #cbd5e1;
+          border-bottom: 1.5px solid #cbd5e1;
+          td {
+            padding: 14px 0;
+            font-weight: 700;
+            font-size: 16px;
+            &.fee-val {
+              font-size: 18px;
+              color: #0f172a;
+            }
+          }
+        }
+      }
+    }
+
+    /* Document Grid Layout */
+    .ws-documents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+
+      .ws-doc-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 12px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #ffffff;
+          border-color: #cbd5e1;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .ws-doc-header {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+
+          .ws-doc-icon-wrap {
+            width: 36px;
+            height: 36px;
+            background: #e0f2fe;
+            color: #0284c7;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            svg {
+              stroke: #0284c7;
+            }
+          }
+
+          .ws-doc-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+
+            .ws-doc-type-title {
+              font-size: 13.5px;
+              font-weight: 700;
+              color: #1e293b;
+              line-height: 1.35;
+              word-break: break-word;
+            }
+
+            .ws-doc-subtext {
+              font-size: 11.5px;
+              font-weight: 500;
+              color: #64748b;
+            }
+          }
+        }
+
+        .ws-doc-body {
+          .ws-document-item {
+            margin-top: 0;
+
+            .ws-document-flex {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              flex-wrap: wrap;
+
+              .ws-document-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 14px;
+                background: #ffffff;
+                border: 1px solid #bae6fd;
+                border-radius: 8px;
+                color: #0284c7;
+                font-size: 12.5px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s ease;
+                min-width: unset;
+
+                &:hover {
+                  background: #0284c7;
+                  color: #ffffff;
+                  border-color: #0284c7;
+
+                  svg {
+                    fill: #ffffff;
+                  }
+                }
+
+                svg {
+                  width: 16px;
+                  height: 16px;
+                  fill: #0284c7;
+                  transition: fill 0.2s ease;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* Action Bar for Disconnect / Reconnect / Make Payment */
+  .ws-action-bar-wrap {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+
+    .ws-submit-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: #a82227;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(168, 34, 39, 0.25);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #8e1c21;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 14px rgba(168, 34, 39, 0.35);
+      }
+    }
+
+    .ws-secondary-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #f8fafc;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+      }
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .ws-citizen-container {
+    padding: 4px 8px 36px;
+
+    .ws-citizen-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ws-citizen-card .ws-card-body {
+      grid-template-columns: 1fr;
+      .ws-card-field.full-width {
+        grid-column: span 1;
+      }
+    }
+  }
+
+  .ws-details-page-container {
+    padding: 4px 8px 36px;
+
+    .ws-details-card {
+      padding: 18px 16px;
+    }
+
+    .ws-details-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
