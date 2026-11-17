@@ -70,20 +70,18 @@ public class BusinessServDetailQueryBuilder {
     	boolean hasCondition = false;
 
         if (StringUtils.isNotBlank(businessServiceDetailCriteria.getTenantId())) {
-        	selectQuery.append(" WHERE businessservice.tenantId = ? ");
+        	selectQuery.append(addClauseOnFilter(hasCondition)).append(" businessservice.tenantId = ? ");
 			preparedStatementValues.add(businessServiceDetailCriteria.getTenantId());
 			hasCondition = true;
         }
 
         if (!CollectionUtils.isEmpty(businessServiceDetailCriteria.getBusinessService())) {
-        	selectQuery.append(hasCondition ? " AND " : " WHERE ");
-			selectQuery.append(" businessservice.businessservice IN ").append(getQueryForCollection(businessServiceDetailCriteria.getBusinessService(), preparedStatementValues));
+        	selectQuery.append(addClauseOnFilter(hasCondition)).append(" businessservice.businessservice IN ").append(getQueryForCollection(businessServiceDetailCriteria.getBusinessService(), preparedStatementValues));
 			hasCondition = true;
 		}
 
         if (businessServiceDetailCriteria.getId() != null && !businessServiceDetailCriteria.getId().isEmpty())
-        	selectQuery.append(hasCondition ? " AND " : " WHERE ");
-			selectQuery.append(" businessservice.id IN ").append(getQueryForCollection(businessServiceDetailCriteria.getId(), preparedStatementValues));
+        	selectQuery.append(addClauseOnFilter(hasCondition)).append(" businessservice.id IN ").append(getQueryForCollection(businessServiceDetailCriteria.getId(), preparedStatementValues));
 
     }
 
@@ -100,25 +98,19 @@ public class BusinessServDetailQueryBuilder {
 			query.append(" ( ");
 			boolean hasCondition = false;
 			if (StringUtils.isNotBlank(detail.getBusinessService())) {
-				query.append("businessservice.businessservice = ?");
+				query.append(addClauseOnFilter(hasCondition)).append(" businessservice.businessservice = ?");
 				preparedStatementValues.add(detail.getBusinessService());
 				hasCondition = true;
 			}
 
 			if ("edit".equalsIgnoreCase(mode)) {
-				if (hasCondition)
-					query.append(" AND ");
-				
-				query.append("businessservice.id != ?");
+				query.append(addClauseOnFilter(hasCondition)).append("businessservice.id != ?");
 				preparedStatementValues.add(detail.getId());
 				hasCondition = true;
 			}
 
 			if (StringUtils.isNotBlank(detail.getTenantId())) {
-				if (hasCondition)
-					query.append(" AND ");
-				
-				query.append("businessservice.tenantId = ?");
+				query.append(addClauseOnFilter(hasCondition)).append("businessservice.tenantId = ?");
 				preparedStatementValues.add(detail.getTenantId());
 				hasCondition = true;
 			}
@@ -148,4 +140,8 @@ public class BusinessServDetailQueryBuilder {
 		preparedStatementValues.addAll(values);
 		return "(" + placeholders + ")";
 	}
+    
+    private String addClauseOnFilter(boolean hasCondition) {
+        return hasCondition ? " AND " : " WHERE ";
+    }
 }
