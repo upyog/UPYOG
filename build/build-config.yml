@@ -810,7 +810,12 @@ config:
     build:
       - work-dir: frontend/cnd-ui/
         dockerfile: frontend/cnd-ui/web/docker/Dockerfile
-        image-name: cnd-ui    
+        image-name: cnd-ui
+  - name: builds/upyog/frontend/works-ui
+    build:
+      - work-dir: frontend/works-ui/
+        dockerfile: frontend/works-ui/web/docker/Dockerfile
+        image-name: works-ui
   #EDCR
   
   - name: builds/upyog/edcr/dcr-client/egov-dcr
