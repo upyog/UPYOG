@@ -13,7 +13,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useMatch } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { stringReplaceAll, convertEpochToDate } from "./utils";
 import ActionModal from "./components/Modal";
 import { downloadAndPrintChallan, downloadAndPrintReciept } from "./utils";
@@ -35,7 +35,7 @@ const EmployeeChallan = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const navigate = Digit.Hooks.useCustomNavigate();
-  const { url } = useMatch();
+  const { url } = Digit.Hooks.useModuleBasePath();
   const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);
   const [showToast, setShowToast] = useState(null);
 
@@ -47,7 +47,7 @@ const EmployeeChallan = (props) => {
         return navigate(`/upyog-ui/employee/mcollect/modify-challan/${challanno}`);
       case "BUTTON_PAY":
         return navigate(
-          `/upyog-ui/employee/payment/collect/${challanDetails?.businessService}/${challanno}/tenantId=${tenantId}?workflow=mcollect`
+          `/upyog-ui/employee/payment/collect/${challanDetails?.businessService}/${challanno}/${tenantId}?workflow=mcollect`
         );
       default:
         break;

@@ -1,15 +1,13 @@
 import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute, AdvertisementModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Routes, Link, useLocation } from "react-router-dom";
+import { Route, Routes, Link, useLocation, Navigate } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
 import Footer from "../../components/Footer";
 import { AppHome, processLinkData } from "../../components/Home";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
 import CitizenHome from "./Home";
-import LanguageSelection from "./Home/LanguageSelection";
-import LocationSelection from "./Home/LocationSelection";
 import Login from "./Login";
 import UserProfile from "./Home/UserProfile";
 import ErrorComponent from "../../components/ErrorComponent";
@@ -31,8 +29,6 @@ const layout = appContent.citizen8.layout;
 
 const sidebarHiddenFor = [
   "/upyog-ui/citizen/register/name",
-  "/upyog-ui/citizen/select-language",
-  "/upyog-ui/citizen/select-location",
   "/upyog-ui/citizen/login",
   "/upyog-ui/citizen/register/otp",
 ];
@@ -95,12 +91,8 @@ const Home = (props) => {
   const isLoginPage =
     location?.pathname?.includes("/login") ||
     location?.pathname?.includes("/register") ||
-    location?.pathname?.includes("/select-language") ||
-    location?.pathname?.includes("/select-location") ||
     window.location.href.includes("/citizen/login") ||
-    window.location.href.includes("/citizen/register") ||
-    window.location.href.includes("/citizen/select-language") ||
-    window.location.href.includes("/citizen/select-location");
+    window.location.href.includes("/citizen/register");
 
   const navigate = Digit.Hooks.useCustomNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -309,8 +301,8 @@ const Home = (props) => {
             <Route path="*" element={<CitizenHome onToggleSidebarWidth={toggleSidebarWidth} layout={layout} isSidebarCollapsed={isSidebarCollapsed} />} />
             <Route path="login/*" element={<Login stateCode={stateCode} layout={layout} />} />
             <Route path="register/*" element={<Login stateCode={stateCode} isUserRegistered={false} layout={layout} />} />
-            <Route path="select-language" element={<LanguageSelection />} />
-            <Route path="select-location" element={<LocationSelection />} />
+            <Route path="select-language" element={<Navigate to="/upyog-ui/citizen/login" replace />} />
+            <Route path="select-location" element={<Navigate to="/upyog-ui/citizen/login" replace />} />
             <Route path="error" element={<ErrorComponent initData={initData} goToHome={() => navigate("/upyog-ui/citizen")} />} />
             <Route path="all-services" element={
               <AppHome

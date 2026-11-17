@@ -50,11 +50,11 @@ export const ChallanGenerationModule = ({ stateCode, userType, tenants }) => {
 export const ChallanReducers = getRootReducer;
 
 const componentsToRegister = {
-  ConsumerDetails,
-  ServiceDetails,
+  ChallanConsumerDetails: ConsumerDetails,
+  ChallanServiceDetails: ServiceDetails,
   ChallanGenerationCard,
   ChallanGenerationModule,
-  MCollectEmployeeChallan: EmployeeChallan,
+  ChallanGenerationEmployeeChallan: EmployeeChallan,
   SearchReceipt,
   SearchChallan,
   MCOLLECT_INBOX_FILTER: (props) => <InboxFilter {...props} />,

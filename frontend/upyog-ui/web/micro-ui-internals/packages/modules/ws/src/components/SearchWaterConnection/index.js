@@ -258,15 +258,15 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
       case "Active":
         return <div>
             <span className="link">
-              {row.original?.service === "WATER" ? <Link to={{
-              pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}&workflow=WS&ISWSCON`
-            }}>
+              {row.original?.service === "WATER" ? (
+                <Link to={`/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}&workflow=WS&ISWSCON`}>
                   {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link> : <Link to={{
-              pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`
-            }}>
+                </Link>
+              ) : (
+                <Link to={`/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}&workflow=SW&ISWSCON`}>
                   {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>}
+                </Link>
+              )}
             </span>
           </div>;
     }

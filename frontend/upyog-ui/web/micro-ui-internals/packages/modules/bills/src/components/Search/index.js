@@ -164,15 +164,13 @@ const SearchApplication = ({ showTable, showLoader, isLoading, tenantId, t, onSu
           <div>
             <span className="link">
               <Link
-                to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${
-                    row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW")
-                      ? encodeURIComponent(row.original?.["consumerCode"], "/", "+")
-                      : row.original?.["consumerCode"]
-                  }/tenantId=${row.original?.["tenantId"]}?workflow=${
-                    row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW") ? "WS" : "mcollect"
-                  }`,
-                }}
+                to={`/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${
+                  row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW")
+                    ? encodeURIComponent(row.original?.["consumerCode"], "/", "+")
+                    : row.original?.["consumerCode"]
+                }/tenantId=${row.original?.["tenantId"]}?workflow=${
+                  row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW") ? "WS" : "mcollect"
+                }`}
               >
                 {t(`${"ABG_COLLECT"}`)}{" "}
               </Link>
@@ -185,15 +183,13 @@ const SearchApplication = ({ showTable, showLoader, isLoading, tenantId, t, onSu
           <div>
             <span className="link">
               <Link
-                to={{
-                  pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${
-                    row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW")
-                      ? encodeURIComponent(row.original?.["consumerCode"], "/", "+")
-                      : row.original?.["consumerCode"]
-                  }/tenantId=${row.original?.["tenantId"]}?workflow=${
-                    row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW") ? "WS" : "mcollect"
-                  }`,
-                }}
+                to={`/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${
+                  row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW")
+                    ? encodeURIComponent(row.original?.["consumerCode"], "/", "+")
+                    : row.original?.["consumerCode"]
+                }/tenantId=${row.original?.["tenantId"]}?workflow=${
+                  row.original?.["consumerCode"]?.includes("WS") || row.original?.["consumerCode"]?.includes("SW") ? "WS" : "mcollect"
+                }`}
               >
                 {t(`${"ABG_GENERATE_NEW_BILL"}`)}
               </Link>

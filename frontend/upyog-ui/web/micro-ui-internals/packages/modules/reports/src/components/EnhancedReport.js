@@ -7,7 +7,6 @@ const getSearchParamsObj = (field, data, key, t) => {
   let obj = {}
   if (data[key] === undefined || data[key] === '' || field === undefined || data[key] === t('ALL'))
     return
-
   switch (field?.type) {
     case "string":
       if (data[key] === undefined || data[key] === "")
@@ -16,33 +15,52 @@ const getSearchParamsObj = (field, data, key, t) => {
       obj["input"] = data[key];
       return obj
 
-    case "singlevaluelist":
-      var defaultValueObj = field.defaultValue
-      var isLoc = field.localisationRequired;
-      var input
-      if (isLoc) {
-        input = Object.keys(defaultValueObj).find(el => t(defaultValueObj[el]) === data[key])
-      } else {
-        input = Object.keys(defaultValueObj).find(el => defaultValueObj[el] === data[key])
-      }
-      obj["name"] = key
+    case "singlevaluelist": {
+      const defaultValueObj = field.defaultValue || {};
+      const selectedVal = typeof data[key] === "object" ? data[key]?.code || data[key]?.name : data[key];
+      const prefix = field.localisationPrefix || "";
+      const input =
+        Object.keys(defaultValueObj).find(
+          (el) =>
+            t(defaultValueObj[el]) === selectedVal ||
+            defaultValueObj[el] === selectedVal ||
+            t(`${prefix}${defaultValueObj[el]}`) === selectedVal ||
+            t(el) === selectedVal ||
+            el === selectedVal
+        ) ?? selectedVal;
+      if (input === undefined || input === "" || input === t("ALL") || input === "All") return;
+      obj["name"] = key;
       obj["input"] = input;
-      return obj
+      return obj;
+    }
 
-    case "multivaluelist":
-      if (data?.[key]?.[0]?.name === "All")
-        return
-      var defaultValueObj = field.defaultValue
-      var isLoc = field.localisationRequired;
-      var input
-      if (isLoc) {
-        input = data[key].map(selection => Object.keys(defaultValueObj).find(el => t(defaultValueObj[el]) === t(selection.name)))
-      } else {
-        input = data[key].map(selection => Object.keys(defaultValueObj).find(el => defaultValueObj[el] === selection.name))
-      }
-      obj["name"] = key
+    case "multivaluelist": {
+      if (!Array.isArray(data?.[key]) || data[key].length === 0 || data?.[key]?.[0]?.name === "All" || data?.[key]?.[0]?.name === t("ALL"))
+        return;
+      const defaultValueObj = field.defaultValue || {};
+      const prefix = field.localisationPrefix || "";
+      const input = data[key]
+        .map((selection) => {
+          const selName = typeof selection === "object" ? selection?.name : selection;
+          if (selection?.code) return selection.code;
+          return (
+            Object.keys(defaultValueObj).find(
+              (el) =>
+                t(defaultValueObj[el]) === t(selName) ||
+                t(defaultValueObj[el]) === selName ||
+                defaultValueObj[el] === selName ||
+                t(`${prefix}${defaultValueObj[el]}`) === selName ||
+                t(el) === selName ||
+                el === selName
+            ) ?? selName
+          );
+        })
+        .filter((v) => v !== undefined && v !== "" && v !== "All" && v !== t("ALL"));
+      if (input.length === 0) return;
+      obj["name"] = key;
       obj["input"] = input;
-      return obj
+      return obj;
+    }
 
     case "epoch":
       obj["name"] = key;

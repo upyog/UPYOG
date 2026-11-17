@@ -121,23 +121,17 @@ const EmployeeChallan = (props) => {
 
   return (
     <React.Fragment>
-      <div className="employee-application-details mcollect-remove fixed height from status count checkbox-mb-md">
-        <div className="mcollect-remove fixed height from status count checkbox-flex">
-          <div className="mcollect-remove fixed height from status count checkbox-item">
-        <Header>{`${t("CHALLAN_DETAILS")}`} </Header>
-        </div>
-        <div className="mcollect-remove fixed height from status count checkbox-mt-neg">
-          <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-divNew mc-employee-challan-wrapper"
-              onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
-              displayOptions={isDisplayDownloadMenu}
-              options={challanDetails?.applicationStatus === "PAID" ? [challanDownload , receiptDownload] : [challanDownload]}
-              downloadBtnClassName={"employee-download-btn-className"}
-              optionsClassName={"employee-options-btn-className"}
-            />
-         </div>
+      <div className="employee-application-details employee-challan-root">
+        <Header>{`${t("CHALLAN_DETAILS")}`}</Header>
+        <MultiLink
+          className="multilinkWrapper employee-mulitlink-main-div mc-employee-challan-wrapper"
+          onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
+          displayOptions={isDisplayDownloadMenu}
+          options={challanDetails?.applicationStatus === "PAID" ? [challanDownload, receiptDownload] : [challanDownload]}
+          downloadBtnClassName={"employee-download-btn-className"}
+          optionsClassName={"employee-options-btn-className"}
+        />
       </div>
-</div>
       <div>
         <Card>
           <StatusTable className="mc-employee-challan-table-cell">

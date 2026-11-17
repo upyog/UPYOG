@@ -487,7 +487,7 @@ const ApplicationDetails = () => {
           <div className="ws-application-details-full-width-relative">
             {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />}
           </div>
-          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="ws-application-details-btn"></LinkButton>
+          {/* <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="ws-application-details-btn"></LinkButton> */}
         </div>
       </div>
 

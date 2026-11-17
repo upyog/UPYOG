@@ -48,13 +48,16 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   // Push current values up to FormComposer whenever any field changes
-  const formValue = watch();
+  const formValue = useWatch({ control });
   useEffect(() => {
     onSelect(config?.key, [formValue]);
-    console.log("ADDRESS DETAILS", formValue);
     // Also keep sessionStorage in sync for tax-head merging in onSubmit
     const stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
-    sessionStorage.setItem("mcollectFormData", JSON.stringify({ ...stored, ...formValue }));
+    sessionStorage.setItem("mcollectFormData", JSON.stringify({
+      ...stored,
+      ...formValue,
+      mohalla: formValue?.mohalla || stored.mohalla || "",
+    }));
   }, [JSON.stringify(formValue)]);
 
   // Sync parent error state
@@ -67,24 +70,16 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
     }
   }, [JSON.stringify(errors)]);
 
-  // Reset mohalla when pincode changes (skip initial mount)
+  // Filter localities by pincode
   const selectedPincode = useWatch({ control, name: "pincode", defaultValue: "" });
-  const isPincodeInitialMount = React.useRef(true);
   useEffect(() => {
-    if (isPincodeInitialMount.current) {
-      isPincodeInitialMount.current = false;
-      return;
-    }
-    if (!isEdit) setValue("mohalla", "");
-
-    // Filter localities by pincode
     if (selectedPincode) {
       const filtered = fetchedLocalities?.filter((loc) => loc.pincode == selectedPincode);
       setLocalities(filtered?.length ? filtered : fetchedLocalities);
     } else {
       setLocalities(fetchedLocalities);
     }
-  }, [selectedPincode]);
+  }, [selectedPincode, fetchedLocalities]);
 
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
@@ -98,7 +93,16 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
               control={control}
               name="doorNo"
               render={({ field }) => (
-                <TextInput value={field.value} onChange={(e) => field.onChange(e.target.value)} onBlur={field.onBlur} disable={isEdit} />
+                <TextInput
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    const stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+                    sessionStorage.setItem("mcollectFormData", JSON.stringify({ ...stored, doorNo: e.target.value }));
+                  }}
+                  onBlur={field.onBlur}
+                  disable={isEdit}
+                />
               )}
             />
           </div>
@@ -111,7 +115,16 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
               control={control}
               name="building"
               render={({ field }) => (
-                <TextInput value={field.value} onChange={(e) => field.onChange(e.target.value)} onBlur={field.onBlur} disable={isEdit} />
+                <TextInput
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    const stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+                    sessionStorage.setItem("mcollectFormData", JSON.stringify({ ...stored, building: e.target.value }));
+                  }}
+                  onBlur={field.onBlur}
+                  disable={isEdit}
+                />
               )}
             />
           </div>
@@ -124,7 +137,16 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
               control={control}
               name="streetName"
               render={({ field }) => (
-                <TextInput value={field.value} onChange={(e) => field.onChange(e.target.value)} onBlur={field.onBlur} disable={isEdit} />
+                <TextInput
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    const stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+                    sessionStorage.setItem("mcollectFormData", JSON.stringify({ ...stored, streetName: e.target.value }));
+                  }}
+                  onBlur={field.onBlur}
+                  disable={isEdit}
+                />
               )}
             />
           </div>
@@ -141,7 +163,12 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
                 <TextInput
                   value={field.value}
                   errorStyle={!!(localFormState.touchedFields?.pincode && errors?.pincode?.message)}
-                  onChange={(e) => field.onChange(e.target.value)}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    if (!isEdit) setValue("mohalla", "");
+                    const stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+                    sessionStorage.setItem("mcollectFormData", JSON.stringify({ ...stored, pincode: e.target.value, mohalla: isEdit ? stored.mohalla : "" }));
+                  }}
                   onBlur={field.onBlur}
                   disable={isEdit}
                 />
@@ -165,7 +192,11 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
                 selected={field.value}
                 isMandatory={true}
                 option={localities}
-                select={field.onChange}
+                select={(val) => {
+                  field.onChange(val);
+                  const stored = JSON.parse(sessionStorage.getItem("mcollectFormData")) || {};
+                  sessionStorage.setItem("mcollectFormData", JSON.stringify({ ...stored, mohalla: val }));
+                }}
                 optionKey="i18nkey"
                 onBlur={field.onBlur}
                 disable={isEdit}

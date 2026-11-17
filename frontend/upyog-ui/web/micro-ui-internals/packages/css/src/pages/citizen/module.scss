@@ -4613,9 +4613,7 @@
   margin-bottom: 15px;
 }
 
-.mcollect-remove fixed height from status count checkbox-flex {
-  display: flex;
-}
+
 
 .mcollect-remove fixed height from status count checkbox-item {
   width: 80%;
@@ -4624,8 +4622,12 @@
 .mcollect-remove fixed height from status count checkbox-mt-neg {
   width: 20%;
   margin-top: -20px;
+  position: relative !important;
 }
 
+.mcollect-remove fixed height from status count checkbox-flex {
+  position: relative !important;
+}
 
 .wt-tp-application-details-digipin-row-center {
   display: flex;
