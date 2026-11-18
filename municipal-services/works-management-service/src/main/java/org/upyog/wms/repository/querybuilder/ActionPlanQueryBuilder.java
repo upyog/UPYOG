@@ -20,19 +20,21 @@ public class ActionPlanQueryBuilder {
     private static final Map<String, String> SORT_COLUMNS = Map.of(
             "createdTime", "ap.createdtime",
             "approvedDate", "ap.approveddate",
-            "projectId", "ap.projectid",
+            "projectId", "pd.projectid",
             "applicationNumber", "ap.applicationnumber",
             "actionPlanNumber", "ap.actionplannumber");
 
     private static final String BASE_QUERY = """
             SELECT ap.*, COUNT(*) OVER() AS full_count
             FROM eg_wms_action_plan ap
+            JOIN eg_wms_ap_project_detail pd ON pd.actionplanid = ap.id AND pd.isactive = true
             WHERE ap.isactive = true
             """;
 
     private static final String COUNT_QUERY = """
             SELECT COUNT(*)
             FROM eg_wms_action_plan ap
+            JOIN eg_wms_ap_project_detail pd ON pd.actionplanid = ap.id AND pd.isactive = true
             WHERE ap.isactive = true
             """;
 
@@ -87,7 +89,7 @@ public class ActionPlanQueryBuilder {
         in(sql, params, "ap.id", c.getIds());
         in(sql, params, "ap.applicationnumber", c.getApplicationNumbers());
         in(sql, params, "ap.actionplannumber", c.getActionPlanNumbers());
-        in(sql, params, "ap.projectid", c.getProjectIds());
+        in(sql, params, "pd.projectid", c.getProjectIds());
         in(sql, params, "ap.status", c.getStatuses());
         eq(sql, params, "ap.financialyear", c.getFinancialYear());
         eq(sql, params, "ap.schemecode", c.getSchemeCode());

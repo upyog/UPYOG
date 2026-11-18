@@ -1,6 +1,7 @@
 package org.upyog.wms.service;
 
 import static org.upyog.wms.util.WmsUtil.isBlank;
+import static org.upyog.wms.util.WmsUtil.projectId;
 
 import java.util.Comparator;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ActionPlanService {
         List<ActionPlan> related = isBlank(plan.getTenantId()) ? List.of() : revision
                 ? find(ActionPlanSearchCriteria.builder().tenantId(plan.getTenantId())
                         .actionPlanNumbers(List.of(plan.getActionPlanNumber())).build(), true)
-                : projectIdInUse(plan.getTenantId(), plan.getProjectId());
+                : projectIdInUse(plan.getTenantId(), projectId(plan));
         validator.validateCreate(request, related);
 
         MdmsData mdms = mdmsService.getMasterData(requestInfo, plan.getTenantId());
@@ -88,9 +89,10 @@ public class ActionPlanService {
 
         MdmsData mdms = mdmsService.getMasterData(requestInfo, incoming.getTenantId());
         boolean workflowEnabled = workflowService.isWorkflowEnabled(mdms);
-        List<ActionPlan> sameProject = incoming.getProjectId() != null
-                && !incoming.getProjectId().equals(existing.getProjectId())
-                ? projectIdInUse(existing.getTenantId(), incoming.getProjectId()) : List.of();
+        String incomingProjectId = projectId(incoming);
+        List<ActionPlan> sameProject = incomingProjectId != null
+                && !incomingProjectId.equals(projectId(existing))
+                ? projectIdInUse(existing.getTenantId(), incomingProjectId) : List.of();
 
         List<ValidationWarning> warnings = validator.validateUpdate(request, existing, mdms, workflowEnabled,
                 sameProject);

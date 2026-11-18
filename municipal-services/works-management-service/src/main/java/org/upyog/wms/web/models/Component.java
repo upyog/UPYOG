@@ -1,5 +1,6 @@
 package org.upyog.wms.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -23,6 +24,10 @@ public class Component {
 
     @Size(max = 64)
     private String tenantId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Size(max = 64)
+    private String projectDetailId;
 
     @Size(max = 64)
     private String componentNumber;

@@ -5,6 +5,9 @@ import static org.upyog.wms.constants.WmsConstants.USER_TYPE_EMPLOYEE;
 import static org.upyog.wms.util.WmsUtil.isBlank;
 import static org.upyog.wms.util.WmsUtil.nn;
 import static org.upyog.wms.util.WmsUtil.projectComponents;
+import static org.upyog.wms.util.WmsUtil.projectDetail;
+import static org.upyog.wms.util.WmsUtil.projectId;
+import static org.upyog.wms.util.WmsUtil.projectName;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -62,7 +65,7 @@ public class ActionPlanValidator {
 
         if (isBlank(plan.getActionPlanNumber())) {
             projectPlans.stream().findFirst().ifPresent(existing -> errors.add(PROJECT_ALREADY_REGISTERED,
-                    "projectId", "Project ID " + plan.getProjectId() + " is already registered (application "
+                    "projectDetails[0].projectId", "Project ID " + projectId(plan) + " is already registered (application "
                             + existing.getApplicationNumber() + ", status " + existing.getStatus() + ")"));
         } else {
             validateRevision(plan, projectPlans, errors);
@@ -85,8 +88,9 @@ public class ActionPlanValidator {
                 .findFirst()
                 .ifPresent(v -> errors.add(REVISION_NOT_ALLOWED, "actionPlanNumber", "Revision "
                         + v.getApplicationNumber() + " is already in progress (" + v.getStatus() + ")"));
-        if (plan.getProjectId() != null && !plan.getProjectId().equals(published.get().getProjectId())) {
-            errors.add(REVISION_NOT_ALLOWED, "projectId", "Project ID cannot be changed in a revision");
+        if (projectId(plan) != null && !projectId(plan).equals(projectId(published.get()))) {
+            errors.add(REVISION_NOT_ALLOWED, "projectDetails[0].projectId",
+                    "Project ID cannot be changed in a revision");
         }
         // Components carried into the revision must be components of the published version
         Set<String> known = projectComponents(published.get()).stream()
@@ -223,13 +227,13 @@ public class ActionPlanValidator {
 
     private void validateProjectIdChange(ActionPlan plan, ActionPlan existing, List<ActionPlan> sameProject,
                                          ValidationErrors errors) {
-        if (plan.getProjectId() == null || plan.getProjectId().equals(existing.getProjectId())) {
+        if (projectId(plan) == null || projectId(plan).equals(projectId(existing))) {
             return;
         }
         if (existing.getVersion() != null && existing.getVersion() > 1) {
-            errors.add(INVALID_ACTION, "projectId", "Project ID cannot be changed in a revision");
+            errors.add(INVALID_ACTION, "projectDetails[0].projectId", "Project ID cannot be changed in a revision");
         } else if (sameProject.stream().anyMatch(p -> !p.getId().equals(existing.getId()))) {
-            errors.add(PROJECT_ALREADY_REGISTERED, "projectId", "Project ID " + plan.getProjectId()
+            errors.add(PROJECT_ALREADY_REGISTERED, "projectDetails[0].projectId", "Project ID " + projectId(plan)
                     + " is already registered");
         }
     }
@@ -309,11 +313,15 @@ public class ActionPlanValidator {
         if (isBlank(plan.getFinancialYear())) {
             errors.add(REQUIRED, "financialYear", "Financial Year is mandatory even for a draft");
         }
-        if (isBlank(plan.getProjectId())) {
-            errors.add(REQUIRED, "projectId", "Project ID is mandatory even for a draft");
+        if (projectDetail(plan).isEmpty()) {
+            errors.add(REQUIRED, "projectDetails", "One active project detail is mandatory even for a draft");
+            return;
         }
-        if (isBlank(plan.getProjectName())) {
-            errors.add(REQUIRED, "projectName", "Project Name is mandatory even for a draft");
+        if (isBlank(projectId(plan))) {
+            errors.add(REQUIRED, "projectDetails[0].projectId", "Project ID is mandatory even for a draft");
+        }
+        if (isBlank(projectName(plan))) {
+            errors.add(REQUIRED, "projectDetails[0].projectName", "Project Name is mandatory even for a draft");
         }
     }
 

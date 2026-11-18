@@ -5,6 +5,7 @@ import static org.upyog.wms.constants.WmsConstants.COMPONENT_INACTIVE;
 import static org.upyog.wms.util.WmsUtil.isTrue;
 import static org.upyog.wms.util.WmsUtil.nn;
 import static org.upyog.wms.util.WmsUtil.projectComponents;
+import static org.upyog.wms.util.WmsUtil.projectDetail;
 import static org.upyog.wms.util.WmsUtil.setProjectComponents;
 
 import java.util.ArrayList;
@@ -116,7 +117,8 @@ public class EnrichmentService {
             plan.setVersion(nextVersion);
             plan.setIsLatestVersion(false);
             plan.setActionPlanNumber(published.getActionPlanNumber());
-            plan.setProjectId(published.getProjectId());
+            String publishedProjectId = projectDetail(published).map(ProjectDetail::getProjectId).orElse(null);
+            projectDetail(plan).ifPresent(detail -> detail.setProjectId(publishedProjectId));
         } else {
             plan.setVersion(1);
             plan.setIsLatestVersion(true);
@@ -178,7 +180,8 @@ public class EnrichmentService {
 
         copySystemFields(existing, plan, ctx);
         if (existing.getVersion() != null && existing.getVersion() > 1) {
-            plan.setProjectId(existing.getProjectId());
+            String existingProjectId = projectDetail(existing).map(ProjectDetail::getProjectId).orElse(null);
+            projectDetail(plan).ifPresent(detail -> detail.setProjectId(existingProjectId));
         }
         plan.setAdminSanction(isTrue(plan.getAdminSanction()));
         plan.setDeclarationAccepted(isTrue(plan.getDeclarationAccepted()));
@@ -280,6 +283,8 @@ public class EnrichmentService {
 
     /** Sets tenant and parent ids on every child row. */
     private static void linkParents(ActionPlan plan) {
+        plan.getProjectDetails().forEach(detail -> detail.setActionPlanId(plan.getId()));
+        String projectDetailId = projectDetail(plan).map(ProjectDetail::getId).orElse(null);
         plan.getFundDetails().forEach(f -> {
             f.setActionPlanId(plan.getId());
             f.setComponentId(null);
@@ -289,6 +294,7 @@ public class EnrichmentService {
             b.setComponentId(null);
         });
         projectComponents(plan).forEach(c -> {
+            c.setProjectDetailId(projectDetailId);
             c.getFundDetails().forEach(f -> {
                 f.setActionPlanId(plan.getId());
                 f.setComponentId(c.getId());
