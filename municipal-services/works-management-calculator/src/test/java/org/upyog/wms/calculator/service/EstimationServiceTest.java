@@ -32,9 +32,8 @@ class EstimationServiceTest {
     /** FRS Section 5 example: 100 = Manpower 20 + Material 40 + Service 40. */
     private static ActionPlan frsExample() {
         return ActionPlan.builder().tenantId("od.cuttack").applicationNumber("WMS-AP-1")
-                .approvedAmount(new BigDecimal("100")).fundSource("PARTIAL")
-                .fundDetails(List.of(fund("GOVT_GRANT", "CENTRAL_GRANT", "60"), fund("OSR", "PROPERTY_TAX", "40")))
-                .projectDetails(List.of(ProjectDetail.builder().components(List.of(
+                .fundSource("PARTIAL")
+                .projectDetails(List.of(ProjectDetail.builder().approvedAmount(new BigDecimal("100")).components(List.of(
                         component("C-1", "MANPOWER", "20", fund("GOVT_GRANT", "CENTRAL_GRANT", "20")),
                         component("C-2", "GOODS", "40", fund("GOVT_GRANT", "CENTRAL_GRANT", "40")),
                         component("C-3", "SERVICES", "40", fund("OSR", "PROPERTY_TAX", "40"))))
@@ -52,13 +51,14 @@ class EstimationServiceTest {
                 s.componentBreakup().stream().map(FinancialSummary.ComponentBreakup::percentage).toList());
         assertEquals(3, s.categoryBreakup().size());
         assertEquals(new BigDecimal("60.00"), s.componentFundBreakup().get(0).amount());
-        assertEquals("CENTRAL_GRANT", s.planFundBreakup().get(0).sourceCode());
+        assertEquals("CENTRAL_GRANT", s.componentFundBreakup().get(0).sourceCode());
+        assertTrue(s.planFundBreakup().isEmpty());
     }
 
     @Test
     void unallocatedBalanceIsReported() {
         ActionPlan plan = frsExample();
-        plan.setApprovedAmount(new BigDecimal("120"));
+        plan.getProjectDetails().get(0).setApprovedAmount(new BigDecimal("120"));
         FinancialSummary s = service.summarize(plan);
         assertFalse(s.balanced());
         assertEquals(new BigDecimal("20.00"), s.unallocatedBalance());
