@@ -3,9 +3,10 @@ package org.egov.pg.service.gateways.icici;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 
 import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -107,25 +109,44 @@ public class ICICIGateway implements Gateway {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(Arrays.asList(
+                    MediaType.APPLICATION_JSON,
+                    MediaType.APPLICATION_OCTET_STREAM
+                ));
 
             log.info("ICICI request : {}", request);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
             log.info("ICICI INITIATE_SALE_URL: {}", INITIATE_SALE_URL);
-            ResponseEntity<Map> response = restTemplate.exchange(INITIATE_SALE_URL, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<byte[]> response = restTemplate.exchange(INITIATE_SALE_URL, HttpMethod.POST, entity, byte[].class);
             log.info("ICICI Response: {}", response);
-            Map<String, Object> responseBody = response.getBody();
+            byte[] responseBytes = response.getBody();
 
-            log.info("ICICI initiate sale response : {}", responseBody);
-
-            if (responseBody == null) {
-
+            if (responseBytes == null || responseBytes.length == 0) {
                 throw new RuntimeException("Empty response from ICICI");
             }
+            
+            log.info("ICICI initiate sale response : {}", responseBytes);
 
-            String responseCode = (String) responseBody.get("responseCode");
+            
+            String responseString = new String(
+                    responseBytes,
+                    StandardCharsets.UTF_8
+            );
 
-            log.info("responseCode : {}", responseCode);
+            log.info("ICICI raw response: {}", responseString);
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+
+			Map<String, Object> responseBody = objectMapper.readValue(responseString,
+					new TypeReference<Map<String, Object>>() {
+					});
+
+            log.info("ICICI initiate sale response: {}", responseBody);
+
+            String responseCode = String.valueOf(
+                    responseBody.get("responseCode")
+            );
 
             if (!"R1000".equals(responseCode)) {
 
@@ -135,6 +156,10 @@ public class ICICIGateway implements Gateway {
             String redirectURI = (String) responseBody.get("redirectURI");
 
             String tranCtx = (String) responseBody.get("tranCtx");
+            
+			if (redirectURI == null || tranCtx == null) {
+				throw new RuntimeException("Missing redirectURI or tranCtx in ICICI response");
+			}
 
             return UriComponentsBuilder.fromHttpUrl(redirectURI).queryParam("tranCtx", tranCtx).build().toUri();
 
@@ -168,17 +193,27 @@ public class ICICIGateway implements Gateway {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-
+            headers.setAccept(Arrays.asList(
+                    MediaType.APPLICATION_JSON,
+                    MediaType.APPLICATION_OCTET_STREAM
+            ));
+            
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
-            ResponseEntity<Map> response = restTemplate.exchange(STATUS_CHECK_URL, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<byte[]> response = restTemplate.exchange(STATUS_CHECK_URL, HttpMethod.POST, entity, byte[].class);
 
-            Map<String, Object> responseBody = response.getBody();
-            log.info("ICICI status response : {}", responseBody);
-
-            if (responseBody == null) {
+            byte[]responseBytes = response.getBody();
+           
+            if (responseBytes == null || responseBytes.length == 0) {
                 throw new RuntimeException("Empty response from ICICI");
             }
+
+            String responseString = new String(responseBytes, StandardCharsets.UTF_8);
+            
+			Map<String, Object> responseBody = objectMapper.readValue(responseString,
+					new TypeReference<Map<String, Object>>() {
+					});
+           
 
             currentStatus.setGatewayTxnId((String) responseBody.get("txnID"));
             currentStatus.setGatewayStatusCode((String) responseBody.get("txnResponseCode"));
