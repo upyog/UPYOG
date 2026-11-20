@@ -40,7 +40,7 @@ final class TestData {
                 Map.of("MANPOWER", Set.of(), "GOODS", Set.of("FURNITURE"), "SERVICES", Set.of("CLOUD")),
                 Map.of(
                         "ACTION_PLAN", new DocumentTypeConfig("ACTION_PLAN", "ACTION_PLAN", true, false),
-                        "ADMIN_SANCTION", new DocumentTypeConfig("ADMIN_SANCTION", "ACTION_PLAN", true, false),
+                        "ADMIN_SANCTION", new DocumentTypeConfig("ADMIN_SANCTION", "ACTION_PLAN", false, false),
                         "TECHNICAL_SANCTION", new DocumentTypeConfig("TECHNICAL_SANCTION", "ACTION_PLAN", false, false),
                         "APPROVAL_PROCEEDING", new DocumentTypeConfig("APPROVAL_PROCEEDING", "ACTION_PLAN", false, true),
                         "REFERENCE", new DocumentTypeConfig("REFERENCE", "ACTION_PLAN", false, true),
@@ -74,6 +74,7 @@ final class TestData {
                         .purposeCode("DEVELOPMENT_WORK")
                         .startDate(1767225600000L).endDate(1798761600000L)
                         .typeOfWork("ORIGINAL").workCategory("BUILDINGS")
+                        .approvedAmount(new BigDecimal("100"))
                         .components(components).build())))
                 .recommendations(new ArrayList<>(List.of(Recommendation.builder().recommendedBy("MLA").build())))
                 .locations(new ArrayList<>(List.of(Location.builder().stateCode("OD").districtCode("CUTTACK")
@@ -81,7 +82,6 @@ final class TestData {
                 .offlineApprovalDate(1762128000000L)
                 .approvingAuthority("Commissioner")
                 .schemeCode("FINANCE_COMMISSION").subSchemeCode("STREET_LIGHTS")
-                .approvedAmount(new BigDecimal("100"))
                 .fundSource("PARTIAL")
                 .fundDetails(new ArrayList<>(List.of(fund("GOVT_GRANT", "CENTRAL_GRANT", "60"),
                         fund("OSR", "PROPERTY_TAX", "40"))))

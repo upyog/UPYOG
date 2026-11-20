@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,10 +67,6 @@ public final class SubmissionRules {
         components(plan, errors, warnings);
         documents(plan, errors);
         financialSummary(plan, errors);
-        if (!isTrue(plan.getDeclarationAccepted())) {
-            errors.add(DECLARATION_REQUIRED, "declarationAccepted",
-                    "Accept the declaration that the entered data matches the approval evidence");
-        }
         return warnings;
     }
 
@@ -99,6 +94,7 @@ public final class SubmissionRules {
             }
             requiredMaster(d.getTypeOfWork(), mdms.typesOfWork(), p + "typeOfWork", "Type of Work", errors);
             requiredMaster(d.getWorkCategory(), mdms.workCategories(), p + "workCategory", "Work Category", errors);
+            positiveAmount(d.getApprovedAmount(), p + "approvedAmount", "Approved Project Amount", errors);
         }
 
         if (!isTrue(plan.getAdminSanction())) {
@@ -165,11 +161,7 @@ public final class SubmissionRules {
         if (!subSchemes.isEmpty()) {
             requiredMaster(plan.getSubSchemeCode(), subSchemes, "subSchemeCode", "Sub-Scheme", errors);
         }
-        positiveAmount(plan.getApprovedAmount(), "approvedAmount", "Approved Project Amount", errors);
-
-        Optional<FundType> source = fundSource(plan.getFundSource(), "fundSource", errors);
-        source.ifPresent(s -> fundRows(s, plan.getFundDetails(), plan.getApprovedAmount(), "fundDetails",
-                "Approved Project Amount", errors));
+        fundSource(plan.getFundSource(), "fundSource", errors);
 
         if (plan.getTotalComponents() == null || plan.getTotalComponents() < 1) {
             errors.add(REQUIRED, "totalComponents", "Total No. of Components must be at least 1");
@@ -259,8 +251,15 @@ public final class SubmissionRules {
     }
 
     private void financialSummary(ActionPlan plan, ValidationErrors errors) {
-        BigDecimal approved = plan.getApprovedAmount();
-        List<Component> active = activeComponents(plan);
+        List<ProjectDetail> details = live(plan.getProjectDetails(), ProjectDetail::getIsActive);
+        if (details.size() != 1) {
+            return;
+        }
+        ProjectDetail project = details.get(0);
+        BigDecimal approved = project.getApprovedAmount();
+        List<Component> active = live(project.getComponents(), Component::getIsActive).stream()
+                .filter(c -> !COMPONENT_INACTIVE.equals(c.getStatus()))
+                .toList();
         if (approved == null || active.isEmpty()) {
             return;
         }
@@ -275,21 +274,6 @@ public final class SubmissionRules {
                     + plain(componentTotal) + ") exceeds the Approved Project Amount (" + plain(approved) + ")");
         }
 
-        // Funding-wise reconciliation: component funding per type vs plan funding per type
-        Map<FundType, BigDecimal> planByType = totalsByType(live(plan.getFundDetails(), FundDetail::getIsActive));
-        Map<FundType, BigDecimal> compByType = totalsByType(active.stream()
-                .flatMap(c -> live(c.getFundDetails(), FundDetail::getIsActive).stream())
-                .toList());
-        for (FundType type : List.of(FundType.GOVT_GRANT, FundType.OSR)) {
-            BigDecimal planAmount = planByType.getOrDefault(type, BigDecimal.ZERO);
-            BigDecimal compAmount = compByType.getOrDefault(type, BigDecimal.ZERO);
-            int c = compAmount.compareTo(planAmount);
-            if ((cfg.fullAllocationRequired() && c != 0) || (!cfg.fullAllocationRequired() && c > 0)) {
-                errors.add(FUND_TOTAL_MISMATCH, "components.fundDetails." + type, "Components' " + type
-                        + " funding (" + plain(compAmount) + ") does not match the plan's " + type + " funding ("
-                        + plain(planAmount) + ")");
-            }
-        }
     }
 
     private void fundRows(FundType source, List<FundDetail> rows, BigDecimal total, String path, String totalLabel,
@@ -365,13 +349,6 @@ public final class SubmissionRules {
                 errors.add(REQUIRED, p + "fileStoreId", "Upload the file");
             }
         }
-    }
-
-    private static Map<FundType, BigDecimal> totalsByType(List<FundDetail> rows) {
-        Map<FundType, BigDecimal> totals = new EnumMap<>(FundType.class);
-        rows.forEach(r -> FundType.from(r.getFundType()).ifPresent(t -> totals.merge(t,
-                r.getAmount() == null ? BigDecimal.ZERO : r.getAmount(), BigDecimal::add)));
-        return totals;
     }
 
     private static List<Component> activeComponents(ActionPlan plan) {

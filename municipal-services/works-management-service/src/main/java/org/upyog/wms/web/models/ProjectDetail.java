@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +50,10 @@ public class ProjectDetail {
 
     @Size(max = 64)
     private String workCategory;
+
+    @DecimalMin(value = "0.00", message = "approvedAmount must not be negative")
+    @Digits(integer = 13, fraction = 2)
+    private BigDecimal approvedAmount;
 
     private Boolean isActive;
 
