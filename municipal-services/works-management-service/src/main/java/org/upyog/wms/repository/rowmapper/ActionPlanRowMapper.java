@@ -66,6 +66,7 @@ public class ActionPlanRowMapper {
                 .endDate(rs.getObject("enddate", Long.class))
                 .typeOfWork(rs.getString("typeofwork"))
                 .workCategory(rs.getString("workcategory"))
+                .approvedAmount(rs.getBigDecimal("approvedamount"))
                 .isActive(rs.getBoolean("isactive"))
                 .additionalDetails(json(rs, "additionaldetails"))
                 .auditDetails(audit(rs))

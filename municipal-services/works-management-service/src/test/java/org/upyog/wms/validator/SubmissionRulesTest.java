@@ -42,7 +42,6 @@ class SubmissionRulesTest {
         projectComponents(plan).get(2).getFundDetails().get(0).setAmount(new BigDecimal("30"));
         ValidationErrors errors = run(plan);
         assertTrue(errors.containsRule(ErrorCodes.COMPONENT_TOTAL_MISMATCH), errors.asMap()::toString);
-        assertTrue(errors.containsRule(ErrorCodes.FUND_TOTAL_MISMATCH), errors.asMap()::toString);
     }
 
     @Test
@@ -59,11 +58,15 @@ class SubmissionRulesTest {
     }
 
     @Test
-    void partialFundingNeedsBothSources() {
+    void planLevelFundDetailsAreNotValidated() {
         ActionPlan plan = TestData.validPlan();
-        plan.setFundDetails(new java.util.ArrayList<>(List.of(TestData.fund("GOVT_GRANT", "CENTRAL_GRANT", "100"))));
+        plan.setFundDetails(List.of());
         ValidationErrors errors = run(plan);
-        assertTrue(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundDetails"), errors.asMap()::toString);
+        assertFalse(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundDetails"), errors.asMap()::toString);
+        assertFalse(errors.asMap().containsKey(ErrorCodes.FUND_TOTAL_MISMATCH + ":fundDetails"),
+                errors.asMap()::toString);
+        assertFalse(errors.asMap().containsKey(ErrorCodes.FUND_TOTAL_MISMATCH + ":components.fundDetails.OSR"),
+                errors.asMap()::toString);
     }
 
     @Test
@@ -159,13 +162,13 @@ class SubmissionRulesTest {
     }
 
     @Test
-    void declarationAndMastersAreChecked() {
+    void declarationIsOptionalAndMastersAreChecked() {
         ActionPlan plan = TestData.validPlan();
         plan.setDeclarationAccepted(false);
         plan.setSchemeCode("UNKNOWN");
         plan.getLocations().get(0).setDistrictCode("NOWHERE");
         ValidationErrors errors = run(plan);
-        assertTrue(errors.containsRule(ErrorCodes.DECLARATION_REQUIRED));
+        assertFalse(errors.containsRule(ErrorCodes.DECLARATION_REQUIRED));
         assertTrue(errors.asMap().containsKey(ErrorCodes.INVALID_MASTER + ":schemeCode"));
         assertTrue(errors.asMap().containsKey(ErrorCodes.INVALID_MASTER + ":locations[0].districtCode"));
         assertFalse(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":subSchemeCode"));
