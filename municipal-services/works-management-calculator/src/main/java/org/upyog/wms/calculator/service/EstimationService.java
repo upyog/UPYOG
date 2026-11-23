@@ -34,7 +34,7 @@ public class EstimationService {
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
     public FinancialSummary summarize(ActionPlan plan) {
-        BigDecimal total = scale(plan.getApprovedAmount());
+        BigDecimal total = projectApprovedAmount(plan);
         List<Component> active = components(plan).stream()
                 .filter(c -> !Boolean.FALSE.equals(c.getIsActive()) && !COMPONENT_INACTIVE.equals(c.getStatus()))
                 .toList();
@@ -52,10 +52,9 @@ public class EstimationService {
                 .map(e -> new CategoryBreakup(e.getKey(), scale(e.getValue()), percent(e.getValue(), total)))
                 .toList();
 
-        List<FundDetail> planFunds = live(plan.getFundDetails());
-        List<FundBreakup> planFundBreakup = fundBreakup(planFunds, f -> f.getFundType() + "|" + f.getSourceCode(), total);
         List<FundDetail> componentFunds = active.stream().flatMap(c -> live(c.getFundDetails()).stream()).toList();
-        List<FundBreakup> componentFundBreakup = fundBreakup(componentFunds, f -> f.getFundType() + "|", total);
+        List<FundBreakup> componentFundBreakup = fundBreakup(componentFunds,
+                f -> f.getFundType() + "|" + f.getSourceCode(), total);
 
         BigDecimal unallocated = total.subtract(componentTotal);
         List<String> observations = new ArrayList<>();
@@ -65,26 +64,18 @@ public class EstimationService {
         } else if (unallocated.signum() < 0) {
             observations.add("Components exceed the Total Approved Amount by " + unallocated.negate().toPlainString());
         }
-        BigDecimal planFundTotal = sum(planFunds, FundDetail::getAmount);
-        if (planFundTotal.compareTo(total) != 0) {
-            observations.add("Fund break-up total " + planFundTotal.toPlainString()
-                    + " does not equal the Total Approved Amount " + total.toPlainString());
-        }
-        for (String type : List.of(FUND_GOVT_GRANT, FUND_OSR)) {
-            BigDecimal p = sum(planFunds.stream().filter(f -> type.equals(f.getFundType())).toList(), FundDetail::getAmount);
-            BigDecimal c = sum(componentFunds.stream().filter(f -> type.equals(f.getFundType())).toList(), FundDetail::getAmount);
-            if (p.compareTo(c) != 0) {
-                observations.add(type + " funding of components (" + c.toPlainString()
-                        + ") differs from the plan (" + p.toPlainString() + ")");
-            }
+        BigDecimal componentFundTotal = sum(componentFunds, FundDetail::getAmount);
+        if (componentFundTotal.compareTo(componentTotal) != 0) {
+            observations.add("Component fund break-up total " + componentFundTotal.toPlainString()
+                    + " does not equal the Total Component Amount " + componentTotal.toPlainString());
         }
         return new FinancialSummary(total, componentTotal, unallocated, observations.isEmpty(), components,
-                categories, planFundBreakup, componentFundBreakup, observations);
+                categories, List.of(), componentFundBreakup, observations);
     }
 
     /** Fees from MDMS FeeConfig (FLAT or PERCENTAGE of the approved amount, clamped to min / max). */
     public List<TaxHeadEstimate> fees(ActionPlan plan, List<FeeConfig> configs, String businessService) {
-        BigDecimal base = scale(plan.getApprovedAmount());
+        BigDecimal base = projectApprovedAmount(plan);
         return configs.stream()
                 .filter(FeeConfig::active)
                 .filter(f -> businessService.equals(f.businessService()))
@@ -149,8 +140,16 @@ public class EstimationService {
     private static List<Component> components(ActionPlan plan) {
         return list(plan.getProjectDetails()).stream()
                 .filter(Objects::nonNull)
+                .filter(project -> !Boolean.FALSE.equals(project.getIsActive()))
                 .flatMap(project -> list(project.getComponents()).stream())
                 .toList();
+    }
+
+    private static BigDecimal projectApprovedAmount(ActionPlan plan) {
+        return sum(list(plan.getProjectDetails()).stream()
+                .filter(Objects::nonNull)
+                .filter(project -> !Boolean.FALSE.equals(project.getIsActive()))
+                .toList(), ProjectDetail::getApprovedAmount);
     }
 
     private static BigDecimal nz(BigDecimal value) {
