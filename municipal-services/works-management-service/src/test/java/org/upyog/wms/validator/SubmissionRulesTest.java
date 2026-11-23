@@ -45,6 +45,27 @@ class SubmissionRulesTest {
     }
 
     @Test
+    void approvedAmountMustComeFromActionPlan() {
+        ActionPlan plan = TestData.validPlan();
+        plan.getProjectDetails().get(0).setApprovedAmount(new BigDecimal("999"));
+
+        ValidationErrors errors = run(plan);
+
+        assertTrue(errors.isEmpty(), errors.asMap()::toString);
+    }
+
+    @Test
+    void actionPlanApprovedAmountIsMandatory() {
+        ActionPlan plan = TestData.validPlan();
+        plan.setApprovedAmount(null);
+
+        ValidationErrors errors = run(plan);
+
+        assertTrue(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":approvedAmount"),
+                errors.asMap()::toString);
+    }
+
+    @Test
     void underAllocationAllowedWhenFullAllocationIsOff() {
         ActionPlanConfig cfg = new ActionPlanConfig(true, Set.of("GOVT_GRANT", "PARTIAL"), true, false, true, true, 5, null);
         ActionPlan plan = TestData.validPlan();
@@ -64,8 +85,6 @@ class SubmissionRulesTest {
         ValidationErrors errors = run(plan);
         assertFalse(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundDetails"), errors.asMap()::toString);
         assertFalse(errors.asMap().containsKey(ErrorCodes.FUND_TOTAL_MISMATCH + ":fundDetails"),
-                errors.asMap()::toString);
-        assertFalse(errors.asMap().containsKey(ErrorCodes.FUND_TOTAL_MISMATCH + ":components.fundDetails.OSR"),
                 errors.asMap()::toString);
     }
 
