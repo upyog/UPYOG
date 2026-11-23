@@ -172,8 +172,14 @@
                     "name": "subScheme",
                     "label": "WORKS_AP_SUB_SCHEME",
                     "type": "select",
-                    "required": true,
                     "dependsOn": "scheme",
+                    "requiredWhen": {
+                        "field": "scheme",
+                        "in": [
+                            "FINANCE_COMMISSION",
+                            "MUNICIPAL_WORKS"
+                        ]
+                    },
                     "options": {
                         "source": "mdms",
                         "master": "SubScheme",
@@ -342,14 +348,14 @@
                                     "visibleWhen": {
                                         "field": "fundSource",
                                         "in": [
-                                            "GRANT",
+                                            "GOVT_GRANT",
                                             "PARTIAL"
                                         ]
                                     },
                                     "requiredWhen": {
                                         "field": "fundSource",
                                         "in": [
-                                            "GRANT",
+                                            "GOVT_GRANT",
                                             "PARTIAL"
                                         ]
                                     }
@@ -361,14 +367,14 @@
                                     "visibleWhen": {
                                         "field": "fundSource",
                                         "in": [
-                                            "GRANT",
+                                            "GOVT_GRANT",
                                             "PARTIAL"
                                         ]
                                     },
                                     "requiredWhen": {
                                         "field": "fundSource",
                                         "in": [
-                                            "GRANT",
+                                            "GOVT_GRANT",
                                             "PARTIAL"
                                         ]
                                     }
@@ -380,14 +386,14 @@
                                     "visibleWhen": {
                                         "field": "fundSource",
                                         "in": [
-                                            "GRANT",
+                                            "GOVT_GRANT",
                                             "PARTIAL"
                                         ]
                                     },
                                     "requiredWhen": {
                                         "field": "fundSource",
                                         "in": [
-                                            "GRANT",
+                                            "GOVT_GRANT",
                                             "PARTIAL"
                                         ]
                                     }

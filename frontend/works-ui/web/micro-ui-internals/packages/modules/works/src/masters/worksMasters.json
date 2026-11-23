@@ -52,7 +52,7 @@
     ],
     "RecommendedBy": [
         {
-            "code": "ULB",
+            "code": "ULB_INITIATIVE",
             "name": "ULB Initiative"
         },
         {
@@ -70,19 +70,19 @@
     ],
     "Scheme": [
         {
-            "code": "FC",
+            "code": "FINANCE_COMMISSION",
             "name": "Finance Commission"
         },
         {
-            "code": "MW",
+            "code": "MUNICIPAL_WORKS",
             "name": "Municipal Works"
         },
         {
-            "code": "FC15",
+            "code": "FC_15",
             "name": "15th Finance Commission"
         },
         {
-            "code": "NHS",
+            "code": "NATIONAL_HEALTH_SCHEME",
             "name": "National Health Scheme"
         },
         {
@@ -102,37 +102,12 @@
         {
             "code": "STREET_LIGHTS",
             "name": "Street Lights",
-            "parent": "FC"
+            "parent": "FINANCE_COMMISSION"
         },
         {
             "code": "MUNICIPAL_ROAD_WORKS",
             "name": "Municipal Road Works",
-            "parent": "MW"
-        },
-        {
-            "code": "GENERAL_FC15",
-            "name": "General",
-            "parent": "FC15"
-        },
-        {
-            "code": "GENERAL_NHS",
-            "name": "General",
-            "parent": "NHS"
-        },
-        {
-            "code": "GENERAL_NSDP",
-            "name": "General",
-            "parent": "NSDP"
-        },
-        {
-            "code": "GENERAL_PMAY",
-            "name": "General",
-            "parent": "PMAY"
-        },
-        {
-            "code": "GENERAL_SBM",
-            "name": "General",
-            "parent": "SBM"
+            "parent": "MUNICIPAL_WORKS"
         }
     ],
     "PurposeOfProject": [
@@ -141,19 +116,19 @@
             "name": "Development Work"
         },
         {
-            "code": "MANPOWER_SERVICES",
+            "code": "MAN_POWER_SERVICES",
             "name": "Man Power Services"
         },
         {
-            "code": "PROCUREMENT_MATERIALS",
+            "code": "PROCUREMENT_OF_MATERIALS",
             "name": "Procurement of Materials"
         },
         {
-            "code": "PROCUREMENT_MACHINERIES",
+            "code": "PROCUREMENT_OF_MACHINERIES",
             "name": "Procurement of Machineries"
         },
         {
-            "code": "PROCUREMENT_VEHICLES",
+            "code": "PROCUREMENT_OF_VEHICLES",
             "name": "Procurement of Vehicles"
         },
         {
@@ -167,7 +142,7 @@
             "name": "Original"
         },
         {
-            "code": "IMPROVEMENT_UPGRADATION",
+            "code": "IMPROVEMENTS_UPGRADATION",
             "name": "Improvements / Upgradation"
         },
         {
@@ -192,7 +167,7 @@
         },
         {
             "code": "LABOUR_CONTRACT_WORKS",
-            "name": "Labour Contract works"
+            "name": "Labour Contract Works"
         }
     ],
     "WorkCategory": [
@@ -213,11 +188,11 @@
             "name": "Canals (including Linings and Structures)"
         },
         {
-            "code": "DAMS",
+            "code": "DAMS_ALLIED_WORKS",
             "name": "Dams & Allied Works"
         },
         {
-            "code": "WATER_SEWAGE_LINES",
+            "code": "WATER_SUPPLY_SEWAGE_LINES",
             "name": "Water supply / Sewage lines"
         },
         {
@@ -225,7 +200,7 @@
             "name": "Power Stations"
         },
         {
-            "code": "TREATMENT_TANKS",
+            "code": "WATER_SEWAGE_TREATMENT_TANKS",
             "name": "Water / sewage treatment tanks"
         }
     ],
@@ -244,7 +219,7 @@
         },
         {
             "code": "BOTH",
-            "name": "Both"
+            "name": "Both (Goods and Services)"
         }
     ],
     "ComponentSubCategory": [
@@ -255,7 +230,7 @@
         },
         {
             "code": "FURNITURE",
-            "name": "Furniture",
+            "name": "Furnitures",
             "parent": "GOODS"
         },
         {
@@ -271,8 +246,8 @@
     ],
     "FundSource": [
         {
-            "code": "GRANT",
-            "name": "Government Grant"
+            "code": "GOVT_GRANT",
+            "name": "Govt. Grants"
         },
         {
             "code": "OSR",
@@ -280,20 +255,20 @@
         },
         {
             "code": "PARTIAL",
-            "name": "Partial (Grant + OSR)"
+            "name": "Partial (Govt. Grants + OSR)"
         }
     ],
     "GrantType": [
         {
-            "code": "CENTRAL",
+            "code": "CENTRAL_GRANT",
             "name": "Central Grant"
         },
         {
-            "code": "STATE",
+            "code": "STATE_GOVT_GRANT",
             "name": "State Government Grant"
         },
         {
-            "code": "OTHER_AGENCIES",
+            "code": "OTHER_GOVT_AGENCIES",
             "name": "Other Government Agencies"
         },
         {
@@ -311,16 +286,24 @@
             "name": "Property Tax"
         },
         {
+            "code": "TRADE_LICENSE",
+            "name": "Trade License Fee"
+        },
+        {
             "code": "WATER_CHARGES",
             "name": "Water Charges"
         },
         {
-            "code": "TRADE_LICENCE",
-            "name": "Trade Licence Fees"
+            "code": "ADVERTISEMENT_TAX",
+            "name": "Advertisement Tax"
         },
         {
-            "code": "OTHER_OSR",
-            "name": "Other Own Source"
+            "code": "MUNICIPAL_PROPERTY_RENT",
+            "name": "Rent on Municipal Properties"
+        },
+        {
+            "code": "OTHERS",
+            "name": "Other Own Revenue"
         }
     ]
 }

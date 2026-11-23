@@ -36,7 +36,8 @@ export function useOptions(field, values, scope, loadOptions) {
     let options = isStatic ? spec : request ? data : EMPTY;
     if (field.dependsOn) {
         const parent = lookup(values, scope, field.dependsOn);
-        options = options.filter((o) => o.parent === parent);
+        const parentNorm = String(parent ?? "").toUpperCase();
+        options = options.filter((o) => String(o.parent ?? "").toUpperCase() === parentNorm);
     }
     if (isMdms && resolved.filterBy)
         options = options.filter((o) => Object.entries(resolved.filterBy).every(([k, v]) => o[k] === v));

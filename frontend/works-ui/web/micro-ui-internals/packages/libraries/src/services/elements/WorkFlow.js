@@ -112,8 +112,11 @@ export const WorkflowService = {
   getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData }) => {
     const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id); 
     const applicationProcessInstance = cloneDeep(workflow?.ProcessInstances);
-    const getLocationDetails = window.location.href.includes("/obps/") || window.location.href.includes("noc/inbox");
-    const moduleCodeData = getLocationDetails ? applicationProcessInstance?.[0]?.businessService : moduleCode;
+    const getLocationDetails =
+      window.location.href.includes("/obps/") ||
+      window.location.href.includes("noc/inbox") ||
+      window.location.href.includes("/works/");
+    const moduleCodeData = (getLocationDetails && applicationProcessInstance?.[0]?.businessService) || moduleCode;
     const businessServiceResponse = (await Digit.WorkflowService.init(tenantId, moduleCodeData))?.BusinessServices[0]?.states;
     if (workflow && workflow.ProcessInstances) {
       const processInstances = workflow.ProcessInstances;

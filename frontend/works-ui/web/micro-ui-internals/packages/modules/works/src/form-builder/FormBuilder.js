@@ -184,6 +184,173 @@ function Field({ field, siblings, scope }) {
 
 /* ───────── controls ───────── */
 const toFile = (f) => ({ name: f.name, size: f.size, type: f.type, uploadedOn: E.todayInIndia(), file: f });
+
+const uploadToFilestore = async (rawFile, field) => {
+    if (field?.maxSizeMB && rawFile.size > field.maxSizeMB * 1024 * 1024) {
+        throw new Error(`File "${rawFile.name}" exceeds the ${field.maxSizeMB} MB limit.`);
+    }
+    const tenantId =
+        window?.Digit?.ULBService?.getCurrentTenantId?.() ||
+        window?.Digit?.ULBService?.getStateId?.() ||
+        "pg";
+    const res = await window.Digit.UploadServices.Filestorage("WORKS", rawFile, tenantId);
+    const fileStoreId = res?.data?.files?.[0]?.fileStoreId;
+    if (!fileStoreId) {
+        throw new Error(`Failed to upload "${rawFile.name}". Please try again.`);
+    }
+    return { ...toFile(rawFile), fileStoreId };
+};
+
+function FileControl({ field, base, value, onChange, disabled, types, tr }) {
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState(null);
+
+    const handleFileChange = async (e) => {
+        const f = e.target.files?.[0];
+        e.target.value = "";
+        if (!f) return;
+        setUploadError(null);
+        setUploading(true);
+        try {
+            const uploaded = await uploadToFilestore(f, field);
+            onChange(uploaded);
+        } catch (err) {
+            setUploadError(
+                err?.response?.data?.Errors?.[0]?.message ||
+                    err?.message ||
+                    "File upload failed. Please try again."
+            );
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    if (value) {
+        return (
+            <div className="fb-file-chip">
+                <div className="fb-file-chip__info">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <span className="fb-file-chip__name">{value.name}</span>
+                    {value.size ? <span className="fb-file-chip__size">({formatFileSize(value.size)})</span> : null}
+                </div>
+                {!disabled && (
+                    <button type="button" className="fb-link-danger" onClick={() => onChange(undefined)}>
+                        {tr("FB_REMOVE")}
+                    </button>
+                )}
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            <div className="fb-upload-box">
+                <input
+                    {...base}
+                    disabled={disabled || uploading}
+                    className="fb-upload-input"
+                    type="file"
+                    accept={acceptOf(field)}
+                    onChange={handleFileChange}
+                />
+                <p className="fb-hint">
+                    {uploading ? "Uploading file..." : tr("FB_FILE_HINT", { types, size: field.maxSizeMB })}
+                </p>
+            </div>
+            {uploadError && <p className="fb-error" role="alert">{uploadError}</p>}
+        </div>
+    );
+}
+
+function FileListControl({ field, base, value, onChange, disabled, tr }) {
+    const list = value || [];
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState(null);
+
+    const handleFilesChange = async (e) => {
+        const files = Array.from(e.target.files || []);
+        e.target.value = "";
+        if (files.length === 0) return;
+
+        if (field.maxFiles && list.length + files.length > field.maxFiles) {
+            setUploadError(`You can upload a maximum of ${field.maxFiles} files.`);
+            return;
+        }
+
+        setUploadError(null);
+        setUploading(true);
+        try {
+            const uploadedFiles = await Promise.all(files.map((f) => uploadToFilestore(f, field)));
+            onChange([...list, ...uploadedFiles]);
+        } catch (err) {
+            setUploadError(
+                err?.response?.data?.Errors?.[0]?.message ||
+                    err?.message ||
+                    "File upload failed. Please try again."
+            );
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    return (
+        <div className="fb-filelist">
+            <div className="fb-upload-box">
+                <input
+                    {...base}
+                    disabled={disabled || uploading}
+                    className="fb-upload-input"
+                    type="file"
+                    multiple
+                    accept={acceptOf(field)}
+                    onChange={handleFilesChange}
+                />
+                <p className="fb-hint">
+                    {uploading
+                        ? "Uploading file(s)..."
+                        : tr("FB_FILES_COUNT", { count: list.length, max: field.maxFiles, size: field.maxSizeMB })}
+                </p>
+            </div>
+            {uploadError && <p className="fb-error" role="alert">{uploadError}</p>}
+            {list.length > 0 && (
+                <div className="fb-table-wrap">
+                    <table className="fb-table">
+                        <thead>
+                            <tr>
+                                <th>{tr("FB_COL_NAME")}</th>
+                                <th>{tr("FB_COL_TYPE")}</th>
+                                <th>{tr("FB_COL_UPLOADED")}</th>
+                                <th className="fb-table__actions-col" />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {list.map((f, i) => (
+                                <tr key={f.fileStoreId || i}>
+                                    <td>
+                                        <span className="fb-table__filename">{f.name}</span>
+                                        {f.size ? <span className="fb-file-chip__size"> ({formatFileSize(f.size)})</span> : null}
+                                    </td>
+                                    <td><span className="fb-type-badge">{(f.type || "PDF").split("/").pop().toUpperCase()}</span></td>
+                                    <td>{f.uploadedOn}</td>
+                                    <td className="fb-table__actions-col">
+                                        {!disabled && (
+                                            <button type="button" className="fb-link-danger" onClick={() => onChange(list.filter((_, k) => k !== i))}>
+                                                {tr("FB_REMOVE")}
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
+}
 const acceptOf = (f) => (f.fileTypes || []).map((t) => `.${t}`).join(",");
 
 function Choice({ field, id, value, onChange, disabled, scope }) {
@@ -284,79 +451,9 @@ function Control(p) {
                 </div>
             );
         case "file":
-            return value ? (
-                <div className="fb-file-chip">
-                    <div className="fb-file-chip__info">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                        </svg>
-                        <span className="fb-file-chip__name">{value.name}</span>
-                        {value.size ? <span className="fb-file-chip__size">({formatFileSize(value.size)})</span> : null}
-                    </div>
-                    {!disabled && (
-                        <button type="button" className="fb-link-danger" onClick={() => onChange(undefined)}>
-                            {tr("FB_REMOVE")}
-                        </button>
-                    )}
-                </div>
-            ) : (
-                <div className="fb-upload-box">
-                    <input {...base} className="fb-upload-input" type="file" accept={acceptOf(field)} onChange={(e) => { const f = e.target.files?.[0]; if (f) onChange(toFile(f)); e.target.value = ""; }} />
-                    <p className="fb-hint">{tr("FB_FILE_HINT", { types, size: field.maxSizeMB })}</p>
-                </div>
-            );
-        case "fileList": {
-            const list = value || [];
-            return (
-                <div className="fb-filelist">
-                    <div className="fb-upload-box">
-                        <input
-                            {...base}
-                            className="fb-upload-input"
-                            type="file"
-                            multiple
-                            accept={acceptOf(field)}
-                            onChange={(e) => { onChange([...list, ...Array.from(e.target.files).map(toFile)]); e.target.value = ""; }}
-                        />
-                        <p className="fb-hint">{tr("FB_FILES_COUNT", { count: list.length, max: field.maxFiles, size: field.maxSizeMB })}</p>
-                    </div>
-                    {list.length > 0 && (
-                        <div className="fb-table-wrap">
-                            <table className="fb-table">
-                                <thead>
-                                    <tr>
-                                        <th>{tr("FB_COL_NAME")}</th>
-                                        <th>{tr("FB_COL_TYPE")}</th>
-                                        <th>{tr("FB_COL_UPLOADED")}</th>
-                                        <th className="fb-table__actions-col" />
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {list.map((f, i) => (
-                                        <tr key={i}>
-                                            <td>
-                                                <span className="fb-table__filename">{f.name}</span>
-                                                {f.size ? <span className="fb-file-chip__size"> ({formatFileSize(f.size)})</span> : null}
-                                            </td>
-                                            <td><span className="fb-type-badge">{(f.type || "PDF").split("/").pop().toUpperCase()}</span></td>
-                                            <td>{f.uploadedOn}</td>
-                                            <td className="fb-table__actions-col">
-                                                {!disabled && (
-                                                    <button type="button" className="fb-link-danger" onClick={() => onChange(list.filter((_, k) => k !== i))}>
-                                                        {tr("FB_REMOVE")}
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            );
-        }
+            return <FileControl field={field} base={base} value={value} onChange={onChange} disabled={disabled} types={types} tr={tr} />;
+        case "fileList":
+            return <FileListControl field={field} base={base} value={value} onChange={onChange} disabled={disabled} tr={tr} />;
         case "computed":
             return <Computed field={field} />;
         case "summaryTable":

@@ -378,6 +378,12 @@ const Urls = {
     create: "/gc-services/garbage-accounts/_create",
     search: "/gc-services/garbage-accounts/_search",
     update: "/gc-services/garbage-accounts/_update",
+  },
+
+  works: {
+    createActionPlan: "/works-management-service/action-plan/v1/_create",
+    updateActionPlan: "/works-management-service/action-plan/v1/_update",
+    searchActionPlan: "/works-management-service/action-plan/v1/_search",
   }
 };
 
