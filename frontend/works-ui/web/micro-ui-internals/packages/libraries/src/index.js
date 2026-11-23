@@ -53,6 +53,7 @@ import { CFService } from "./services/elements/CF";
 import { PTRService } from "./services/elements/PTR";
 import { ASSETService } from "./services/elements/ASSET";
 import { CHBServices } from "./services/elements/CHB";
+import { WorksService } from "./services/elements/Works";
 import { ADSServices } from "./services/elements/ADS";
 import { EwService } from "./services/elements/EW";
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
@@ -137,6 +138,7 @@ const initLibraries = () => {
   setupLibraries("PTRService", PTRService);
   setupLibraries("ASSETService", ASSETService);
   setupLibraries("CHBServices", CHBServices);
+  setupLibraries("WorksService", WorksService);
   setupLibraries("ADSServices", ADSServices);
   setupLibraries("EwService", EwService);
   setupLibraries("CMServices", CMServices);

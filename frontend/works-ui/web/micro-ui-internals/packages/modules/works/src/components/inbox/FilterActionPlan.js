@@ -10,14 +10,16 @@ const STATUS_OPTIONS = [
 ];
 
 const SCHEME_OPTIONS = [
-  { code: "WORKS_SCHEME_FC15", label: "15th Finance Commission" },
-  { code: "WORKS_SCHEME_MW", label: "Municipal Works" },
-  { code: "WORKS_SCHEME_SBM", label: "Swachh Bharat Mission (SBM)" },
-  { code: "WORKS_SCHEME_PMAY", label: "Pradhan Mantri Awas Yojana (PMAY)" },
-  { code: "WORKS_SCHEME_NSDP", label: "National Slum Development Program (NSDP)" },
+  { code: "MUNICIPAL_WORKS", label: "Municipal Works" },
+  { code: "FINANCE_COMMISSION", label: "Finance Commission" },
+  { code: "FC_15", label: "15th Finance Commission" },
+  { code: "NATIONAL_HEALTH_SCHEME", label: "National Health Scheme" },
+  { code: "NSDP", label: "National Slum Development Program (NSDP)" },
+  { code: "PMAY", label: "Pradhan Mantri Awas Yojana (PMAY)" },
+  { code: "SBM", label: "Swachh Bharat Mission (SBM)" },
 ];
 
-const FINANCIAL_YEARS = ["2025-26", "2024-25", "2023-24"];
+const FINANCIAL_YEARS = ["2026-27", "2025-26", "2024-25", "2023-24"];
 
 const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) => {
   const { t } = useTranslation();

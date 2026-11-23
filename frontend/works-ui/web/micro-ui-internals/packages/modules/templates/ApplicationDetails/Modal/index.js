@@ -14,6 +14,7 @@ import SVActionModal from "./SVActionModal";
 import WTActionModal from "./WTActionModal";
 import GCActionModal from "./GCActionModal";
 import FireNocActionModal from "./FireNocActionModal";
+import WORKSActionModal from "./WORKSActionModal";
 
 
 
@@ -71,8 +72,16 @@ const ActionModal = (props) => {
   if (props?.businessService.includes("garbage-service")) {
     return <GCActionModal {...props} />;
   }
-  if (props?.businessService.includes("FIRENOC")) {
+  if (props?.businessService?.includes("FIRENOC")) {
     return <FireNocActionModal {...props} />;
+  }
+  if (
+    props?.moduleCode === "WORKS" ||
+    props?.businessService?.toUpperCase?.().includes("WORKS") ||
+    props?.businessService?.toUpperCase?.().includes("ACTION_PLAN") ||
+    props?.businessService?.toUpperCase?.().includes("WMS")
+  ) {
+    return <WORKSActionModal {...props} />;
   }
   
   // return <FSMActionModal {...props} />;
