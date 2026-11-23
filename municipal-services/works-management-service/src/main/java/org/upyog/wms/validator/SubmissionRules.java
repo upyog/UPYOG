@@ -160,10 +160,8 @@ public final class SubmissionRules {
         if (!subSchemes.isEmpty()) {
             requiredMaster(plan.getSubSchemeCode(), subSchemes, "subSchemeCode", "Sub-Scheme", errors);
         }
-        Optional<FundType> planSource = fundSource(plan.getFundSource(), "fundSource", errors);
+        fundSource(plan.getFundSource(), "fundSource", errors);
         positiveAmount(plan.getApprovedAmount(), "approvedAmount", "Approved Amount", errors);
-        planSource.ifPresent(source -> fundRows(source, plan.getFundDetails(),
-                plan.getApprovedAmount(), "fundDetails", "Approved Amount", errors));
 
         if (plan.getTotalComponents() == null || plan.getTotalComponents() < 1) {
             errors.add(REQUIRED, "totalComponents", "Total No. of Components must be at least 1");

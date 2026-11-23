@@ -79,11 +79,13 @@ class SubmissionRulesTest {
     }
 
     @Test
-    void planLevelFundDetailsAreValidatedAgainstActionPlanAmount() {
+    void planLevelFundDetailsAreNotValidated() {
         ActionPlan plan = TestData.validPlan();
         plan.setFundDetails(List.of());
         ValidationErrors errors = run(plan);
-        assertTrue(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundDetails"), errors.asMap()::toString);
+        assertFalse(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundDetails"), errors.asMap()::toString);
+        assertFalse(errors.asMap().containsKey(ErrorCodes.FUND_TOTAL_MISMATCH + ":fundDetails"),
+                errors.asMap()::toString);
     }
 
     @Test
