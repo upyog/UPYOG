@@ -94,7 +94,6 @@ public final class SubmissionRules {
             }
             requiredMaster(d.getTypeOfWork(), mdms.typesOfWork(), p + "typeOfWork", "Type of Work", errors);
             requiredMaster(d.getWorkCategory(), mdms.workCategories(), p + "workCategory", "Work Category", errors);
-            positiveAmount(d.getApprovedAmount(), p + "approvedAmount", "Approved Project Amount", errors);
         }
 
         if (!isTrue(plan.getAdminSanction())) {
@@ -161,7 +160,10 @@ public final class SubmissionRules {
         if (!subSchemes.isEmpty()) {
             requiredMaster(plan.getSubSchemeCode(), subSchemes, "subSchemeCode", "Sub-Scheme", errors);
         }
-        fundSource(plan.getFundSource(), "fundSource", errors);
+        Optional<FundType> planSource = fundSource(plan.getFundSource(), "fundSource", errors);
+        positiveAmount(plan.getApprovedAmount(), "approvedAmount", "Approved Amount", errors);
+        planSource.ifPresent(source -> fundRows(source, plan.getFundDetails(),
+                plan.getApprovedAmount(), "fundDetails", "Approved Amount", errors));
 
         if (plan.getTotalComponents() == null || plan.getTotalComponents() < 1) {
             errors.add(REQUIRED, "totalComponents", "Total No. of Components must be at least 1");
@@ -256,7 +258,7 @@ public final class SubmissionRules {
             return;
         }
         ProjectDetail project = details.get(0);
-        BigDecimal approved = project.getApprovedAmount();
+        BigDecimal approved = plan.getApprovedAmount();
         List<Component> active = live(project.getComponents(), Component::getIsActive).stream()
                 .filter(c -> !COMPONENT_INACTIVE.equals(c.getStatus()))
                 .toList();
@@ -267,11 +269,11 @@ public final class SubmissionRules {
         int cmp = componentTotal.compareTo(approved);
         if (cfg.fullAllocationRequired() && cmp != 0) {
             errors.add(COMPONENT_TOTAL_MISMATCH, "projectDetails[0].components", "Total of Components Approved Amount ("
-                    + plain(componentTotal) + ") should match the Approved Project Amount (" + plain(approved)
+                    + plain(componentTotal) + ") should match the Action Plan Approved Amount (" + plain(approved)
                     + "). Unallocated balance: " + plain(approved.subtract(componentTotal)));
         } else if (!cfg.fullAllocationRequired() && cmp > 0) {
             errors.add(COMPONENT_OVER_ALLOCATED, "projectDetails[0].components", "Total of Components Approved Amount ("
-                    + plain(componentTotal) + ") exceeds the Approved Project Amount (" + plain(approved) + ")");
+                    + plain(componentTotal) + ") exceeds the Action Plan Approved Amount (" + plain(approved) + ")");
         }
 
     }

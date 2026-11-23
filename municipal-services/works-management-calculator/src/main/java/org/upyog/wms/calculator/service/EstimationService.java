@@ -20,7 +20,6 @@ import org.upyog.wms.calculator.web.models.FinancialSummary.CategoryBreakup;
 import org.upyog.wms.calculator.web.models.FinancialSummary.ComponentBreakup;
 import org.upyog.wms.calculator.web.models.FinancialSummary.FundBreakup;
 import org.upyog.wms.calculator.web.models.FundDetail;
-import org.upyog.wms.calculator.web.models.ProjectDetail;
 import org.upyog.wms.calculator.web.models.TaxHeadEstimate;
 import org.upyog.wms.calculator.web.models.mdms.FeeConfig;
 
@@ -34,7 +33,7 @@ public class EstimationService {
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
     public FinancialSummary summarize(ActionPlan plan) {
-        BigDecimal total = projectApprovedAmount(plan);
+        BigDecimal total = approvedAmount(plan);
         List<Component> active = components(plan).stream()
                 .filter(c -> !Boolean.FALSE.equals(c.getIsActive()) && !COMPONENT_INACTIVE.equals(c.getStatus()))
                 .toList();
@@ -75,7 +74,7 @@ public class EstimationService {
 
     /** Fees from MDMS FeeConfig (FLAT or PERCENTAGE of the approved amount, clamped to min / max). */
     public List<TaxHeadEstimate> fees(ActionPlan plan, List<FeeConfig> configs, String businessService) {
-        BigDecimal base = projectApprovedAmount(plan);
+        BigDecimal base = approvedAmount(plan);
         return configs.stream()
                 .filter(FeeConfig::active)
                 .filter(f -> businessService.equals(f.businessService()))
@@ -145,11 +144,8 @@ public class EstimationService {
                 .toList();
     }
 
-    private static BigDecimal projectApprovedAmount(ActionPlan plan) {
-        return sum(list(plan.getProjectDetails()).stream()
-                .filter(Objects::nonNull)
-                .filter(project -> !Boolean.FALSE.equals(project.getIsActive()))
-                .toList(), ProjectDetail::getApprovedAmount);
+    private static BigDecimal approvedAmount(ActionPlan plan) {
+        return scale(plan.getApprovedAmount());
     }
 
     private static BigDecimal nz(BigDecimal value) {
