@@ -154,7 +154,7 @@ public class EnrichmentService {
 		List<Transaction> statuses = transactionRepository.fetchTransactions(criteria);
 
 		if (statuses == null || statuses.isEmpty()) {
-		    throw new CustomException("TXN_NOT_FOUND", "No transaction found for given criteria");
+		    throw new CustomException("ICICI_EMPTY_RESPONSE","Empty response from ICICI");			    
 		}
 
 		String atomTxnId = statuses.get(0).getAtomTxnId();

@@ -102,13 +102,12 @@ class ICICIUtils {
 
             // Remove secureHash field if already present
             requestMap.remove("secureHash");
-
+            
             // Create plain hash text
             StringBuilder plainHashText = new StringBuilder();
 
-            for (Map.Entry<String, Object> entry : requestMap.entrySet()) {
-
-                Object value = entry.getValue();
+            for (String key : PgConstants.ICICI_HASH_SEQUENCE) {
+                Object value = requestMap.get(key);
 
                 if (value != null) {
                     plainHashText.append(value);
