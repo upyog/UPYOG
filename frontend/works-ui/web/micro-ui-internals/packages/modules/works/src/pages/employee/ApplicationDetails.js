@@ -27,7 +27,7 @@ const ApplicationDetails = ({ parentRoute = "/works-ui/employee/works" }) => {
   const businessService =
     applicationDetails?.applicationData?.workflow?.businessService ||
     applicationDetails?.applicationData?.businessService ||
-    "WMS.ACTION_PLAN";
+    "WMS_ACTION_PLAN";
 
   const workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: applicationDetails?.tenantId || tenantId,

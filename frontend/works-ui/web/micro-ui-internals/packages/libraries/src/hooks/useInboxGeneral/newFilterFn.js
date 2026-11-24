@@ -565,4 +565,54 @@ FireNoc: (filtersArg) => {
     
     return { searchFilters, workflowFilters, limit, offset, sortOrder };
   },
+
+  WORKS: (filtersArg) => {
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+    const {
+      applicationNumber,
+      applicationNumbers,
+      financialYear,
+      schemeCode,
+      scheme,
+      limit = 10,
+      offset = 0,
+      sortBy,
+      sortOrder,
+      applicationStatus,
+      status,
+      services,
+      assignee,
+    } = filtersArg || {};
+
+    if (applicationNumber) {
+      searchFilters.applicationNumber = applicationNumber;
+    }
+    if (applicationNumbers) {
+      searchFilters.applicationNumbers = applicationNumbers;
+    }
+    if (financialYear) {
+      searchFilters.financialYear = financialYear;
+    }
+    if (schemeCode || scheme) {
+      searchFilters.schemeCode = schemeCode || scheme;
+    }
+    if (applicationStatus && applicationStatus?.[0]) {
+      workflowFilters.status = applicationStatus.map((s) => (typeof s === "string" ? s : s.uuid || s.applicationStatus));
+    } else if (status?.length) {
+      workflowFilters.status = Array.isArray(status) ? status : [status];
+    }
+    if (filtersArg?.uuid?.code === "ASSIGNED_TO_ME" || assignee === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+
+    workflowFilters.businessService = services?.length ? services : ["WMS_ACTION_PLAN"];
+    workflowFilters.moduleName = "Works Management Service";
+    searchFilters.isInboxSearch = true;
+
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  },
 };

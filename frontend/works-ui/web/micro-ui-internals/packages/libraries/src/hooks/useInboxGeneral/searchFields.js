@@ -225,6 +225,23 @@ const inboxSearchFields = {
           maxLength: "",
         },
       },
+    ],
+    WORKS: [
+      {
+        label: "WORKS_AP_APPLICATION_NO",
+        name: "applicationNumber",
+        roles: [],
+      },
+      {
+        label: "WORKS_AP_FINANCIAL_YEAR",
+        name: "financialYear",
+        roles: [],
+      },
+      {
+        label: "WORKS_AP_SCHEME",
+        name: "schemeCode",
+        roles: [],
+      },
     ]
 };
 
