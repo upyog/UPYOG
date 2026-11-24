@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from "react-router-dom";
 import { Loader, Card, Header } from "@nudmcdgnpm/digit-ui-react-components";
@@ -91,12 +91,118 @@ const EnhancedReport = (props) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState([]);
   const [searchData, setSearchData] = useState({});
+  const [ulbDefaultValue, setUlbDefaultValue] = useState(null);
+  const [allUlbDefaultValue, setAllUlbDefaultValue] = useState({});
+  const [isAllUlbLoaded, setIsAllUlbLoaded] = useState(false);
 
   // Get tenant ID from session or default
   const tenantId = Digit.ULBService.getCurrentTenantId() || "as";
   // Fetch report metadata
   const { isLoading: SearchFormIsLoading, data: SearchFormUIData, error: metaError } =
     Digit.Hooks.reports.useReportMeta.fetchMetaData(moduleName, reportName, tenantId);
+
+  const isMiscDashboardReport =
+    reportName === "MiscDashboardReport" ||
+    SearchFormUIData?.reportDetails?.reportName === "MiscDashboardReport";
+
+  const fetchUlbsByState = useCallback(
+    async (selectedState = "") => {
+      const masterDetail = { name: "nationalInfo" };
+      if (selectedState) {
+        const safeState = String(selectedState).replace(/"/g, '\\"');
+        masterDetail.filter = `[?(@.stateCode=="${safeState}")]`;
+      }
+      const mdmsTenantId = Digit.ULBService.getStateId() || tenantId;
+      try {
+        const response = await Digit.MDMSService.call(mdmsTenantId, {
+          tenantId: mdmsTenantId,
+          moduleDetails: [
+            {
+              moduleName: "tenant",
+              masterDetails: [masterDetail],
+            },
+          ],
+        });
+        const ulbList = response?.MdmsRes?.tenant?.nationalInfo || [];
+        const nextUlbDefaultValue = {};
+        ulbList
+          .filter((item) => item && item.active !== false)
+          .forEach((item) => {
+            nextUlbDefaultValue[item.code] = item.name || item.code;
+          });
+        if (!selectedState) {
+          setAllUlbDefaultValue(nextUlbDefaultValue);
+          setIsAllUlbLoaded(true);
+        }
+        setUlbDefaultValue(nextUlbDefaultValue);
+      } catch (error) {
+        console.error("Error while loading ULB dropdown:", error);
+      }
+    },
+    [tenantId]
+  );
+
+  useEffect(() => {
+    if (isMiscDashboardReport && SearchFormUIData?.reportDetails && !isAllUlbLoaded) {
+      setIsAllUlbLoaded(true);
+      fetchUlbsByState("");
+    }
+  }, [isMiscDashboardReport, SearchFormUIData, isAllUlbLoaded, fetchUlbsByState]);
+
+  const effectiveMetaData = useMemo(() => {
+    if (!SearchFormUIData || !isMiscDashboardReport || ulbDefaultValue === null) {
+      return SearchFormUIData;
+    }
+    const cloned = JSON.parse(JSON.stringify(SearchFormUIData));
+    const searchParams = cloned?.reportDetails?.searchParams || [];
+    const ulbIndex = searchParams.findIndex((field) => field.name === "ulb");
+    if (ulbIndex > -1) {
+      searchParams[ulbIndex].defaultValue = ulbDefaultValue;
+      searchParams[ulbIndex].disabled = false;
+    }
+    return cloned;
+  }, [SearchFormUIData, isMiscDashboardReport, ulbDefaultValue]);
+
+  const handleStateChange = useCallback(
+    (selectedValue) => {
+      if (!isMiscDashboardReport) return;
+      const stateField = effectiveMetaData?.reportDetails?.searchParams?.find((f) => f.name === "state");
+      let stateCode = "";
+      if (selectedValue && selectedValue !== t("ALL") && selectedValue !== "All") {
+        const defaultValueObj = stateField?.defaultValue || {};
+        const prefix = stateField?.localisationPrefix || "";
+        const rawVal = typeof selectedValue === "object" ? selectedValue?.code || selectedValue?.name : selectedValue;
+        stateCode =
+          Object.keys(defaultValueObj).find(
+            (el) =>
+              t(defaultValueObj[el]) === rawVal ||
+              defaultValueObj[el] === rawVal ||
+              t(`${prefix}${defaultValueObj[el]}`) === rawVal ||
+              t(el) === rawVal ||
+              el === rawVal
+          ) ?? rawVal;
+      }
+      if (!stateCode) {
+        if (Object.keys(allUlbDefaultValue).length > 0) {
+          setUlbDefaultValue(allUlbDefaultValue);
+        } else {
+          fetchUlbsByState("");
+        }
+      } else {
+        fetchUlbsByState(stateCode);
+      }
+    },
+    [isMiscDashboardReport, effectiveMetaData, allUlbDefaultValue, fetchUlbsByState, t]
+  );
+
+  const handleClearAll = useCallback(() => {
+    if (!isMiscDashboardReport) return;
+    if (Object.keys(allUlbDefaultValue).length > 0) {
+      setUlbDefaultValue(allUlbDefaultValue);
+    } else {
+      fetchUlbsByState("");
+    }
+  }, [isMiscDashboardReport, allUlbDefaultValue, fetchUlbsByState]);
 
   // Fetch report data
   const { isLoading: isLoadingReportsData, data: ReportsData, error: dataError } =
@@ -127,7 +233,7 @@ const EnhancedReport = (props) => {
 
   const onSubmit = (data) => {
     setSearchData(data);
-    const reportData = SearchFormUIData?.reportDetails?.searchParams || [];
+    const reportData = effectiveMetaData?.reportDetails?.searchParams || [];
     let searchParams = [];
 
     Object.keys(data).forEach((key) => {
@@ -182,7 +288,7 @@ const EnhancedReport = (props) => {
       <SearchApplication
         onSubmit={onSubmit}
         isLoading={SearchFormIsLoading}
-        data={SearchFormUIData}
+        data={effectiveMetaData}
         tableData={!isLoadingReportsData && processedReportsData?.reportData?.length > 0 ? processedReportsData : { display: "ES_COMMON_NO_DATA" }}
         isTableDataLoading={isLoadingReportsData}
         Count={processedReportsData?.reportData?.length || 0}
@@ -192,6 +298,8 @@ const EnhancedReport = (props) => {
         tabLabel={tabLabel}
         updateTabLabel={updateTabLabel}
         tenantId={tenantId}
+        onStateChange={isMiscDashboardReport ? handleStateChange : undefined}
+        onClearAll={isMiscDashboardReport ? handleClearAll : undefined}
       />
     </div>
   ) : <Loader />;

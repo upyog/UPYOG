@@ -1,62 +1,669 @@
+/* ==========================================================================
+   PAGE TITLE, SEARCH CARD SHELL & 3-COLUMN CARD GRID (Matches PT My Apps)
+   Pure CSS2 selectors (no :has()) so postcss-preset-env never rewrites them.
+   ========================================================================== */
+:global(.est-estcard-fullwidth) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+:global(.est-estcard-fullwidth .app-container) {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 8px 16px 48px !important;
+  box-sizing: border-box !important;
+
+  @media (max-width: 768px) {
+    padding: 4px 12px 32px !important;
+  }
+}
+
+:global(.est-estcard-fullwidth .app-container > header) {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 0 18px 0 !important;
+  padding: 0 !important;
+}
+
+:global(.est-estcard-fullwidth .app-container > .card) {
+  border-radius: 14px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  padding: 18px 22px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+:global(.est-estcard-fullwidth .app-container > .card + div) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+  margin-top: 20px !important;
+  margin-bottom: 28px !important;
+  align-items: stretch !important;
+
+  @media (min-width: 1560px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  @media (max-width: 1080px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  > div {
+    display: flex !important;
+    min-width: 0 !important;
+  }
+
+  > .est-myapps__msg {
+    grid-column: 1 / -1 !important;
+  }
+}
+
 .est-myapps {
+  /* ========================================================================
+     SEARCH & FILTER BAR (Matches PT Modern Citizen Design System)
+     ======================================================================== */
   &__container {
-    margin-left: 16px;
+    margin: 0;
+    padding: 4px 2px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   &__search-row {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 18px;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
   }
 
   &__field-col {
-    flex: 1;
+    flex: 1 1 240px;
+    min-width: 0;
   }
 
   &__field-inner {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+
+    :global(.card-label),
+    :global(h2) {
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b !important;
+      margin: 0 !important;
+      line-height: 1.3 !important;
+    }
+
+    :global(.text-input-field),
+    :global(.employee-card-input),
+    :global(input) {
+      margin-bottom: 0 !important;
+    }
   }
 
   &__text-input {
-    width: 100%;
-    padding: 8px;
+    width: 100% !important;
+    height: 42px !important;
+    padding: 0 !important;
+    border-radius: 10px !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    font-size: 13.5px !important;
+    color: #0f172a !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+    &:focus,
+    &:focus-within {
+      outline: none !important;
+      border-color: #a82227 !important;
+      box-shadow: 0 0 0 3px rgba(168, 34, 39, 0.12) !important;
+    }
+
+    &::placeholder {
+      color: #94a3b8 !important;
+    }
   }
 
   &__dropdown {
-    width: 100%;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+
+    :global(.select) {
+      height: 42px !important;
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      background: #ffffff !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+      &:focus-within {
+        border-color: #a82227 !important;
+        box-shadow: 0 0 0 3px rgba(168, 34, 39, 0.12) !important;
+      }
+    }
+
+    :global(.options-card) {
+      border-radius: 10px !important;
+      box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.14) !important;
+      border: 1px solid #e2e8f0 !important;
+      margin-top: 4px !important;
+    }
   }
 
   &__search-btn-wrap {
-    margin-top: 17%;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 1px;
+
+    :global(.submit-bar) {
+      height: 42px !important;
+      min-width: 128px !important;
+      padding: 0 22px !important;
+      border-radius: 10px !important;
+      background: #a82227 !important;
+      box-shadow: 0 2px 8px rgba(168, 34, 39, 0.25) !important;
+      border: none !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+      &:hover {
+        background: #8e1c21 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(168, 34, 39, 0.35) !important;
+      }
+
+      :global(header) {
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        color: #ffffff !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: flex-start;
+
+      :global(.submit-bar) {
+        flex: 1;
+      }
+    }
   }
 
   &__clear-link {
-    margin-left: 30%;
-    margin-top: 10px;
-    display: block;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-decoration: none !important;
     cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a !important;
+    }
   }
 
+  /* ========================================================================
+     EMPTY STATE & LOAD MORE (Matches PT Empty / Pagination Style)
+     ======================================================================== */
   &__msg {
-    margin-left: 16px;
-    margin-top: 16px;
+    margin: 24px 0 8px 0 !important;
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+
+    :global(.link) a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #fecaca;
+      color: #a82227 !important;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none !important;
+      box-shadow: 0 2px 6px rgba(168, 34, 39, 0.08);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #fff1f2;
+        border-color: #a82227;
+        transform: translateY(-1px);
+      }
+    }
   }
 
+  /* ========================================================================
+     APPLICATION CARD (Matches PT .pt-citizen-app-card Design Language)
+     ======================================================================== */
   &__card {
-    margin-top: 16px;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 20px 22px !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    /* Top crimson-to-orange gradient stripe matching PT My Applications */
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, #a82227, #f97316);
+      opacity: 0.9;
+    }
+
+    &:hover {
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.03) !important;
+      border-color: #cbd5e1 !important;
+      transform: translateY(-2px);
+    }
+
+    :global(.data-table),
+    :global(.employee-data-table) {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr) !important;
+      row-gap: 12px !important;
+      column-gap: 12px !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      flex: 1 0 auto !important;
+
+      @media (max-width: 420px) {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+    }
+
+    :global(.row) {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      gap: 3px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+
+      :global(h2) {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 11.5px !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        line-height: 1.35 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+
+        &::before {
+          content: "";
+          display: inline-block;
+          width: 14px;
+          height: 14px;
+          flex-shrink: 0;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 14px 14px;
+        }
+      }
+
+      :global(.value) {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        line-height: 1.4 !important;
+        word-break: break-word !important;
+      }
+
+      /* ====================================================================
+         CARD HEADER — Matches PT .pt-citizen-app-card-header
+         Row 1 (Allotment Number + 40x40 icon) & Row 6 (Status Pill) on row 1
+         ==================================================================== */
+      &:first-child {
+        grid-column: 1 / 2 !important;
+        grid-row: 1 !important;
+        position: relative !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        min-height: 40px !important;
+        padding: 0 0 14px 50px !important;
+        margin-bottom: 4px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+
+        /* 40x40 soft crimson document icon badge matching .pt-citizen-app-icon */
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          background-color: #fff1f2;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a82227' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 19px 19px;
+        }
+
+        :global(h2) {
+          display: block !important;
+          font-size: 10.5px !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
+          color: #64748b !important;
+
+          &::before {
+            display: none !important;
+          }
+        }
+
+        :global(.value) {
+          font-size: 14px !important;
+          font-weight: 700 !important;
+          color: #0f172a !important;
+          font-family: monospace, sans-serif !important;
+          letter-spacing: -0.01em !important;
+          line-height: 1.3 !important;
+          word-break: break-all !important;
+        }
+      }
+
+      /* Row 6: Payment Status pill placed in top-right header matching .pt-citizen-app-status-pill */
+      &:nth-child(6) {
+        grid-column: 2 / 3 !important;
+        grid-row: 1 !important;
+        align-items: flex-end !important;
+        justify-content: center !important;
+        padding: 0 0 14px 0 !important;
+        margin-bottom: 4px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+
+        :global(h2) {
+          display: none !important;
+        }
+
+        :global(.value) {
+          display: inline-flex !important;
+          width: fit-content !important;
+          max-width: 100% !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-align: center !important;
+          padding: 4px 10px !important;
+          border-radius: 9999px !important;
+          font-size: 10.5px !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.03em !important;
+          line-height: 1.25 !important;
+          background: #fffbeb !important;
+          color: #b45309 !important;
+          border: 1px solid #fde68a !important;
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: 2 !important;
+          align-items: flex-start !important;
+          padding-bottom: 12px !important;
+        }
+      }
+
+      /* Row 3: Allottee Name — full-width with user icon (matching PT Owner Name) */
+      &:nth-child(3) {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 420px) {
+          grid-row: auto !important;
+        }
+      }
+
+      /* Row 2: Allotment Type — briefcase icon (matching PT Application Type) */
+      &:nth-child(2) {
+        grid-column: 1 / 2 !important;
+        grid-row: 3 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='7' width='20' height='14' rx='2' ry='2'/%3E%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: auto !important;
+        }
+      }
+
+      /* Row 4: Billing Cycle — cycle/repeat icon */
+      &:nth-child(4) {
+        grid-column: 2 / 3 !important;
+        grid-row: 3 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='23 4 23 10 17 10'/%3E%3Cpolyline points='1 20 1 14 7 14'/%3E%3Cpath d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: auto !important;
+        }
+      }
+
+      /* Row 5: Monthly Rent — bold emphasis + card/wallet icon */
+      &:nth-child(5) {
+        grid-column: 1 / 2 !important;
+        grid-row: 4 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1' y='4' width='22' height='16' rx='2' ry='2'/%3E%3Cline x1='1' y1='10' x2='23' y2='10'/%3E%3C/svg%3E");
+        }
+
+        :global(.value) {
+          color: #0f172a !important;
+          font-size: 14.5px !important;
+          font-weight: 700 !important;
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: auto !important;
+        }
+      }
+
+      /* Row 9: Next Payment Due Date — clock icon */
+      &:nth-child(9) {
+        grid-column: 2 / 3 !important;
+        grid-row: 4 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: auto !important;
+        }
+      }
+
+      /* Row 7: Agreement Start Date — calendar icon */
+      &:nth-child(7) {
+        grid-column: 1 / 2 !important;
+        grid-row: 5 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: auto !important;
+        }
+      }
+
+      /* Row 8: Agreement End Date — calendar icon */
+      &:nth-child(8) {
+        grid-column: 2 / 3 !important;
+        grid-row: 5 !important;
+
+        :global(h2)::before {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+        }
+
+        @media (max-width: 420px) {
+          grid-column: 1 / -1 !important;
+          grid-row: auto !important;
+        }
+      }
+    }
+
+    @media (max-width: 640px) {
+      padding: 18px 16px !important;
+    }
   }
 
+  /* ========================================================================
+     CARD FOOTER ACTIONS (Matches PT .pt-citizen-app-card-actions)
+     ======================================================================== */
   &__actions {
     display: flex;
-    gap: 12px;
-    margin-top: 16px;
+    align-items: center;
+    justify-content: stretch;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+
+    @media (max-width: 420px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 
-  // Match the two-button row width even when Make Payment is hidden.
   &__action-btn {
-    flex: 1;
-    max-width: calc(50% - 6px);
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 38px !important;
+    padding: 0 12px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+
+    :global(header) {
+      font-size: 12.5px !important;
+      font-weight: 600 !important;
+      white-space: nowrap !important;
+    }
+
+    /* Secondary outlined style when paired with Make Payment */
+    &:first-child {
+      background: #ffffff !important;
+      border: 1.5px solid #fecaca !important;
+      box-shadow: 0 1px 3px rgba(168, 34, 39, 0.08) !important;
+
+      :global(header) {
+        color: #a82227 !important;
+      }
+
+      &:hover {
+        background: #fff1f2 !important;
+        border-color: #a82227 !important;
+        transform: translateY(-1px);
+      }
+    }
+
+    /* Primary PT crimson button style (Make Payment, or View Summary when only button) */
+    &:nth-child(2),
+    &:only-child {
+      background: #a82227 !important;
+      border: none !important;
+      box-shadow: 0 2px 6px rgba(168, 34, 39, 0.2) !important;
+
+      :global(header) {
+        color: #ffffff !important;
+      }
+
+      &:hover {
+        background: #8e1c21 !important;
+        box-shadow: 0 4px 12px rgba(168, 34, 39, 0.3) !important;
+        transform: translateY(-1px);
+      }
+    }
+
+    @media (max-width: 420px) {
+      width: 100% !important;
+      flex: none !important;
+    }
   }
 }

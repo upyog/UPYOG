@@ -17,7 +17,7 @@ import ESTAssignAssets from "./PageComponents/ESTAssignAssets";
 import ESTApplicationDetails from "./pages/citizen/ESTApplicationDetails";
 
 const componentsToRegister = {
-  MyApplications,
+  ESTMyApplications: MyApplications,
   ESTPaymentHistory,
   NewRegistration,
   ESTRegCreate,

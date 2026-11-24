@@ -1,28 +1,306 @@
-.estAppDetails {
-  &__header-employee {
-    margin-bottom: 15px;
+/* ==========================================================================
+   EST APPLICATION DETAILS — Modern Citizen & Employee Summary UX
+   Pure CSS2 adjacent-sibling selectors (no :has()) so postcss-preset-env
+   never rewrites them.
+   ========================================================================== */
+
+.estAppDetails__header-citizen+ :global(.card),
+.estAppDetails__header-employee+ :global(.card) {
+  position: relative !important;
+  overflow: hidden !important;
+
+  width: 100% !important;
+  margin: 0 auto 36px !important;
+  padding: 28px 32px 32px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+  box-sizing: border-box !important;
+
+  /* Top crimson-to-orange gradient accent bar matching PT / EST My Applications */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    background: linear-gradient(90deg, #a82227, #f97316);
+    opacity: 0.95;
   }
 
-  &__header-citizen {
-    margin-right: auto;
-    max-width: 960px;
+  @media (max-width: 768px) {
+    padding: 20px 18px 24px !important;
+  }
+
+  /* Hide redundant inner "Application Details" CardHeader (already shown in page header above) */
+  > :global(.card-header) {
+    display: none !important;
+  }
+
+  /* Section Sub-Headers */
+  > :global(.card-sub-header),
+  > :global(.employee-card-sub-header) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.01em !important;
+    margin: 28px 0 16px 0 !important;
+    padding: 0 0 10px 0 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    line-height: 1.35 !important;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 18px;
+      border-radius: 9999px;
+      background: linear-gradient(180deg, #a82227, #f97316);
+      flex-shrink: 0;
+    }
+
+    &:first-of-type {
+      margin-top: 2px !important;
+    }
+  }
+
+  /* Section Metadata Grid (StatusTable) */
+  :global(.data-table),
+  :global(.employee-data-table) {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px 28px !important;
+    width: 100% !important;
+    padding: 4px 0 8px 0 !important;
+    margin: 0 !important;
+
+    @media (max-width: 960px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 16px 20px !important;
+    }
+
+    @media (max-width: 580px) {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+
+    :global(.row) {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      gap: 4px !important;
+      padding: 10px 14px !important;
+      margin: 0 !important;
+      border: none !important;
+      border-bottom: none !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      transition: background 0.18s ease, border-color 0.18s ease !important;
+
+      :global(h2) {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 11.5px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+        color: #64748b !important;
+        line-height: 1.35 !important;
+      }
+
+      :global(.value) {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        line-height: 1.45 !important;
+        word-break: break-word !important;
+      }
+    }
+  }
+
+  /* Highlight Allotment Number (first row of first StatusTable) with crimson pill badge */
+  > :global(.data-table):first-of-type :global(.row):first-child,
+  > :global(.employee-data-table):first-of-type :global(.row):first-child {
+    background: transparent !important;
+    border: none !important;
+
+    :global(.value) {
+      display: inline-flex !important;
+      width: fit-content !important;
+      margin-top: 2px !important;
+      padding: 3px 10px !important;
+      border-radius: 9999px !important;
+      background: #fff1f2 !important;
+      border: 1px solid #fecaca !important;
+      color: #a82227 !important;
+      font-family: monospace, sans-serif !important;
+      font-size: 13.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.01em !important;
+    }
+  }
+
+  /* Document Preview Wrapper */
+  :global(.dynamic-check-page__loading) {
+    padding: 16px;
+    font-size: 13.5px;
+    color: #64748b;
+  }
+
+  :global(.dynamic-check-page__preview) {
+    margin-top: 4px;
+  }
+
+  :global(.dynamic-check-page__file-list) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  :global(.dynamic-check-page__file-item) {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+
+  :global(.dynamic-check-page__file-label) {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  :global(.dynamic-check-page__file-ref) {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+    word-break: break-all;
+  }
+}
+
+.estAppDetails {
+
+  /* ========================================================================
+     TOP PAGE HEADER & DOWNLOAD MULTILINK BAR
+     ======================================================================== */
+  &__header-citizen,
+  &__header-employee {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 14px !important;
+
+    margin: 8px auto 20px auto !important;
+    padding: 0 !important;
+    width: 100% !important;
   }
 
   &__title {
-    font-size: 32px;
-    margin-left: 0px;
-    padding-top: 10px;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    letter-spacing: -0.02em !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.25 !important;
+
+    @media (max-width: 640px) {
+      font-size: 22px !important;
+    }
   }
 
+  &__multilink-citizen,
   &__multilink-employee {
-    z-index: 10;
+    position: relative !important;
+    z-index: 20 !important;
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
 
-    flex-direction: row-reverse;
-    align-items: center;
-    margin-top: -45px;
-  }
+    :global(.multilinkWrapper) {
+      position: relative !important;
+      margin: 0 !important;
+    }
 
-  &__multilink-citizen {
-    display: block;
+    :global(.multilink-labelWrap) {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 9px 18px !important;
+      border-radius: 10px !important;
+      background: #a82227 !important;
+      border: none !important;
+      box-shadow: 0 2px 8px rgba(168, 34, 39, 0.25) !important;
+      cursor: pointer !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+      &:hover {
+        background: #8e1c21 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(168, 34, 39, 0.35) !important;
+      }
+
+      svg,
+      svg path {
+        fill: #ffffff !important;
+      }
+
+      :global(.multilink-link-button),
+      :global(button) {
+        color: #ffffff !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        border: none !important;
+      }
+    }
+
+    :global(.multilink-optionWrap) {
+      position: absolute !important;
+      top: calc(100% + 8px) !important;
+      right: 0 !important;
+      left: auto !important;
+      min-width: 230px !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 6px !important;
+      box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.14), 0 4px 10px rgba(15, 23, 42, 0.06) !important;
+      z-index: 30 !important;
+    }
+
+    :global(.multilink-option) {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 10px 12px !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      cursor: pointer !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+
+      &:hover {
+        background: #fff1f2 !important;
+        color: #a82227 !important;
+      }
+    }
   }
 }

@@ -92,13 +92,16 @@ export const convertDateToEpoch = (dateString) => {
 };
 
 export const convertStringToFloat = (amountString) => {
+  if (amountString === null || amountString === undefined || amountString === "") {
+    return null;
+  }
   // Remove commas if present and convert to float
-  const cleanedString = amountString.replace(/,/g, '');
-  
+  const cleanedString = String(amountString).replace(/,/g, "");
+
   // Convert to float and return
   const floatValue = parseFloat(cleanedString);
-  
-  // Return the float value, or NaN if conversion fails
+
+  // Return the float value, or null if conversion fails
   return isNaN(floatValue) ? null : floatValue;
 };
 

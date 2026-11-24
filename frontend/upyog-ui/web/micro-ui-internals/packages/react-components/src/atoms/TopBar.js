@@ -65,7 +65,7 @@ const TopBar = ({
           ) : (
             <div className="location-button">
               <img src="/upyog-ui/images/location.svg" alt="location" />
-              <span>{cityName || "City A"}</span>
+              <span>{cityName || "Delhi"}</span>
             </div>
           )}
         </div>

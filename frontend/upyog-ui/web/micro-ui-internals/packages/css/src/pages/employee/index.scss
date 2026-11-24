@@ -588,10 +588,17 @@
       top: 0 !important;
       left: 0 !important;
       z-index: 1000 !important;
-      background: #ffffff !important;
+      background: linear-gradient(90deg, #ffffff 0%, #f8f7fc 100%) !important;
+      border-right: 1px solid rgba(196, 184, 219, 0.75) !important;
+      box-shadow:
+        inset -1px 0 0 rgba(255, 255, 255, 0.95),
+        inset -2px 0 0 rgba(88, 79, 116, 0.06),
+        2px 0 6px rgba(15, 23, 42, 0.04),
+        8px 0 24px -4px rgba(31, 27, 45, 0.09),
+        18px 0 38px -8px rgba(78, 61, 119, 0.07) !important;
       flex-shrink: 0 !important;
       overflow-y: hidden !important;
-      transition: width 0.3s ease-in-out !important;
+      transition: width 0.3s ease-in-out, box-shadow 0.2s ease !important;
 
       &.SideBarStatic--collapsed {
         width: 80px !important;
@@ -632,7 +639,13 @@
     .main-body {
       width: 100% !important;
       min-height: calc(100vh - 84px) !important;
-      background: #F7F5FA !important;
+      background-color: #f3f4f9 !important;
+      background-image:
+        radial-gradient(circle at 8% 12%, rgba(99, 68, 155, 0.11) 0px, transparent 42%),
+        radial-gradient(circle at 92% 16%, rgba(56, 189, 248, 0.09) 0px, transparent 40%),
+        linear-gradient(rgba(88, 79, 116, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88, 79, 116, 0.035) 1px, transparent 1px) !important;
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px !important;
       display: block !important;
       box-sizing: border-box !important;
       padding-bottom: 0px !important;
@@ -927,13 +940,14 @@
 .SideBarStatic {
   .drawer-desktop {
     .sidebar-list {
-      height: 40px !important;
+      height: auto !important;
+      min-height: 40px !important;
       display: flex !important;
       align-items: center !important;
       width: 90% !important;
       margin: 2px auto !important;
-      padding: 0 12px !important;
-      border-radius: 6px !important;
+      padding: 6px 12px !important;
+      border-radius: 14px !important;
       box-sizing: border-box !important;
       transition: all 0.2s ease !important;
       cursor: pointer;
@@ -972,16 +986,20 @@
       }
 
       .menu-label {
-        margin-left: 12px !important;
+        margin-left: 11px !important;
         margin-right: 4px !important;
         padding: 0 !important;
-        line-height: 1.2 !important;
-        font-size: 13.5px !important;
+        line-height: 1.3 !important;
+        font-size: 13px !important;
         font-weight: 500 !important;
-        color: #5f5c62 !important;
+        color: #475569 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-        white-space: nowrap !important;
+        white-space: normal !important;
+        word-break: break-word !important;
         flex: 1 !important;
         min-width: 0 !important;
         text-align: left !important;
@@ -1003,40 +1021,47 @@
       }
 
       &:hover {
-        background: #F0E9F7 !important;
+        background: rgba(15, 23, 42, 0.04) !important;
+        border-radius: 14px !important;
+        transform: none;
+        box-shadow: none;
 
         .menu-label {
-          color: #584F74 !important;
+          color: #0f172a !important;
+          font-weight: 500 !important;
         }
 
         .sidebar-icon,
         .icon {
-          fill: #584F74 !important;
-          color: #584F74 !important;
+          fill: #4f46e5 !important;
+          color: #4f46e5 !important;
         }
 
         .accordion-chevron .arrow-icon {
-          fill: #584F74 !important;
+          fill: #4f46e5 !important;
         }
       }
 
       &.active {
-        background: #F0E9F7 !important;
-        border-left: 3px solid #584F74 !important;
+        background: rgba(99, 102, 241, 0.1) !important;
+        border: none !important;
+        border-left: none !important;
+        border-radius: 14px !important;
+        box-shadow: none !important;
 
         .menu-label {
-          color: #584F74 !important;
+          color: #4338ca !important;
           font-weight: 600 !important;
         }
 
         .sidebar-icon,
         .icon {
-          fill: #584F74 !important;
-          color: #584F74 !important;
+          fill: #4338ca !important;
+          color: #4338ca !important;
         }
 
         .accordion-chevron .arrow-icon {
-          fill: #584F74 !important;
+          fill: #4338ca !important;
         }
       }
     }

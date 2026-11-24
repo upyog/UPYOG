@@ -25,22 +25,33 @@ const HeaderBoxSection = ({ title, actionLabel, onActionClick, cards = [], varia
 				<div className="sectionBody">
 					{cards.map((card, index) => {
 						const isServiceVariant = variant === "service";
-						const isCentered = card?.icon?.includes("+");
+						const isCentered = !isServiceVariant && typeof card?.icon === "string" && card.icon.includes("+");
+						const themeClass = card?.theme ? `buttonCard--service-${card.theme}` : "";
 
 						return (
 							<button
 								type="button"
 								key={`${card.title || "card"}-${index}`}
 								onClick={card.onClick}
-								className={`buttonCard ${isCentered ? "buttonCard--center" : ""}`}
+								className={`buttonCard ${isServiceVariant ? "buttonCard--service" : ""} ${themeClass} ${isCentered ? "buttonCard--center" : ""} ${card.accent ? `buttonCard--${card.accent}` : ""}`}
 							>
 								{isServiceVariant ? (
 									<>
-										<div className="serviceVarientIcon">
-											{card.icon || card.title?.slice(0, 2)?.toUpperCase() || "•"}
+										<div className="serviceCardTopRow">
+											<div className="serviceVarientIcon">
+												{card.svgIcon && (
+													<span className="serviceVarientIcon__svg">{card.svgIcon}</span>
+												)}
+												<span className="serviceVarientIcon__code">
+													{card.badgeCode || card.icon || card.title?.slice(0, 2)?.toUpperCase() || "•"}
+												</span>
+											</div>
+											<div className="serviceCardTopMeta">
+												<span className="serviceCardArrowCircle">→</span>
+											</div>
 										</div>
 
-										<div>
+										<div className="serviceCardContent">
 											<div className="serviceVarientsubTitle">
 												{card.subtitle}
 											</div>
@@ -50,11 +61,29 @@ const HeaderBoxSection = ({ title, actionLabel, onActionClick, cards = [], varia
 												</div>
 											) : null}
 										</div>
+
+										{card.ctaLabel && (
+											<div className="serviceCardFooterCta">
+												<span>{card.ctaLabel}</span>
+												<span className="serviceCardFooterCta__arrow">→</span>
+											</div>
+										)}
+
+										{card.svgIcon && (
+											<div className="serviceCardBgWatermark" aria-hidden="true">
+												{card.svgIcon}
+											</div>
+										)}
 									</>
 								) : (
 									<>
-										<div className="serviceVarientTitle">
-											{card.title}
+										<div className="statCardHeaderRow">
+											<div className="serviceVarientTitle">
+												{card.title}
+											</div>
+											{card.badgeIcon && (
+												<span className="statCardBadgeIcon">{card.badgeIcon}</span>
+											)}
 										</div>
 
 										<div className="statCardValue">
@@ -63,7 +92,7 @@ const HeaderBoxSection = ({ title, actionLabel, onActionClick, cards = [], varia
 
 										{card.actionLabel && card.value !== 0 ? (
 											<div className="statCardAction">
-												{card.actionLabel}
+												{card.actionLabel} <span>→</span>
 											</div>
 										) : (
 											<div className="statCardNoTask">

@@ -29,7 +29,7 @@ const App = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const NewNDCStepForm = Digit.ComponentRegistryService.getComponent("NewNDCStepFormCitizen");
-  const MyApplications = Digit.ComponentRegistryService.getComponent("MyApplications");
+  const MyApplications = Digit.ComponentRegistryService.getComponent("NDCMyApplications");
   const NDCResponseCitizen = Digit.ComponentRegistryService.getComponent("NDCResponseCitizen");
   const ApplicationOverview = Digit?.ComponentRegistryService?.getComponent("CitizenApplicationOverview");
   const isResponse = window.location.href.includes("/response");

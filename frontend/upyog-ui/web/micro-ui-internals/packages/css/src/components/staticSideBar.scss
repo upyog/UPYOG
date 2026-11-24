@@ -31,11 +31,201 @@
 .static-citizen-sidebar-inner {
   display: flex;
   flex-direction: column;
-  height: auto;
+  height: 100vh;
   z-index: 99;
+  padding: 0 0 12px 0;
+  box-sizing: border-box;
 
   @media (max-width: 780px) {
-    height: calc(100vh - 10px);
+    height: 100vh;
+  }
+
+  .sidebar-logo-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 16px 14px;
+
+    .logo-design {
+      margin: 0 auto !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        max-height: 38px;
+        width: auto;
+        object-fit: contain;
+      }
+    }
+  }
+
+  .profile-section {
+    padding: 4px 14px 10px !important;
+    background: transparent !important;
+    cursor: pointer;
+
+    .profile-card-inner {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      box-sizing: border-box;
+      transition: background-color 0.18s ease;
+
+      &:hover {
+        background: rgba(15, 23, 42, 0.04);
+      }
+    }
+
+    .profile-avatar-ring {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(135deg, #6366f1 0%, #9333ea 60%, #ec4899 100%);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-sizing: border-box;
+      }
+
+      .profile-online-dot {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #10b981;
+        border: 2px solid #ffffff;
+      }
+    }
+
+    .profile-meta-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      text-align: left;
+
+      .name-Profile .label-text {
+        font-size: 13.5px !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        letter-spacing: -0.01em !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .loc-Profile .label-text {
+        font-size: 11.5px !important;
+        font-weight: 500 !important;
+        color: #64748b !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .profile-divider {
+      width: calc(100% - 8px);
+      height: 1px;
+      background: rgba(15, 23, 42, 0.06);
+      margin: 8px auto 0;
+    }
+
+    &.profile-section--collapsed {
+      padding: 8px 6px 6px !important;
+
+      .profile-card-inner {
+        flex-direction: column;
+        justify-content: center;
+        padding: 6px 4px;
+        gap: 6px;
+      }
+
+      .profile-avatar-ring {
+        width: 38px;
+        height: 38px;
+      }
+
+      .profile-meta-wrap {
+        text-align: center;
+        align-items: center;
+      }
+    }
+  }
+
+  .citizen-sidebar-search-wrap {
+    padding: 0 14px 10px;
+    box-sizing: border-box;
+
+    .citizen-sidebar-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.04);
+      border: 1px solid transparent;
+      box-shadow: none;
+      color: #64748b;
+      transition: all 0.18s ease;
+
+      &:focus-within {
+        background: #ffffff;
+        border-color: rgba(99, 102, 241, 0.45);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        color: #4f46e5;
+      }
+
+      input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #1f1b2d;
+
+        &::placeholder {
+          color: #94a3b8;
+        }
+      }
+
+      .citizen-sidebar-search__clear {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 11px;
+        padding: 2px 4px;
+        line-height: 1;
+
+        &:hover {
+          color: #475569;
+        }
+      }
+    }
   }
 }
 
@@ -387,10 +577,21 @@
 }
 
 .version-badge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: #5f5c62 !important;
+  margin: 6px auto 2px;
+
+  span {
+    padding: 2px 8px;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    color: #94a3b8 !important;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
 }
 
 /* ==========================================================================
@@ -398,11 +599,11 @@
    ========================================================================== */
 .SideBarStatic .drawer-desktop .sidebar-list .menu-item .icon.citizen-sidebar-icon-badge,
 .static-citizen-sidebar-inner .drawer-desktop .sidebar-list .menu-item .icon.citizen-sidebar-icon-badge {
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  max-width: 28px !important;
-  border-radius: 8px !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  border-radius: 50% !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -411,11 +612,13 @@
   background-color: var(--cs-icon-bg, #eef2ff) !important;
   color: var(--cs-icon-color, #4f46e5) !important;
   fill: var(--cs-icon-color, #4f46e5) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: transform 0.18s ease, background-color 0.18s ease !important;
 
   svg {
-    width: 16px !important;
-    height: 16px !important;
+    width: 15px !important;
+    height: 15px !important;
     fill: none !important;
     stroke: var(--cs-icon-color, currentColor) !important;
     color: var(--cs-icon-color, currentColor) !important;
@@ -430,10 +633,51 @@
 .SideBarStatic .drawer-desktop .sidebar-list:hover .menu-item .icon.citizen-sidebar-icon-badge,
 .SideBarStatic .drawer-desktop .sidebar-list.active .menu-item .icon.citizen-sidebar-icon-badge {
   transform: scale(1.06);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  box-shadow: none !important;
 }
 
 .SideBarStatic .drawer-desktop .sidebar-list.sidebar-list-helpline .menu-item .icon.citizen-sidebar-icon-badge,
 .static-citizen-sidebar-inner .drawer-desktop .sidebar-list.sidebar-list-helpline .menu-item .icon.citizen-sidebar-icon-badge {
   margin: 0 12px 0 0 !important;
+}
+
+.sidebar-hover-tooltip {
+  position: fixed;
+  transform: translateY(-50%);
+  z-index: 10050;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 9px 15px;
+  border-radius: 10px;
+  white-space: normal;
+  max-width: 340px;
+  box-shadow: 0 14px 30px -6px rgba(15, 23, 42, 0.38), 0 4px 12px -2px rgba(15, 23, 42, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  animation: sidebarTipFade 0.14s ease-out;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent #0f172a transparent transparent;
+  }
+}
+
+@keyframes sidebarTipFade {
+  from {
+    opacity: 0;
+    transform: translate(-4px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
 }

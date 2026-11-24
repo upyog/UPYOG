@@ -319,11 +319,11 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const regexPattern = (columnType) => {
     if (!columnType) {
-      return "^[-+]?([1-8]?[0-9](\\.[0-9]+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7][0-9])|([1-9]?[0-9]))(\\.[0-9]+)?)$";
+      return "^[\\-+]?([1-8]?[0-9](\\.[0-9]+)?|90(\\.0+)?),\\s*[\\-+]?(180(\\.0+)?|((1[0-7][0-9])|([1-9]?[0-9]))(\\.[0-9]+)?)$";
     } else if (columnType === "number") {
       return "^[0-9]+(\\.[0-9]+)?$";
     } else if (columnType === "text") {
-      return "^[a-zA-Z0-9 ,./\\-]+$";
+      return "^[a-zA-Z0-9 ,.\\/\\-]+$";
     }
   };
 
@@ -814,7 +814,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   className="assetv2-asset-all-details-wrapper"
                   {...{
                     isRequired: true,
-                    pattern: "^[-+]?([1-8]?[0-9](\\.[0-9]+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7][0-9])|([1-9]?[0-9]))(\\.[0-9]+)?)$",
+                    pattern: "^[\\-+]?([1-8]?[0-9](\\.[0-9]+)?|90(\\.0+)?),\\s*[\\-+]?(180(\\.0+)?|((1[0-7][0-9])|([1-9]?[0-9]))(\\.[0-9]+)?)$",
                     title: t("VALID_LAT_LONG"),
                   }}
                   placeholder={t("AST_LAT_LONG_PLACEHOLDERS")}

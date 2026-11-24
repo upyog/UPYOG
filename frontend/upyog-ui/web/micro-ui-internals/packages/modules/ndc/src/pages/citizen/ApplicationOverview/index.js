@@ -1,4 +1,4 @@
-import { Row, StatusTable, Card, CardSubHeader, ActionBar, SubmitBar, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import { Row, StatusTable, Card, CardSubHeader, ActionBar, SubmitBar, MultiLink, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -256,7 +256,7 @@ const CitizenApplicationOverview = () => {
   return (
     <div className={"employee-main-application-details"}>
       <div className="ndc-application-overview">
-        {/* <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header> */}
+        <Header>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
 
         <div className="ndc-flex-end">
           <div className="cardHeaderWithOptions ral-app-details-header">

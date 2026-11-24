@@ -17,7 +17,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 
 
-const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTableDataLoading, Count, searchData, reportName }) => {
+const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTableDataLoading, Count, searchData, reportName, onStateChange, onClearAll }) => {
     const { t } = useTranslation()
     const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
         defaultValues: {
@@ -36,7 +36,7 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
     // }, [formState])
 
 
-    const searchFormFieldsComponentProps = { formState, Controller, register, control, t, reset, data };
+    const searchFormFieldsComponentProps = { formState, Controller, register, control, setValue, t, reset, data, onStateChange, onClearAll };
     // Deep clone to avoid mutating props and ensure fresh data for manipulation
     const rowData = tableData?.reportData ? JSON.parse(JSON.stringify(tableData.reportData)) : [];
     if(rowData?.[0]?.[0]!=1){
