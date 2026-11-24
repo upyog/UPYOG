@@ -130,6 +130,7 @@ class ICICIUtils {
                     plainHashText.append(value);
                 }
             }
+            
 
             log.info("ICICI Plain Hash Text : {}", plainHashText);
 
