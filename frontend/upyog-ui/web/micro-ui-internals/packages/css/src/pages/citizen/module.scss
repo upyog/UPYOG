@@ -5968,11 +5968,16 @@
     bottom: auto !important;
     transform: none !important;
     margin: auto !important;
-    max-width: calc(100vw - 32px) !important;
+    width: 480px !important;
+    max-width: min(480px, calc(100vw - 32px)) !important;
+    flex: 0 0 auto !important;
+    height: auto !important;
     border-radius: 12px !important;
     overflow: hidden !important;
 
     @media (max-width: 780px) {
+      width: 324px !important;
+      max-width: calc(100vw - 32px) !important;
       min-height: 240px !important;
       height: auto !important;
       max-height: 90vh !important;
