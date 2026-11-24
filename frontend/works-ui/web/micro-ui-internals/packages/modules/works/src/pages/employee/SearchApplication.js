@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
-import { useWorksInbox } from "../../api/useWorksInbox";
+import { useWorksSearch } from "../../api/useWorksInbox";
 import SearchActionPlan from "../../components/inbox/SearchActionPlan";
 import WorksTable from "../../components/inbox/WorksTable";
 import "../../components/inbox/inbox.css";
@@ -18,7 +18,7 @@ const SearchApplication = ({ parentRoute = "/works-ui/employee/works" }) => {
     setPageOffset(0);
   }, [searchParams]);
 
-  const { isLoading, data } = useWorksInbox({
+  const { isLoading, data } = useWorksSearch({
     tenantId,
     searchParams,
     filters: {},

@@ -15,6 +15,7 @@ import { TPService } from "../../services/elements/TP";
 import { PGRAIService } from "../../services/elements/PGRAI";
 import { GCServices } from "../../services/elements/GC"
 import { NOCService } from "../../services/elements/NOC";
+import { WorksService } from "../../services/elements/Works";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -128,6 +129,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNumber",
     fetchFilters: filterFunctions.FireNoc,
     _searchFn: () => NOCService.search(tenantId, filters),
+  },
+  WORKS: {
+    services: ["WMS_ACTION_PLAN"],
+    searchResponseKey: "ActionPlans",
+    businessIdsParamForSearch: "applicationNumbers",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.WORKS,
+    _searchFn: () => WorksService.searchActionPlan({ tenantId, filters }),
   },
 });
 
