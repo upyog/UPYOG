@@ -185,7 +185,9 @@ const Home = ({ layout }) => {
 
   const responses = aggregateData?.responses || {};
   const dueRenewalsRaw = responses?.["due-renewals"]?.data?.bills || responses?.["due-renewals"]?.data || [];
-  const dueRenewals = Array.isArray(dueRenewalsRaw) ? dueRenewalsRaw : [];
+  const dueRenewals = Array.isArray(dueRenewalsRaw)
+    ? dueRenewalsRaw.filter((b) => Number(b?.totalAmount ?? b?.amount ?? 0) > 0)
+    : [];
 
   const actionHandlers = {
     onOpenDueRenewals: () => setIsDueRenewalsModalOpen(true),
@@ -200,6 +202,20 @@ const Home = ({ layout }) => {
     <Loader />
   ) : (
     <div className="HomePageContainer">
+      <div className="home-bg-watermark" aria-hidden="true">
+        <div className="home-bg-watermark__city" />
+        <img
+          src="/upyog-ui/images/Logo.png"
+          alt=""
+          className="home-bg-watermark__logo"
+        />
+        <svg className="home-bg-watermark__crest" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="200" cy="200" r="180" stroke="currentColor" strokeWidth="1.5" strokeDasharray="6 6" />
+          <circle cx="200" cy="200" r="140" stroke="currentColor" strokeWidth="1.2" />
+          <circle cx="200" cy="200" r="100" stroke="currentColor" strokeWidth="1" strokeDasharray="4 8" />
+          <circle cx="200" cy="200" r="60" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      </div>
       {/* <div className="SideBarStatic">
         <StaticCitizenSideBar />
       </div> */}
@@ -255,21 +271,25 @@ const Home = ({ layout }) => {
           </div>
         )}
 
+
+
         {UIType?.summary && (
           <div className="home-summary-section">
             <HeaderBoxSection cards={taskSummaryCards} columns={4} />
           </div>
         )}
-
         {UIType?.welcomeView && (
           <div className="welcomeBanner">
-            <p>Welcome, {userName}</p>
-            <h1>What are you working on today?</h1>
-            <div>
+            {/* <span className="welcomeBanner__badge">
+              {getLabel(t, "CITIZEN_DIGITAL_PORTAL", "UPYOG Citizen Digital Portal")}
+            </span> */}
+            <p>{getLabel(t, "CITIZEN_WELCOME_BACK", "Welcome back")}, {userName}</p>
+            <h1>{getLabel(t, "CITIZEN_HERO_HEADING", "What are you working on today?")}</h1>
+            <div className="welcomeBanner__searchBox">
               <img src="/upyog-ui/images/search.svg" alt="search icon" />
               <input
                 type="text"
-                placeholder="Search by applicant number, ID, name or module..."
+                placeholder={getLabel(t, "CITIZEN_SEARCH_PLACEHOLDER", "Search by application number, ID, name or module...")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
@@ -279,18 +299,19 @@ const Home = ({ layout }) => {
                 }}
               />
               <button
+                type="button"
                 onClick={() => {
                   if (searchTerm) {
                     navigate(`/upyog-ui/citizen/search-application?id=${encodeURIComponent(searchTerm)}`);
                   }
                 }}
               >
-                Search
+                {getLabel(t, "ES_COMMON_SEARCH", "Search")}
               </button>
             </div>
+
           </div>
         )}
-
         <div className="home-services-actions-section">
           {UIType?.quickServices && (
             <HeaderBoxSection title={getLabel(t, "CITIZEN_QUICK_SERVICES", "Quick Services")} cards={returnConstants(t, "quickServiceCards", navigate)} variant="service" columns={4} />
@@ -494,7 +515,9 @@ const buildNotificationItems = (aggregateData, eventsData = [], t, navigate, ten
   const liveEvents = Array.isArray(eventsData) ? eventsData : [];
 
   const dueRenewalsRaw = responses?.["due-renewals"]?.data?.bills || responses?.["due-renewals"]?.data || [];
-  const dueRenewals = Array.isArray(dueRenewalsRaw) ? dueRenewalsRaw : [];
+  const dueRenewals = Array.isArray(dueRenewalsRaw)
+    ? dueRenewalsRaw.filter((b) => Number(b?.totalAmount ?? b?.amount ?? 0) > 0)
+    : [];
 
   const recentAppsRaw = responses?.["recent-applications"]?.data?.applications || responses?.["recent-applications"]?.data || [];
   const recentApps = Array.isArray(recentAppsRaw) ? recentAppsRaw : [];
@@ -584,8 +607,8 @@ const buildNotificationItems = (aggregateData, eventsData = [], t, navigate, ten
     const appSvc = topApp?.serviceName
       ? getLabel(t, topApp.serviceName, topApp.serviceName)
       : topApp?.businessService
-      ? getLabel(t, topApp.businessService, topApp.businessService)
-      : getLabel(t, "APPLICATION", "Application");
+        ? getLabel(t, topApp.businessService, topApp.businessService)
+        : getLabel(t, "APPLICATION", "Application");
     const appNo = topApp?.applicationNumber || topApp?.consumerCode || topApp?.id || "";
     const appStatus = topApp?.status ? getLabel(t, topApp.status, topApp.status) : getLabel(t, "SUBMITTED", "Submitted");
     fallbackItems.push({
@@ -651,7 +674,9 @@ const buildUserActionCards = (aggregateData, t, navigate, tenantId, handlers = {
   const responses = aggregateData?.responses || {};
 
   const dueRenewalsRaw = responses?.["due-renewals"]?.data?.bills || responses?.["due-renewals"]?.data || [];
-  const dueRenewals = Array.isArray(dueRenewalsRaw) ? dueRenewalsRaw : [];
+  const dueRenewals = Array.isArray(dueRenewalsRaw)
+    ? dueRenewalsRaw.filter((b) => Number(b?.totalAmount ?? b?.amount ?? 0) > 0)
+    : [];
 
   const recentAppsRaw = responses?.["recent-applications"]?.data?.applications || responses?.["recent-applications"]?.data || [];
   const recentApps = Array.isArray(recentAppsRaw) ? recentAppsRaw : [];
@@ -788,7 +813,9 @@ const buildTaskSummaryCards = (aggregateData, t, navigate, handlers = {}, events
   const quickSummary = responses?.["quick-summary"]?.data || {};
 
   const dueRenewalsRaw = responses?.["due-renewals"]?.data?.bills || responses?.["due-renewals"]?.data || [];
-  const dueRenewals = Array.isArray(dueRenewalsRaw) ? dueRenewalsRaw : [];
+  const dueRenewals = Array.isArray(dueRenewalsRaw)
+    ? dueRenewalsRaw.filter((b) => Number(b?.totalAmount ?? b?.amount ?? 0) > 0)
+    : [];
 
   const recentAppsRaw = responses?.["recent-applications"]?.data?.applications || responses?.["recent-applications"]?.data || [];
   const recentApps = Array.isArray(recentAppsRaw) ? recentAppsRaw : [];
@@ -809,12 +836,16 @@ const buildTaskSummaryCards = (aggregateData, t, navigate, handlers = {}, events
       title: getLabel(t, "CITIZEN_TASK_ASSIGNED", "Task Assigned"),
       value: quickSummary?.taskAssigned || 0,
       actionLabel: getLabel(t, "VIEW_ALL_TASKS", "View all tasks"),
+      badgeIcon: "📋",
+      accent: "indigo",
       onClick: () => navigate("/upyog-ui/citizen"),
     },
     {
       title: getLabel(t, "CITIZEN_PENDING_PAYMENT", "Pending Payment"),
       value: pendingBillsCount || quickSummary?.pendingPayment || 0,
       actionLabel: getLabel(t, "PAY_NOW", "Pay now"),
+      badgeIcon: "💳",
+      accent: "amber",
       onClick: () => {
         if (handlers?.onOpenDueRenewals) {
           handlers.onOpenDueRenewals();
@@ -829,12 +860,16 @@ const buildTaskSummaryCards = (aggregateData, t, navigate, handlers = {}, events
       title: getLabel(t, "CITIZEN_RECENT_APPLICATIONS", "Recent Applications"),
       value: recentApps.length || quickSummary?.totalApplications || 0,
       actionLabel: getLabel(t, "VIEW_APPLICATIONS", "View applications"),
+      badgeIcon: "📂",
+      accent: "emerald",
       onClick: () => navigate("/upyog-ui/citizen"),
     },
     {
       title: getLabel(t, "CITIZEN_NOTIFICATIONS", "Notifications"),
       value: notifsCount,
       actionLabel: getLabel(t, "VIEW_NOTIFICATIONS", "View notifications"),
+      badgeIcon: "🔔",
+      accent: "rose",
       onClick: () => navigate("/upyog-ui/citizen/engagement/notifications"),
     },
   ];
@@ -907,10 +942,75 @@ function returnConstants(t, type, fn, navigate) {
       };
     case "quickServiceCards":
       return [
-        { title: "PT", text: "View & manage property tax", subtitle: "Property Tax", icon: "PT", onClick: () => nav("/upyog-ui/citizen/pt-home") },
-        { title: "TL", text: "Apply for trade licence", subtitle: "Trade License", icon: "TL", onClick: () => nav("/upyog-ui/citizen/tl-home") },
-        { title: "WS", text: "Water & sewerage connections & bills", subtitle: "Water & Sewerage", icon: "WS", onClick: () => nav("/upyog-ui/citizen/ws-home") },
-        { title: "+", text: "Expand all services", subtitle: "View All", icon: "+", onClick: () => nav("/upyog-ui/citizen/all-services") },
+        {
+          title: getLabel(t, "PT", "PT"),
+          badgeCode: "PT",
+          theme: "indigo",
+          text: getLabel(t, "CITIZEN_QUICK_PT_DESC", "View & manage property tax"),
+          subtitle: getLabel(t, "ACTION_TEST_PROPERTY_TAX", "Property ID and Taxation"),
+          ctaLabel: getLabel(t, "CITIZEN_OPEN_SERVICE", "Open Service"),
+          icon: "PT",
+          svgIcon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 10.5L12 3l9 7.5" />
+              <path d="M5 9.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" />
+              <path d="M9 20v-6h6v6" />
+            </svg>
+          ),
+          onClick: () => nav("/upyog-ui/citizen/pt-home"),
+        },
+        {
+          title: getLabel(t, "TL", "TL"),
+          badgeCode: "TL",
+          theme: "amber",
+          text: getLabel(t, "CITIZEN_QUICK_TL_DESC", "Apply for trade licence"),
+          subtitle: getLabel(t, "ACTION_TEST_TRADE_LICENSE", "Trade License Issuance and Payment"),
+          ctaLabel: getLabel(t, "CITIZEN_OPEN_SERVICE", "Open Service"),
+          icon: "TL",
+          svgIcon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M7 8h10" />
+              <path d="M7 12h6" />
+              <circle cx="16.5" cy="14.5" r="2.5" />
+            </svg>
+          ),
+          onClick: () => nav("/upyog-ui/citizen/tl-home"),
+        },
+        {
+          title: getLabel(t, "WS", "WS"),
+          badgeCode: "WS",
+          theme: "cyan",
+          text: getLabel(t, "CITIZEN_QUICK_WS_DESC", "Water & sewerage connections & bills"),
+          subtitle: getLabel(t, "ACTION_TEST_WATER_AND_SEWERAGE", "Water and Sewerage Connection Management"),
+          ctaLabel: getLabel(t, "CITIZEN_OPEN_SERVICE", "Open Service"),
+          icon: "WS",
+          svgIcon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+              <path d="M9.5 14a3.5 3.5 0 0 0 5 0" />
+            </svg>
+          ),
+          onClick: () => nav("/upyog-ui/citizen/ws-home"),
+        },
+        {
+          title: "+",
+          badgeCode: "28+",
+          theme: "violet",
+          text: getLabel(t, "CITIZEN_QUICK_EXPAND_SERVICES", "Expand all services"),
+          subtitle: getLabel(t, "COMMON_VIEW_ALL", "View All"),
+          ctaLabel: getLabel(t, "CITIZEN_BROWSE_CATALOG", "Explore All"),
+          icon: "+",
+          svgIcon: (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1.5" />
+              <rect x="14" y="3" width="7" height="7" rx="1.5" />
+              <rect x="3" y="14" width="7" height="7" rx="1.5" />
+              <path d="M14 17.5h7M17.5 14v7" />
+            </svg>
+          ),
+          onClick: () => nav("/upyog-ui/citizen/all-services"),
+        },
       ];
     default:
       return;

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   HomeIcon,
   EditPencilIcon,
@@ -54,33 +55,40 @@ const defaultImage =
 /* 
 Feature :: Citizen Webview sidebar
 */
-const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed }) => {
+const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed, onProfileClick }) => {
   const username = isSidebarCollapsed
     ? info?.name?.split(' ').map(word => word[0]).join('').toUpperCase()
     : info?.name;
 
   return (
-    <div className="profile-section">
-      <div className="imageloader imageloader-loaded">
-        <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
-      </div>
-      <div id="profile-name" className="label-container name-Profile">
-        <div className="label-text"> {username} </div>
-      </div>
-      {!isSidebarCollapsed && <div id="profile-location" className="label-container loc-Profile">
-        <div className="label-text"> {info?.mobileNumber} </div>
-      </div>}
-      {!isSidebarCollapsed && info?.emailId && (
-        <div id="profile-emailid" className="label-container loc-Profile">
-          <div className="label-text"> {info.emailId} </div>
+    <div className={`profile-section ${isSidebarCollapsed ? "profile-section--collapsed" : ""}`} onClick={onProfileClick} role="button" tabIndex={0}>
+      <div className="profile-card-inner">
+        <div className="imageloader imageloader-loaded profile-avatar-ring">
+          <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} alt={username || "User"} />
+          <span className="profile-online-dot" title="Active" />
         </div>
-      )}
+        <div className="profile-meta-wrap">
+          <div id="profile-name" className="label-container name-Profile">
+            <div className="label-text">{username}</div>
+          </div>
+          {!isSidebarCollapsed && info?.mobileNumber && (
+            <div id="profile-location" className="label-container loc-Profile">
+              <div className="label-text">📱 {info.mobileNumber}</div>
+            </div>
+          )}
+          {!isSidebarCollapsed && info?.emailId && (
+            <div id="profile-emailid" className="label-container loc-Profile">
+              <div className="label-text">{info.emailId}</div>
+            </div>
+          )}
+        </div>
+      </div>
       <div className="profile-divider"></div>
       {false && window.location.href.includes("/employee") &&
         !window.location.href.includes("/employee/user/login") &&
         !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
     </div>
-  )
+  );
 };
 
 const BadgeIcon = ({ bg = "#eef2ff", color = "#4f46e5", children }) => (
@@ -468,6 +476,8 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
   const [isEmployee, setisEmployee] = useState(false);
   const [isSidebarOpen, toggleSidebar] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  const [sidebarSearch, setSidebarSearch] = useState("");
+  const [hoverTip, setHoverTip] = useState(null);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
   useEffect(() => {
@@ -537,10 +547,15 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
       itemComponent = item.text;
     }
     const Item = () => (
-      <span className="menu-item" {...item.populators} onClick={(e) => {
-        if (item.populators?.onClick) item.populators.onClick(e);
-        handleNavClick();
-      }}>
+      <span
+        className="menu-item"
+        title={typeof item.text === "string" ? item.text : undefined}
+        {...item.populators}
+        onClick={(e) => {
+          if (item.populators?.onClick) item.populators.onClick(e);
+          handleNavClick();
+        }}
+      >
         {leftIcon}
         <div className="menu-label">{itemComponent}</div>
       </span>
@@ -565,7 +580,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
   let profileItem;
 
   if (true && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name || "City A"} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed} />;
+    profileItem = <Profile info={user?.info} stateName={stateInfo?.name || "Delhi"} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed} onProfileClick={showProfilePage} />;
     menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line");
     menuItems = [
       ...menuItems,
@@ -615,6 +630,24 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
     menuItems.splice(1, 0, ...dynamicModuleItems);
   }
 
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (!sidebarSearch.trim()) return true;
+    if (item?.element === "Helpline" || item?.id === "help-line") return true;
+    const labelStr = typeof item?.text === "string" ? item.text : String(item?.moduleKey || item?.element || "");
+    return labelStr.toLowerCase().includes(sidebarSearch.trim().toLowerCase());
+  });
+
+  const isItemActive = (item) => {
+    const rawLink = (item?.link || item?.sidebarURL || "").replace("/digit-ui/", "/upyog-ui/");
+    if (!rawLink) {
+      return item?.element === "HOME" && (pathname === "/upyog-ui/citizen" || pathname === "/upyog-ui/citizen/");
+    }
+    if (rawLink === "/upyog-ui/citizen" || rawLink === "/upyog-ui/citizen/") {
+      return pathname === "/upyog-ui/citizen" || pathname === "/upyog-ui/citizen/";
+    }
+    return pathname === rawLink || pathname.startsWith(`${rawLink}/`);
+  };
+
   return (
     <React.Fragment>
       <div className="static-citizen-sidebar-inner">
@@ -634,15 +667,70 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
           )}
         </div>
         {profileItem}
-        <div className="drawer-desktop">
-          {menuItems?.map((item, index) => (
-            <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""} ${item?.element === "Helpline" || item?.id === "help-line" ? "sidebar-list-helpline" : ""}`} key={index}>
-              <MenuItem item={item} />
+        {!isSidebarCollapsed && (
+          <div className="citizen-sidebar-search-wrap">
+            <div className="citizen-sidebar-search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder={t("CITIZEN_SIDEBAR_FILTER", "Filter services...")}
+                value={sidebarSearch}
+                onChange={(e) => setSidebarSearch(e.target.value)}
+              />
+              {sidebarSearch && (
+                <button type="button" className="citizen-sidebar-search__clear" onClick={() => setSidebarSearch("")} aria-label="Clear">
+                  ✕
+                </button>
+              )}
             </div>
-          ))}
+          </div>
+        )}
+        <div className="drawer-desktop" onScroll={() => hoverTip && setHoverTip(null)}>
+          {filteredMenuItems?.map((item, index) => {
+            const labelText = typeof item?.text === "string" ? item.text : null;
+            return (
+              <div
+                className={`sidebar-list ${isItemActive(item) ? "active" : ""} ${item?.element === "Helpline" || item?.id === "help-line" ? "sidebar-list-helpline" : ""}`}
+                key={index}
+                onMouseEnter={(e) => {
+                  if (!labelText || isMobile) return;
+                  const labelEl = e.currentTarget.querySelector(".menu-label");
+                  const isTruncated = labelEl && (labelEl.scrollHeight > labelEl.clientHeight + 1 || labelEl.scrollWidth > labelEl.clientWidth + 1);
+                  if (isSidebarCollapsed || isTruncated || labelText.length > 20) {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const sidebarEl = e.currentTarget.closest(".SideBarStatic") || e.currentTarget.closest(".static-citizen-sidebar-inner");
+                    const sidebarRect = sidebarEl ? sidebarEl.getBoundingClientRect() : rect;
+                    setHoverTip({
+                      text: labelText,
+                      top: rect.top + rect.height / 2,
+                      left: sidebarRect.right - 10,
+                    });
+                  }
+                }}
+                onMouseLeave={() => setHoverTip(null)}
+              >
+                <MenuItem item={item} />
+              </div>
+            );
+          })}
         </div>
+        {hoverTip &&
+          typeof document !== "undefined" &&
+          createPortal(
+            <div
+              className="sidebar-hover-tooltip"
+              style={{ top: `${hoverTip.top}px`, left: `${hoverTip.left}px` }}
+              role="tooltip"
+            >
+              {hoverTip.text}
+            </div>,
+            document.body
+          )}
         <div className="version-badge">
-          <span>v5.1</span>
+          <span>UPYOG • v5.1</span>
         </div>
         <div className="citizen-logout">
           <button onClick={handleLogout}>

@@ -1,5 +1,6 @@
 import { CardText, CloseSvg, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
+import ReactDOM from "react-dom";
 import { useTranslation } from "react-i18next";
 
 const Heading = (props) => {
@@ -38,26 +39,20 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
     }
   }
   React.useEffect(() => {
-    window.addEventListener("resize", () => {
-      onResize();
-    });
+    window.addEventListener("resize", onResize);
     return () => {
-      window.addEventListener("resize", () => {
-        onResize();
-      });
+      window.removeEventListener("resize", onResize);
     };
-  });
-  return (
-    isMobileView
+  }, [isMobileView]);
+  const dialogContent = (
+    <div className="core-logout-portal-root">
+      {isMobileView
       ? <Modal
         popupStyles={{
-          height: "174px",
-          maxHeight: "174px",
+          minHeight: "240px",
+          height: "auto",
+          maxHeight: "90vh",
           width: "324px",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: 'translate(-50%, -50%)',
         }}
         popupModuleActionBarStyles={{
           display: "flex",
@@ -103,7 +98,12 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
             <strong>{t("CORE_LOGOUT_MESSAGE")}?</strong>
           </CardText>
         </div>
-      </Modal>
-  )
+      </Modal>}
+    </div>
+  );
+
+  return typeof document !== "undefined"
+    ? ReactDOM.createPortal(dialogContent, document.body)
+    : dialogContent;
 }
 export default LogoutDialog;

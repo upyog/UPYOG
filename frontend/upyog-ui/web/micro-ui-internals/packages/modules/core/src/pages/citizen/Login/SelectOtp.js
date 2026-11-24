@@ -1,8 +1,11 @@
 import React, { useState, Fragment, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import useInterval from "../../../hooks/useInterval";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [timeLeft, setTimeLeft] = useState(30);
   const TYPE_REGISTER = { type: "register" };
   const TYPE_LOGIN = { type: "login" };
@@ -121,8 +124,20 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     );
   }
 
+  const handleBack = () => {
+    const basePath = location.pathname.replace(/\/otp\/?$/, "");
+    navigate(basePath || "/upyog-ui/citizen/login", { state: location.state });
+  };
+
   return (
     <>
+      <button type="button" className="login-back-btn" onClick={handleBack}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        <span>{t("CS_COMMON_BACK")}</span>
+      </button>
       <div className="login-form-header">
         <h2>{t("OTP Verification")}</h2>
         <p>

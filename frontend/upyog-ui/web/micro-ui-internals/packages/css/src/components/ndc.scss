@@ -1,198 +1,997 @@
 .ndc-loader-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 9999
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999
 }
 
 .ndc-loader-module {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100px;
-    width: 100%;
-    position: relative
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  width: 100%;
+  position: relative
 }
 
 .ndc-loader-spinner {
-    width: 64px;
-    height: 64px;
-    border: 8px solid #1976d2;
-    border-top: 8px solid transparent;
-    border-radius: 50%;
-    animation: ndc-spin 1.2s linear infinite
+  width: 64px;
+  height: 64px;
+  border: 8px solid #1976d2;
+  border-top: 8px solid transparent;
+  border-radius: 50%;
+  animation: ndc-spin 1.2s linear infinite
 }
 
 @keyframes ndc-spin {
-    0% {
-        transform: rotate(0deg)
-    }
+  0% {
+    transform: rotate(0deg)
+  }
 
-    100% {
-        transform: rotate(360deg)
-    }
+  100% {
+    transform: rotate(360deg)
+  }
 }
 
 .ndc-margin-bottom-16 {
-    margin-bottom: 16px
+  margin-bottom: 16px
 }
 
 .ndc-label-width-100 {
-    width: 100%
+  width: 100%
 }
 
 .ndc-flex-end {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 16px
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px
 }
 
 .ndc-row-padding {
-    padding: 16px
+  padding: 16px
 }
 
 .ndc-row-container {
-    max-width: 960px;
-    min-width: 640px;
-    margin-right: auto
+  max-width: 960px;
+  min-width: 640px;
+  margin-right: auto
 }
 
 .ndc-cursor-not-allowed {
-    cursor: not-allowed
+  cursor: not-allowed
 }
 
 .ndc-display-block {
-    display: block
+  display: block
 }
 
 .ndc-width-100-pad {
-    width: 100%;
-    padding-right: 25px;
-    padding-left: 25px
+  width: 100%;
+  padding-right: 25px;
+  padding-left: 25px
 }
 
 .ndc-margin-left-10 {
-    margin-left: 10px
+  margin-left: 10px
 }
 
 .ndc-margin-bottom-8 {
-    margin-bottom: 8px
+  margin-bottom: 8px
 }
 
 .ndc-block-display {
-    display: block
+  display: block
 }
 
 .ndc-strong-label {
-    font-weight: 700
+  font-weight: 700
 }
 
 /* Banner defaults for NDC response */
 .ndc-banner-padding {
-    padding: 10px
+  padding: 10px
 }
 
 .ndc-banner-header {
-    font-size: 32px;
-    word-break: break-word
+  font-size: 32px;
+  word-break: break-word
 }
 
 .ndc-cursor-pointer {
-    cursor: pointer
+  cursor: pointer
 }
 
 .ndc-due-red {
-    background: red;
-    color: white;
-    padding-top: 8px;
-    padding-left: 10px
+  background: red;
+  color: white;
+  padding-top: 8px;
+  padding-left: 10px
 }
 
 .ndc-due-default {
-    background: none;
-    color: black;
-    padding: 0
+  background: none;
+  color: black;
+  padding: 0
 }
 
 .ndc-search-container-wide {
-    width: 200%;
-    margin-left: 24px
+  width: 200%;
+  margin-left: 24px
 }
 
 .ndc-text-start {
-    text-align: start
+  text-align: start
 }
 
 .ndc-search-action-width {
-    width: 100%
+  width: 100%
 }
 
 .ndc-card-margin-top-20 {
-    margin-top: 20px
+  margin-top: 20px
 }
 
 .ndc-text-center {
-    text-align: center
+  text-align: center
 }
 
 .ndc-margin-top-40 {
-    margin-top: 40px
+  margin-top: 40px
 }
 
 .ndc-form-field-column {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%
 }
 
 .ndc-flex-row-center-gap {
-    display: flex;
-    align-items: center;
-    gap: 12px
+  display: flex;
+  align-items: center;
+  gap: 12px
 }
 
 .ndc-btn-small-white {
-    color: white;
-    font-size: 13px
+  color: white;
+  font-size: 13px
 }
 
 .ndc-white-text {
-    color: white
+  color: white
 }
 
 .ndc-green-text {
-    color: green
+  color: green
 }
 
 .ndc-delete-icon {
-    cursor: pointer;
-    margin-left: 20px
+  cursor: pointer;
+  margin-left: 20px
 }
 
 .ndc-margin-top-24 {
-    margin-top: 24px
+  margin-top: 24px
 }
 
 .ndc-btn-smaller {
-    color: white;
-    font-size: 12px
+  color: white;
+  font-size: 12px
 }
 
 .ndc-margin-bottom-20 {
-    margin-bottom: 20px
+  margin-bottom: 20px
 }
 
 .ndc-info-text {
-    color: green;
-    font-size: 14px;
-    padding-bottom: 10px
+  color: green;
+  font-size: 14px;
+  padding-bottom: 10px
+}
+
+/* ==========================================================================
+   NDC CITIZEN MY APPLICATIONS — Modern UX (Matches PT / EST My Applications)
+   Pure CSS2 selectors — zero JS/JSX changes, zero impact on other NDC routes.
+   ========================================================================== */
+.ndc-width-100-pad {
+  display: block !important;
+  box-sizing: border-box !important;
+
+  >.app-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    align-content: flex-start !important;
+    column-gap: 22px !important;
+    row-gap: 22px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: calc(100vh - 115px) !important;
+    position: relative !important;
+    padding: 8px 16px 112px !important;
+    box-sizing: border-box !important;
+
+    @media (max-width: 768px) {
+      padding: 4px 12px 136px !important;
+    }
+
+    /* Default: all direct children span full width so other NDC routes are untouched */
+    >* {
+      flex: 0 0 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Page Title (only rendered directly on My Applications) */
+    >header {
+      font-size: 26px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      letter-spacing: -0.02em !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1.25 !important;
+    }
+
+    /* Responsive Card Grid — max 3 spacious cards per row on desktop */
+    >header~div:not(.ndc-application-overview-custom) {
+      flex: 0 0 calc((100% - 44px) / 3) !important;
+      max-width: calc((100% - 44px) / 3) !important;
+      display: flex !important;
+      min-width: 0 !important;
+
+      @media (max-width: 1080px) {
+        flex: 0 0 calc((100% - 22px) / 2) !important;
+        max-width: calc((100% - 22px) / 2) !important;
+      }
+
+      @media (max-width: 680px) {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+      }
+
+      >.card {
+        width: 100% !important;
+        max-width: none !important;
+        height: 100% !important;
+        min-height: 220px !important;
+        margin: 0 !important;
+        padding: 24px 26px !important;
+        border-radius: 14px !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr) !important;
+        grid-template-rows: auto 1fr auto !important;
+        row-gap: 18px !important;
+        column-gap: 14px !important;
+        position: relative !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+        /* Top crimson-to-orange accent stripe */
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3.5px;
+          background: linear-gradient(90deg, #a82227, #f97316);
+          opacity: 0.9;
+        }
+
+        &:hover {
+          box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.03) !important;
+          border-color: #cbd5e1 !important;
+          transform: translateY(-2px);
+        }
+
+        /* Shared KeyNote reset */
+        .key-note-pair {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          justify-content: flex-start !important;
+          gap: 3px !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          border: none !important;
+          min-width: 0 !important;
+
+          h3 {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 11.5px !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+            line-height: 1.35 !important;
+          }
+
+          .rc-key-note-wrapper {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+
+            p {
+              margin: 0 !important;
+              padding: 0 !important;
+              font-size: 13.5px !important;
+              font-weight: 600 !important;
+              color: #1e293b !important;
+              line-height: 1.4 !important;
+              word-break: break-word !important;
+            }
+          }
+
+          .caption {
+            display: none !important;
+          }
+
+          /* 1st KeyNote: Application Number header left with 38x38 document icon */
+          &:nth-of-type(1) {
+            grid-column: 1 / 2 !important;
+            grid-row: 1 !important;
+            position: relative !important;
+            justify-content: center !important;
+            min-height: 40px !important;
+            padding: 0 0 14px 50px !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+
+            &::before {
+              content: "";
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 38px;
+              height: 38px;
+              border-radius: 10px;
+              background-color: #fff1f2;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a82227' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E");
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: 19px 19px;
+            }
+
+            h3 {
+              font-size: 10.5px !important;
+              font-weight: 700 !important;
+              text-transform: uppercase !important;
+              letter-spacing: 0.05em !important;
+              color: #64748b !important;
+            }
+
+            .rc-key-note-wrapper p {
+              font-size: 14px !important;
+              font-weight: 700 !important;
+              color: #0f172a !important;
+              font-family: monospace, sans-serif !important;
+              letter-spacing: -0.01em !important;
+              word-break: break-all !important;
+            }
+          }
+
+          /* 2nd KeyNote: Owner Name full-width with user icon */
+          &:nth-of-type(2) {
+            grid-column: 1 / -1 !important;
+            grid-row: 2 !important;
+            padding: 2px 0 !important;
+
+            h3 {
+              display: flex !important;
+              align-items: center !important;
+              gap: 6px !important;
+
+              &::before {
+                content: "";
+                display: inline-block;
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 14px 14px;
+              }
+            }
+
+            .rc-key-note-wrapper p {
+              font-size: 14px !important;
+              font-weight: 600 !important;
+              color: #1e293b !important;
+            }
+          }
+
+          /* 3rd KeyNote: Status pill placed in top-right card header */
+          &:nth-of-type(3) {
+            grid-column: 2 / 3 !important;
+            grid-row: 1 !important;
+            align-items: flex-end !important;
+            justify-content: center !important;
+            padding: 0 0 14px 0 !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+
+            h3 {
+              display: none !important;
+            }
+
+            .rc-key-note-wrapper {
+              width: auto !important;
+              display: flex !important;
+              justify-content: flex-end !important;
+
+              p {
+                display: inline-flex !important;
+                width: fit-content !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+                padding: 4px 10px !important;
+                border-radius: 9999px !important;
+                font-size: 10.5px !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.03em !important;
+                line-height: 1.25 !important;
+                background: #fffbeb !important;
+                color: #b45309 !important;
+                border: 1px solid #fde68a !important;
+              }
+            }
+          }
+        }
+
+        /* Card Footer Actions */
+        .action-button-myapplication {
+          grid-column: 1 / -1 !important;
+          grid-row: 3 !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 10px !important;
+          margin: 4px 0 0 0 !important;
+          padding-top: 14px !important;
+          border-top: 1px solid #f1f5f9 !important;
+
+          >div {
+            flex: 1 1 0 !important;
+            margin: 0 !important;
+            min-width: 0 !important;
+
+            a {
+              display: block !important;
+              text-decoration: none !important;
+            }
+
+            .submit-bar {
+              width: 100% !important;
+              max-width: none !important;
+              min-width: 0 !important;
+              height: 38px !important;
+              padding: 0 14px !important;
+              border-radius: 8px !important;
+              transition: all 0.2s ease !important;
+
+              header {
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                white-space: nowrap !important;
+              }
+            }
+
+            /* Outlined secondary when paired with Make Payment */
+            &:first-child .submit-bar {
+              background: #ffffff !important;
+              border: 1.5px solid #fecaca !important;
+              box-shadow: 0 1px 3px rgba(168, 34, 39, 0.08) !important;
+
+              header {
+                color: #a82227 !important;
+              }
+
+              &:hover {
+                background: #fff1f2 !important;
+                border-color: #a82227 !important;
+                transform: translateY(-1px);
+              }
+            }
+
+            /* Primary crimson CTA (Make Payment, or View Details when only button) */
+            &:nth-child(2) .submit-bar,
+            &:only-child .submit-bar {
+              background: #a82227 !important;
+              border: none !important;
+              box-shadow: 0 2px 6px rgba(168, 34, 39, 0.2) !important;
+
+              header {
+                color: #ffffff !important;
+              }
+
+              &:hover {
+                background: #8e1c21 !important;
+                box-shadow: 0 4px 12px rgba(168, 34, 39, 0.3) !important;
+                transform: translateY(-1px);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /* Pagination Controls */
+    >.ndc-application-overview-custom {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 14px !important;
+      margin: 4px 0 !important;
+
+      button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #1e293b !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+
+        &:hover:not(:disabled) {
+          background: #fff1f2 !important;
+          border-color: #a82227 !important;
+          color: #a82227 !important;
+        }
+
+        &:disabled {
+          opacity: 0.45 !important;
+          cursor: not-allowed !important;
+        }
+      }
+
+      span {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 6px 14px !important;
+        border-radius: 9999px !important;
+      }
+    }
+
+    /* Footer Help Card & Empty State */
+    >.ndc-application-list {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 16px 22px !important;
+      margin: 0 !important;
+      font-size: 13.5px !important;
+      color: #64748b !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: wrap !important;
+      gap: 12px !important;
+      box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.05) !important;
+
+      /* Pin the "Not able to find the application?" footer bar at the bottom */
+      &:last-of-type {
+        position: absolute !important;
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 20px !important;
+        width: auto !important;
+        max-width: none !important;
+
+        @media (max-width: 768px) {
+          left: 12px !important;
+          right: 12px !important;
+          bottom: 16px !important;
+        }
+      }
+
+      .link a {
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 9px 18px !important;
+        border-radius: 8px !important;
+        background: #a82227 !important;
+        color: #ffffff !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        box-shadow: 0 2px 6px rgba(168, 34, 39, 0.2) !important;
+        transition: all 0.2s ease !important;
+
+        &:hover {
+          background: #8e1c21 !important;
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   NDC CITIZEN APPLICATION OVERVIEW — Modern Summary UX (Matches EST Details)
+   Pure SCSS only — zero JS/JSX changes.
+   ========================================================================== */
+.ndc-width-100-pad .employee-main-application-details {
+
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 0 40px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  box-sizing: border-box !important;
+
+  /* Top Title & Download MultiLink Bar */
+  .ndc-application-overview {
+    width: 100% !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 14px !important;
+
+    > header {
+      font-size: 26px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      letter-spacing: -0.02em !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1.25 !important;
+
+      @media (max-width: 640px) {
+        font-size: 22px !important;
+      }
+    }
+
+    .ndc-flex-end {
+      display: flex !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .cardHeaderWithOptions,
+    .ral-app-details-header {
+      margin: 0 !important;
+      padding: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+    }
+
+    .multilinkWrapper {
+      position: relative !important;
+      margin: 0 !important;
+      z-index: 20 !important;
+    }
+
+    .multilink-labelWrap {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 9px 18px !important;
+      border-radius: 10px !important;
+      background: #a82227 !important;
+      border: none !important;
+      box-shadow: 0 2px 8px rgba(168, 34, 39, 0.25) !important;
+      cursor: pointer !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+      &:hover {
+        background: #8e1c21 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(168, 34, 39, 0.35) !important;
+      }
+
+      svg,
+      svg path {
+        fill: #ffffff !important;
+      }
+
+      .multilink-link-button,
+      button {
+        color: #ffffff !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        border: none !important;
+      }
+    }
+
+    .multilink-optionWrap {
+      position: absolute !important;
+      top: calc(100% + 8px) !important;
+      right: 0 !important;
+      left: auto !important;
+      min-width: 230px !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 6px !important;
+      box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.14), 0 4px 10px rgba(15, 23, 42, 0.06) !important;
+      z-index: 30 !important;
+    }
+
+    .multilink-option {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 10px 12px !important;
+      border-radius: 8px !important;
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      cursor: pointer !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+
+      &:hover {
+        background: #fff1f2 !important;
+        color: #a82227 !important;
+      }
+    }
+  }
+
+  /* Summary Cards (.ndc_card_main & Timeline card) */
+  .ndc_card_main,
+  >.card {
+    position: relative !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 26px 30px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+    box-sizing: border-box !important;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, #a82227, #f97316);
+      opacity: 0.95;
+    }
+
+    @media (max-width: 768px) {
+      padding: 20px 18px !important;
+    }
+
+    /* Section Header */
+    .ndc_label,
+    .card-sub-header,
+    .employee-card-sub-header {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      letter-spacing: -0.01em !important;
+      margin: 0 0 18px 0 !important;
+      padding: 0 0 10px 0 !important;
+      border-bottom: 1px solid #f1f5f9 !important;
+      line-height: 1.35 !important;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        border-radius: 9999px;
+        background: linear-gradient(180deg, #a82227, #f97316);
+        flex-shrink: 0;
+      }
+    }
+
+    /* Multiple NDC Service Blocks Divider */
+    .ndc-application-overview-table+.ndc-application-overview-table {
+      margin-top: 20px !important;
+      padding-top: 20px !important;
+      border-top: 1px dashed #e2e8f0 !important;
+    }
+
+    /* 3-Column Borderless Metadata Grid (Matches EST Application Details) */
+    .data-table,
+    .employee-data-table {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 16px 28px !important;
+      width: 100% !important;
+      padding: 4px 0 !important;
+      margin: 0 !important;
+
+      @media (max-width: 960px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px 20px !important;
+      }
+
+      @media (max-width: 580px) {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      .row {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 4px !important;
+        padding: 8px 10px !important;
+        margin: 0 !important;
+        border: none !important;
+        border-bottom: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+
+        h2 {
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          font-size: 11.5px !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.04em !important;
+          color: #64748b !important;
+          line-height: 1.35 !important;
+        }
+
+        .value {
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          font-size: 14px !important;
+          font-weight: 600 !important;
+          color: #1e293b !important;
+          line-height: 1.45 !important;
+          word-break: break-word !important;
+        }
+      }
+
+      /* Soft rose highlight when Due Amount > 0 (replaces harsh solid red box) */
+      .ndc-due-red {
+        background: #fff1f2 !important;
+        border: 1px solid #fecaca !important;
+        border-radius: 10px !important;
+        padding: 2px 4px !important;
+        color: #991b1b !important;
+
+        .row {
+          h2 {
+            color: #991b1b !important;
+          }
+
+          .value {
+            color: #dc2626 !important;
+            font-weight: 700 !important;
+            font-size: 15px !important;
+          }
+        }
+      }
+
+      .ndc-due-default {
+        background: transparent !important;
+        padding: 0 !important;
+      }
+    }
+
+    /* Application Documents Overview — Horizontal Flex Cards */
+    .document-container {
+      width: 100% !important;
+      margin-top: 4px !important;
+
+      .document-grid {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: stretch !important;
+        gap: 16px !important;
+        width: 100% !important;
+      }
+
+      .document-link {
+        display: flex !important;
+        text-decoration: none !important;
+        flex: 0 0 auto !important;
+      }
+
+      .document-card {
+        width: 170px !important;
+        padding: 18px 14px !important;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #f8fafc !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        box-sizing: border-box !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+        &:hover {
+          background: #ffffff !important;
+          border-color: #fecaca !important;
+          box-shadow: 0 6px 18px -4px rgba(168, 34, 39, 0.12) !important;
+          transform: translateY(-2px);
+
+          .document-action-label {
+            background: #a82227 !important;
+            color: #ffffff !important;
+            border-color: #a82227 !important;
+          }
+        }
+      }
+
+      .document-icon-wrapper {
+        width: 64px !important;
+        height: 64px !important;
+        border-radius: 12px !important;
+        background: #fff1f2 !important;
+        border: 1px solid #fee2e2 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        svg {
+          width: 38px !important;
+          height: 44px !important;
+        }
+      }
+
+      .document-name {
+        margin: 0 !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        text-align: center !important;
+        line-height: 1.35 !important;
+        word-break: break-word !important;
+      }
+
+      .document-action-label {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 16px !important;
+        border-radius: 9999px !important;
+        background: #fff1f2 !important;
+        border: 1px solid #fecaca !important;
+        color: #a82227 !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+      }
+    }
+  }
 }

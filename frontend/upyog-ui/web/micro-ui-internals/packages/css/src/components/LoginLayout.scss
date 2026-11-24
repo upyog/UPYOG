@@ -524,7 +524,6 @@
 	display: flex;
 	align-items: center;
 	height: 48px;
-	padding: 0 14px;
 	border: 1.5px solid #dcd3ea;
 	border-radius: 8px;
 	background: #faf8fd;
@@ -539,6 +538,7 @@
 
 	input {
 		width: 100%;
+		padding: 0 24px !important;
 		border: none;
 		background: transparent;
 		outline: none;
@@ -827,45 +827,76 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 10px;
+	margin-top: 2px;
 	margin-bottom: 24px;
 	text-align: center;
 	width: 100%;
 	box-sizing: border-box;
+	padding: 34px 28px 30px;
+	border-radius: 20px;
+	background-image:
+		linear-gradient(105deg, rgba(26, 17, 52, 0.92) 0%, rgba(46, 31, 86, 0.84) 48%, rgba(62, 40, 108, 0.68) 100%),
+		url("/upyog-ui/images/dashboard-banner.jpg");
+	background-size: cover;
+	background-position: center right;
+	background-repeat: no-repeat;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	box-shadow: 0 18px 40px -12px rgba(30, 21, 56, 0.32), 0 4px 12px rgba(30, 21, 56, 0.14);
+	position: relative;
+	overflow: hidden;
+
+	.welcomeBanner__badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 5px 14px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.12);
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		backdrop-filter: blur(8px);
+		color: #f3e8ff;
+		font-size: 11.5px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		margin-bottom: 12px;
+	}
 
 	p {
 		margin: 0 0 6px 0;
 		font-size: 15px;
 		font-weight: 600;
-		color: #584F74;
+		color: rgba(233, 213, 255, 0.92);
 	}
 
 	h1 {
-		font-size: 28px;
-		font-weight: 700;
-		color: #1F1B2D;
+		font-size: 30px;
+		font-weight: 800;
+		color: #ffffff;
 		line-height: 1.25;
+		letter-spacing: -0.015em;
 		margin: 0;
 	}
 
-	div {
+	.welcomeBanner__searchBox,
+	&>div:not(.welcomeBanner__quickPills) {
 		display: flex;
 		width: 100%;
 		max-width: 680px;
 		background-color: #ffffff;
 		height: 54px;
 		border-radius: 28px;
-		margin-top: 16px;
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-		border: 1.5px solid #DCD3EA;
+		margin-top: 18px;
+		box-shadow: 0 10px 28px rgba(15, 10, 35, 0.22);
+		border: 2px solid rgba(255, 255, 255, 0.9);
 		box-sizing: border-box;
 		align-items: center;
-		padding: 4px 6px 4px 16px;
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		padding: 4px 6px 4px 18px;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
 		&:focus-within {
-			border-color: #584F74;
-			box-shadow: 0 4px 20px rgba(88, 79, 116, 0.15);
+			border-color: #c4b5fd;
+			box-shadow: 0 12px 32px rgba(15, 10, 35, 0.32), 0 0 0 4px rgba(196, 181, 253, 0.25);
 		}
 
 		img {
@@ -891,7 +922,7 @@
 
 		button {
 			margin: 0;
-			background: var(--app-btn-primary-gradient, linear-gradient(90deg, #6A4A91 0%, #3E285F 100%));
+			background: linear-gradient(90deg, #6A4A91 0%, #3E285F 100%);
 			padding: 0 28px;
 			height: 44px;
 			color: #ffffff;
@@ -905,6 +936,45 @@
 
 			&:hover {
 				opacity: 0.95;
+				transform: translateY(-1px);
+			}
+		}
+	}
+
+	.welcomeBanner__quickPills {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 16px;
+		max-width: 680px;
+
+		.welcomeBanner__quickLabel {
+			font-size: 12.5px;
+			font-weight: 600;
+			color: rgba(226, 232, 240, 0.85);
+			margin-right: 4px;
+		}
+
+		.welcomeBanner__pill {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 13px;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.12);
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			color: #ffffff;
+			font-size: 12.5px;
+			font-weight: 600;
+			cursor: pointer;
+			backdrop-filter: blur(6px);
+			transition: all 0.18s ease;
+
+			&:hover {
+				background: rgba(255, 255, 255, 0.24);
+				border-color: rgba(255, 255, 255, 0.4);
 				transform: translateY(-1px);
 			}
 		}
@@ -957,6 +1027,10 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	position: relative !important;
+	z-index: 30 !important;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
+	box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.05) !important;
 
 	.login-navbar-card {
 		display: flex;
@@ -1516,6 +1590,487 @@
 
 		.login-app-container {
 			margin: 16px auto 32px auto !important;
+			width: 92% !important;
+			max-width: 440px !important;
+			height: auto !important;
+			max-height: none !important;
+			padding: 24px 20px !important;
+		}
+	}
+}
+
+/* Temporarily hide hero headline & feature cards on Citizen & Employee login so the banner shows cleanly */
+.login-shell--citizen .login-hero__content,
+.login-shell--employee .login-hero__content {
+	display: none !important;
+}
+
+/* ==========================================================================
+   REVERSED LOGIN UX:
+   - Citizen: Full-height panel docked flush right + full banner image on left
+   - Employee: Fullscreen banner image + floating rounded card above the image
+   ========================================================================== */
+
+/* CITIZEN LOGIN — Full uncropped banner on left + Frosted glass blur right drawer */
+.login-shell--citizen:not(.login-shell--split-bg) {
+	background-image: url("/upyog-ui/images/UPYOG_Login_Background_Image.png") !important;
+	background-size: cover !important;
+	background-position: right center !important;
+	background-repeat: no-repeat !important;
+	background-color: #f8fafc !important;
+	align-items: stretch !important;
+
+	.login-hero {
+		background-image: url("/upyog-ui/images/UPYOG_Login_Background_Image.png") !important;
+		background-size: 100% 100% !important;
+		background-position: center !important;
+		background-repeat: no-repeat !important;
+		height: calc(100vh - 84px) !important;
+		max-height: calc(100vh - 84px) !important;
+		flex: 1 !important;
+		padding: 0 !important;
+		overflow: hidden !important;
+	}
+
+	.login-app-container {
+		position: relative !important;
+		height: calc(100vh - 84px) !important;
+		min-height: calc(100vh - 84px) !important;
+		max-height: calc(100vh - 84px) !important;
+		overflow-y: auto !important;
+		margin: 0 0 0 auto !important;
+		background: linear-gradient(180deg,
+				rgba(255, 255, 255, 0.80) 0%,
+				rgba(255, 255, 255, 0.72) 100%) !important;
+		backdrop-filter: blur(24px) saturate(165%) !important;
+		-webkit-backdrop-filter: blur(24px) saturate(165%) !important;
+		border-radius: 0 !important;
+		border-left: 1px solid rgba(255, 255, 255, 0.65) !important;
+		border-top: none !important;
+		border-right: none !important;
+		border-bottom: none !important;
+		box-shadow:
+			-16px 0 48px rgba(15, 23, 42, 0.16),
+			inset 1px 0 0 rgba(255, 255, 255, 0.85) !important;
+		display: flex !important;
+		flex-direction: column !important;
+		justify-content: center !important;
+		align-items: center !important;
+		padding: 36px 40px !important;
+		box-sizing: border-box !important;
+		width: 480px !important;
+		max-width: 100vw !important;
+		flex-shrink: 0 !important;
+		z-index: 10 !important;
+
+		&::before {
+			content: "";
+			display: block !important;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 3.5px;
+			background: linear-gradient(90deg, #7B1123 0%, #a82227 60%, #f97316 100%);
+		}
+
+		/* Borderless content directly on the frosted glass drawer (zero box-in-box) */
+		.login-panel__content {
+			position: relative !important;
+			width: 100% !important;
+			max-width: 396px !important;
+			margin: auto 0 !important;
+			padding: 0 !important;
+			background: transparent !important;
+			border-radius: 0 !important;
+			border: none !important;
+			box-shadow: none !important;
+			box-sizing: border-box !important;
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: center !important;
+		}
+
+		.login-back-btn {
+			display: inline-flex !important;
+			align-items: center !important;
+			gap: 6px !important;
+			width: fit-content !important;
+			margin: 0 0 14px 0 !important;
+			padding: 6px 12px 6px 10px !important;
+			border-radius: 9999px !important;
+			background: rgba(255, 255, 255, 0.78) !important;
+			border: 1px solid rgba(203, 213, 225, 0.85) !important;
+			color: #334155 !important;
+			font-size: 13px !important;
+			font-weight: 600 !important;
+			cursor: pointer !important;
+			transition: all 0.2s ease !important;
+
+			svg {
+				transition: transform 0.2s ease !important;
+			}
+
+			&:hover {
+				background: #fff1f2 !important;
+				border-color: #fecaca !important;
+				color: #a82227 !important;
+
+				svg {
+					transform: translateX(-2px);
+				}
+			}
+		}
+
+		.login-form-header {
+			margin-bottom: 22px !important;
+			padding-bottom: 16px !important;
+			border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+
+			&::before {
+				content: "CITIZEN PORTAL";
+				display: inline-flex;
+				align-items: center;
+				padding: 4px 11px;
+				margin-bottom: 10px;
+				border-radius: 9999px;
+				background: rgba(255, 241, 242, 0.9);
+				border: 1px solid rgba(254, 202, 202, 0.9);
+				color: #a82227;
+				font-size: 10px;
+				font-weight: 800;
+				letter-spacing: 0.08em;
+			}
+
+			h2 {
+				font-size: 26px !important;
+				font-weight: 800 !important;
+				color: #0f172a !important;
+				letter-spacing: -0.025em !important;
+				margin: 0 0 6px 0 !important;
+				line-height: 1.2 !important;
+			}
+
+			p {
+				font-size: 13.5px !important;
+				color: #334155 !important;
+				line-height: 1.5 !important;
+				margin: 0 !important;
+			}
+		}
+
+		.login-form-body {
+			display: flex !important;
+			flex-direction: column !important;
+			gap: 16px !important;
+		}
+
+		.login-field-group {
+			margin: 0 !important;
+		}
+
+		.login-label {
+			display: block !important;
+			font-size: 11px !important;
+			font-weight: 700 !important;
+			text-transform: uppercase !important;
+			letter-spacing: 0.05em !important;
+			color: #334155 !important;
+			margin-bottom: 7px !important;
+		}
+
+		/* Segmented Pill Language Tray on Frosted Glass */
+		.login-language-list {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			align-items: center !important;
+			gap: 6px !important;
+			padding: 5px !important;
+			margin: 0 !important;
+			border-radius: 12px !important;
+			background: rgba(255, 255, 255, 0.65) !important;
+			border: 1px solid rgba(203, 213, 225, 0.75) !important;
+
+			li {
+				flex: 1 1 auto !important;
+				display: inline-flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				border-radius: 9px !important;
+				border: 1px solid transparent !important;
+				background: transparent !important;
+				color: #334155 !important;
+				font-size: 13px !important;
+				font-weight: 600 !important;
+				padding: 7px 12px !important;
+				box-shadow: none !important;
+				transition: all 0.2s ease !important;
+
+				&:hover {
+					background: rgba(255, 255, 255, 0.92) !important;
+					color: #0f172a !important;
+				}
+
+				&.is-selected {
+					background: linear-gradient(135deg, #a82227 0%, #7B1123 100%) !important;
+					border-color: transparent !important;
+					color: #ffffff !important;
+					box-shadow: 0 4px 12px rgba(123, 17, 35, 0.3) !important;
+				}
+
+				&:last-child {
+					flex: 0 0 auto !important;
+					padding: 7px 9px !important;
+					opacity: 0.7;
+				}
+			}
+		}
+
+		/* City Dropdown — Crisp Glass-Integrated Field */
+		.city-selection {
+			border-radius: 12px !important;
+			border: 1.5px solid rgba(203, 213, 225, 0.85) !important;
+			background: rgba(255, 255, 255, 0.86) !important;
+			min-height: 46px !important;
+			transition: all 0.2s ease !important;
+
+			&:hover {
+				border-color: #94a3b8 !important;
+				background: #ffffff !important;
+			}
+
+			&:focus-within {
+				background: #ffffff !important;
+				border-color: #a82227 !important;
+				box-shadow: 0 0 0 4px rgba(168, 34, 39, 0.12) !important;
+			}
+
+			.city-selection-dropdown .select {
+				border: none !important;
+				background: transparent !important;
+				box-shadow: none !important;
+			}
+		}
+
+		/* Mobile Number Input */
+		.login-input-wrap {
+			border-radius: 12px !important;
+			border: 1.5px solid rgba(203, 213, 225, 0.85) !important;
+			background: rgba(255, 255, 255, 0.86) !important;
+			height: 46px !important;
+			overflow: hidden !important;
+			transition: all 0.2s ease !important;
+
+			&:hover {
+				border-color: #94a3b8 !important;
+				background: #ffffff !important;
+			}
+
+			&:focus-within {
+				background: #ffffff !important;
+				border-color: #a82227 !important;
+				box-shadow: 0 0 0 4px rgba(168, 34, 39, 0.12) !important;
+			}
+
+			.login-prefix {
+				background: rgba(241, 245, 249, 0.85) !important;
+				border-right: 1px solid rgba(203, 213, 225, 0.8) !important;
+				color: #1e293b !important;
+				font-weight: 700 !important;
+				font-size: 13.5px !important;
+				height: 100% !important;
+				display: inline-flex !important;
+				align-items: center !important;
+				padding: 0 14px !important;
+			}
+
+			input {
+				background: transparent !important;
+				font-size: 14.5px !important;
+				font-weight: 600 !important;
+				color: #0f172a !important;
+				letter-spacing: 0.03em !important;
+				padding: 0 14px !important;
+
+				&::placeholder {
+					color: #64748b !important;
+					font-weight: 400 !important;
+					letter-spacing: 0 !important;
+				}
+			}
+		}
+
+		.login-helper {
+			margin-top: 7px !important;
+			font-size: 12px !important;
+			color: #334155 !important;
+		}
+
+		/* Tactile Primary & DigiLocker Buttons */
+		.login-actions {
+			margin-top: 22px !important;
+			gap: 12px !important;
+		}
+
+		.login-primary-button {
+			height: 48px !important;
+			border-radius: 12px !important;
+			background: linear-gradient(135deg, #b91c1c 0%, #881337 100%) !important;
+			color: #ffffff !important;
+			font-size: 14.5px !important;
+			font-weight: 700 !important;
+			letter-spacing: 0.02em !important;
+			border: none !important;
+			box-shadow:
+				0 8px 22px -4px rgba(136, 19, 55, 0.42),
+				inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+			&:hover:not(:disabled) {
+				background: linear-gradient(135deg, #991b1b 0%, #6b0f2b 100%) !important;
+				transform: translateY(-1.5px) !important;
+				box-shadow:
+					0 12px 26px -4px rgba(136, 19, 55, 0.48),
+					inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+			}
+
+			&:active:not(:disabled) {
+				transform: translateY(0) !important;
+			}
+
+			&:disabled {
+				opacity: 0.5 !important;
+				box-shadow: none !important;
+				cursor: not-allowed !important;
+			}
+		}
+
+		.login-divider {
+			display: flex !important;
+			align-items: center !important;
+			gap: 12px !important;
+			font-size: 11px !important;
+			font-weight: 700 !important;
+			letter-spacing: 0.08em !important;
+			color: #475569 !important;
+			margin: 2px 0 !important;
+
+			&::before,
+			&::after {
+				content: "";
+				flex: 1;
+				height: 1px;
+				background: rgba(15, 23, 42, 0.14);
+			}
+		}
+
+		.login-secondary-button {
+			height: 46px !important;
+			border-radius: 12px !important;
+			background: rgba(255, 255, 255, 0.9) !important;
+			border: 1.5px solid rgba(203, 213, 225, 0.85) !important;
+			color: #0f172a !important;
+			font-size: 13.5px !important;
+			font-weight: 600 !important;
+			box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+			transition: all 0.2s ease !important;
+
+			&:hover {
+				background: #ffffff !important;
+				border-color: #94a3b8 !important;
+				transform: translateY(-1px) !important;
+				box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1) !important;
+			}
+		}
+
+		/* Soft Emerald Trust Badge */
+		.login-security {
+			margin-top: 18px !important;
+			padding: 9px 14px !important;
+			border-radius: 10px !important;
+			background: rgba(240, 253, 244, 0.88) !important;
+			border: 1px solid rgba(187, 247, 208, 0.9) !important;
+			font-size: 12px !important;
+			font-weight: 500 !important;
+			color: #166534 !important;
+			justify-content: center !important;
+		}
+	}
+
+	@media (max-width: 980px) {
+		.login-hero {
+			display: none !important;
+		}
+
+		.login-app-container {
+			width: 100% !important;
+			height: auto !important;
+			min-height: calc(100vh - 84px) !important;
+			max-height: none !important;
+			margin: 0 !important;
+			box-shadow: none !important;
+		}
+	}
+}
+
+/* EMPLOYEE LOGIN — Fullscreen banner image + floating rounded card above image */
+.login-shell--employee,
+.login-shell--employee.login-shell-employeeV2 {
+	background-image: url("/upyog-ui/images/UPYOG_Login_Background_Image.png") !important;
+	background-size: 100% 100% !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+	width: 100vw !important;
+	height: calc(100vh - 84px) !important;
+	max-height: calc(100vh - 84px) !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+
+	.login-hero {
+		background: transparent !important;
+		background-image: none !important;
+		overflow: hidden !important;
+	}
+
+	.login-app-container {
+		background: rgba(255, 255, 255, 0.96) !important;
+		backdrop-filter: blur(16px) !important;
+		-webkit-backdrop-filter: blur(16px) !important;
+		border-radius: 20px !important;
+		box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+		border: 1px solid rgba(255, 255, 255, 0.9) !important;
+		height: auto !important;
+		min-height: 440px !important;
+		max-height: calc(100vh - 120px) !important;
+		overflow-y: auto !important;
+		margin: auto 80px auto auto !important;
+		padding: 32px 36px !important;
+		box-sizing: border-box !important;
+		width: 480px !important;
+		max-width: 90vw !important;
+		flex-shrink: 0 !important;
+		z-index: 10 !important;
+
+		.login-panel__content {
+			width: 100% !important;
+			max-width: 430px !important;
+			margin: 0 !important;
+		}
+	}
+
+	@media (max-width: 980px) {
+		height: auto !important;
+		min-height: calc(100vh - 84px) !important;
+		max-height: none !important;
+		flex-direction: column !important;
+		overflow-y: auto !important;
+
+		.login-hero {
+			display: none !important;
+		}
+
+		.login-app-container {
+			margin: 24px auto 32px auto !important;
 			width: 92% !important;
 			max-width: 440px !important;
 			height: auto !important;

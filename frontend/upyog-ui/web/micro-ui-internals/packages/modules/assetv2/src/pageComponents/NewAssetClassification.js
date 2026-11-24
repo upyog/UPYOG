@@ -506,7 +506,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
+              pattern: "^[a-zA-Z0-9\\/\\-]*$",
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
@@ -525,7 +525,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
+              pattern: "^[a-zA-Z0-9\\/\\-]*$",
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
@@ -555,7 +555,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z0-9/-]*$",
+                pattern: "^[a-zA-Z0-9\\/\\-]*$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}

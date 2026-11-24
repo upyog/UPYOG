@@ -27,11 +27,11 @@ const ASTDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     result =
       (EmptyInboxComp && <EmptyInboxComp data={data} />) ||
       (data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty) ? (
-        <Card className="assetv2-astdesktop-inbox-card">
+        <Card className="pt-desktop-inbox-card-mt-md">
           {t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
             .map((text, index) => (
-              <p key={index} className="assetv2-astdesktop-inbox-centered">
+              <p key={index} className="pt-desktop-inbox-card-center-text">
                 {text}
               </p>
             ))}
@@ -87,7 +87,7 @@ const ASTDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div className="assetv2-astdesktop-inbox-wrapper">
+      <div className="pt-desktop-inbox-flex-1">
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={(d) => {
@@ -100,7 +100,7 @@ const ASTDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           searchParams={props.searchParams}
           clearSearch={() => setClearSearchCalled(true)}
         />
-        <div className={`result ${!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
+        <div className={`result pt-desktop-inbox-result ${!props?.isSearch ? "pt-desktop-inbox-result-inbox" : ""}`}>
           {result}
         </div>
       </div>

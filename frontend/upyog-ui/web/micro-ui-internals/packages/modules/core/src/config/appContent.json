@@ -50,6 +50,7 @@
         "pointers": {
           "enabled": true,
           "showIcons": true,
+          "isWhiteCard": true,
           "hasBackground": true,
           "data": [
             {
@@ -520,7 +521,7 @@
     "theme": "metroBurgundy",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/upyog-ui/images/citizen-metro-bg.jpg",
+        "backgroundUrl": "/upyog-ui/images/UPYOG_Login_Background_Image.png",
         "isFormOnLeft": false,
         "isSplitBg": false,
         "hasHeroCard": true,
@@ -625,6 +626,7 @@
         "pointers": {
           "enabled": true,
           "showIcons": true,
+          "isWhiteCard": true,
           "hasBackground": true,
           "data": [
             {
@@ -666,8 +668,9 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/upyog-ui/images/empbg.png",
+        "backgroundUrl": "/upyog-ui/images/UPYOG_Login_Background_Image.png",
         "isEmployeeV2": true,
+        "hasHeroCard": true,
         "mainlogo": {
           "dualLogo": false,
           "url": "/upyog-ui/images/logo-secondary.png"
@@ -686,6 +689,7 @@
         "pointers": {
           "enabled": true,
           "showIcons": true,
+          "isWhiteCard": true,
           "hasBackground": true,
           "data": [
             {

@@ -28,6 +28,7 @@ import appContent from "../../config/appContent.json";
 const layout = appContent.citizen8.layout;
 
 const sidebarHiddenFor = [
+  "/upyog-ui/citizen/register",
   "/upyog-ui/citizen/register/name",
   "/upyog-ui/citizen/login",
   "/upyog-ui/citizen/register/otp",
@@ -106,7 +107,9 @@ const Home = (props) => {
   let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
   newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
 
-  const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
+  const hideSidebar =
+    isLoginPage ||
+    sidebarHiddenFor.some((e) => location?.pathname?.includes(e) || window.location.href.includes(e));
   const toggleSidebarWidth = () => {
     if (window.innerWidth <= 780 || window.Digit.Utils.browser.isMobile()) {
       setIsMobileSidebarOpen((prev) => !prev);
