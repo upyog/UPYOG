@@ -102,28 +102,11 @@ class ICICIUtils {
 
             // Remove secureHash field if already present
             requestMap.remove("secureHash");
-
-            
-            String[] hashSequence = {
-                    "addlParam1",
-                    "addlParam2",
-                    "amount",
-                    "currencyCode",
-                    "customerEmailID",
-                    "customerMobileNo",
-                    "customerName",
-                    "merchantId",
-                    "merchantTxnNo",
-                    "payType",
-                    "returnURL",
-                    "transactionType",
-                    "txnDate"
-            };
             
             // Create plain hash text
             StringBuilder plainHashText = new StringBuilder();
 
-            for (String key : hashSequence) {
+            for (String key : PgConstants.ICICI_HASH_SEQUENCE) {
                 Object value = requestMap.get(key);
 
                 if (value != null) {

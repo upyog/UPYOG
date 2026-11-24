@@ -12,6 +12,7 @@ import org.egov.pg.models.Refund;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.models.Transaction.TxnStatusEnum;
 import org.egov.pg.service.Gateway;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -123,7 +124,7 @@ public class ICICIGateway implements Gateway {
             byte[] responseBytes = response.getBody();
 
             if (responseBytes == null || responseBytes.length == 0) {
-                throw new RuntimeException("Empty response from ICICI");
+            	throw new CustomException("ICICI_EMPTY_RESPONSE","Empty response from ICICI");
             }
             
             log.info("ICICI initiate sale response : {}", responseBytes);
@@ -149,8 +150,8 @@ public class ICICIGateway implements Gateway {
             );
 
             if (!"R1000".equals(responseCode)) {
-
-                throw new RuntimeException("ICICI payment initiation failed : " + responseBody);
+            	
+            	throw new CustomException("ICICI_PAYMENT_INITIATION_FAILED","ICICI payment initiation failed : " + responseBody);
             }
 
             String redirectURI = (String) responseBody.get("redirectURI");
@@ -158,7 +159,7 @@ public class ICICIGateway implements Gateway {
             String tranCtx = (String) responseBody.get("tranCtx");
             
 			if (redirectURI == null || tranCtx == null) {
-				throw new RuntimeException("Missing redirectURI or tranCtx in ICICI response");
+				throw new CustomException("ICICI_INVALID_RESPONSE","Missing redirectURI or tranCtx in ICICI response");
 			}
 
             return UriComponentsBuilder.fromHttpUrl(redirectURI).queryParam("tranCtx", tranCtx).build().toUri();
@@ -167,7 +168,7 @@ public class ICICIGateway implements Gateway {
 
             log.info("Error while generating ICICI redirect URI", ex);
 
-            throw new RuntimeException("ICICI payment initiation failed", ex);
+            throw new CustomException("ICICI PAYMENT INITIATION FAILED",ex.getMessage());
         }
     }
 
@@ -205,7 +206,7 @@ public class ICICIGateway implements Gateway {
             byte[]responseBytes = response.getBody();
            
             if (responseBytes == null || responseBytes.length == 0) {
-                throw new RuntimeException("Empty response from ICICI");
+                throw new CustomException("ICICI_EMPTY_RESPONSE","Empty response from ICICI");
             }
 
             String responseString = new String(responseBytes, StandardCharsets.UTF_8);
@@ -239,8 +240,7 @@ public class ICICIGateway implements Gateway {
         } catch (Exception ex) {
 
             log.info("Error while fetching ICICI payment status:{}", ex);
-
-            throw new RuntimeException("ICICI payment status fetch failed", ex);
+            throw new CustomException("ICICI_STATUS_FETCH_FAILED",ex.getMessage());
         }
     }
 

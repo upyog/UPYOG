@@ -1,5 +1,7 @@
 package org.egov.pg.constants;
 
+import java.util.List;
+
 public class PgConstants {
 
     public static final String TXN_INITIATED = "Transaction initiated";
@@ -17,6 +19,9 @@ public class PgConstants {
     public static final String PG_MODULE = "egov-pg";
     public static final String PG_REFUND = "PG_REFUND";
     public static final String HMAC_SHA256 = "HmacSHA256";
+	public static final List<String> ICICI_HASH_SEQUENCE = List.of("addlParam1", "addlParam2", "amount", "currencyCode",
+			"customerEmailID", "customerMobileNo", "customerName", "merchantId", "merchantTxnNo", "payType",
+			"returnURL", "transactionType", "txnDate");
 
     private PgConstants() {
     }
