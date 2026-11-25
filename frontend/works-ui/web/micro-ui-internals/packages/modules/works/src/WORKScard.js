@@ -2,16 +2,16 @@ import { PersonIcon, EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-compo
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-// Visible to any logged-in user holding the EMPLOYEE role
-const hasEmployeeRole = () => {
+// Visible to any logged-in employee holding a role starting with WMS_
+const hasWmsRole = () => {
     const userRoles = Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [];
-    return userRoles.includes("EMPLOYEE");
+    return userRoles.some((code) => typeof code === "string" && code.startsWith("WMS_"));
 };
 
 const WORKSCard = () => {
     const { t } = useTranslation();
 
-    if (!hasEmployeeRole()) {
+    if (!hasWmsRole()) {
         return null;
     }
 

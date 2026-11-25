@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import EmployeeApp from "./pages/employee";
 import WORKSCard from "./WORKScard";
 import CreateActionPlan from "./pages/employee/CreateActionPlan";
 import Inbox from "./pages/employee/Inbox";
 import FormBuilder from "./form-builder/FormBuilder";
+import actionPlanMessages from "./forms/actionPlan.messages.json";
 
 /**
  * Components exposed to the Digit ComponentRegistry so other modules / configs
@@ -29,12 +31,21 @@ const addComponentsToRegistry = () => {
  * where code = "WORKS" (from MDMS tenant.citymodule).
  * Works is employee-only, so citizens get nothing.
  */
+const WORKS_MODULE_CODES = ["WORKS", "WMS"];
+
 export const WORKSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = Digit.Hooks.useModuleBasePath();
+  const { i18n } = useTranslation();
 
-  const moduleCode = "WORKS";
   const language = Digit.StoreData.getCurrentLanguage();
-  const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode: WORKS_MODULE_CODES, language });
+
+  // Register local fallback labels into i18next inside useEffect (never during render)
+  useEffect(() => {
+    if (!isLoading && i18n && language) {
+      i18n.addResourceBundle(language, "translation", actionPlanMessages, true, false);
+    }
+  }, [i18n, language, isLoading]);
 
   addComponentsToRegistry();
 

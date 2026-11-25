@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-const STATUS_OPTIONS = [
-  { code: "PENDING_FOR_VERIFICATION", label: "WORKS_STATUS_PENDING_FOR_VERIFICATION", defaultLabel: "Pending Verification" },
-  { code: "PENDING_APPROVAL", label: "WORKS_STATUS_PENDING_APPROVAL", defaultLabel: "Pending Approval" },
-  { code: "APPROVED", label: "WORKS_STATUS_APPROVED", defaultLabel: "Approved" },
-  { code: "INITIATED", label: "WORKS_STATUS_INITIATED", defaultLabel: "Initiated" },
-  { code: "REJECTED", label: "WORKS_STATUS_REJECTED", defaultLabel: "Rejected" },
+const DEFAULT_STATUS_OPTIONS = [
+  { code: "PENDING_FOR_VERIFICATION", label: "WF_WORKS_PENDING_FOR_VERIFICATION" },
+  { code: "PENDING_FOR_APPROVAL", label: "WF_WORKS_PENDING_FOR_APPROVAL" },
+  { code: "APPROVED", label: "WF_WORKS_APPROVED" },
+  { code: "INITIATED", label: "WF_WORKS_INITIATED" },
+  { code: "REJECTED", label: "WF_WORKS_REJECTED" },
 ];
 
 const SCHEME_OPTIONS = [
@@ -21,14 +21,37 @@ const SCHEME_OPTIONS = [
 
 const FINANCIAL_YEARS = ["2026-27", "2025-26", "2024-25", "2023-24"];
 
-const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) => {
+const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {}, statusMap = [] }) => {
   const { t } = useTranslation();
 
+  const [assignee, setAssignee] = useState(filters.assignee || "ASSIGNED_TO_ALL");
   const [selectedStatuses, setSelectedStatuses] = useState(
     Array.isArray(filters.status) ? filters.status : filters.status ? [filters.status] : []
   );
   const [selectedScheme, setSelectedScheme] = useState(filters.scheme || "");
   const [selectedFY, setSelectedFY] = useState(filters.financialYear || "");
+
+  // Use live statusMap from /inbox/v1/_search when available, else fallback defaults
+  const statusOptions = useMemo(() => {
+    if (Array.isArray(statusMap) && statusMap.length > 0) {
+      return statusMap
+        .filter((s) => s?.applicationstatus || s?.stateid)
+        .map((s) => {
+          const statusKey = s.applicationstatus || s.state || s.stateid;
+          return {
+            code: s.stateid || statusKey,
+            statusKey,
+            label: `WF_WORKS_${statusKey}`,
+            count: Number(s.count) || 0,
+          };
+        });
+    }
+    return DEFAULT_STATUS_OPTIONS.map((item) => ({
+      ...item,
+      statusKey: item.code,
+      count: statusCounts[item.code] ?? 0,
+    }));
+  }, [statusMap, statusCounts]);
 
   const handleStatusToggle = (code) => {
     setSelectedStatuses((prev) =>
@@ -36,9 +59,21 @@ const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) =
     );
   };
 
+  const handleAssigneeChange = (val) => {
+    setAssignee(val);
+    onFilterChange({
+      ...filters,
+      assignee: val === "ASSIGNED_TO_ME" ? "ASSIGNED_TO_ME" : undefined,
+      status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
+      scheme: selectedScheme || undefined,
+      financialYear: selectedFY || undefined,
+    });
+  };
+
   const handleApply = (e) => {
     e?.preventDefault();
     onFilterChange({
+      assignee: assignee === "ASSIGNED_TO_ME" ? "ASSIGNED_TO_ME" : undefined,
       status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
       scheme: selectedScheme || undefined,
       financialYear: selectedFY || undefined,
@@ -46,6 +81,7 @@ const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) =
   };
 
   const handleClear = () => {
+    setAssignee("ASSIGNED_TO_ALL");
     setSelectedStatuses([]);
     setSelectedScheme("");
     setSelectedFY("");
@@ -61,13 +97,45 @@ const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) =
         </button>
       </div>
 
+      {/* Assigned To Filter (matches PT Inbox) */}
+      <div className="works-filter-section">
+        <span className="works-filter-label">{t("ES_INBOX_ASSIGNED_TO", "Assigned To")}</span>
+        <div style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+          {[
+            { code: "ASSIGNED_TO_ALL", label: t("ES_INBOX_ASSIGNED_TO_ALL", "All") },
+            { code: "ASSIGNED_TO_ME", label: t("ES_INBOX_ASSIGNED_TO_ME", "Assigned to me") },
+          ].map((opt) => {
+            const active = assignee === opt.code;
+            return (
+              <button
+                key={opt.code}
+                type="button"
+                onClick={() => handleAssigneeChange(opt.code)}
+                style={{
+                  flex: 1,
+                  padding: "7px 10px",
+                  borderRadius: "6px",
+                  border: active ? "1.5px solid #584f74" : "1px solid #d0d5dd",
+                  background: active ? "#f0e9f7" : "#ffffff",
+                  color: active ? "#584f74" : "#344054",
+                  fontWeight: active ? 600 : 500,
+                  fontSize: "12.5px",
+                  cursor: "pointer",
+                }}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Status Filter */}
       <div className="works-filter-section">
         <span className="works-filter-label">{t("WORKS_INBOX_STATUS", "Status")}</span>
         <div className="works-filter-checkboxes">
-          {STATUS_OPTIONS.map((item) => {
+          {statusOptions.map((item) => {
             const isChecked = selectedStatuses.includes(item.code);
-            const count = statusCounts[item.code] ?? 0;
             return (
               <label key={item.code} className="works-filter-check-item">
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -76,9 +144,9 @@ const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) =
                     checked={isChecked}
                     onChange={() => handleStatusToggle(item.code)}
                   />
-                  <span>{t(item.label, item.defaultLabel)}</span>
+                  <span>{t(item.label)}</span>
                 </div>
-                {count > 0 && <span className="works-filter-count-badge">{count}</span>}
+                {item.count > 0 && <span className="works-filter-count-badge">{item.count}</span>}
               </label>
             );
           })}
@@ -127,4 +195,3 @@ const FilterActionPlan = ({ filters = {}, onFilterChange, statusCounts = {} }) =
 };
 
 export default FilterActionPlan;
-

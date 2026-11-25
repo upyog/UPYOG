@@ -679,7 +679,15 @@ export default function FormBuilder({
                 await onSubmit(payload);
                 setDirty(false);
             } catch (err) {
-                setFormError(err?.message || tr("FB_ERR_SUBMIT_FAILED"));
+                const apiErrors = err?.response?.data?.Errors;
+                const apiError =
+                    Array.isArray(apiErrors) && apiErrors.length > 0
+                        ? apiErrors
+                              .map((e) => e?.message || e?.description || e?.code)
+                              .filter(Boolean)
+                              .join(" | ")
+                        : err?.message;
+                setFormError(apiError || tr("FB_ERR_SUBMIT_FAILED"));
             }
         } finally {
             busyRef.current = false;

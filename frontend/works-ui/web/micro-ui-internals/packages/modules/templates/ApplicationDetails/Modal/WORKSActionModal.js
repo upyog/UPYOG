@@ -97,9 +97,6 @@ const WORKSActionModal = ({
     if (selectedApprover?.uuid) {
       workflow.assignes = [selectedApprover.uuid];
     }
-    if (selectedApprover?.department) {
-      workflow.approvingDepartment = selectedApprover.department;
-    }
     if (selectedApprover?.designation) {
       workflow.designation = selectedApprover.designation;
     }
