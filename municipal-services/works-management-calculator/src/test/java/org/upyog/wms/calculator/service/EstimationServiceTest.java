@@ -26,7 +26,7 @@ class EstimationServiceTest {
 
     private static Component component(String no, String category, String amount, FundDetail fund) {
         return Component.builder().componentNumber(no).componentName(no).category(category).status("ACTIVE")
-                .approvedAmount(new BigDecimal(amount)).fundDetails(List.of(fund)).build();
+                .fundSource(fund.getFundType()).approvedAmount(new BigDecimal(amount)).fundDetails(List.of(fund)).build();
     }
 
     /** FRS Section 5 example: 100 = Manpower 20 + Material 40 + Service 40. */
@@ -89,6 +89,19 @@ class EstimationServiceTest {
         List<TaxHeadEstimate> fees = service.fees(frsExample(), configs, "WMS.ACTION_PLAN");
         assertEquals(1, fees.size());
         assertEquals(new BigDecimal("100.00"), fees.get(0).estimateAmount());   // 0.5% of 100 = 0.50 -> min 100
+    }
+
+    @Test
+    void feeFundSourceComesFromComponents() {
+        ActionPlan plan = frsExample();
+        plan.setFundSource("GOVT_GRANT");
+        FeeConfig partial = new FeeConfig("PARTIAL", "WMS.ACTION_PLAN", "WMS_AP_PARTIAL_FEE", "FLAT",
+                new BigDecimal("50"), null, null, List.of("PARTIAL"), true);
+
+        List<TaxHeadEstimate> fees = service.fees(plan, List.of(partial), "WMS.ACTION_PLAN");
+
+        assertEquals(1, fees.size());
+        assertEquals(new BigDecimal("50.00"), fees.get(0).estimateAmount());
     }
 
     @Test

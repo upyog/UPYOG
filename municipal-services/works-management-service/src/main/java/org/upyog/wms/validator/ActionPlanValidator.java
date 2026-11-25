@@ -1,6 +1,7 @@
 package org.upyog.wms.validator;
 
 import static org.upyog.wms.constants.ErrorCodes.*;
+import static org.upyog.wms.constants.WmsConstants.COMPONENT_INACTIVE;
 import static org.upyog.wms.constants.WmsConstants.USER_TYPE_EMPLOYEE;
 import static org.upyog.wms.util.WmsUtil.isBlank;
 import static org.upyog.wms.util.WmsUtil.nn;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.upyog.wms.config.WmsConfiguration;
 import org.upyog.wms.constants.ActionPlanAction;
 import org.upyog.wms.constants.ActionPlanStatus;
+import org.upyog.wms.constants.FundType;
 import org.upyog.wms.util.WmsUtil;
 import org.upyog.wms.web.models.ActionPlan;
 import org.upyog.wms.web.models.ActionPlanRequest;
@@ -214,15 +216,41 @@ public class ActionPlanValidator {
                 && Objects.equals(user, existing.getAuditDetails().getCreatedBy())) {
             errors.add(MAKER_CHECKER, "workflow.action", "The creator of the plan cannot verify or approve it");
         }
-        // FR-AP-22: senior approval only for Government Grant (full or partial) funding
-        boolean senior = mdms.config().requiresSeniorApproval(existing.getFundSource());
+        // FR-AP-22: senior approval only for component-derived Government Grant / Partial funding.
+        Optional<FundType> derivedSource = componentFundSource(existing);
+        if (derivedSource.isEmpty()) {
+            errors.add(INVALID_ACTION, "projectDetails[0].components.fundSource",
+                    "Fund source cannot be determined from the active components");
+            return;
+        }
+        String fundSource = derivedSource.get().name();
+        boolean senior = mdms.config().requiresSeniorApproval(fundSource);
         if (action == ActionPlanAction.VERIFY && !senior) {
-            errors.add(INVALID_ACTION, "workflow.action", "Fund source " + existing.getFundSource()
+            errors.add(INVALID_ACTION, "workflow.action", "Fund source " + fundSource
                     + " does not need senior approval: use VERIFY_AND_APPROVE");
         } else if (action == ActionPlanAction.VERIFY_AND_APPROVE && senior) {
-            errors.add(INVALID_ACTION, "workflow.action", "Fund source " + existing.getFundSource()
+            errors.add(INVALID_ACTION, "workflow.action", "Fund source " + fundSource
                     + " needs senior approval: use VERIFY");
         }
+    }
+
+    private static Optional<FundType> componentFundSource(ActionPlan plan) {
+        Set<FundType> sources = new HashSet<>();
+        for (org.upyog.wms.web.models.Component component : projectComponents(plan)) {
+            if (!WmsUtil.isLive(component.getIsActive()) || COMPONENT_INACTIVE.equals(component.getStatus())) {
+                continue;
+            }
+            Optional<FundType> source = FundType.from(component.getFundSource());
+            if (source.isEmpty()) {
+                return Optional.empty();
+            }
+            sources.add(source.get());
+        }
+        if (sources.isEmpty()) {
+            return Optional.empty();
+        }
+        return sources.contains(FundType.PARTIAL) || sources.size() > 1
+                ? Optional.of(FundType.PARTIAL) : sources.stream().findFirst();
     }
 
     private void validateProjectIdChange(ActionPlan plan, ActionPlan existing, List<ActionPlan> sameProject,
