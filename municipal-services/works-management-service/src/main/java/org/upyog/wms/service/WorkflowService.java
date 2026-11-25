@@ -20,11 +20,13 @@ import org.upyog.wms.constants.ActionPlanStatus;
 import org.upyog.wms.constants.ErrorCodes;
 import org.upyog.wms.repository.ServiceRequestRepository;
 import org.upyog.wms.web.models.ActionPlan;
+import org.upyog.wms.web.models.RequestInfoWrapper;
 import org.upyog.wms.web.models.Workflow;
 import org.upyog.wms.web.models.mdms.MdmsData;
 import org.upyog.wms.web.models.workflow.ProcessInstance;
 import org.upyog.wms.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.wms.web.models.workflow.ProcessInstanceResponse;
+import org.upyog.wms.web.models.workflow.State;
 
 /**
  * Moves an Action Plan to its next status.
@@ -70,9 +72,13 @@ public class WorkflowService {
         if (!workflowEnabled) {
             return localTransition(action, currentStatus);
         }
+        ProcessInstance processInstance = processInstance(plan, action);
+        if (currentStatus != null) {
+            processInstance.setState(currentWorkflowState(requestInfo, plan));
+        }
         ProcessInstanceRequest request = ProcessInstanceRequest.builder()
                 .requestInfo(requestInfo)
-                .processInstances(List.of(processInstance(plan, action)))
+                .processInstances(List.of(processInstance))
                 .build();
         ProcessInstanceResponse response = serviceRequestRepository.post(
                 config.getWorkflowHost() + config.getWorkflowTransitionPath(), request, ProcessInstanceResponse.class);
@@ -83,6 +89,26 @@ public class WorkflowService {
                 .map(s -> isBlank(s.getApplicationStatus()) ? s.getState() : s.getApplicationStatus())
                 .orElseThrow(() -> new CustomException(ErrorCodes.EXTERNAL_SERVICE,
                         "Workflow transition returned no state for " + plan.getApplicationNumber()));
+    }
+
+    private State currentWorkflowState(RequestInfo requestInfo, ActionPlan plan) {
+        String searchUrl = config.getWorkflowHost()
+                + config.getWorkflowTransitionPath().replace("_transition", "_search")
+                + "?tenantId=" + plan.getTenantId() + "&businessIds=" + plan.getApplicationNumber()
+                + "&businessService=" + config.getBusinessService();
+        ProcessInstanceResponse response = serviceRequestRepository.post(searchUrl,
+                RequestInfoWrapper.builder().requestInfo(requestInfo).build(), ProcessInstanceResponse.class);
+
+        return Optional.ofNullable(response)
+                .map(ProcessInstanceResponse::getProcessInstances)
+                .stream()
+                .flatMap(List::stream)
+                .filter(process -> plan.getApplicationNumber().equals(process.getBusinessId()))
+                .map(ProcessInstance::getState)
+                .filter(state -> state != null && !isBlank(state.getUuid()))
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorCodes.EXTERNAL_SERVICE,
+                        "Current workflow state not found for " + plan.getApplicationNumber()));
     }
 
     private String localTransition(ActionPlanAction action, String currentStatus) {

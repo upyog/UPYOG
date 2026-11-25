@@ -97,13 +97,35 @@ class SubmissionRulesTest {
     }
 
     @Test
-    void componentSourceMustFitPlanSource() {
+    void stalePlanSourceIsIgnoredBecauseComponentsAreCanonical() {
         ActionPlan plan = TestData.validPlan();
         plan.setFundSource("GOVT_GRANT");
         ValidationErrors errors = run(plan);
-        assertTrue(errors.asMap().containsKey(ErrorCodes.FUND_SOURCE_CONFLICT
-                        + ":projectDetails[0].components[2].fundSource"),
-                errors.asMap()::toString);
+        assertTrue(errors.isEmpty(), errors.asMap()::toString);
+    }
+
+    @Test
+    void planLevelFundSourceIsNotRequired() {
+        ActionPlan plan = TestData.validPlan();
+        plan.setFundSource(null);
+
+        ValidationErrors errors = run(plan);
+
+        assertTrue(errors.isEmpty(), errors.asMap()::toString);
+        assertFalse(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundSource"));
+    }
+
+    @Test
+    void missingComponentFundSourceIsReportedAtComponentLevel() {
+        ActionPlan plan = TestData.validPlan();
+        plan.setFundSource(null);
+        projectComponents(plan).get(0).setFundSource(null);
+
+        ValidationErrors errors = run(plan);
+
+        assertFalse(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":fundSource"));
+        assertTrue(errors.asMap().containsKey(ErrorCodes.REQUIRED
+                + ":projectDetails[0].components[0].fundSource"), errors.asMap()::toString);
     }
 
     @Test

@@ -160,7 +160,6 @@ public final class SubmissionRules {
         if (!subSchemes.isEmpty()) {
             requiredMaster(plan.getSubSchemeCode(), subSchemes, "subSchemeCode", "Sub-Scheme", errors);
         }
-        fundSource(plan.getFundSource(), "fundSource", errors);
         positiveAmount(plan.getApprovedAmount(), "approvedAmount", "Approved Amount", errors);
 
         if (plan.getTotalComponents() == null || plan.getTotalComponents() < 1) {
@@ -179,7 +178,6 @@ public final class SubmissionRules {
             errors.add(COMPONENT_COUNT_MISMATCH, "totalComponents", "Components entered (" + active.size()
                     + ") must match Total No. of Components (" + plan.getTotalComponents() + ")");
         }
-        Optional<FundType> planSource = FundType.from(plan.getFundSource());
         Set<String> numbers = new HashSet<>();
         Map<String, Integer> normalisedNames = new HashMap<>();
 
@@ -197,15 +195,6 @@ public final class SubmissionRules {
             positiveAmount(c.getApprovedAmount(), p + "approvedAmount", "Approved Component Amount", errors);
 
             Optional<FundType> compSource = fundSource(c.getFundSource(), p + "fundSource", errors);
-            if (compSource.isPresent() && planSource.isPresent() && compSource.get() != FundType.PARTIAL
-                    && !planSource.get().allowsRow(compSource.get())) {
-                errors.add(FUND_SOURCE_CONFLICT, p + "fundSource", "Fund Source " + c.getFundSource()
-                        + " is not allowed when the plan is funded by " + plan.getFundSource());
-            } else if (compSource.isPresent() && planSource.isPresent() && compSource.get() == FundType.PARTIAL
-                    && planSource.get() != FundType.PARTIAL) {
-                errors.add(FUND_SOURCE_CONFLICT, p + "fundSource",
-                        "Partial funding is allowed only when the plan Fund Source is Partial");
-            }
             compSource.ifPresent(s -> fundRows(s, c.getFundDetails(), c.getApprovedAmount(), p + "fundDetails",
                     "Approved Component Amount", errors));
             beneficiaries(c.getBeneficiaries(), p + "beneficiaries", errors);

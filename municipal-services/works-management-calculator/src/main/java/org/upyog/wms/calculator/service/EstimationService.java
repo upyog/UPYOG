@@ -6,10 +6,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -75,11 +77,12 @@ public class EstimationService {
     /** Fees from MDMS FeeConfig (FLAT or PERCENTAGE of the approved amount, clamped to min / max). */
     public List<TaxHeadEstimate> fees(ActionPlan plan, List<FeeConfig> configs, String businessService) {
         BigDecimal base = approvedAmount(plan);
+        String fundSource = componentFundSource(plan);
         return configs.stream()
                 .filter(FeeConfig::active)
                 .filter(f -> businessService.equals(f.businessService()))
                 .filter(f -> f.applicableFundSources() == null || f.applicableFundSources().isEmpty()
-                        || f.applicableFundSources().contains(plan.getFundSource()))
+                        || f.applicableFundSources().contains(fundSource))
                 .map(f -> new TaxHeadEstimate(f.taxHeadCode(), clamp(fee(f, base), f)))
                 .filter(t -> t.estimateAmount().signum() > 0)
                 .sorted(Comparator.comparing(TaxHeadEstimate::taxHeadCode))
@@ -142,6 +145,29 @@ public class EstimationService {
                 .filter(project -> !Boolean.FALSE.equals(project.getIsActive()))
                 .flatMap(project -> list(project.getComponents()).stream())
                 .toList();
+    }
+
+    private static String componentFundSource(ActionPlan plan) {
+        Set<String> sources = new HashSet<>();
+        for (Component component : components(plan)) {
+            if (Boolean.FALSE.equals(component.getIsActive()) || COMPONENT_INACTIVE.equals(component.getStatus())) {
+                continue;
+            }
+            String source = component.getFundSource();
+            if (FUND_GOVT_GRANT.equalsIgnoreCase(source)) {
+                sources.add(FUND_GOVT_GRANT);
+            } else if (FUND_OSR.equalsIgnoreCase(source)) {
+                sources.add(FUND_OSR);
+            } else if ("PARTIAL".equalsIgnoreCase(source)) {
+                sources.add("PARTIAL");
+            } else {
+                return null;
+            }
+        }
+        if (sources.isEmpty()) {
+            return null;
+        }
+        return sources.contains("PARTIAL") || sources.size() > 1 ? "PARTIAL" : sources.iterator().next();
     }
 
     private static BigDecimal approvedAmount(ActionPlan plan) {
