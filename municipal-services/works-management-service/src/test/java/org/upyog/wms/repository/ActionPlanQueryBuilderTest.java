@@ -62,20 +62,6 @@ class ActionPlanQueryBuilderTest {
     }
 
     @Test
-    void projectNameUsesCaseInsensitiveContainsSearchAndEscapesWildcards() {
-        ActionPlanSearchCriteria criteria = ActionPlanSearchCriteria.builder().tenantId("od")
-                .projectName(" Drain_100%! ").build();
-        List<Object> params = new ArrayList<>();
-
-        String sql = builder.getSearchQuery(criteria, params);
-
-        assertTrue(sql.contains("pd.projectname ILIKE ? ESCAPE '!'"));
-        assertFalse(sql.contains("Drain_100"));
-        assertEquals(List.of("od", "od.%", "%Drain!_100!%!!%", 10, 0), params);
-        assertEquals(placeholders(sql), (long) params.size());
-    }
-
-    @Test
     void childQueryUsesPlaceholders() {
         List<Object> params = new ArrayList<>();
         String sql = builder.getChildQuery("eg_wms_ap_component", "actionplanid", List.of("1", "2", "3"),

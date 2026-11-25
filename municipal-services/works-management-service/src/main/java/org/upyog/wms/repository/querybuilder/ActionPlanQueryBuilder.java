@@ -131,9 +131,8 @@ public class ActionPlanQueryBuilder {
 
     private static void containsIgnoreCase(StringBuilder sql, List<Object> params, String column, String value) {
         if (value != null && !value.isBlank()) {
-            String escapedValue = value.trim().replace("!", "!!").replace("%", "!%").replace("_", "!_");
-            sql.append(" AND ").append(column).append(" ILIKE ? ESCAPE '!'");
-            params.add("%" + escapedValue + "%");
+            sql.append(" AND POSITION(LOWER(?) IN LOWER(").append(column).append(")) > 0");
+            params.add(value.trim());
         }
     }
 
