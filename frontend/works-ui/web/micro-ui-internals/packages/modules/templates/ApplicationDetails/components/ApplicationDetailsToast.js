@@ -1,6 +1,23 @@
 import React from "react";
 import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 
+const extractErrorMessages = (error, t) => {
+  const apiErrors =
+    error?.response?.data?.Errors ||
+    error?.Errors ||
+    (Array.isArray(error) ? error : null);
+
+  if (Array.isArray(apiErrors) && apiErrors.length > 0) {
+    const messages = apiErrors
+      .map((err) => err?.message || err?.description || (err?.code ? t(err.code) : null))
+      .filter(Boolean);
+    if (messages.length > 0) return messages;
+  }
+
+  const single = error?.message || (typeof error === "string" ? error : null);
+  return single ? [single] : [];
+};
+
 function ApplicationDetailsToast({ t, showToast, closeToast, businessService }) {
   if (businessService?.includes("NewTL") || businessService?.includes("TL") || businessService?.includes("EDITRENEWAL")) {
     let label = "";
@@ -66,8 +83,28 @@ function ApplicationDetailsToast({ t, showToast, closeToast, businessService }) 
     }
     return <React.Fragment>{showToast && <Toast error={showToast.key === "error"} label={label} onClose={closeToast} />}</React.Fragment>;
   } else {
-    const label = showToast?.message || (showToast?.key === "error" ? showToast?.error?.message : `ES_${businessService}_${showToast?.action?.action}_UPDATE_SUCCESS`);
-    return <React.Fragment>{showToast && <Toast error={showToast.key === "error"} label={t(label)} onClose={closeToast} />}</React.Fragment>;
+    if (showToast?.key === "error") {
+      const errorMessages = extractErrorMessages(showToast?.error, t);
+      const errorLabel =
+        showToast?.message ||
+        (errorMessages.length > 1
+          ? errorMessages.map((msg) => `• ${msg}`).join("\n")
+          : errorMessages[0] || t("CS_SOMETHING_WENT_WRONG", "Something went wrong"));
+      return (
+        <React.Fragment>
+          {showToast && (
+            <Toast
+              error={true}
+              label={errorLabel}
+              onClose={closeToast}
+              style={{ whiteSpace: "pre-line", height: "auto", maxWidth: "600px", padding: "12px 16px" }}
+            />
+          )}
+        </React.Fragment>
+      );
+    }
+    const label = showToast?.message || `ES_${businessService}_${showToast?.action?.action}_UPDATE_SUCCESS`;
+    return <React.Fragment>{showToast && <Toast error={false} label={t(label)} onClose={closeToast} />}</React.Fragment>;
   }
 }
 

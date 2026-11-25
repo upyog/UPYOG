@@ -17,18 +17,31 @@ export default function CreateActionPlan({ parentRoute = "/works-ui/employee/wor
     const tr = useMemo(() => makeTr(t, { ...FB_MESSAGES, ...messages }), [t]);
 
     const [dirty, setDirty] = useState(false);
-    const [createdNo, setCreatedNo] = useState(null);
+    const [submittedPlan, setSubmittedPlan] = useState(null);
     const { mutateAsync: createPlan } = useCreateActionPlan();
 
     // Navigate in an effect so the leave-page guard is already disarmed when we leave
     useEffect(() => {
-        if (createdNo) navigate(`${parentRoute}/application-details/${createdNo}`, { replace: true });
-    }, [createdNo]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (submittedPlan) {
+            const appNo = submittedPlan.applicationNumber || "";
+            const target = appNo
+                ? `${parentRoute}/acknowledgement/${encodeURIComponent(appNo)}`
+                : `${parentRoute}/acknowledgement`;
+            navigate(target, {
+                replace: true,
+                state: {
+                    actionPlan: submittedPlan,
+                    applicationNumber: appNo,
+                    id: submittedPlan.id,
+                },
+            });
+        }
+    }, [submittedPlan]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleSubmit = async (data) => {
-        const plan = await createPlan({ ...data, tenantId }); // if this throws, FormBuilder shows the message
+        const plan = await createPlan({ ...data, tenantId }); // calls _create (INITIATE) then _update (SUBMIT)
         setDirty(false);
-        setCreatedNo(plan.applicationNumber);
+        setSubmittedPlan(plan);
     };
 
     const handleBack = () => {

@@ -218,7 +218,32 @@ export const useCreateActionPlan = () => {
         res?.actionPlans?.[0] ||
         res;
 
-      return created;
+      if (!created || (!created.id && !created.applicationNumber)) {
+        return created;
+      }
+
+      // Immediately call _update with SUBMIT action so the newly initiated Action Plan is submitted
+      const submitRes = await Digit.WorksService.updateActionPlan(
+        {
+          ActionPlan: {
+            ...created,
+            workflow: {
+              action: "SUBMIT",
+              comments: "Submitted for verification",
+            },
+          },
+        },
+        created?.tenantId || tenantId
+      );
+
+      const submitted =
+        submitRes?.ActionPlan ||
+        submitRes?.ActionPlans?.[0] ||
+        submitRes?.actionPlan ||
+        submitRes?.actionPlans?.[0] ||
+        created;
+
+      return submitted;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["works", "inbox"] });

@@ -19,6 +19,7 @@ const WorksDesktopInbox = ({
   filters = {},
   onFilterChange,
   statusCounts = {},
+  statusMap = [],
   parentRoute = "/works-ui/employee/works",
 }) => {
   return (
@@ -30,6 +31,7 @@ const WorksDesktopInbox = ({
           filters={filters}
           onFilterChange={onFilterChange}
           statusCounts={statusCounts}
+          statusMap={statusMap}
         />
       </div>
 
