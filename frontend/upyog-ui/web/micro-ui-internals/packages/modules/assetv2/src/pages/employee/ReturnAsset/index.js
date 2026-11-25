@@ -64,7 +64,7 @@ const ReturnAsset = () => {
       },   
     };
 
-    navigate("/upyog-ui/employee/asset/assetservice/return-response", { replace: true, state: { Asset: formData } }); 
+    navigate("/upyog-ui/employee/assetv2/assetservice/return-response", { replace: true, state: { Asset: formData } }); 
     
 
   };

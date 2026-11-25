@@ -77,7 +77,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   useEffect(() => {
     if(action?.state==="INITIATED"){
-      navigate(`/upyog-ui/employee/asset/assetservice/edit/`+ `${applicationData?.applicationNo}`);
+      const assetBase = window.location.pathname.includes("/assetv2/")
+        ? "/upyog-ui/employee/assetv2/assetservice/edit/"
+        : "/upyog-ui/employee/asset/assetservice/edit/";
+      navigate(assetBase + `${applicationData?.applicationNo}`);
     }
     else {
       setConfig(

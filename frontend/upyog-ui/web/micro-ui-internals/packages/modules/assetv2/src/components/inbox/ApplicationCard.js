@@ -60,7 +60,7 @@ export const ApplicationCard = ({
       </Card>
     );
   } else if (data && data?.length > 0) {
-    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={linkPrefix ? linkPrefix : "/upyog-ui/employee/asset/"} />;
+    result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={linkPrefix ? linkPrefix : "/upyog-ui/employee/assetv2/"} />;
   }
 
   return (

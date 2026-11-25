@@ -59,14 +59,14 @@ const EditAssetMaintenance = () => {
         costOfMaintenance :data?.editMaintenanceDetails?.[0]?.costOfMaintenance,
         description :data?.editMaintenanceDetails?.[0]?.description,
         vendor:data?.editMaintenanceDetails?.[0]?.vendor,
-        maintenanceCycle:data?.editMaintenanceDetails?.[0]?.maintenanceCycle.code,
+        maintenanceCycle:data?.editMaintenanceDetails?.[0]?.maintenanceCycle?.code,
         partsAddedOrReplaced:data?.editMaintenanceDetails?.[0]?.partsAddedOrReplaced,
         preConditionRemarks: data?.editMaintenanceDetails?.[0]?.preConditionRemarks,
         postConditionRemarks:data?.editMaintenanceDetails?.[0]?.postConditionRemarks,
         isAMCExpired: data?.editMaintenanceDetails?.[0]?.isAMCExpired,
         isWarrantyExpired: data?.editMaintenanceDetails?.[0]?.isWarrantyExpired,
-        isLifeOfAssetAffected:data?.editMaintenanceDetails?.[0]?.isLifeOfAssetAffected.code,
-        assetMaintenanceIncreasedYear:data?.editMaintenanceDetails?.[0]?.assetMaintenanceIncreasedYear.code,
+        isLifeOfAssetAffected:data?.editMaintenanceDetails?.[0]?.isLifeOfAssetAffected?.code,
+        assetMaintenanceIncreasedYear:data?.editMaintenanceDetails?.[0]?.assetMaintenanceIncreasedYear?.code,
         documents: [
             {
                 "documentType": "ASSET.MAINTENANCE.DOC3",
@@ -92,7 +92,7 @@ const EditAssetMaintenance = () => {
       }
     };
     
-    navigate("/upyog-ui/employee/asset/assetservice/edit-maintenance", { replace: true, state: { AssetMaintenance: formData,  applicationNo} });
+    navigate("/upyog-ui/employee/assetv2/assetservice/edit-maintenance", { replace: true, state: { AssetMaintenance: formData,  applicationNo} });
 
   };
 

@@ -6,7 +6,7 @@
 
 import React, { useCallback, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import {SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -174,7 +174,7 @@ const ASSETReportApplication = ({
     for (let i = 0; i < data.length; i += batchSize) {
       const batch = data.slice(i, i + batchSize);
       const qrPromises = batch.map(async (row, index) => {
-        const url = `https://niuatt.niua.in/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
+        const url = `https://upyog.niua.org/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
         const assetDetails = `
       Application No: ${row.applicationNo}
       Asset Classification: ${row.assetClassification}
@@ -209,36 +209,36 @@ const ASSETReportApplication = ({
     doc.save("Asset-QR-Reports.pdf");
   };
   return <React.Fragment>
-                
-                <div>
-                <Header>{t("AST_REPORTS_CHECK")}</Header>
-                <Card className={"card-search-heading"}>
-                    <span className="asset-search-report-application-card-grey-text">{t("Provide at least one parameter to search for an application")}</span>
-                </Card>
-                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-                <SearchField>
-                      <label>{t("MYCITY_CODE_LABEL")}</label>
-                      <Controller control={control} name="city" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={allCities} optionKey="i18nKey" t={t} disable={false} />} />
-                  </SearchField>
-                  <SearchField>
-                      <label>{t("AST_PARENT_CATEGORY_LABEL")}</label>
-                      <Controller control={control} name="assetParentCategory" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={asset_Type} optionKey="i18nKey" t={t} disable={false} />} />
-                  </SearchField>
-                <SearchField>
-                    <label>{t("AST_FROM_DATE")}</label>
-                    <Controller render={props => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />} name="fromDate" control={control} />
-                </SearchField>
-                <SearchField>
-                    <label>{t("AST_TO_DATE")}</label>
-                    <Controller render={props => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />} name="toDate" control={control} />
-                </SearchField>
-                <SearchField>
-                      <label>{t("AST_ASSET_CATEGORY_LABEL")}</label>
-                      <Controller control={control} name="assetClassification" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={menu_Asset} optionKey="i18nKey" t={t} disable={false} />} />
-                  </SearchField>
-                <SearchField className="submit">
-                    <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                    <p onClick={() => {
+
+    <div>
+      <Header>{t("AST_REPORTS_CHECK")}</Header>
+      <Card className={"card-search-heading"}>
+        <span className="asset-search-report-application-card-grey-text">{t("Provide at least one parameter to search for an application")}</span>
+      </Card>
+      <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
+        <SearchField>
+          <label>{t("MYCITY_CODE_LABEL")}</label>
+          <Controller control={control} name="city" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={allCities} optionKey="i18nKey" t={t} disable={false} />} />
+        </SearchField>
+        <SearchField>
+          <label>{t("AST_PARENT_CATEGORY_LABEL")}</label>
+          <Controller control={control} name="assetParentCategory" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={asset_Type} optionKey="i18nKey" t={t} disable={false} />} />
+        </SearchField>
+        <SearchField>
+          <label>{t("AST_FROM_DATE")}</label>
+          <Controller render={props => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />} name="fromDate" control={control} />
+        </SearchField>
+        <SearchField>
+          <label>{t("AST_TO_DATE")}</label>
+          <Controller render={props => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />} name="toDate" control={control} />
+        </SearchField>
+        <SearchField>
+          <label>{t("AST_ASSET_CATEGORY_LABEL")}</label>
+          <Controller control={control} name="assetClassification" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={menu_Asset} optionKey="i18nKey" t={t} disable={false} />} />
+        </SearchField>
+        <SearchField className="submit">
+          <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
+          <p onClick={() => {
             reset({
               applicationNo: "",
               city: "",
@@ -255,25 +255,25 @@ const ASSETReportApplication = ({
             setShowToast(null);
             previousPage();
           }} className="asset-search-report-application-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
-                </SearchField>
-                
-            </SearchForm>
+        </SearchField>
 
-            <br></br>
-           {data !== "" ? <div className="asset-search-report-application-flex-mt-sm">
-            <button onClick={downloadPDF} className="asset-search-report-application-btn-red-action">Download PDF</button>
-            <button onClick={downloadXLS} className="asset-search-report-application-btn-red-action-2">Download XLS</button> 
-            <button onClick={downloadQRReport} className="asset-search-report-application-btn-red-action-3">Download QR Report</button> 
+      </SearchForm>
 
-            </div> : ""}
+      <br></br>
+      {data !== "" ? <div className="asset-search-report-application-flex-mt-sm">
+        <button onClick={downloadPDF} className="asset-search-report-application-btn-red-action">Download PDF</button>
+        <button onClick={downloadXLS} className="asset-search-report-application-btn-red-action-2">Download XLS</button>
+        <button onClick={downloadQRReport} className="asset-search-report-application-btn-red-action-3">Download QR Report</button>
 
-            <br></br>
-            
-            {!isLoading && data?.display ? <Card className="asset-search-report-application-card-mt-md">
-                {t(data.display).split("\\n").map((text, index) => <p key={index} className="asset-search-report-application-card-center-text">
-                        {text}
-                    </p>)}
-            </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+      </div> : ""}
+
+      <br></br>
+
+      {!isLoading && data?.display ? <Card className="asset-search-report-application-card-mt-md">
+        {t(data.display).split("\\n").map((text, index) => <p key={index} className="asset-search-report-application-card-center-text">
+          {text}
+        </p>)}
+      </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
         return {
           style: {
             minWidth: cellInfo.column.Header === t("ASSET_INBOX_APPLICATION_NO") ? "240px" : "",
@@ -285,9 +285,9 @@ const ASSETReportApplication = ({
         id: getValues("sortBy"),
         desc: getValues("sortOrder") === "DESC" ? true : false
       }]} /> : data !== "" || isLoading && <Loader />}
-            </div>
+    </div>
 
-            
-        </React.Fragment>;
+
+  </React.Fragment>;
 };
 export default ASSETReportApplication;

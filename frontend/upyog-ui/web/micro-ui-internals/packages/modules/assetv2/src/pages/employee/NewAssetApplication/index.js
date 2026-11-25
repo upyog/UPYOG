@@ -64,7 +64,7 @@ const NewAssetApplication = () => {
       },   
     };
 
-    navigate("/upyog-ui/employee/asset/assetservice/assign-response", { replace: true, state: { Assets: formData } }); 
+    navigate("/upyog-ui/employee/assetv2/assetservice/assign-response", { replace: true, state: { Assets: formData } }); 
     
 
   };

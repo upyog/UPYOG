@@ -106,11 +106,13 @@ import {
         }
     }, [formValue]);
 
+    const errorKeys = Object.keys(errors || {}).join(",");
+
     useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors))
         setError(config.key, { type: errors });
     else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
-    }, [errors]);
+    }, [errors, errorKeys, formState.errors[config.key]]);
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
@@ -165,7 +167,7 @@ import {
                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                         validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                         }}
-                        render={(props) => (
+                        render={({ field: props }) => (
                         <TextInput
                             type="date"
                             value={props.value}
@@ -178,7 +180,7 @@ import {
                     />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
                
 
                

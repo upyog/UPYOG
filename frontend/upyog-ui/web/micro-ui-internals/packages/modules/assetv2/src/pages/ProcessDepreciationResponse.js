@@ -7,6 +7,8 @@ const ProcessDepreciationResponse = (props) => {
   const location = useLocation();
   const { ProcessDepreciation, applicationNo } = location.state || {}; // Getting data from the location state
   const { t } = useTranslation();
+  const moduleBasePath = Digit.Hooks.useModuleBasePath();
+  const parentRoute = props.parentRoute || moduleBasePath?.path || "/upyog-ui/employee/assetv2";
   const [message, setMessage] = useState(null);
   const [applicationDetail, setApplicationDetail] = useState(null);
   const [error, setError] = useState(false);
@@ -58,7 +60,7 @@ const ProcessDepreciationResponse = (props) => {
               successful={true}
             />
             <div className="assetv2-asset-dispose-response-flex-row">
-              <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
+              <Link to={`${parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
                 <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
               </Link>
             </div>
@@ -73,7 +75,7 @@ const ProcessDepreciationResponse = (props) => {
       )}
 
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? "/upyog-ui/employee" : "/upyog-ui/citizen"}`}>
+        <Link to={`${parentRoute.includes("employee") ? "/upyog-ui/employee" : "/upyog-ui/citizen"}`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

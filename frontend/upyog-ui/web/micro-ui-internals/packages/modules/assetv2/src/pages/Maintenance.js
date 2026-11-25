@@ -52,10 +52,11 @@ const Maintenance = (props) => {
 
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { state } = props.location;
+  const location = useLocation();
+  const { state } = location || {};
   // console.log('State value :- ', state?.AssetMaintenance, state?.applicationNo);
 
-  const mutation = Digit.Hooks.asset.useMaintenanceAPI(tenantId, state.key !== "UPDATE");
+  const mutation = Digit.Hooks.asset.useMaintenanceAPI(tenantId, state?.key !== "UPDATE");
   const mutation1 = Digit.Hooks.asset.useMaintenanceAPI(tenantId, false);
 
   useEffect(() => {
