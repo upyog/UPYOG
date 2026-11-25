@@ -201,16 +201,9 @@ public class ActionPlanValidator {
         if (isBlank(wf.getComments())) {
             errors.add(REQUIRED, "workflow.comments", "Remarks are mandatory for " + action);
         }
-        if (isBlank(wf.getApprovingDepartment())) {
-            errors.add(REQUIRED, "workflow.approvingDepartment", "Approving Department is mandatory");
-        } else if (!mdms.approvingDepartments().contains(wf.getApprovingDepartment())) {
+        if (!isBlank(wf.getApprovingDepartment())
+                && !mdms.approvingDepartments().contains(wf.getApprovingDepartment())) {
             errors.add(INVALID_MASTER, "workflow.approvingDepartment", "Approving Department is not valid");
-        }
-        if (isBlank(wf.getDesignation())) {
-            errors.add(REQUIRED, "workflow.designation", "Name of the Designation is mandatory");
-        }
-        if (isBlank(wf.getApproverName())) {
-            errors.add(REQUIRED, "workflow.approverName", "Name of the Approver is mandatory");
         }
         if (mdms.config().makerCheckerSeparation()
                 && Objects.equals(user, existing.getAuditDetails().getCreatedBy())) {
