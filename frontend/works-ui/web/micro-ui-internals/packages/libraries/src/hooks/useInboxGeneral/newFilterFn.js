@@ -50,7 +50,7 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   PTR: (filtersArg) => {
-    
+
 
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
@@ -67,10 +67,10 @@ export const filterFunctions = {
       searchFilters.applicationNumber = applicationNumbers;
     }
 
-    if(petType){
-      searchFilters.petType=petType;
+    if (petType) {
+      searchFilters.petType = petType;
     }
-    
+
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
       workflowFilters.status = applicationStatus.map((status) => status.uuid);
       if (applicationStatus?.some((e) => e.nonActionableRole)) {
@@ -96,14 +96,14 @@ export const filterFunctions = {
     workflowFilters["moduleName"] = "pet-services";
 
 
-   
+
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   ASSET: (filtersArg) => {
     let { uuid } = Digit.UserService.getUser()?.info || {};
     const searchFilters = {};
     const workflowFilters = {};
-    const { applicationNo, assetParentCategory,assetClassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+    const { applicationNo, assetParentCategory, assetClassification, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
 
     if (filtersArg?.applicationNo) {
       searchFilters.applicationNo = filtersArg?.applicationNo;
@@ -114,7 +114,7 @@ export const filterFunctions = {
     if (filtersArg?.assetClassification) {
       searchFilters.assetClassification = filtersArg?.assetClassification;
     }
-    
+
 
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
       workflowFilters.status = applicationStatus.map((status) => status.uuid);
@@ -165,7 +165,7 @@ export const filterFunctions = {
     if (filtersArg?.requestId) {
       searchFilters.requestId = requestId;
     }
-    
+
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
       workflowFilters.status = applicationStatus.map((status) => status.uuid);
       if (applicationStatus?.some((e) => e.nonActionableRole)) {
@@ -191,8 +191,8 @@ export const filterFunctions = {
     workflowFilters["moduleName"] = "ewaste-services";
 
 
-    
-    return { requestId,searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+
+    return { requestId, searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   CHB: (filtersArg) => {
     /*
@@ -217,7 +217,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,venueType, limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
+    const { bookingNo, mobileNumber, venueType, limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -225,10 +225,10 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if(bookingNo) {   
+    if (bookingNo) {
       searchFilters.bookingNo = bookingNo;
     }
-    if(venueType){
+    if (venueType) {
       searchFilters.venueType = venueType.code;
     }
 
@@ -240,11 +240,11 @@ export const filterFunctions = {
     workflowFilters["moduleName"] = "chb-services";
 
 
-    
+
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
 
-  
+
   WT: (filtersArg) => {
     /*
   This function generates filters for querying Water Tanker applications.
@@ -267,7 +267,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+    const { bookingNo, mobileNumber, limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -275,18 +275,18 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if(bookingNo) {   
+    if (bookingNo) {
       searchFilters.bookingNo = bookingNo;
     }
     if (services) {
       workflowFilters.businessService = services;
     }
-    if(locality?.length) {
+    if (locality?.length) {
       searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
     }
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
-    workflowFilters["moduleName"] = "request-service.water_tanker";    
+    workflowFilters["moduleName"] = "request-service.water_tanker";
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   MT: (filtersArg) => {
@@ -311,7 +311,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+    const { bookingNo, mobileNumber, limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -319,20 +319,20 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if(bookingNo) {   
+    if (bookingNo) {
       searchFilters.bookingNo = bookingNo;
     }
     if (services) {
       workflowFilters.businessService = services;
     }
-    if(locality?.length) {
+    if (locality?.length) {
       searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
     }
 
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "request-service.mobile_toilet";
-    
+
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   TP: (filtersArg) => {
@@ -357,7 +357,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
+    const { bookingNo, mobileNumber, limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -365,24 +365,24 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if(bookingNo) {   
+    if (bookingNo) {
       searchFilters.bookingNo = bookingNo;
     }
     if (services) {
       workflowFilters.businessService = services;
     }
-    if(locality?.length) {
+    if (locality?.length) {
       searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
     }
 
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "request-service.tree_pruning";
-    
+
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
 
-   GC: (filtersArg) => {
+  GC: (filtersArg) => {
 
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
@@ -398,7 +398,7 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if(applicationNumber) {   
+    if (applicationNumber) {
       searchFilters.applicationNumber = applicationNumber;
     }
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
@@ -410,14 +410,14 @@ export const filterFunctions = {
     if (services) {
       workflowFilters.businessService = services;
     }
-    if(locality?.length) {
+    if (locality?.length) {
       searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
     }
 
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "garbage-service";
-    
+
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   /**
@@ -452,7 +452,7 @@ export const filterFunctions = {
 
 
 
-    const { serviceRequestId, services, mobileNumber, limit, offset, sortOrder, applicationStatus, status, assignee , locality, serviceCode} = filtersArg || {};
+    const { serviceRequestId, services, mobileNumber, limit, offset, sortOrder, applicationStatus, status, assignee, locality, serviceCode } = filtersArg || {};
 
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
 
@@ -478,7 +478,7 @@ export const filterFunctions = {
 
     }
 
-    if(assignee && assignee !==undefined){
+    if (assignee && assignee !== undefined) {
 
       searchFilters.assignee = assignee;
 
@@ -524,14 +524,14 @@ export const filterFunctions = {
 
     workflowFilters["moduleName"] = "pgr-ai-services";
 
-    
+
 
     return { searchFilters, workflowFilters, limit, offset, sortOrder };
 
-},
+  },
 
-// payload it will send beloe details in the inbox api whichever condition gets true
-FireNoc: (filtersArg) => {
+  // payload it will send beloe details in the inbox api whichever condition gets true
+  FireNoc: (filtersArg) => {
 
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
@@ -539,18 +539,18 @@ FireNoc: (filtersArg) => {
     const workflowFilters = {};
 
 
-    const { applicationNumber, mobileNumber, limit, offset, total, applicationStatus, services,sortOrder,assignee } = filtersArg || {};
+    const { applicationNumber, mobileNumber, limit, offset, total, applicationStatus, services, sortOrder, assignee } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
     }
     if (assignee === "ASSIGNED_TO_ME") {
-    workflowFilters.assignee = uuid;
-  }
+      workflowFilters.assignee = uuid;
+    }
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if(applicationNumber) {   
+    if (applicationNumber) {
       searchFilters.applicationNumber = applicationNumber;
     }
     if (applicationStatus?.length) {
@@ -562,7 +562,7 @@ FireNoc: (filtersArg) => {
 
     searchFilters["sortOrder"] = ["DESC"];
     workflowFilters["moduleName"] = "fireNoc";
-    
+
     return { searchFilters, workflowFilters, limit, offset, sortOrder };
   },
 
@@ -610,7 +610,7 @@ FireNoc: (filtersArg) => {
     }
 
     workflowFilters.businessService = services?.length ? services : ["WMS_ACTION_PLAN"];
-    workflowFilters.moduleName = "Works Management Service";
+    workflowFilters.moduleName = "works-management-service";
     searchFilters.isInboxSearch = true;
 
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };

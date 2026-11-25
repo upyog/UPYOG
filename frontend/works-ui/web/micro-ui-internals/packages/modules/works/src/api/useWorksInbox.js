@@ -61,7 +61,7 @@ export const useWorksInbox = ({
     queryFn: async () => {
       const processSearchCriteria = {
         businessService: ["WMS_ACTION_PLAN"],
-        moduleName: "Works Management Service",
+        moduleName: "works-management-service",
       };
 
       const moduleSearchCriteria = {
@@ -69,7 +69,7 @@ export const useWorksInbox = ({
       };
 
       if (searchParams.applicationNumber) {
-        moduleSearchCriteria.applicationNumber = searchParams.applicationNumber.trim();
+        moduleSearchCriteria.applicationNumbers = searchParams.applicationNumber.trim();
       }
 
       const fy = searchParams.financialYear || filters.financialYear;

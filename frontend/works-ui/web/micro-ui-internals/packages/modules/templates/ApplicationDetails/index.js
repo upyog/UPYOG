@@ -160,7 +160,7 @@ const ApplicationDetails = (props) => {
         onError: (error, variables) => {
           setIsEnableLoader(false);
           setShowToast({ key: "error", error });
-          setTimeout(closeToast, 5000);
+          setTimeout(closeToast, 8000);
         },
         onSuccess: (data, variables) => {
           sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");

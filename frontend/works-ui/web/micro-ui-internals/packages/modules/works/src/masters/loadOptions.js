@@ -17,6 +17,7 @@ const fetchWorksMdms = async (stateId) => {
       {
         moduleName: "WorksManagement",
         masterDetails: [
+          { name: "District" },
           { name: "Scheme" },
           { name: "RecommendedBy" },
           { name: "Purpose" },
@@ -124,6 +125,7 @@ export async function loadOptions(spec) {
       ).toUpperCase();
 
       const rawDistricts =
+        (Array.isArray(wm.District) && wm.District.length > 0 && wm.District) ||
         (Array.isArray(tenantMdms.district) && tenantMdms.district.length > 0 && tenantMdms.district) ||
         (Array.isArray(tenantMdms.District) && tenantMdms.District.length > 0 && tenantMdms.District) ||
         [];
@@ -160,7 +162,7 @@ export async function loadOptions(spec) {
       // Fallback 2: local worksMasters.json aligned with defaultStateCode
       return fallbackOptions("District").map((d) => ({
         ...d,
-        parent: d.parent === "PB" ? defaultStateCode : d.parent,
+        parent: (d.parent || defaultStateCode).toUpperCase(),
       }));
     }
 

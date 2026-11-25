@@ -64,6 +64,7 @@ const Inbox = ({
   const actionPlans = data?.ActionPlans || [];
   const totalCount = data?.totalCount || 0;
   const statusCounts = data?.statusCounts || {};
+  const statusMap = data?.statusMap || [];
 
   return (
     <div className="works-inbox-wrapper">
@@ -85,6 +86,7 @@ const Inbox = ({
           filters={filters}
           onFilterChange={handleFilterChange}
           statusCounts={statusCounts}
+          statusMap={statusMap}
           parentRoute={parentRoute}
         />
       ) : (
@@ -103,6 +105,7 @@ const Inbox = ({
           filters={filters}
           onFilterChange={handleFilterChange}
           statusCounts={statusCounts}
+          statusMap={statusMap}
           parentRoute={parentRoute}
         />
       )}

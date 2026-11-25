@@ -25,20 +25,14 @@ const formatDate = (epoch) => {
 const getStatusBadge = (status, t) => {
   const s = String(status || "").toUpperCase();
   let badgeClass = "status-pending";
-  let label = t(`WORKS_STATUS_${s}`, s);
+  const label = s ? t(`WF_WORKS_${s}`) : "—";
 
-  if (s.includes("APPROV")) {
+  if (s === "APPROVED") {
     badgeClass = "status-approved";
-    label = t("WORKS_STATUS_APPROVED", "Approved");
   } else if (s.includes("INITIAT")) {
     badgeClass = "status-initiated";
-    label = t("WORKS_STATUS_INITIATED", "Initiated");
   } else if (s.includes("REJECT")) {
     badgeClass = "status-rejected";
-    label = t("WORKS_STATUS_REJECTED", "Rejected");
-  } else if (s.includes("VERIF")) {
-    badgeClass = "status-pending";
-    label = t("WORKS_STATUS_PENDING_FOR_VERIFICATION", "Pending Verification");
   }
 
   return (

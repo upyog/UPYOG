@@ -15,7 +15,7 @@
     ],
     "State": [
         {
-            "code": "PB",
+            "code": "PG",
             "name": "Punjab"
         },
         {
@@ -25,29 +25,24 @@
     ],
     "District": [
         {
-            "code": "LDH",
-            "name": "Ludhiana",
-            "parent": "PB"
-        },
-        {
-            "code": "ASR",
+            "code": "AMRITSAR",
             "name": "Amritsar",
-            "parent": "PB"
+            "parent": "PG"
         },
         {
-            "code": "JAL",
+            "code": "JALANDHAR",
             "name": "Jalandhar",
-            "parent": "PB"
+            "parent": "PG"
         },
         {
-            "code": "GGN",
-            "name": "Gurugram",
-            "parent": "HR"
+            "code": "LUDHIANA",
+            "name": "Ludhiana",
+            "parent": "PG"
         },
         {
-            "code": "FBD",
-            "name": "Faridabad",
-            "parent": "HR"
+            "code": "PATIALA",
+            "name": "Patiala",
+            "parent": "PG"
         }
     ],
     "RecommendedBy": [

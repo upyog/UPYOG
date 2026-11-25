@@ -207,25 +207,31 @@ function ApplicationDetailsContent({
   };
 
   // File open service
-  const openFilePDF = (fileId) => {
-    Digit.UploadServices.Filefetch([fileId], Digit.ULBService.getStateId())
-      .then((res) => {
-        const concatenatedUrls = res?.data?.fileStoreIds?.[0]?.url;
-        if (concatenatedUrls) {
-          const urlArray = concatenatedUrls.split(",");
-          const fileUrl = urlArray[0];
-          if (fileUrl) {
-            window.open(fileUrl, "_blank");
-          } else {
-            console.error("No valid URL found to open!");
-          }
-        } else {
-          console.error("URL is missing in the response!");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching file:", error);
-      });
+  const openFilePDF = async (fileId, docTenantId) => {
+    const primaryTenant = docTenantId || applicationDetails?.tenantId || tenantId || Digit.ULBService.getStateId();
+    const fallbackTenant = Digit.ULBService.getStateId();
+
+    const extractUrl = (res) => {
+      const raw = res?.data?.fileStoreIds?.[0]?.url || res?.data?.[fileId];
+      if (!raw) return null;
+      return String(raw).split(",")[0];
+    };
+
+    try {
+      let res = await Digit.UploadServices.Filefetch([fileId], primaryTenant);
+      let fileUrl = extractUrl(res);
+      if (!fileUrl && fallbackTenant && fallbackTenant !== primaryTenant) {
+        res = await Digit.UploadServices.Filefetch([fileId], fallbackTenant);
+        fileUrl = extractUrl(res);
+      }
+      if (fileUrl) {
+        window.open(fileUrl, "_blank", "noopener,noreferrer");
+      } else {
+        console.error("No valid URL found for fileStoreId:", fileId);
+      }
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
   };
 
   // Copy Application Number to Clipboard
@@ -326,6 +332,14 @@ function ApplicationDetailsContent({
 
   const statusPrefixToUse = timelineStatusPrefix || (businessService ? `${businessService.toUpperCase()}_COMMON_STATUS_` : "");
   const formattedStatus = rawStatus ? t(`${statusPrefixToUse}${rawStatus}`) : null;
+  const isWorksModule =
+    window.location.href.includes("/works/") ||
+    String(businessService || "").toUpperCase().includes("WMS") ||
+    String(businessService || "").toUpperCase().includes("ACTION_PLAN");
+  const worksActionId =
+    isWorksModule && String(rawStatus || "").toUpperCase() === "APPROVED"
+      ? applicationData?.actionPlanNumber || applicationData?.applicationNumber || primaryAppNumber
+      : null;
   const isEmployee = Digit.SessionStorage.get("user_type") === "employee";
   const createdDate = convertEpochToDateDMY(applicationData?.auditDetails?.createdTime);
   const applicationChannel = applicationData?.channel
@@ -379,51 +393,67 @@ function ApplicationDetailsContent({
           </div>
 
           <div className="app-details-header-main">
-            <div className="app-details-header-left">
-              <span className="app-details-header-label">{t("APPLICATION_NUMBER") || "Application Number"}</span>
-              <div className="app-details-header-app-no-wrap">
-                <span className="app-details-header-app-no">{primaryAppNumber}</span>
-                <button
-                  type="button"
-                  className={`app-details-copy-btn ${copiedAppNo ? "copied" : ""}`}
-                  onClick={() => handleCopyAppNo(primaryAppNumber)}
-                  title={t("COPY_TO_CLIPBOARD") || "Copy to clipboard"}
-                >
-                  {copiedAppNo ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  ) : (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "28px" }}>
+              <div className="app-details-header-left">
+                <span className="app-details-header-label">{t("APPLICATION_NUMBER") || "Application Number"}</span>
+                <div className="app-details-header-app-no-wrap">
+                  <span className="app-details-header-app-no">{primaryAppNumber}</span>
+                  <button
+                    type="button"
+                    className={`app-details-copy-btn ${copiedAppNo ? "copied" : ""}`}
+                    onClick={() => handleCopyAppNo(primaryAppNumber)}
+                    title={t("COPY_TO_CLIPBOARD") || "Copy to clipboard"}
+                  >
+                    {copiedAppNo ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                    )}
+                    {copiedAppNo && <span className="app-details-copy-tooltip">{t("COPIED") || "Copied!"}</span>}
+                  </button>
+                </div>
+
+                <div className="app-details-header-meta">
+                  {createdDate !== "NA" && (
+                    <span>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                      {t("SUBMITTED_ON") || "Submitted"}: {createdDate}
+                    </span>
                   )}
-                  {copiedAppNo && <span className="app-details-copy-tooltip">{t("COPIED") || "Copied!"}</span>}
-                </button>
+                  {applicationChannel && (
+                    <span>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                      {applicationChannel}
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="app-details-header-meta">
-                {createdDate !== "NA" && (
-                  <span>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    {t("SUBMITTED_ON") || "Submitted"}: {createdDate}
+              {worksActionId && (
+                <div
+                  className="app-details-header-left"
+                  style={{ borderLeft: "1px solid #e2e8f0", paddingLeft: "28px" }}
+                >
+                  <span className="app-details-header-label">
+                    {t("WORKS_AP_ACTION_ID") || "Action Plan ID"}
                   </span>
-                )}
-                {applicationChannel && (
-                  <span>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    {applicationChannel}
-                  </span>
-                )}
-              </div>
+                  <div className="app-details-header-app-no-wrap">
+                    <span className="app-details-header-app-no">{worksActionId}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {formattedStatus && (
@@ -606,6 +636,74 @@ function ApplicationDetailsContent({
             </div>
           )}
 
+
+          {/* Render Documents Section */}
+          {detail?.additionalDetails?.documents?.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "12px" }}>
+              {detail.additionalDetails.documents.map((docGroup, gIdx) => {
+                const docs = docGroup?.values || [];
+                if (docs.length === 0) return null;
+                return (
+                  <div key={gIdx}>
+                    {docGroup?.title && (
+                      <p style={{ fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "10px" }}>
+                        {t(docGroup.title)}
+                      </p>
+                    )}
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                        gap: "12px",
+                      }}
+                    >
+                      {docs.map((doc, dIdx) => (
+                        <button
+                          key={doc?.documentUid || doc?.fileStoreId || dIdx}
+                          type="button"
+                          onClick={() => openFilePDF(doc?.fileStoreId, doc?.tenantId)}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "12px 14px",
+                            background: "#f8fafc",
+                            border: "1px solid #e2e8f0",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            transition: "all 0.15s ease",
+                          }}
+                          title={t("CS_COMMON_VIEW", "View Document")}
+                        >
+                          <div style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
+                            <PDFSvg />
+                          </div>
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div
+                              style={{
+                                fontSize: "13px",
+                                fontWeight: 600,
+                                color: "#1e293b",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {t(doc?.title || doc?.documentType || "DOCUMENT")}
+                            </div>
+                            <div style={{ fontSize: "11.5px", color: "#584f74", marginTop: "2px", fontWeight: 500 }}>
+                              {t("CS_COMMON_VIEW", "View PDF")} ↗
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
         </div>
       ))}

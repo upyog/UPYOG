@@ -6,6 +6,7 @@ import CreateActionPlan from "./CreateActionPlan";
 import Inbox from "./Inbox";
 import ApplicationDetails from "./ApplicationDetails";
 import SearchApplication from "./SearchApplication";
+import ActionPlanAcknowledgement from "./ActionPlanAcknowledgement";
 
 const EmployeeApp = ({ path }) => {
     const basePath = path?.includes("/inbox") ? path.replace(/\/inbox.*$/, "") : (path || "/works-ui/employee/works");
@@ -16,6 +17,8 @@ const EmployeeApp = ({ path }) => {
                 <Route path="search-application" element={<PrivateRoute><SearchApplication parentRoute={basePath} /></PrivateRoute>} />
                 <Route path="application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={basePath} /></PrivateRoute>} />
                 <Route path="create-action-plan" element={<PrivateRoute><CreateActionPlan parentRoute={basePath} /></PrivateRoute>} />
+                <Route path="acknowledgement" element={<PrivateRoute><ActionPlanAcknowledgement parentRoute={basePath} /></PrivateRoute>} />
+                <Route path="acknowledgement/:applicationNumber" element={<PrivateRoute><ActionPlanAcknowledgement parentRoute={basePath} /></PrivateRoute>} />
                 <Route path="*" element={<Navigate to={`${basePath}/inbox`} replace />} />
             </Routes>
         </ThemeProvider>
