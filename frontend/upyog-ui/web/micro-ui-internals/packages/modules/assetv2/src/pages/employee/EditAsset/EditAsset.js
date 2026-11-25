@@ -73,7 +73,7 @@ const convertStringToFloat = (amountString) => {
       {
         onSuccess: (response) => {
           queryClient.clear();
-          navigate("/upyog-ui/employee/asset/assetservice/edit-response", { 
+          navigate("/upyog-ui/employee/assetv2/assetservice/edit-response", { 
             replace: true, 
             state: { 
               Assets: formData,
@@ -83,7 +83,7 @@ const convertStringToFloat = (amountString) => {
           });
         },
         onError: (error) => {
-          navigate("/upyog-ui/employee/asset/assetservice/edit-response", { 
+          navigate("/upyog-ui/employee/assetv2/assetservice/edit-response", { 
             replace: true, 
             state: { 
               Assets: formData,

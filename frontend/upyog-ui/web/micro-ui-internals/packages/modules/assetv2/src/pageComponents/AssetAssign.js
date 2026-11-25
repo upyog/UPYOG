@@ -132,11 +132,13 @@ const OwnerForm = (_props) => {
         }
     }, [formValue]);
 
+    const errorKeys = Object.keys(errors || {}).join(",");
+
     useEffect(() => {
         if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors))
             setError(config.key, { type: errors });
         else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
-    }, [errors]);
+    }, [errors, errorKeys, formState.errors[config.key]]);
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
@@ -173,7 +175,7 @@ const OwnerForm = (_props) => {
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={props.value}
                                         autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "assignedUser"}
@@ -190,7 +192,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.assignedUser ? errors?.assignedUser?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.assignedUser ? errors?.assignedUser?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_EMP_CODE")}</CardLabel>
                         <div className="field">
@@ -205,7 +207,7 @@ const OwnerForm = (_props) => {
                                             /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                                     },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={props.value}
                                         // disable={isEditScreen}
@@ -223,7 +225,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_DESIGNATION")}</CardLabel>
@@ -232,7 +234,7 @@ const OwnerForm = (_props) => {
                             control={control}
                             name={"designation"}
                             defaultValue={assigndetails?.designation}
-                            render={(props) => (
+                            render={({ field: props }) => (
                                 <Dropdown
                                     className="form-field"
                                     selected={props.value}
@@ -246,7 +248,7 @@ const OwnerForm = (_props) => {
                         />
                     </LabelFieldPair>
 
-                    <CardLabelError style={errorStyle}>{localFormState.touched.designation ? errors?.designation?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.designation ? errors?.designation?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_ALLOCATED_DEPARTMENT")}</CardLabel>
@@ -255,7 +257,7 @@ const OwnerForm = (_props) => {
                             name={"allocatedDepartment"}
                             defaultValue={assigndetails?.allocatedDepartment}
 
-                            render={(props) => (
+                            render={({ field: props }) => (
                                 <Dropdown
                                     className="form-field"
                                     selected={props.value}
@@ -268,7 +270,7 @@ const OwnerForm = (_props) => {
                             )}
                         />
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.allocatedDepartment ? errors?.allocatedDepartment?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.allocatedDepartment ? errors?.allocatedDepartment?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_TRANSFER_DATE")}</CardLabel>
@@ -281,7 +283,7 @@ const OwnerForm = (_props) => {
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         type="date"
                                         value={props.value}
@@ -294,7 +296,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.transferDate ? errors?.transferDate?.message : ""}</CardLabelError>
 
 
 

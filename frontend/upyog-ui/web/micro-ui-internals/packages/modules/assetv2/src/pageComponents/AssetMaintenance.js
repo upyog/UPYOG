@@ -167,11 +167,13 @@ const OwnerForm = (_props) => {
         }
     }, [formValue]);
 
+    const errorKeys = Object.keys(errors || {}).join(",");
+
     useEffect(() => {
         if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors))
             setError(config.key, { type: errors });
         else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
-    }, [errors]);
+    }, [errors, errorKeys, formState.errors[config.key]]);
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
@@ -334,7 +336,7 @@ const OwnerForm = (_props) => {
                                 name={"applicationNo"}
                                 defaultValue={maintenanceDetails?.applicationNo}
 
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.id))}`}
                                         readOnly // Makes the input field readonly
@@ -352,7 +354,7 @@ const OwnerForm = (_props) => {
                                 name={"applicationNo"}
                                 defaultValue={maintenanceDetails?.applicationNo}
 
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
                                         readOnly // Makes the input field readonly
@@ -382,7 +384,7 @@ const OwnerForm = (_props) => {
                                 name={"applicationNo"}
                                 defaultValue={maintenanceDetails?.applicationNo}
 
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
                                         readOnly // Makes the input field readonly
@@ -400,7 +402,7 @@ const OwnerForm = (_props) => {
                                 name={"applicationNo"}
                                 defaultValue={maintenanceDetails?.applicationNo}
 
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetParentCategory))}`}
                                         readOnly // Makes the input field readonly
@@ -424,7 +426,7 @@ const OwnerForm = (_props) => {
                                 name={"applicationNo"}
                                 defaultValue={maintenanceDetails?.applicationNo}
 
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`}
                                         readOnly // Makes the input field readonly
@@ -470,7 +472,7 @@ const OwnerForm = (_props) => {
                                                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                                 validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                             }}
-                                            render={(props) => (
+                                            render={({ field: props }) => (
                                                 <TextInput
                                                     value={props.value}
                                                     autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "assetWarrantyDescription"}
@@ -487,7 +489,7 @@ const OwnerForm = (_props) => {
                                         />
                                     </div>
                                 </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.assetWarrantyDescription ? errors?.assetWarrantyDescription?.message : ""}</CardLabelError> */}
+                                <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.assetWarrantyDescription ? errors?.assetWarrantyDescription?.message : ""}</CardLabelError> */}
 
                                 <LabelFieldPair>
                                     <CardLabel className="card-label-smaller">{t("AST_WARRANTY_DESCRIPTION")} <span className="assetv2-asset-all-details-required-asterisk">*</span></CardLabel>
@@ -500,7 +502,7 @@ const OwnerForm = (_props) => {
                                                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                                 validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                             }}
-                                            render={(props) => (
+                                            render={({ field: props }) => (
                                                 <TextArea
                                                     type={"textarea"}
                                                     value={props.value}
@@ -518,7 +520,7 @@ const OwnerForm = (_props) => {
                                         />
                                     </div>
                                 </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.assetWarrantyDescription ? errors?.assignedUser?.assetWarrantyDescription : ""}</CardLabelError>
+                                <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.assetWarrantyDescription ? errors?.assignedUser?.assetWarrantyDescription : ""}</CardLabelError>
                             </div>
                         )}
                     {warrantyExp.code === "IN_AMC" &&
@@ -538,7 +540,7 @@ const OwnerForm = (_props) => {
                                                         /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                                                 },
                                             }}
-                                            render={(props) => (
+                                            render={({ field: props }) => (
                                                 <TextInput
                                                     value={props.value}
                                                     // disable={isEditScreen}
@@ -556,7 +558,7 @@ const OwnerForm = (_props) => {
                                         />
                                     </div>
                                 </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError> */}
+                                <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError> */}
 
                                 <LabelFieldPair>
                                     <CardLabel className="card-label-smaller">{t("AST_AMC_DETAILS")} <span className="assetv2-asset-all-details-required-asterisk">*</span> </CardLabel>
@@ -569,7 +571,7 @@ const OwnerForm = (_props) => {
                                                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                                 validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                             }}
-                                            render={(props) => (
+                                            render={({ field: props }) => (
                                                 <TextArea
                                                     type={"textarea"}
                                                     value={props.value}
@@ -587,7 +589,7 @@ const OwnerForm = (_props) => {
                                         />
                                     </div>
                                 </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.assignedUser?.amcDetails : ""}</CardLabelError>
+                                <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.amcDetails ? errors?.assignedUser?.amcDetails : ""}</CardLabelError>
 
                             </div>
                         )}
@@ -603,7 +605,7 @@ const OwnerForm = (_props) => {
                             control={control}
                             name={"maintenanceType"}
                             defaultValue={maintenanceDetails?.maintenanceType}
-                            render={(props) => (
+                            render={({ field: props }) => (
                                 <Dropdown
                                     className="form-field"
                                     selected={props.value}
@@ -634,7 +636,7 @@ const OwnerForm = (_props) => {
                                     //   return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
                                     // },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         type="date"
                                         value={props.value}
@@ -659,16 +661,16 @@ const OwnerForm = (_props) => {
                             control={control}
                             name={"maintenanceCycle"}
                             defaultValue={maintenanceDetails?.maintenanceCycle}
-                            render={(props) => (
+                            render={({ field: props }) => (
                                 <Dropdown
                                     className="form-field"
                                     selected={props.value}
                                     select={(value) => {
                                         props.onChange(value);
-                                        const date = control.getValues("assetMaintenanceDate");
+                                        const date = getValues("assetMaintenanceDate");
                                         if (date) {
                                             const nextDate = calculateNextDate(date, value);
-                                            control.setValue("assetNextMaintenanceDate", nextDate);
+                                            setValue("assetNextMaintenanceDate", nextDate);
                                         }
                                     }}
                                     onBlur={props.onBlur}
@@ -680,7 +682,7 @@ const OwnerForm = (_props) => {
                         />
                     </LabelFieldPair>
 
-                    <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                                 {t("AST_NEXT_MAINTENANCE_DATE")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
@@ -702,7 +704,7 @@ const OwnerForm = (_props) => {
                                         return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
                                     },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         type="date"
                                         value={props.value}
@@ -727,7 +729,7 @@ const OwnerForm = (_props) => {
                             name={"paymentType"}
                             defaultValue={maintenanceDetails?.paymentType}
 
-                            render={(props) => (
+                            render={({ field: props }) => (
                                 <Dropdown
                                     className="form-field"
                                     selected={props.value}
@@ -740,7 +742,7 @@ const OwnerForm = (_props) => {
                             )}
                         />
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
 
                     {/* <LabelFieldPair>
                         <CardLabel className="card-label-smaller" className="custom-style">
@@ -761,7 +763,7 @@ const OwnerForm = (_props) => {
                                             /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                                     },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={props.value}
                                         // disable={isEditScreen}
@@ -779,7 +781,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair> */}
-                    <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_DESCRIPTION")} <span className="assetv2-asset-all-details-required-asterisk">*</span> </CardLabel>
@@ -792,7 +794,7 @@ const OwnerForm = (_props) => {
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextArea
                                         type={"textarea"}
                                         value={props.value}
@@ -810,7 +812,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.description ? errors?.assignedUser?.description : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.description ? errors?.assignedUser?.description : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_VENDOR")} <span className="assetv2-asset-all-details-required-asterisk">*</span> </CardLabel>
                         <div className="field">
@@ -825,7 +827,7 @@ const OwnerForm = (_props) => {
                                             /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                                     },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextInput
                                         value={props.value}
                                         // disable={isEditScreen}
@@ -843,7 +845,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.vendor ? errors?.vendor?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.vendor ? errors?.vendor?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PARTS_TO_BE_ADDED")} <span className="assetv2-asset-all-details-required-asterisk">*</span></CardLabel>
@@ -856,7 +858,7 @@ const OwnerForm = (_props) => {
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextArea
                                         type={"textarea"}
                                         value={props.value}
@@ -874,7 +876,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.partsAddedOrReplaced ? errors?.assignedUser?.partsAddedOrReplaced : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.partsAddedOrReplaced ? errors?.assignedUser?.partsAddedOrReplaced : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_SUPPORTING_DOCUMENTS")} <span className="assetv2-asset-all-details-required-asterisk">*</span> </CardLabel>
@@ -882,7 +884,7 @@ const OwnerForm = (_props) => {
                             <Controller
                                 control={control}
                                 name={"supportingDocument"}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <UploadFile
                                         id={"supportingDocument"}
                                         onUpload={(e) => handleFileUpload(e, setSupportingDocumentFile)}
@@ -906,7 +908,7 @@ const OwnerForm = (_props) => {
                             <Controller
                                 control={control}
                                 name={"preCondition"}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <UploadFile
                                         id={"preCondition"}
                                         onUpload={(file) => handleFileUpload(file, setPreConditionFile)}
@@ -934,7 +936,7 @@ const OwnerForm = (_props) => {
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                 }}
-                                render={(props) => (
+                                render={({ field: props }) => (
                                     <TextArea
                                         type={"textarea"}
                                         value={props.value}
@@ -952,7 +954,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.preConditionRemarks ? errors?.assignedUser?.preConditionRemarks : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.preConditionRemarks ? errors?.assignedUser?.preConditionRemarks : ""}</CardLabelError>
                     <div className="assetv2-asset-maintenance-container-padding">
 
 
@@ -962,7 +964,7 @@ const OwnerForm = (_props) => {
                                 <Controller
                                     control={control}
                                     name={"postCondition"}
-                                    render={(props) => (
+                                    render={({ field: props }) => (
                                         <UploadFile
                                             id={"postCondition"}
                                             onUpload={(file) => handleFileUpload(file, setPostConditionFile)}
@@ -990,7 +992,7 @@ const OwnerForm = (_props) => {
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                                     }}
-                                    render={(props) => (
+                                    render={({ field: props }) => (
                                         <TextArea
                                             type={"textarea"}
                                             value={props.value}
@@ -1008,7 +1010,7 @@ const OwnerForm = (_props) => {
                                 />
                             </div>
                         </LabelFieldPair>
-                        <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
+                        <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
                         <LabelFieldPair>
                             <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                                 {t("AST_IS_LIFE_OF__ASSET_AFFECTED")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
@@ -1040,7 +1042,7 @@ const OwnerForm = (_props) => {
                                             control={control}
                                             name={"assetMaintenanceIncreasedYear"}
                                             defaultValue={maintenanceDetails?.assetMaintenanceIncreasedYear || null}
-                                            render={(props) => (
+                                            render={({ field: props }) => (
                                                 <Dropdown
                                                     className="form-field"
                                                     selected={props.value}
@@ -1053,7 +1055,7 @@ const OwnerForm = (_props) => {
                                             )}
                                         />
                                     </LabelFieldPair>
-                                    <CardLabelError style={errorStyle}>{localFormState.touched.assetMaintenanceIncreasedYear ? errors?.assetMaintenanceIncreasedYear?.message : ""}</CardLabelError>
+                                    <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.assetMaintenanceIncreasedYear ? errors?.assetMaintenanceIncreasedYear?.message : ""}</CardLabelError>
                                 </div>
                             )}
                     </div>

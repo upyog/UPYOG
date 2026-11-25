@@ -84,6 +84,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, 
 
     actionDetail &&
       actionDetail.map((opt) => {
+        const normalizedUrl = (opt.url || "").replace("/employee/asset/", "/employee/assetv2/");
 
         // this condition use for if asset asign then show return asset if asset not assign then show asset Assign
         if (
@@ -92,14 +93,14 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, 
         ) {
           actionMdms.push({
             label: t(opt.code),
-            link: `${opt.url}${row?.original?.["applicationNo"]}`,
+            link: `${normalizedUrl}${row?.original?.["applicationNo"]}`,
             code: opt.code
           });
         } else if ( opt.code !== "AST_RETURN" && opt.code !== "AST_ASSIGN") {
           // Push other options unconditionally
           actionMdms.push({
             label: t(opt.code),
-            link: `${opt.url}${row?.original?.["applicationNo"]}`,
+            link: `${normalizedUrl}${row?.original?.["applicationNo"]}`,
             code: opt.code
           });
         }
@@ -118,7 +119,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, 
         }
       });
       if(applicationDetails)
-      navigate("/upyog-ui/employee/asset/assetservice/asset-process-depreciation-response", { replace: true, state: { ProcessDepreciation: applicationDetails,  applicationNo} });
+      navigate("/upyog-ui/employee/assetv2/assetservice/asset-process-depreciation-response", { replace: true, state: { ProcessDepreciation: applicationDetails,  applicationNo} });
     } catch (error) {
       setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
@@ -135,7 +136,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, 
         return (
           <div>
             <span className="link">
-              <Link to={`/upyog-ui/employee/asset/assetservice/applicationsearch/application-details/${row.original?.["applicationNo"]}`}>
+              <Link to={`/upyog-ui/employee/assetv2/assetservice/applicationsearch/application-details/${row.original?.["applicationNo"]}`}>
                 {row.original?.["applicationNo"]}
               </Link>
             </span>
@@ -190,7 +191,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, 
         const menuRef = useRef();
 
         const toggleMenu = () => {
-          setIsMenuOpen(!isMenuOpen);
+          setIsMenuOpen((prev) => !prev);
         };
 
         const closeMenu = (e) => {
@@ -276,7 +277,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, 
       },
       mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
     },
-  ]), [])
+  ]), [actionDetail, t])
 
   const onSort = useCallback((args) => {
     if (args.length === 0) return

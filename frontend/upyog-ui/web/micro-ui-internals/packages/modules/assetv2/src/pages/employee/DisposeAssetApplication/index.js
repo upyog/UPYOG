@@ -98,7 +98,7 @@ const DisposeAssetApplication = () => {
           if(applicationDetails){
             console.log('success data is coming')
             // setShowToast({ error: false, label: 'Asset Dispose Successfully'});
-            navigate("/upyog-ui/employee/asset/assetservice/asset-dispose-response", { replace: true, state: { AssetDisposal: applicationDetails, applicationNo } }); 
+            navigate("/upyog-ui/employee/assetv2/assetservice/asset-dispose-response", { replace: true, state: { AssetDisposal: applicationDetails, applicationNo } }); 
           }
         }
         catch (error) {

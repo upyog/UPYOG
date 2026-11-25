@@ -149,7 +149,7 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) =>
             )}
           />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.city ? errors?.city?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.city ? errors?.city?.message : ""}</CardLabelError>
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("AST_LOCALITY") + " *"}</CardLabel>
           <Controller
@@ -170,7 +170,7 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) =>
             )}
           />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.locality ? errors?.locality?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState?.touchedFields?.locality ? errors?.locality?.message : ""}</CardLabelError>
       </div>
     );
   }

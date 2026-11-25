@@ -36,7 +36,7 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: true,
       },
       {
-        path: "/upyog-ui/employee/asset/assetservice/inbox",
+        path: "/upyog-ui/employee/assetv2/assetservice/inbox",
         content: t("ES_TITLE_INBOX"),
         show: location.pathname.includes("asset/assetservice/inbox") ? false : false,
       },
@@ -96,20 +96,20 @@ const EmployeeApp = ({ path, url, userType }) => {
             <Route path= "assetservice/dispose-assets/:id" element={<PrivateRoute><DisposeApplication /></PrivateRoute>} />
             <Route path= "assetservice/return-assets/:id" element={<PrivateRoute><NewAssetReturnApplication /></PrivateRoute>} />
             <Route path= "assetservice/edit/:id" element={<PrivateRoute><EditAsset /></PrivateRoute>} />
-            <Route path= "assetservice/new-assets/*" element={<PrivateRoute><ASSETCreate /></PrivateRoute>} />
+            <Route path= "assetservice/new-assets/*" element={<PrivateRoute><ASSETCreate parentRoute={path} /></PrivateRoute>} />
             <Route path= "assetservice/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
             <Route path= "assetservice/applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
-            <Route path= "assetservice/assign-response/*" element={<PrivateRoute><Response /></PrivateRoute>} />
-            <Route path= "assetservice/maintenance/*" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
-            <Route path= "assetservice/edit-maintenance/*" element={<PrivateRoute><EditMaintenance /></PrivateRoute>} />
+            <Route path= "assetservice/assign-response/*" element={<PrivateRoute><Response parentRoute={path} /></PrivateRoute>} />
+            <Route path= "assetservice/maintenance/*" element={<PrivateRoute><Maintenance parentRoute={path} /></PrivateRoute>} />
+            <Route path= "assetservice/edit-maintenance/*" element={<PrivateRoute><EditMaintenance parentRoute={path} /></PrivateRoute>} />
             <Route path= "assetservice/maintenance-edit/:id" element={<PrivateRoute><EditAssetMaintenance /></PrivateRoute>} />
-            <Route path= "assetservice/asset-dispose-response/*" element={<PrivateRoute><DisposeResponse /></PrivateRoute>} />
-            <Route path= "assetservice/asset-process-depreciation-response/*" element={<PrivateRoute><ProcessDepreciationResponse /></PrivateRoute>} />
-            <Route path= "assetservice/return-response/*" element={<PrivateRoute><ReturnResponse /></PrivateRoute>} />
+            <Route path= "assetservice/asset-dispose-response/*" element={<PrivateRoute><DisposeResponse parentRoute={path} /></PrivateRoute>} />
+            <Route path= "assetservice/asset-process-depreciation-response/*" element={<PrivateRoute><ProcessDepreciationResponse parentRoute={path} /></PrivateRoute>} />
+            <Route path= "assetservice/return-response/*" element={<PrivateRoute><ReturnResponse parentRoute={path} /></PrivateRoute>} />
             {/* <Route path= "assetservice/search" element={<PrivateRoute><Search /></PrivateRoute>} /> */}
-            <Route path= "assetservice/my-asset/*" element={<PrivateRoute><SearchApp /></PrivateRoute>} />
+            <Route path= "assetservice/my-asset/*" element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />
             <Route path= "assetservice/report/*" element={<PrivateRoute><SearchReport /></PrivateRoute>} />
-            <Route path= "assetservice/edit-response/*" element={<PrivateRoute><EditResponse /></PrivateRoute>} />
+            <Route path= "assetservice/edit-response/*" element={<PrivateRoute><EditResponse parentRoute={path} /></PrivateRoute>} />
           </Routes>
         </div>
       </React.Fragment>
