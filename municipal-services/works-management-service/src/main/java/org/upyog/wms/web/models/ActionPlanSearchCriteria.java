@@ -32,6 +32,9 @@ public class ActionPlanSearchCriteria {
 
     private List<String> projectIds;
 
+    @Size(max = 256)
+    private String projectName;
+
     private List<String> statuses;
 
     @Size(max = 16)

@@ -90,6 +90,7 @@ public class ActionPlanQueryBuilder {
         in(sql, params, "ap.applicationnumber", c.getApplicationNumbers());
         in(sql, params, "ap.actionplannumber", c.getActionPlanNumbers());
         in(sql, params, "pd.projectid", c.getProjectIds());
+        containsIgnoreCase(sql, params, "pd.projectname", c.getProjectName());
         in(sql, params, "ap.status", c.getStatuses());
         eq(sql, params, "ap.financialyear", c.getFinancialYear());
         eq(sql, params, "ap.schemecode", c.getSchemeCode());
@@ -125,6 +126,13 @@ public class ActionPlanQueryBuilder {
         if (values != null && !values.isEmpty()) {
             sql.append(" AND ").append(column).append(" IN (").append(placeholders(values.size())).append(')');
             params.addAll(values);
+        }
+    }
+
+    private static void containsIgnoreCase(StringBuilder sql, List<Object> params, String column, String value) {
+        if (value != null && !value.isBlank()) {
+            sql.append(" AND POSITION(LOWER(?) IN LOWER(").append(column).append(")) > 0");
+            params.add(value.trim());
         }
     }
 
