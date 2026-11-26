@@ -144,88 +144,92 @@ const transformActionPlanToDetails = (ap) => {
     },
   ];
 
-  // 3. Projects & Components (all fields from CreateActionPlan Section 3)
-  projects.forEach((project, pIdx) => {
-    const projectValues = [
-      { title: "WORKS_AP_PROJECT_ID", value: project.projectId || "NA" },
-      { title: "WORKS_AP_PROJECT_NAME", value: project.projectName || "NA" },
-      { title: "WORKS_AP_PURPOSE", value: project.purposeCode || "NA" },
-      ...(project.specifyPurpose
-        ? [{ title: "WORKS_AP_SPECIFY_PURPOSE", value: project.specifyPurpose }]
-        : []),
-      { title: "WORKS_AP_START_DATE", value: formatDate(project.startDate) },
-      { title: "WORKS_AP_END_DATE", value: formatDate(project.endDate) },
-      { title: "WORKS_AP_TYPE_OF_WORK", value: project.typeOfWork || "NA" },
-      { title: "WORKS_AP_WORK_CATEGORY", value: project.workCategory || "NA" },
-      {
-        title: "WORKS_AP_DECLARED_COMPONENT_COUNT",
-        value: String(project.components?.length || 0),
-      },
-    ];
+  // 3. Project Details (Single Table Structure)
+  if (projects.length > 0) {
+    const projectRows = projects.map((project) => [
+      project.projectId || "NA",
+      project.projectName || "NA",
+      project.purposeCode === "OTHERS" && project.specifyPurpose
+        ? `${project.purposeCode} (${project.specifyPurpose})`
+        : project.purposeCode || "NA",
+      project.typeOfWork || "NA",
+      project.workCategory || "NA",
+      formatDate(project.startDate),
+      formatDate(project.endDate),
+      String(project.components?.length || 0),
+    ]);
 
     sections.push({
-      title: `Project ${pIdx + 1}: ${project.projectName || project.projectId || ""}`,
+      title: "WORKS_AP_SEC_PROJECT_DETAILS",
       asSectionHeader: true,
-      values: projectValues,
+      isTable: true,
+      headers: [
+        "WORKS_AP_PROJECT_ID",
+        "WORKS_AP_PROJECT_NAME",
+        "WORKS_AP_PURPOSE",
+        "WORKS_AP_TYPE_OF_WORK",
+        "WORKS_AP_WORK_CATEGORY",
+        "WORKS_AP_START_DATE",
+        "WORKS_AP_END_DATE",
+        "WORKS_AP_TOTAL_COMPONENTS",
+      ],
+      tableRows: projectRows,
     });
 
-    (project.components || []).forEach((comp, cIdx) => {
-      const compValues = [
-        ...(comp.componentNumber
-          ? [{ title: "WORKS_AP_COMPONENT_NUMBER", value: comp.componentNumber }]
-          : []),
-        { title: "WORKS_AP_COMPONENT_NAME", value: comp.componentName || "NA" },
-        { title: "WORKS_AP_CATEGORY", value: comp.category || "NA" },
-        { title: "WORKS_AP_SUB_CATEGORY", value: comp.subCategory || "NA" },
-        { title: "WORKS_AP_COMPONENT_AMOUNT", value: formatCurrency(comp.approvedAmount) },
-        { title: "WORKS_AP_FUND_SOURCE", value: comp.fundSource || "NA" },
-        ...(comp.status
-          ? [{ title: "WORKS_AP_COMPONENT_STATUS", value: comp.status }]
-          : []),
-      ];
+    // 4. Component Details (Single Table Structure right below Project Details)
+    const componentRows = [];
+    projects.forEach((project) => {
+      (project.components || []).forEach((comp) => {
+        const fundDetailsText =
+          (comp.fundDetails || [])
+            .map((fd) => {
+              const parts = [fd.fundType, fd.sourceCode].filter(Boolean).join(" / ");
+              const namePart = fd.fundName ? ` (${fd.fundName})` : "";
+              return `${parts}${namePart}: ${formatCurrency(fd.amount)}`;
+            })
+            .join("; ") || "NA";
 
-      (comp.fundDetails || []).forEach((fd) => {
-        const ft = String(fd?.fundType || "").toUpperCase();
-        if (ft === "GOVT_GRANT" || ft === "GRANT") {
-          compValues.push(
-            { title: "WORKS_AP_GRANT_TYPE", value: fd.sourceCode || "NA" },
-            { title: "WORKS_AP_GRANT_NAME", value: fd.fundName || "NA" },
-            { title: "WORKS_AP_GRANT_AMOUNT", value: formatCurrency(fd.amount) }
-          );
-        } else if (ft === "OSR") {
-          compValues.push(
-            { title: "WORKS_AP_OSR_SOURCE", value: fd.sourceCode || "NA" },
-            { title: "WORKS_AP_OSR_NAME", value: fd.fundName || "NA" },
-            { title: "WORKS_AP_OSR_AMOUNT", value: formatCurrency(fd.amount) }
-          );
-        } else {
-          compValues.push(
-            { title: "WORKS_AP_FUND_SOURCE", value: fd.sourceCode || fd.fundType || "NA" },
-            { title: "WORKS_AP_OSR_NAME", value: fd.fundName || "NA" },
-            { title: "WORKS_AP_COMPONENT_AMOUNT", value: formatCurrency(fd.amount) }
-          );
-        }
-      });
+        const beneficiariesText =
+          (comp.beneficiaries || [])
+            .map((b) => (b.remark ? `${b.name} (${b.remark})` : b.name))
+            .join("; ") || "NA";
 
-      const beneficiaries = comp.beneficiaries || [];
-      compValues.push({
-        title: "WORKS_AP_BENEFICIARY",
-        value: beneficiaries.length > 0 ? "CS_COMMON_YES" : "CS_COMMON_NO",
-      });
-      beneficiaries.forEach((b) => {
-        compValues.push({ title: "WORKS_AP_BENEFICIARY_NAME", value: b.name || "NA" });
-        if (b.remark) {
-          compValues.push({ title: "WORKS_AP_BENEFICIARY_REMARK", value: b.remark });
-        }
-      });
+        const categoryText = [comp.category, comp.subCategory].filter(Boolean).join(" / ") || "NA";
 
+        componentRows.push([
+          project.projectId || project.projectName || "NA",
+          comp.componentNumber || "NA",
+          comp.componentName || "NA",
+          categoryText,
+          formatCurrency(comp.approvedAmount),
+          comp.fundSource || "NA",
+          fundDetailsText,
+          beneficiariesText,
+          comp.status || "NA",
+        ]);
+      });
+    });
+
+    if (componentRows.length > 0) {
       sections.push({
-        title: `Project ${pIdx + 1} — Component ${cIdx + 1}: ${comp.componentName || comp.componentNumber || ""}`,
-        asSectionHeader: false,
-        values: compValues,
+        title: "WORKS_AP_SEC_COMPONENT_DETAILS",
+        asSectionHeader: true,
+        isTable: true,
+        headers: [
+          "WORKS_AP_PROJECT_ID",
+          "WORKS_AP_COMPONENT_NUMBER",
+          "WORKS_AP_COMPONENT_NAME",
+          "WORKS_AP_CATEGORY",
+          "WORKS_AP_COMPONENT_AMOUNT",
+          "WORKS_AP_FUND_SOURCE",
+          "WORKS_AP_FUND_DETAILS",
+          "WORKS_AP_BENEFICIARY",
+          "WORKS_AP_COMPONENT_STATUS",
+        ],
+        tableRows: componentRows,
       });
-    });
-  });
+    }
+  }
 
   // 4. Financial Summary (matches CreateActionPlan Section 5)
   sections.push({

@@ -180,29 +180,6 @@ export const AppModules = ({ stateCode, userType, appTenants, emp, setEmp }) => 
       ]
     },
     {
-      "module": "Engagement",
-      "code": "Engagement",
-      "active": true,
-      "order": 3,
-      "tenants": [
-        {
-          "code": "pg.citya"
-        },
-        {
-          "code": "pg.cityb"
-        },
-        {
-          "code": "pg.cityc"
-        },
-        {
-          "code": "pg.cityd"
-        },
-        {
-          "code": "pg.citye"
-        }
-      ]
-    },
-    {
       "module": "Bills",
       "code": "Bills",
       "bannerImage": "https://egov-uat-assets.s3.amazonaws.com/Bill.png",
