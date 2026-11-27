@@ -73,14 +73,18 @@ public final class SubmissionRules {
     private void planDetails(ActionPlan plan, ValidationErrors errors) {
         requiredMaster(plan.getFinancialYear(), mdms.financialYears(), "financialYear", "Financial Year", errors);
         List<ProjectDetail> details = live(plan.getProjectDetails(), ProjectDetail::getIsActive);
-        if (details.size() != 1) {
-            errors.add(REQUIRED, "projectDetails", "Exactly one set of project details is required");
+        if (details.isEmpty()) {
+            errors.add(REQUIRED, "projectDetails", "At least one set of project details is required");
         }
+        Set<String> projectIds = new HashSet<>();
         for (int i = 0; i < details.size(); i++) {
             ProjectDetail d = details.get(i);
             String p = "projectDetails[" + i + "].";
             if (isBlank(d.getProjectId())) {
                 errors.add(REQUIRED, p + "projectId", "Project ID is mandatory");
+            } else if (!projectIds.add(d.getProjectId())) {
+                errors.add(DUPLICATE, p + "projectId", "Project ID '" + d.getProjectId()
+                        + "' is entered more than once");
             }
             plainText(d.getProjectName(), true, p + "projectName", "Project Name", errors);
             requiredMaster(d.getPurposeCode(), mdms.purposes(), p + "purposeCode", "Purpose of Project", errors);
@@ -170,7 +174,7 @@ public final class SubmissionRules {
     private void components(ActionPlan plan, ValidationErrors errors, List<ValidationWarning> warnings) {
         List<Component> active = activeComponents(plan);
         if (active.isEmpty()) {
-            errors.add(REQUIRED, "projectDetails[0].components", "At least one Component is required");
+            errors.add(REQUIRED, "projectDetails", "At least one Component is required");
             return;
         }
         if (cfg.enforceComponentCount() && plan.getTotalComponents() != null
@@ -181,35 +185,45 @@ public final class SubmissionRules {
         Set<String> numbers = new HashSet<>();
         Map<String, Integer> normalisedNames = new HashMap<>();
 
-        for (int i = 0; i < active.size(); i++) {
-            Component c = active.get(i);
-            String p = "projectDetails[0].components[" + i + "].";
-            plainText(c.getComponentName(), true, p + "componentName", "Component Name", errors);
-            requiredMaster(c.getCategory(), mdms.componentCategories().keySet(), p + "category", "Category", errors);
-            if (!isBlank(c.getSubCategory())) {
-                Set<String> subs = mdms.componentCategories().getOrDefault(c.getCategory(), Set.of());
-                if (!subs.contains(c.getSubCategory())) {
-                    errors.add(INVALID_MASTER, p + "subCategory", "Sub-Category is not valid for the Category");
+        int componentOrdinal = 0;
+        List<ProjectDetail> projects = live(plan.getProjectDetails(), ProjectDetail::getIsActive);
+        for (int projectIndex = 0; projectIndex < projects.size(); projectIndex++) {
+            List<Component> projectComponents = live(projects.get(projectIndex).getComponents(), Component::getIsActive)
+                    .stream().filter(c -> !COMPONENT_INACTIVE.equals(c.getStatus())).toList();
+            if (projectComponents.isEmpty()) {
+                errors.add(REQUIRED, "projectDetails[" + projectIndex + "].components",
+                        "At least one Component is required for each project");
+            }
+            for (int i = 0; i < projectComponents.size(); i++, componentOrdinal++) {
+                Component c = projectComponents.get(i);
+                String p = "projectDetails[" + projectIndex + "].components[" + i + "].";
+                plainText(c.getComponentName(), true, p + "componentName", "Component Name", errors);
+                requiredMaster(c.getCategory(), mdms.componentCategories().keySet(), p + "category", "Category", errors);
+                if (!isBlank(c.getSubCategory())) {
+                    Set<String> subs = mdms.componentCategories().getOrDefault(c.getCategory(), Set.of());
+                    if (!subs.contains(c.getSubCategory())) {
+                        errors.add(INVALID_MASTER, p + "subCategory", "Sub-Category is not valid for the Category");
+                    }
                 }
-            }
-            positiveAmount(c.getApprovedAmount(), p + "approvedAmount", "Approved Component Amount", errors);
+                positiveAmount(c.getApprovedAmount(), p + "approvedAmount", "Approved Component Amount", errors);
 
-            Optional<FundType> compSource = fundSource(c.getFundSource(), p + "fundSource", errors);
-            compSource.ifPresent(s -> fundRows(s, c.getFundDetails(), c.getApprovedAmount(), p + "fundDetails",
-                    "Approved Component Amount", errors));
-            beneficiaries(c.getBeneficiaries(), p + "beneficiaries", errors);
-            documentsOf(c.getDocuments(), DOC_OWNER_COMPONENT, p + "documents", errors);
+                Optional<FundType> compSource = fundSource(c.getFundSource(), p + "fundSource", errors);
+                compSource.ifPresent(s -> fundRows(s, c.getFundDetails(), c.getApprovedAmount(), p + "fundDetails",
+                        "Approved Component Amount", errors));
+                beneficiaries(c.getBeneficiaries(), p + "beneficiaries", errors);
+                documentsOf(c.getDocuments(), DOC_OWNER_COMPONENT, p + "documents", errors);
 
-            if (c.getComponentNumber() != null && !numbers.add(c.getComponentNumber())) {
-                errors.add(DUPLICATE, p + "componentNumber", "Component " + c.getComponentNumber()
-                        + " is repeated in this plan");
-            }
-            if (c.getComponentName() != null) {
-                String key = c.getComponentName().trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
-                Integer first = normalisedNames.putIfAbsent(key, i);
-                if (first != null) {
-                    warnings.add(new ValidationWarning("WMS_AP_SIMILAR_COMPONENT_NAME", p + "componentName",
-                            "Component name is the same as components[" + first + "]; please check it is not a duplicate"));
+                if (c.getComponentNumber() != null && !numbers.add(c.getComponentNumber())) {
+                    errors.add(DUPLICATE, p + "componentNumber", "Component " + c.getComponentNumber()
+                            + " is repeated in this plan");
+                }
+                if (c.getComponentName() != null) {
+                    String key = c.getComponentName().trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+                    Integer first = normalisedNames.putIfAbsent(key, componentOrdinal);
+                    if (first != null) {
+                        warnings.add(new ValidationWarning("WMS_AP_SIMILAR_COMPONENT_NAME", p + "componentName",
+                                "Component name is the same as another component; please check it is not a duplicate"));
+                    }
                 }
             }
         }
@@ -241,25 +255,22 @@ public final class SubmissionRules {
 
     private void financialSummary(ActionPlan plan, ValidationErrors errors) {
         List<ProjectDetail> details = live(plan.getProjectDetails(), ProjectDetail::getIsActive);
-        if (details.size() != 1) {
+        if (details.isEmpty()) {
             return;
         }
-        ProjectDetail project = details.get(0);
         BigDecimal approved = plan.getApprovedAmount();
-        List<Component> active = live(project.getComponents(), Component::getIsActive).stream()
-                .filter(c -> !COMPONENT_INACTIVE.equals(c.getStatus()))
-                .toList();
+        List<Component> active = activeComponents(plan);
         if (approved == null || active.isEmpty()) {
             return;
         }
         BigDecimal componentTotal = WmsUtil.sum(active, Component::getApprovedAmount);
         int cmp = componentTotal.compareTo(approved);
         if (cfg.fullAllocationRequired() && cmp != 0) {
-            errors.add(COMPONENT_TOTAL_MISMATCH, "projectDetails[0].components", "Total of Components Approved Amount ("
+            errors.add(COMPONENT_TOTAL_MISMATCH, "projectDetails.components", "Total of Components Approved Amount ("
                     + plain(componentTotal) + ") should match the Action Plan Approved Amount (" + plain(approved)
                     + "). Unallocated balance: " + plain(approved.subtract(componentTotal)));
         } else if (!cfg.fullAllocationRequired() && cmp > 0) {
-            errors.add(COMPONENT_OVER_ALLOCATED, "projectDetails[0].components", "Total of Components Approved Amount ("
+            errors.add(COMPONENT_OVER_ALLOCATED, "projectDetails.components", "Total of Components Approved Amount ("
                     + plain(componentTotal) + ") exceeds the Action Plan Approved Amount (" + plain(approved) + ")");
         }
 

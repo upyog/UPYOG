@@ -85,6 +85,28 @@ class EnrichmentServiceTest {
     }
 
     @Test
+    void createLinksComponentsToEachOfMultipleProjects() {
+        ActionPlan plan = ActionPlan.builder().tenantId("od.cuttack").financialYear("2026-27")
+                .projectDetails(new ArrayList<>(List.of(
+                        ProjectDetail.builder().projectId("P1").projectName("Drain")
+                                .components(new ArrayList<>(List.of(component("A")))).build(),
+                        ProjectDetail.builder().projectId("P2").projectName("Road")
+                                .components(new ArrayList<>(List.of(component("B"), component("C")))).build())))
+                .build();
+
+        service.enrichCreate(ActionPlanRequest.builder().requestInfo(requestInfo()).actionPlan(plan).build(), null, 1);
+
+        assertEquals(2, plan.getProjectDetails().size());
+        assertEquals(3, projectComponents(plan).size());
+        assertEquals(List.of("ID-2", "ID-3", "ID-4"),
+                projectComponents(plan).stream().map(Component::getComponentNumber).toList());
+        for (ProjectDetail project : plan.getProjectDetails()) {
+            assertEquals(plan.getId(), project.getActionPlanId());
+            project.getComponents().forEach(component -> assertEquals(project.getId(), component.getProjectDetailId()));
+        }
+    }
+
+    @Test
     void updateSoftDeletesRemovedRowsAndKeepsBusinessIds() {
         ActionPlan existing = created();
         existing.setStatus("INITIATED");
