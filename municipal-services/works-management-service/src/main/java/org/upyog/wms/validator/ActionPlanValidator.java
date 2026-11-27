@@ -6,9 +6,7 @@ import static org.upyog.wms.constants.WmsConstants.USER_TYPE_EMPLOYEE;
 import static org.upyog.wms.util.WmsUtil.isBlank;
 import static org.upyog.wms.util.WmsUtil.nn;
 import static org.upyog.wms.util.WmsUtil.projectComponents;
-import static org.upyog.wms.util.WmsUtil.projectDetail;
-import static org.upyog.wms.util.WmsUtil.projectId;
-import static org.upyog.wms.util.WmsUtil.projectName;
+import static org.upyog.wms.util.WmsUtil.projectDetails;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -33,6 +31,7 @@ import org.upyog.wms.util.WmsUtil;
 import org.upyog.wms.web.models.ActionPlan;
 import org.upyog.wms.web.models.ActionPlanRequest;
 import org.upyog.wms.web.models.ActionPlanSearchCriteria;
+import org.upyog.wms.web.models.ProjectDetail;
 import org.upyog.wms.web.models.ValidationWarning;
 import org.upyog.wms.web.models.Workflow;
 import org.upyog.wms.web.models.mdms.MdmsData;
@@ -51,7 +50,7 @@ public class ActionPlanValidator {
     private final WmsConfiguration config;
 
     /**
-     * @param projectPlans every existing version registered with the same projectId (new plan) or the same
+     * @param projectPlans every existing version registered with any requested projectId (new plan) or the same
      *                     actionPlanNumber (revision)
      */
     public void validateCreate(ActionPlanRequest request, List<ActionPlan> projectPlans) {
@@ -66,9 +65,7 @@ public class ActionPlanValidator {
         draftMinimum(plan, errors);
 
         if (isBlank(plan.getActionPlanNumber())) {
-            projectPlans.stream().findFirst().ifPresent(existing -> errors.add(PROJECT_ALREADY_REGISTERED,
-                    "projectDetails[0].projectId", "Project ID " + projectId(plan) + " is already registered (application "
-                            + existing.getApplicationNumber() + ", status " + existing.getStatus() + ")"));
+            validateProjectsAvailable(plan, projectPlans, null, errors);
         } else {
             validateRevision(plan, projectPlans, errors);
         }
@@ -90,28 +87,35 @@ public class ActionPlanValidator {
                 .findFirst()
                 .ifPresent(v -> errors.add(REVISION_NOT_ALLOWED, "actionPlanNumber", "Revision "
                         + v.getApplicationNumber() + " is already in progress (" + v.getStatus() + ")"));
-        if (projectId(plan) != null && !projectId(plan).equals(projectId(published.get()))) {
-            errors.add(REVISION_NOT_ALLOWED, "projectDetails[0].projectId",
-                    "Project ID cannot be changed in a revision");
+        Map<String, ProjectDetail> publishedProjects = projectsByProjectId(published.get());
+        Set<String> incomingIds = projectDetails(plan).stream().map(ProjectDetail::getProjectId)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        if (!incomingIds.equals(publishedProjects.keySet())) {
+            errors.add(REVISION_NOT_ALLOWED, "projectDetails",
+                    "Projects cannot be added, removed or changed in a revision");
         }
-        // Components carried into the revision must be components of the published version
-        Set<String> known = projectComponents(published.get()).stream()
-                .map(org.upyog.wms.web.models.Component::getComponentNumber)
-                .collect(Collectors.toSet());
-        List<org.upyog.wms.web.models.Component> components = projectComponents(plan);
-        for (int i = 0; i < components.size(); i++) {
-            String number = components.get(i).getComponentNumber();
-            if (number != null && !known.contains(number)) {
-                errors.add(REVISION_NOT_ALLOWED, "projectDetails[0].components[" + i + "].componentNumber", "Component " + number
-                        + " is not part of Action Plan " + plan.getActionPlanNumber()
-                        + "; leave the number empty for a new component");
+        // A carried component must belong to the same project in the published version.
+        List<ProjectDetail> details = projectDetails(plan);
+        for (int p = 0; p < details.size(); p++) {
+            ProjectDetail publishedProject = publishedProjects.get(details.get(p).getProjectId());
+            Set<String> known = publishedProject == null ? Set.of() : nn(publishedProject.getComponents()).stream()
+                    .map(org.upyog.wms.web.models.Component::getComponentNumber).filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            List<org.upyog.wms.web.models.Component> components = nn(details.get(p).getComponents());
+            for (int i = 0; i < components.size(); i++) {
+                String number = components.get(i).getComponentNumber();
+                if (number != null && !known.contains(number)) {
+                    errors.add(REVISION_NOT_ALLOWED, "projectDetails[" + p + "].components[" + i
+                                    + "].componentNumber", "Component " + number + " is not part of project "
+                                    + details.get(p).getProjectId() + " in Action Plan " + plan.getActionPlanNumber()
+                                    + "; leave the number empty for a new component");
+                }
             }
         }
     }
 
     /**
-     * @param sameProject other plans with the requested projectId (only checked when a version-1 draft
-     *                    changes its projectId)
+     * @param sameProject other plans using any newly requested projectId
      * @return warnings from submission rules (empty for other actions)
      */
     public List<ValidationWarning> validateUpdate(ActionPlanRequest request, ActionPlan existing, MdmsData mdms,
@@ -149,7 +153,7 @@ public class ActionPlanValidator {
                     errors.add(UNAUTHORIZED, "auditDetails.createdBy", "Only the creator can edit or submit");
                 }
                 draftMinimum(plan, errors);
-                validateProjectIdChange(plan, existing, sameProject, errors);
+                validateProjectChanges(plan, existing, sameProject, errors);
                 validateChildIds(plan, existing, errors);
             }
             case DECISION -> validateDecision(plan, existing, action, user, mdms, workflowEnabled, errors);
@@ -212,7 +216,7 @@ public class ActionPlanValidator {
         // FR-AP-22: senior approval only for component-derived Government Grant / Partial funding.
         Optional<FundType> derivedSource = componentFundSource(existing);
         if (derivedSource.isEmpty()) {
-            errors.add(INVALID_ACTION, "projectDetails[0].components.fundSource",
+            errors.add(INVALID_ACTION, "projectDetails.components.fundSource",
                     "Fund source cannot be determined from the active components");
             return;
         }
@@ -246,17 +250,42 @@ public class ActionPlanValidator {
                 ? Optional.of(FundType.PARTIAL) : sources.stream().findFirst();
     }
 
-    private void validateProjectIdChange(ActionPlan plan, ActionPlan existing, List<ActionPlan> sameProject,
-                                         ValidationErrors errors) {
-        if (projectId(plan) == null || projectId(plan).equals(projectId(existing))) {
+    private void validateProjectChanges(ActionPlan plan, ActionPlan existing, List<ActionPlan> sameProject,
+                                        ValidationErrors errors) {
+        Set<String> oldIds = projectsByProjectId(existing).keySet();
+        Set<String> newIds = projectDetails(plan).stream().map(ProjectDetail::getProjectId)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        if (existing.getVersion() != null && existing.getVersion() > 1 && !newIds.equals(oldIds)) {
+            errors.add(INVALID_ACTION, "projectDetails", "Projects cannot be added, removed or changed in a revision");
             return;
         }
-        if (existing.getVersion() != null && existing.getVersion() > 1) {
-            errors.add(INVALID_ACTION, "projectDetails[0].projectId", "Project ID cannot be changed in a revision");
-        } else if (sameProject.stream().anyMatch(p -> !p.getId().equals(existing.getId()))) {
-            errors.add(PROJECT_ALREADY_REGISTERED, "projectDetails[0].projectId", "Project ID " + projectId(plan)
-                    + " is already registered");
+        validateProjectsAvailable(plan, sameProject, existing.getId(), errors);
+    }
+
+    private static void validateProjectsAvailable(ActionPlan plan, List<ActionPlan> candidates, String ownPlanId,
+                                                  ValidationErrors errors) {
+        List<ProjectDetail> requested = projectDetails(plan);
+        for (int i = 0; i < requested.size(); i++) {
+            int projectIndex = i;
+            String projectId = requested.get(i).getProjectId();
+            if (isBlank(projectId)) {
+                continue;
+            }
+            candidates.stream()
+                    .filter(candidate -> !Objects.equals(ownPlanId, candidate.getId()))
+                    .filter(candidate -> projectsByProjectId(candidate).containsKey(projectId))
+                    .findFirst()
+                    .ifPresent(existing -> errors.add(PROJECT_ALREADY_REGISTERED,
+                            "projectDetails[" + projectIndex + "].projectId", "Project ID " + projectId
+                                    + " is already registered (application " + existing.getApplicationNumber()
+                                    + ", status " + existing.getStatus() + ")"));
         }
+    }
+
+    private static Map<String, ProjectDetail> projectsByProjectId(ActionPlan plan) {
+        return projectDetails(plan).stream().filter(p -> !isBlank(p.getProjectId()))
+                .collect(Collectors.toMap(ProjectDetail::getProjectId, Function.identity(), (a, b) -> a,
+                        java.util.LinkedHashMap::new));
     }
 
     /** Every child id sent by the client must belong to this plan (protects against cross-plan updates). */
@@ -267,21 +296,28 @@ public class ActionPlanValidator {
         checkIds(plan.getFundDetails(), existing.getFundDetails(), f -> f.getId(), "fundDetails", errors);
         checkIds(plan.getBeneficiaries(), existing.getBeneficiaries(), b -> b.getId(), "beneficiaries", errors);
         checkIds(plan.getDocuments(), existing.getDocuments(), d -> d.getId(), "documents", errors);
-        checkIds(projectComponents(plan), projectComponents(existing), c -> c.getId(),
-                "projectDetails[0].components", errors);
-
         Map<String, org.upyog.wms.web.models.Component> existingComponents = projectComponents(existing).stream()
                 .collect(Collectors.toMap(org.upyog.wms.web.models.Component::getId, Function.identity()));
+        Map<String, ProjectDetail> existingProjects = nn(existing.getProjectDetails()).stream()
+                .filter(p -> p.getId() != null).collect(Collectors.toMap(ProjectDetail::getId, Function.identity()));
         Map<String, org.upyog.wms.web.models.Recommendation> existingRecs = nn(existing.getRecommendations())
                 .stream().collect(Collectors.toMap(r -> r.getId(), Function.identity()));
-        List<org.upyog.wms.web.models.Component> components = projectComponents(plan);
-        for (int i = 0; i < components.size(); i++) {
-            var c = components.get(i);
-            var old = c.getId() == null ? null : existingComponents.get(c.getId());
-            String p = "projectDetails[0].components[" + i + "].";
-            checkIds(c.getFundDetails(), old == null ? null : old.getFundDetails(), f -> f.getId(), p + "fundDetails", errors);
-            checkIds(c.getBeneficiaries(), old == null ? null : old.getBeneficiaries(), b -> b.getId(), p + "beneficiaries", errors);
-            checkIds(c.getDocuments(), old == null ? null : old.getDocuments(), d -> d.getId(), p + "documents", errors);
+        List<ProjectDetail> details = nn(plan.getProjectDetails());
+        for (int projectIndex = 0; projectIndex < details.size(); projectIndex++) {
+            List<org.upyog.wms.web.models.Component> components = nn(details.get(projectIndex).getComponents());
+            ProjectDetail oldProject = details.get(projectIndex).getId() == null ? null
+                    : existingProjects.get(details.get(projectIndex).getId());
+            checkIds(components, oldProject == null ? null : oldProject.getComponents(),
+                    org.upyog.wms.web.models.Component::getId,
+                    "projectDetails[" + projectIndex + "].components", errors);
+            for (int i = 0; i < components.size(); i++) {
+                var c = components.get(i);
+                var old = c.getId() == null ? null : existingComponents.get(c.getId());
+                String p = "projectDetails[" + projectIndex + "].components[" + i + "].";
+                checkIds(c.getFundDetails(), old == null ? null : old.getFundDetails(), f -> f.getId(), p + "fundDetails", errors);
+                checkIds(c.getBeneficiaries(), old == null ? null : old.getBeneficiaries(), b -> b.getId(), p + "beneficiaries", errors);
+                checkIds(c.getDocuments(), old == null ? null : old.getDocuments(), d -> d.getId(), p + "documents", errors);
+            }
         }
         List<org.upyog.wms.web.models.Recommendation> recs = nn(plan.getRecommendations());
         for (int i = 0; i < recs.size(); i++) {
@@ -334,15 +370,24 @@ public class ActionPlanValidator {
         if (isBlank(plan.getFinancialYear())) {
             errors.add(REQUIRED, "financialYear", "Financial Year is mandatory even for a draft");
         }
-        if (projectDetail(plan).isEmpty()) {
-            errors.add(REQUIRED, "projectDetails", "One active project detail is mandatory even for a draft");
+        List<ProjectDetail> details = projectDetails(plan);
+        if (details.isEmpty()) {
+            errors.add(REQUIRED, "projectDetails", "At least one active project detail is mandatory even for a draft");
             return;
         }
-        if (isBlank(projectId(plan))) {
-            errors.add(REQUIRED, "projectDetails[0].projectId", "Project ID is mandatory even for a draft");
-        }
-        if (isBlank(projectName(plan))) {
-            errors.add(REQUIRED, "projectDetails[0].projectName", "Project Name is mandatory even for a draft");
+        Set<String> projectIds = new HashSet<>();
+        for (int i = 0; i < details.size(); i++) {
+            ProjectDetail detail = details.get(i);
+            String path = "projectDetails[" + i + "].";
+            if (isBlank(detail.getProjectId())) {
+                errors.add(REQUIRED, path + "projectId", "Project ID is mandatory even for a draft");
+            } else if (!projectIds.add(detail.getProjectId())) {
+                errors.add(DUPLICATE, path + "projectId", "Project ID " + detail.getProjectId()
+                        + " is repeated in this Action Plan");
+            }
+            if (isBlank(detail.getProjectName())) {
+                errors.add(REQUIRED, path + "projectName", "Project Name is mandatory even for a draft");
+            }
         }
     }
 

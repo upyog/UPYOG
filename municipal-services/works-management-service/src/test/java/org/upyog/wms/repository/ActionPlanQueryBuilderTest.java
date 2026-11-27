@@ -44,8 +44,9 @@ class ActionPlanQueryBuilderTest {
         String sql = builder.getSearchQuery(criteria, params);
         assertEquals(placeholders(sql), (long) params.size());
         assertFalse(sql.contains("od.cuttack"));
-        assertTrue(sql.contains("ORDER BY pd.projectid ASC"));
-        assertTrue(sql.contains("JOIN eg_wms_ap_project_detail pd"));
+        assertTrue(sql.contains("ORDER BY (SELECT MIN(pd_sort.projectid)"));
+        assertFalse(sql.contains("JOIN eg_wms_ap_project_detail pd ON"));
+        assertTrue(sql.contains("EXISTS (SELECT 1 FROM eg_wms_ap_project_detail pd"));
         assertEquals(100, params.get(params.size() - 2));
         assertEquals(20, params.get(params.size() - 1));
     }

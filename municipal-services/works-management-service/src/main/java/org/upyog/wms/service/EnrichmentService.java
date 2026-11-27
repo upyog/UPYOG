@@ -5,8 +5,7 @@ import static org.upyog.wms.constants.WmsConstants.COMPONENT_INACTIVE;
 import static org.upyog.wms.util.WmsUtil.isTrue;
 import static org.upyog.wms.util.WmsUtil.nn;
 import static org.upyog.wms.util.WmsUtil.projectComponents;
-import static org.upyog.wms.util.WmsUtil.projectDetail;
-import static org.upyog.wms.util.WmsUtil.setProjectComponents;
+import static org.upyog.wms.util.WmsUtil.projectDetails;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -113,12 +112,19 @@ public class EnrichmentService {
         plan.setAuditDetails(ctx.fresh());
 
         if (published != null) {
-            // Revision: same project and action plan number, next version; becomes "latest" only when approved
+            // Revision: same projects and action plan number, next version; becomes latest only when approved.
             plan.setVersion(nextVersion);
             plan.setIsLatestVersion(false);
             plan.setActionPlanNumber(published.getActionPlanNumber());
-            String publishedProjectId = projectDetail(published).map(ProjectDetail::getProjectId).orElse(null);
-            projectDetail(plan).ifPresent(detail -> detail.setProjectId(publishedProjectId));
+            List<ProjectDetail> incomingProjects = projectDetails(plan);
+            List<ProjectDetail> publishedProjects = projectDetails(published);
+            if (incomingProjects.size() == publishedProjects.size()) {
+                for (int i = 0; i < incomingProjects.size(); i++) {
+                    if (incomingProjects.get(i).getProjectId() == null) {
+                        incomingProjects.get(i).setProjectId(publishedProjects.get(i).getProjectId());
+                    }
+                }
+            }
         } else {
             plan.setVersion(1);
             plan.setIsLatestVersion(true);
@@ -128,15 +134,16 @@ public class EnrichmentService {
 
         // Every row of a new version is a new row: ignore ids sent by the client
         plan.setProjectDetails(fresh(plan.getProjectDetails(), PROJECT_DETAIL, ctx));
+        projectDetails(plan).forEach(detail -> {
+            detail.setComponents(fresh(detail.getComponents(), COMPONENT, ctx));
+            detail.getComponents().forEach(c -> freshComponentChildren(c, ctx));
+        });
         plan.setLocations(fresh(plan.getLocations(), LOCATION, ctx));
         plan.setRecommendations(fresh(plan.getRecommendations(), RECOMMENDATION, ctx));
         plan.getRecommendations().forEach(r -> r.setDocuments(fresh(r.getDocuments(), DOCUMENT, ctx)));
         plan.setFundDetails(fresh(plan.getFundDetails(), FUND, ctx));
         plan.setBeneficiaries(fresh(plan.getBeneficiaries(), BENEFICIARY, ctx));
         plan.setDocuments(fresh(plan.getDocuments(), DOCUMENT, ctx));
-        setProjectComponents(plan, fresh(projectComponents(plan), COMPONENT, ctx));
-        projectComponents(plan).forEach(c -> freshComponentChildren(c, ctx));
-
         if (published != null) {
             carryRemovedComponents(plan, published, ctx);
         }
@@ -150,11 +157,18 @@ public class EnrichmentService {
 
     /** FR-AP-10: a component dropped in a revision stays in history, marked INACTIVE (never deleted). */
     private void carryRemovedComponents(ActionPlan plan, ActionPlan published, Ctx ctx) {
-        Set<String> kept = projectComponents(plan).stream().map(Component::getComponentNumber)
-                .filter(Objects::nonNull).collect(Collectors.toSet());
-        projectComponents(published).stream()
-                .filter(c -> COMPONENT_ACTIVE.equals(c.getStatus()) && !kept.contains(c.getComponentNumber()))
-                .map(c -> Component.builder()
+        Map<String, ProjectDetail> publishedByProjectId = projectDetails(published).stream()
+                .collect(Collectors.toMap(ProjectDetail::getProjectId, Function.identity()));
+        for (ProjectDetail project : projectDetails(plan)) {
+            ProjectDetail oldProject = publishedByProjectId.get(project.getProjectId());
+            if (oldProject == null) {
+                continue;
+            }
+            Set<String> kept = nn(project.getComponents()).stream().map(Component::getComponentNumber)
+                    .filter(Objects::nonNull).collect(Collectors.toSet());
+            nn(oldProject.getComponents()).stream()
+                    .filter(c -> COMPONENT_ACTIVE.equals(c.getStatus()) && !kept.contains(c.getComponentNumber()))
+                    .map(c -> Component.builder()
                         .id(UUID.randomUUID().toString())
                         .tenantId(ctx.tenantId())
                         .componentNumber(c.getComponentNumber())
@@ -170,7 +184,8 @@ public class EnrichmentService {
                         .documents(new ArrayList<>())
                         .auditDetails(ctx.fresh())
                         .build())
-                .forEach(projectComponents(plan)::add);
+                    .forEach(project.getComponents()::add);
+        }
     }
 
     public void enrichUpdate(ActionPlanRequest request, ActionPlan existing) {
@@ -179,16 +194,21 @@ public class EnrichmentService {
                 System.currentTimeMillis());
 
         copySystemFields(existing, plan, ctx);
-        if (existing.getVersion() != null && existing.getVersion() > 1) {
-            String existingProjectId = projectDetail(existing).map(ProjectDetail::getProjectId).orElse(null);
-            projectDetail(plan).ifPresent(detail -> detail.setProjectId(existingProjectId));
-        }
         plan.setAdminSanction(isTrue(plan.getAdminSanction()));
         plan.setDeclarationAccepted(isTrue(plan.getDeclarationAccepted()));
 
-        // 1:1 sections: reuse the existing row id so the partial unique index is never violated
-        plan.setProjectDetails(merge(reuseIds(plan.getProjectDetails(), existing.getProjectDetails(),
-                PROJECT_DETAIL), existing.getProjectDetails(), PROJECT_DETAIL, ctx));
+        reuseProjectIds(plan.getProjectDetails(), existing.getProjectDetails());
+        Map<String, ProjectDetail> oldProjects = byId(existing.getProjectDetails(), ProjectDetail::getId);
+        for (ProjectDetail project : nn(plan.getProjectDetails())) {
+            ProjectDetail oldProject = project.getId() == null ? null : oldProjects.get(project.getId());
+            List<Component> oldComponents = oldProject == null ? List.of() : oldProject.getComponents();
+            project.setComponents(merge(project.getComponents(), oldComponents, COMPONENT, ctx));
+            for (Component c : nn(project.getComponents())) {
+                Component old = c.getId() == null ? null : byId(oldComponents, Component::getId).get(c.getId());
+                enrichComponentForUpdate(c, old, ctx);
+            }
+        }
+        plan.setProjectDetails(merge(plan.getProjectDetails(), existing.getProjectDetails(), PROJECT_DETAIL, ctx));
         plan.setLocations(merge(reuseIds(plan.getLocations(), existing.getLocations(), LOCATION),
                 existing.getLocations(), LOCATION, ctx));
 
@@ -208,28 +228,6 @@ public class EnrichmentService {
         plan.setBeneficiaries(merge(plan.getBeneficiaries(), existing.getBeneficiaries(), BENEFICIARY, ctx));
         plan.setDocuments(merge(plan.getDocuments(), existing.getDocuments(), DOCUMENT, ctx));
 
-        Map<String, Component> oldComps = byId(projectComponents(existing), Component::getId);
-        setProjectComponents(plan, merge(projectComponents(plan), projectComponents(existing), COMPONENT, ctx));
-        for (Component c : projectComponents(plan)) {
-            Component old = oldComps.get(c.getId());
-            if (old != null) {
-                c.setComponentNumber(old.getComponentNumber());   // business id never changes
-            }
-            if (c.getStatus() == null) {
-                c.setStatus(old == null ? COMPONENT_ACTIVE : old.getStatus());
-            }
-            if (!WmsUtil.isLive(c.getIsActive())) {
-                c.setFundDetails(new ArrayList<>());
-                c.setBeneficiaries(new ArrayList<>());
-                c.setDocuments(new ArrayList<>());
-            } else if (old == null) {
-                freshComponentChildren(c, ctx);
-            } else {
-                c.setFundDetails(merge(c.getFundDetails(), old.getFundDetails(), FUND, ctx));
-                c.setBeneficiaries(merge(c.getBeneficiaries(), old.getBeneficiaries(), BENEFICIARY, ctx));
-                c.setDocuments(merge(c.getDocuments(), old.getDocuments(), DOCUMENT, ctx));
-            }
-        }
         generateComponentNumbers(request.getRequestInfo(), plan);
         linkParents(plan);
     }
@@ -271,6 +269,26 @@ public class EnrichmentService {
         }
     }
 
+    private void enrichComponentForUpdate(Component component, Component old, Ctx ctx) {
+        if (old != null) {
+            component.setComponentNumber(old.getComponentNumber());
+        }
+        if (component.getStatus() == null) {
+            component.setStatus(old == null ? COMPONENT_ACTIVE : old.getStatus());
+        }
+        if (!WmsUtil.isLive(component.getIsActive())) {
+            component.setFundDetails(new ArrayList<>());
+            component.setBeneficiaries(new ArrayList<>());
+            component.setDocuments(new ArrayList<>());
+        } else if (old == null) {
+            freshComponentChildren(component, ctx);
+        } else {
+            component.setFundDetails(merge(component.getFundDetails(), old.getFundDetails(), FUND, ctx));
+            component.setBeneficiaries(merge(component.getBeneficiaries(), old.getBeneficiaries(), BENEFICIARY, ctx));
+            component.setDocuments(merge(component.getDocuments(), old.getDocuments(), DOCUMENT, ctx));
+        }
+    }
+
     /** One idgen call for all components that do not have a number yet (kept in entry order). */
     private void generateComponentNumbers(RequestInfo requestInfo, ActionPlan plan) {
         List<Component> missing = projectComponents(plan).stream()
@@ -283,8 +301,20 @@ public class EnrichmentService {
 
     /** Sets tenant and parent ids on every child row. */
     private static void linkParents(ActionPlan plan) {
-        plan.getProjectDetails().forEach(detail -> detail.setActionPlanId(plan.getId()));
-        String projectDetailId = projectDetail(plan).map(ProjectDetail::getId).orElse(null);
+        plan.getProjectDetails().forEach(detail -> {
+            detail.setActionPlanId(plan.getId());
+            nn(detail.getComponents()).forEach(c -> {
+                c.setProjectDetailId(detail.getId());
+                c.getFundDetails().forEach(f -> {
+                    f.setActionPlanId(plan.getId());
+                    f.setComponentId(c.getId());
+                });
+                c.getBeneficiaries().forEach(b -> {
+                    b.setActionPlanId(plan.getId());
+                    b.setComponentId(c.getId());
+                });
+            });
+        });
         plan.getFundDetails().forEach(f -> {
             f.setActionPlanId(plan.getId());
             f.setComponentId(null);
@@ -292,17 +322,6 @@ public class EnrichmentService {
         plan.getBeneficiaries().forEach(b -> {
             b.setActionPlanId(plan.getId());
             b.setComponentId(null);
-        });
-        projectComponents(plan).forEach(c -> {
-            c.setProjectDetailId(projectDetailId);
-            c.getFundDetails().forEach(f -> {
-                f.setActionPlanId(plan.getId());
-                f.setComponentId(c.getId());
-            });
-            c.getBeneficiaries().forEach(b -> {
-                b.setActionPlanId(plan.getId());
-                b.setComponentId(c.getId());
-            });
         });
     }
 
@@ -369,6 +388,15 @@ public class EnrichmentService {
         nn(incoming).stream().filter(t -> ops.id().apply(t) == null && free.hasNext())
                 .forEach(t -> ops.setId().accept(t, free.next()));
         return incoming;
+    }
+
+    /** Preserve project row identities when clients identify existing rows by the stable projectId. */
+    private static void reuseProjectIds(List<ProjectDetail> incoming, List<ProjectDetail> existing) {
+        Map<String, String> idsByProject = nn(existing).stream()
+                .filter(p -> p.getProjectId() != null && p.getId() != null)
+                .collect(Collectors.toMap(ProjectDetail::getProjectId, ProjectDetail::getId, (a, b) -> a));
+        nn(incoming).stream().filter(p -> p.getId() == null)
+                .forEach(p -> p.setId(idsByProject.get(p.getProjectId())));
     }
 
     private static <T> Map<String, T> byId(List<T> items, Function<T, String> id) {

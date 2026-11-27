@@ -13,6 +13,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.upyog.wms.constants.ErrorCodes;
 import org.upyog.wms.web.models.ActionPlan;
+import org.upyog.wms.web.models.ProjectDetail;
 import org.upyog.wms.web.models.ValidationWarning;
 import org.upyog.wms.web.models.mdms.ActionPlanConfig;
 import org.upyog.wms.web.models.mdms.MdmsData;
@@ -42,6 +43,36 @@ class SubmissionRulesTest {
         projectComponents(plan).get(2).getFundDetails().get(0).setAmount(new BigDecimal("30"));
         ValidationErrors errors = run(plan);
         assertTrue(errors.containsRule(ErrorCodes.COMPONENT_TOTAL_MISMATCH), errors.asMap()::toString);
+    }
+
+    @Test
+    void multipleProjectsAreValidatedAndTotalledTogether() {
+        ActionPlan plan = TestData.validPlan();
+        plan.getProjectDetails().get(0).getComponents().remove(2);
+        ProjectDetail second = ProjectDetail.builder().projectId("PRJ002").projectName("Second project")
+                .purposeCode("DEVELOPMENT_WORK").startDate(1767225600000L).endDate(1798761600000L)
+                .typeOfWork("ORIGINAL").workCategory("BUILDINGS")
+                .components(new java.util.ArrayList<>(List.of(TestData.component("C-3", "Supervision service",
+                        "SERVICES", "OSR", "40", TestData.fund("OSR", "PROPERTY_TAX", "40")))))
+                .build();
+        plan.getProjectDetails().add(second);
+
+        ValidationErrors errors = run(plan);
+
+        assertTrue(errors.isEmpty(), errors.asMap()::toString);
+    }
+
+    @Test
+    void everyProjectNeedsComponentsAndProjectIdsMustBeUnique() {
+        ActionPlan plan = TestData.validPlan();
+        plan.getProjectDetails().add(ProjectDetail.builder().projectId("PRJ001").projectName("Duplicate")
+                .purposeCode("DEVELOPMENT_WORK").startDate(1767225600000L).endDate(1798761600000L)
+                .typeOfWork("ORIGINAL").workCategory("BUILDINGS").components(new java.util.ArrayList<>()).build());
+
+        ValidationErrors errors = run(plan);
+
+        assertTrue(errors.asMap().containsKey(ErrorCodes.DUPLICATE + ":projectDetails[1].projectId"));
+        assertTrue(errors.asMap().containsKey(ErrorCodes.REQUIRED + ":projectDetails[1].components"));
     }
 
     @Test
@@ -186,7 +217,7 @@ class SubmissionRulesTest {
     @Test
     void inactiveComponentsAreIgnoredInTotals() {
         ActionPlan plan = TestData.validPlan();
-        projectComponents(plan).add(TestData.component("C-9", "Old item", "GOODS", "GOVT_GRANT", "999",
+        plan.getProjectDetails().get(0).getComponents().add(TestData.component("C-9", "Old item", "GOODS", "GOVT_GRANT", "999",
                 TestData.fund("GOVT_GRANT", "CENTRAL_GRANT", "999")));
         projectComponents(plan).get(3).setStatus("INACTIVE");
         assertTrue(run(plan).isEmpty());

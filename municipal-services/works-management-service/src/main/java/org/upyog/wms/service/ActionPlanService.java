@@ -1,9 +1,10 @@
 package org.upyog.wms.service;
 
 import static org.upyog.wms.util.WmsUtil.isBlank;
-import static org.upyog.wms.util.WmsUtil.projectId;
+import static org.upyog.wms.util.WmsUtil.projectDetails;
 
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class ActionPlanService {
         List<ActionPlan> related = isBlank(plan.getTenantId()) ? List.of() : revision
                 ? find(ActionPlanSearchCriteria.builder().tenantId(plan.getTenantId())
                         .actionPlanNumbers(List.of(plan.getActionPlanNumber())).build(), true)
-                : projectIdInUse(plan.getTenantId(), projectId(plan));
+                : projectIdsInUse(plan.getTenantId(), projectIds(plan));
         validator.validateCreate(request, related);
 
         MdmsData mdms = mdmsService.getMasterData(requestInfo, plan.getTenantId());
@@ -89,10 +90,9 @@ public class ActionPlanService {
 
         MdmsData mdms = mdmsService.getMasterData(requestInfo, incoming.getTenantId());
         boolean workflowEnabled = workflowService.isWorkflowEnabled(mdms);
-        String incomingProjectId = projectId(incoming);
-        List<ActionPlan> sameProject = incomingProjectId != null
-                && !incomingProjectId.equals(projectId(existing))
-                ? projectIdInUse(existing.getTenantId(), incomingProjectId) : List.of();
+        LinkedHashSet<String> changedProjectIds = new LinkedHashSet<>(projectIds(incoming));
+        changedProjectIds.removeAll(projectIds(existing));
+        List<ActionPlan> sameProject = projectIdsInUse(existing.getTenantId(), List.copyOf(changedProjectIds));
 
         List<ValidationWarning> warnings = validator.validateUpdate(request, existing, mdms, workflowEnabled,
                 sameProject);
@@ -153,11 +153,16 @@ public class ActionPlanService {
         return repository.search(criteria, withChildren).actionPlans();
     }
 
-    private List<ActionPlan> projectIdInUse(String tenantId, String projectId) {
-        if (isBlank(tenantId) || isBlank(projectId)) {
+    private List<ActionPlan> projectIdsInUse(String tenantId, List<String> projectIds) {
+        if (isBlank(tenantId) || projectIds.isEmpty()) {
             return List.of();
         }
-        return find(ActionPlanSearchCriteria.builder().tenantId(tenantId).projectIds(List.of(projectId)).build(),
-                false).stream().filter(p -> tenantId.equals(p.getTenantId())).toList();
+        return find(ActionPlanSearchCriteria.builder().tenantId(tenantId).projectIds(projectIds).build(),
+                true).stream().filter(p -> tenantId.equals(p.getTenantId())).toList();
+    }
+
+    private static List<String> projectIds(ActionPlan plan) {
+        return projectDetails(plan).stream().map(p -> p.getProjectId())
+                .filter(id -> !isBlank(id)).distinct().toList();
     }
 }

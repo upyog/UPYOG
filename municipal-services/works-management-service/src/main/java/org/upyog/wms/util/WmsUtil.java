@@ -23,22 +23,26 @@ public final class WmsUtil {
         return list == null ? List.of() : list;
     }
 
-    /** Components belong to the plan's single project-detail section. */
+    /** All components across the plan's active projects, in request order. */
     public static List<Component> projectComponents(ActionPlan plan) {
         return nn(plan == null ? null : plan.getProjectDetails()).stream()
                 .filter(Objects::nonNull)
                 .filter(detail -> isLive(detail.getIsActive()))
-                .findFirst()
-                .map(detail -> nn(detail.getComponents()))
-                .orElseGet(List::of);
+                .flatMap(detail -> nn(detail.getComponents()).stream())
+                .toList();
     }
 
-    /** The first active project-detail row; submission rules enforce that exactly one exists. */
-    public static Optional<ProjectDetail> projectDetail(ActionPlan plan) {
+    /** Active project-detail rows in request order. */
+    public static List<ProjectDetail> projectDetails(ActionPlan plan) {
         return nn(plan == null ? null : plan.getProjectDetails()).stream()
                 .filter(Objects::nonNull)
                 .filter(detail -> isLive(detail.getIsActive()))
-                .findFirst();
+                .toList();
+    }
+
+    /** Kept for callers that explicitly need the first active project. */
+    public static Optional<ProjectDetail> projectDetail(ActionPlan plan) {
+        return projectDetails(plan).stream().findFirst();
     }
 
     public static String projectId(ActionPlan plan) {
@@ -49,7 +53,7 @@ public final class WmsUtil {
         return projectDetail(plan).map(ProjectDetail::getProjectName).orElse(null);
     }
 
-    /** Replaces the components of the plan's single project-detail section. */
+    /** Replaces components on the first active project (legacy single-project helper). */
     public static void setProjectComponents(ActionPlan plan, List<Component> components) {
         nn(plan == null ? null : plan.getProjectDetails()).stream()
                 .filter(Objects::nonNull)
